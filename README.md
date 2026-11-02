@@ -11,7 +11,7 @@
 | 目录 | 维护内容 |
 | --- | --- |
 | `source/initializer/` | 用户级 sdd-init 入口、元数据、安装器、原有回归测试及专属模板 |
-| `source/project/` | 项目 Skills（当前五个）、共享治理、模板、项目状态工具及观测资源的可编辑正文 |
+| `source/project/` | 四个项目 Skills、七个自定义角色、共享说明、模板、存量状态工具及观测参考资源的可编辑正文 |
 | `scripts/build_release.py` | 从上述来源构建独立的 sdd-init 安装目录和确定性 repo-payload.zip |
 | `tests/` | 分发内容、可重现性和安装保护行为的验证 |
 | `baselines/` | 导入前用户级安装包及文件哈希；仅用于追溯，不作为当前编辑入口 |
@@ -34,6 +34,8 @@ python -B -m unittest discover -s tests -v
 python -B scripts/build_release.py --output .build/candidate/sdd-init
 ```
 
-当前已建立维护源和可重建分发入口。候选仍保留旧 Spec 解析和状态模型，Issue #1 的新流程尚未完整实施；不要直接部署到正在开发的项目。现有安装器测试随产物保留，其全量结果须在实际改造任务中单独记录，不能用打包测试代替。
+当前分发入口为 sdd-doc、sdd-imp、sdd-accept、sdd-commit；使用方式见[共享协作说明](source/project/.agents/sdd/references/governance.md)，七个角色的场景分工及调用时模型建议见[执行协作](source/project/.agents/sdd/references/delegation.md)，实施 Plan 见 [Draft PR #2](https://github.com/bigsmartben/sdd-init/pull/2)。初始化只安装资源和导航，旧 Spec/Status 命令保留供存量记录使用，不作为新流程门禁。
+
+构建后可运行 `python -B .build/sdd-init/scripts/test_govern.py` 验证安装及存量工具。已有退役 Skill 的项目会在安装前收到冲突提示，升级与迁移另按实际范围处理。原型托管、用户级安装与其他项目升级仍未执行；实际验证与限制见 [实施证据](docs/workflow-evidence.md)。
 
 维护、构建、安装、升级与迁移分别按实际范围执行。仓库变更或构建成功不代表用户级安装或其他项目已升级；具体授权与验证要求见 [AGENTS.md](AGENTS.md)。

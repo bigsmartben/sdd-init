@@ -1,3 +1,5 @@
+> 存量 Spec/Status 工具格式参考；不用于创建新流程需求或状态实体。新需求归 Issue，实施 Plan 归 Draft PR。
+
 # {CAPABILITY} — 当前迭代状态
 
 ## 当前迭代

@@ -14,8 +14,6 @@ from pathlib import Path
 import re
 import subprocess
 import sys
-import zipfile
-import tomllib
 
 SKILL = Path(__file__).resolve().parent.parent
 ASSETS = SKILL / "assets"
@@ -300,71 +298,6 @@ def within_scope(path: str, scope: set[str]) -> bool:
 # `sdd-init` is the ONLY global skill. It carries a compressed payload that
 # contains repository-local skills; storing nested SKILL.md files unpacked under
 # ~/.agents/skills/sdd-init would risk discovering them as global skills.
-PROJECT_PAYLOAD = ASSETS / "repo-payload.zip"
-PROJECT_SKILLS = {'sdd-test-loop', 'sdd-doc', 'sdd-imp', 'sdd-commit', 'sdd-review-loop'}
-PROJECT_AGENTS = set()  # SDD does not install custom agent roles.
-
-
-def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes]]:
-    if not PROJECT_PAYLOAD.is_file():
-        fail("仅全局 sdd-init 能初始化仓库级 Skills；当前安装器缺少 repo-payload.zip")
-    changes: list[tuple[Path, bytes]] = []
-    with zipfile.ZipFile(PROJECT_PAYLOAD) as archive:
-        members = archive.namelist()
-        if len(members) != len(set(members)):
-            fail("项目 Skill 包内存在重复路径")
-        for member in members:
-            if member.endswith("/"):
-                continue
-            rel = Path(member)
-            parts = rel.parts
-            is_skill = ((len(parts) == 4 and parts[0:2] == (".agents", "skills")
-                        and parts[2] in PROJECT_SKILLS and parts[3] == "SKILL.md")
-                        or (len(parts) == 5 and parts[0:2] == (".agents", "skills")
-                        and parts[2] in PROJECT_SKILLS and parts[3:] == ("agents", "openai.yaml"))
-                        or (parts == (".agents", "skills", "sdd-commit", "references", "providers.md")))
-            is_shared = (len(parts) == 4 and parts[0:2] == (".agents", "sdd")
-                         and parts[2] in ("scripts", "assets") and parts[3] in
-                         ("govern.py", "blueprint.md", "spec.md", "status.md", "architecture-rule-catalog.md"))
-            is_shared = is_shared or (len(parts) == 4 and parts[:3] == (".agents", "sdd", "references")
-                                      and parts[3] in ("delegation.md", "governance.md", "observability-baseline.md"))
-            is_agent = (len(parts) == 3 and parts[0:2] == (".codex", "agents")
-                        and parts[2] in {role + ".toml" for role in PROJECT_AGENTS})
-            is_agent_config = (parts in ((".codex", "config.toml"), (".codex", "agent-routing.md")))
-            if not (is_skill or is_shared or is_agent or is_agent_config):
-                fail(f"项目 Skill 包包含非法路径: {member}")
-            target = inside(root, root / rel)
-            data = archive.read(member)
-            if target.exists() or target.is_symlink():
-                if target.is_symlink() or not target.is_file():
-                    fail(f"拒绝覆盖已有符号链接或非普通文件: {target}")
-                if target.read_bytes() == data:
-                    continue
-                if not allow_update:
-                    fail(f"项目 Skill/工具文件已被修改: {target}；请审查后使用 init --update-skills 执行明确升级")
-            changes.append((target, data))
-        found = {x for x in members if x.startswith('.agents/skills/') and x.endswith('/SKILL.md')}
-        expected = {f'.agents/skills/{s}/SKILL.md' for s in PROJECT_SKILLS}
-        if found != expected:
-            fail("项目 Skill 包不包含完整的五个仓库级 Skill")
-        required = {f'.codex/agents/{role}.toml' for role in PROJECT_AGENTS}
-        required.update(f'.agents/skills/{name}/agents/openai.yaml' for name in PROJECT_SKILLS)
-        required.update({'.agents/sdd/references/delegation.md', '.agents/sdd/references/governance.md',
-                         '.agents/skills/sdd-commit/references/providers.md',
-                         '.agents/sdd/references/observability-baseline.md'})
-        if not required.issubset(members):
-            fail("项目包缺少角色、调用策略或必要引用")
-    return changes
-
-
-def install_project_payload(root: Path, changes: list[tuple[Path, bytes]]) -> None:
-    for target, data in changes:
-        target.parent.mkdir(parents=True, exist_ok=True)
-        exists = target.exists()
-        target.write_bytes(data)
-        out(f"{'UPDATED' if exists else 'CREATED'} {target}")
-
-
 def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
     out(f"Repository: {root}")
     for rel in ["AGENTS.md", "architecture/blueprint.md", "specs"]:
@@ -380,138 +313,6 @@ def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
     out("这是只读盘点；初始化现有仓库前需先获得用户批准。")
     return 0
 
-
-
-# Project configuration is a native Codex artifact installed by sdd-init.
-# Preserve unrelated TOML tables and keys rather than reserializing the file.
-CONFIG_ROOT = {}  # The user owns the discussion model and reasoning effort.
-CONFIG_AGENTS = {
-    'enabled': 'true',
-    'default_subagent_reasoning_effort': '"medium"',
-    'max_concurrent_threads_per_session': '4',
-}
-
-
-def codex_config_change(root: Path, allow_update: bool) -> tuple[Path, str] | None:
-    dest = inside(root, root / '.codex/config.toml')
-    if dest.is_symlink() or (dest.exists() and not dest.is_file()):
-        fail(f'拒绝覆盖已有符号链接或非文件: {dest}')
-    original = read(dest) if dest.is_file() else ''
-    try:
-        existing = tomllib.loads(original) if original.strip() else {}
-    except tomllib.TOMLDecodeError as exc:
-        fail(f'.codex/config.toml 无法解析: {exc}')
-    sections = {'root': existing, 'agents': existing.get('agents', {})}
-    if not isinstance(sections['agents'], dict):
-        fail('配置 [agents] 必须是 TOML 表')
-    for scope, wanted in [('root', CONFIG_ROOT), ('agents', CONFIG_AGENTS)]:
-        for key, value in wanted.items():
-            parsed = tomllib.loads(f'{key} = {value}')[key]
-            if key in sections[scope] and sections[scope][key] != parsed and not allow_update:
-                fail(f'.codex/config.toml 中 {scope}.{key} 与 SDD 默认配置冲突；确认后使用 init --update-skills')
-    # Locate TOML key lines by section. Inline comments are preserved unless a conflicting
-    # managed key is explicitly approved for replacement.
-    lines = original.splitlines(keepends=True)
-    section = 'root'
-    found = {'root': set(), 'agents': set()}
-    result = []
-    for line in lines:
-        hit = re.match(r'^\s*\[([^\]]+)\]\s*(?:#.*)?$', line.strip())
-        if hit:
-            section = 'agents' if hit.group(1) == 'agents' else 'other'
-        m = re.match(r'^(\s*)(model|model_reasoning_effort|enabled|default_subagent_reasoning_effort|max_concurrent_threads_per_session)\s*=.*$',line)
-        desired = CONFIG_ROOT if section == 'root' else CONFIG_AGENTS if section == 'agents' else None
-        if m and desired is not None and m.group(2) in desired:
-            key = m.group(2)
-            found[section].add(key)
-            if allow_update and sections[section].get(key) != tomllib.loads(f'{key} = {desired[key]}')[key]:
-                line = f'{m.group(1)}{key} = {desired[key]}\n'
-        result.append(line)
-    missing_root = [f'{k} = {v}\n' for k,v in CONFIG_ROOT.items() if k not in found['root']]
-    if missing_root:
-        # New top-level keys must appear before any TOML table.
-        result = missing_root + (['\n'] if result else []) + result
-    missing_agent = [f'{k} = {v}\n' for k,v in CONFIG_AGENTS.items() if k not in found['agents']]
-    if missing_agent:
-        header_positions=[i for i,line in enumerate(result) if line.strip() == '[agents]']
-        if header_positions:
-            idx=header_positions[0]+1
-            while idx<len(result) and not re.match(r'^\s*\[[^\]]+\]\s*',result[idx]):
-                idx+=1
-            result[idx:idx]=missing_agent
-        else:
-            result.extend(['\n' if result else '', '[agents]\n',*missing_agent])
-    merged = ''.join(result)
-    try:
-        parsed = tomllib.loads(merged)
-    except tomllib.TOMLDecodeError as exc:
-        fail(f'合并后 TOML 无效，未写入: {exc}')
-    for k,v in CONFIG_ROOT.items():
-        if parsed.get(k) != tomllib.loads(f'{k} = {v}')[k]:
-            fail(f'合并后根配置 {k} 无效')
-    for k,v in CONFIG_AGENTS.items():
-        if parsed['agents'].get(k) != tomllib.loads(f'{k} = {v}')[k]:
-            fail(f'合并后 [agents].{k} 无效')
-    return (dest, merged) if merged != original else None
-
-def cmd_init(root: Path, args: argparse.Namespace) -> int:
-    # Preflight local skill conflicts BEFORE touching the repo.
-    skill_changes = project_payload(root, args.update_skills)
-    config_change = codex_config_change(root, args.update_skills)
-    # Codex prioritizes root AGENTS.override.md over AGENTS.md. A shadowed
-    # guidance file would make initialization appear successful but ineffective.
-    override = inside(root, root / "AGENTS.override.md")
-    if override.exists() and MARK_START not in read(override):
-        fail("根目录存在 AGENTS.override.md，Codex 会优先读取它并忽略 AGENTS.md；请先处理覆盖关系再初始化，避免治理规则未生效")
-    agents = inside(root, root / "AGENTS.md")
-    fragment = read(ASSETS / "agents-fragment.md")
-    if agents.exists():
-        old_agents = read(agents)
-        if MARK_START in old_agents and fragment.strip() not in old_agents and not args.update_skills:
-            fail("已有不同版本的 AGENTS.md 治理片段；确认升级后使用 init --update-skills")
-    create(inside(root, root / "architecture" / "blueprint.md"), blueprint_template())
-    if not agents.exists():
-        create(agents, "# Project Agent Guidance\n\n" + fragment)
-    else:
-        original = read(agents)
-        if MARK_START in original:
-            if fragment.strip() in original:
-                out("KEEP    AGENTS.md 治理片段已是当前版本")
-            else:
-                marker_end = "<!-- sdd-contract-governance:end -->"
-                begin = original.find(MARK_START)
-                end = original.find(marker_end, begin)
-                if end < 0 or original.find(MARK_START, begin + 1) >= 0:
-                    fail("AGENTS.md 治理片段不完整或重复")
-                overwrite(agents, original[:begin] + fragment.strip() + original[end + len(marker_end):])
-        else:
-            # Explicit sdd-init authorizes minimally appending the marked block.
-            # Preserve all prior project instructions; never replace them.
-            overwrite(agents, original.rstrip() + "\n\n" + fragment)
-    # Initialize named capabilities and backfill missing Status for existing Specs.
-    # Bootstrap missing entities; later authorized entity writes belong to the current executor.
-    capabilities = {require_name(n) for n in args.name}
-    specs_dir = root / "specs"
-    if specs_dir.exists():
-        for existing in specs_dir.glob("*/spec.md"):
-            capabilities.add(require_name(existing.parent.name))
-    for name in sorted(capabilities):
-        spec, status = paths(root, name)
-        if name in args.name:
-            create(spec, spec_template(name))
-        if spec.is_file():
-            create(status, make_status(name, ac_ids(read(spec)), arc_refs(read(spec))))
-    install_project_payload(root, skill_changes)
-    if config_change is not None:
-        dest, merged = config_change
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        if dest.is_file():
-            overwrite(dest, merged)
-        else:
-            create(dest, merged)
-    out("BASELINE 运维与可观测强制基线已安装；须逐项核对现行蓝图的 SDD-OBS-01/02/03 映射、冲突和证据。已有正文不覆盖；安装不代表 Review PASS。")
-    out("已部署五个仓库级 Skills、共享资源与项目配置；未安装自定义 Agent，保留主会话模型和现存 Spec/Status，用户级仅安装 sdd-init。")
-    return 0
 
 
 def cmd_start(root: Path, args: argparse.Namespace) -> int:
@@ -683,7 +484,7 @@ def validate(root: Path, name: str, strict: bool, require_gates: bool = False) -
 def cmd_check(root: Path, args: argparse.Namespace) -> int:
     names = list(dict.fromkeys(require_name(name) for name in args.name)) if args.name else sorted(p.parent.name for p in (root / "specs").glob("*/spec.md"))
     if not names:
-        out("未发现能力 Spec；可以先运行 init --name payment-processing")
+        out("未发现存量 Spec；新流程使用 Issue，不需创建本地 Spec。")
         return 1 if args.strict else 0
     errors, warnings = [], []
     for name in names:
@@ -768,13 +569,10 @@ def cmd_commit(root: Path, args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(description="Blueprint + unique Spec + runtime Status")
+    p = argparse.ArgumentParser(description="Legacy Spec/Status utility; not required by the Issue workflow")
     p.add_argument("--root", default=".", help="要治理的仓库目录（默认当前目录）")
     subs = p.add_subparsers(dest="cmd", required=True)
     subs.add_parser("inspect", help="只读盘点，不修改任何文件")
-    a = subs.add_parser("init", help="初始化 Blueprint/AGENTS、指定能力的 Spec/Status，并补齐既有 Spec 的缺失 Status；不覆盖现有内容")
-    a.add_argument("--update-skills", action="store_true", help="经用户批准后替换已有仓库级 Skill/共享工具；绝不修改 Spec/Blueprint/Status")
-    a.add_argument("--name", action="append", default=[], help="初始化指定能力的 Spec + Status；可重复；不指定时自动补齐已存在能力的缺失 Status")
     a = subs.add_parser("start", help="新迭代重置 Status，不影响 Spec")
     a.add_argument("--name", required=True)
     a.add_argument("--iteration", required=True)
@@ -806,9 +604,10 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         root = require_root(args.root)
+        if args.cmd != "inspect":
+            out("LEGACY: Spec/Status only; not an Issue workflow gate or human acceptance result.")
         return {
             "inspect": cmd_inspect,
-            "init": cmd_init,
             "start": cmd_start,
             "record": cmd_record,
             "attest": cmd_attest,

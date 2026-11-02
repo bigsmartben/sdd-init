@@ -59,6 +59,55 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)})
 
+    def test_new_install_has_only_current_skills_and_no_project_entities(self):
+        skill = builder.build(self.folder / "skill")
+        target = self.folder / "project"
+        target.mkdir()
+        result = subprocess.run(
+            [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
+             "--root", str(target), "init"], capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(
+            {p.parent.name for p in (target / ".agents/skills").glob("*/SKILL.md")},
+            {"sdd-doc", "sdd-imp", "sdd-accept", "sdd-commit"})
+        for name in ("specs", "architecture", ".codex/config.toml", "plan.md"):
+            self.assertFalse((target / name).exists(), name)
+        for name in ("issue.md", "blueprint.md", "draft-pr.md", "acceptance.md", "prototype-reference.md"):
+            self.assertTrue((target / ".agents/sdd/assets" / name).is_file(), name)
+
+    def test_retired_skills_block_upgrade_before_writing(self):
+        skill = builder.build(self.folder / "skill")
+        for name in ("sdd-test-loop", "sdd-review-loop"):
+            target = self.folder / name
+            old = target / ".agents/skills" / name / "SKILL.md"
+            old.parent.mkdir(parents=True)
+            old.write_bytes(b"customized legacy instructions\n")
+            before = {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)}
+            result = subprocess.run(
+                [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
+                 "--root", str(target), "init", "--update-skills"],
+                capture_output=True, text=True, encoding="utf-8")
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(name, result.stderr)
+            self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)})
+
+    def test_missing_new_template_rejected_before_writing(self):
+        skill = builder.build(self.folder / "skill")
+        spec = importlib.util.spec_from_file_location("candidate_govern", skill / "scripts/govern.py")
+        installer = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(installer)
+        broken = self.folder / "broken.zip"
+        with zipfile.ZipFile(installer.PROJECT_PAYLOAD) as source, zipfile.ZipFile(broken, "w") as dest:
+            for name in source.namelist():
+                if name != ".agents/sdd/assets/issue.md":
+                    dest.writestr(name, source.read(name))
+        installer.PROJECT_PAYLOAD = broken
+        target = self.folder / "project"
+        target.mkdir()
+        with self.assertRaises(ValueError):
+            installer.cmd_init(target, installer.build_parser().parse_args(["init"]))
+        self.assertEqual(list(target.iterdir()), [])
+
 
 if __name__ == "__main__":
     unittest.main()
