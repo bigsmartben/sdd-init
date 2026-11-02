@@ -1,0 +1,4 @@
+interface:
+  display_name: "sdd-imp"
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,4 @@
+interface:
+  display_name: "sdd-doc"
+policy:
+  allow_implicit_invocation: true

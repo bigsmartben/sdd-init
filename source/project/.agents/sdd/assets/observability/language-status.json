@@ -1,0 +1,12 @@
+{
+  "version": "2026-10-29",
+  "status_semantics": "Local checks only; no independent Review or Test Gate implied.",
+  "languages": {
+    "java": {"transport": "PASS: example log and trace readback", "raw_text": "PASS: echo sample local and Loki readback", "raw_media": "PASS: fixture bytes forced and read back", "loss_ledger": "PARTIAL: independent bounded queue records IDs and local failures; crash, ledger saturation and SDK loss can be unknown", "full_baseline": "UNVERIFIED"},
+    "node": {"transport": "PASS: OTLP/HTTP and Loki readback", "raw_text": "PASS: input and generated output", "raw_media": "UNVERIFIED", "loss_ledger": "NOT_IMPLEMENTED", "full_baseline": "UNVERIFIED"},
+    "python": {"transport": "PASS: OTLP/HTTP and Loki readback", "raw_text": "PASS: input and generated output", "raw_media": "UNVERIFIED", "loss_ledger": "NOT_IMPLEMENTED", "full_baseline": "UNVERIFIED"},
+    "go": {"transport": "PASS: OTLP/HTTP and Loki readback in container", "raw_text": "PASS: input and generated output", "raw_media": "UNVERIFIED", "loss_ledger": "NOT_IMPLEMENTED", "full_baseline": "UNVERIFIED"},
+    "rust": {"transport": "PASS: OTLP/HTTP and Loki readback in container", "raw_text": "PASS: input and generated output", "raw_media": "UNVERIFIED", "loss_ledger": "NOT_IMPLEMENTED", "full_baseline": "UNVERIFIED"},
+    "android": {"build": "PASS: offline assembleDebug", "transport": "UNVERIFIED: no attached device", "raw_media": "UNVERIFIED", "loss_ledger": "NOT_IMPLEMENTED", "full_baseline": "UNVERIFIED"}
+  }
+}

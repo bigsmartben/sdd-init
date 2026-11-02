@@ -1,0 +1,302 @@
+{
+  "date": "2026-11-02",
+  "initializer_source": "C:\\Users\\24598\\.agents\\skills\\sdd-init",
+  "project_source": "C:\\Users\\24598\\Documents\\codeup\\hanxue-live",
+  "purpose": "Provenance only; imported code retains legacy Spec behavior. No installed source was modified.",
+  "files": [
+    {
+      "path": "source/initializer/SKILL.md",
+      "source": "installed-initializer/SKILL.md",
+      "sha256": "cb39149433296d0812f04880e0f8d29acedd2efa806fe4745f0b44035a99ed42"
+    },
+    {
+      "path": "source/initializer/agents/openai.yaml",
+      "source": "installed-initializer/agents/openai.yaml",
+      "sha256": "a7d45dd3626e60bb6c4ba3ced80c3cac5e6c1f4330e3dcb8154479e9a6af1dec"
+    },
+    {
+      "path": "source/initializer/scripts/govern.py",
+      "source": "installed-initializer/scripts/govern.py",
+      "sha256": "7cd61a9c27a7129179d1012874f3ac7d848934116c91b4515215305956b91160"
+    },
+    {
+      "path": "source/initializer/scripts/test_govern.py",
+      "source": "installed-initializer/scripts/test_govern.py",
+      "sha256": "dea32ebb1f9d65f09814d034d85b80c8e1cfbf481a63dca1b5c3be7583b0366d"
+    },
+    {
+      "path": "source/initializer/assets/agents-fragment.md",
+      "source": "installed-initializer/assets/agents-fragment.md",
+      "sha256": "d876f93ec4059df9849e9a82b057e750492c66fa6887c55216f3f0f60cf61bc8"
+    },
+    {
+      "path": "source/initializer/assets/prompting.md",
+      "source": "installed-initializer/assets/prompting.md",
+      "sha256": "5bb32a94e67ae8a476e883f172e11abd7aa5e835f6edbd95cb63cc324b1cc871"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/architecture-rule-catalog.md",
+      "source": "hanxue-live/.agents/sdd/assets/architecture-rule-catalog.md",
+      "sha256": "bea3206437dfe8dd937310fbf97ccdfa3afbd3e5dc0a1934049e5035b4726699",
+      "distributed_sha256": "bea3206437dfe8dd937310fbf97ccdfa3afbd3e5dc0a1934049e5035b4726699"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/blueprint.md",
+      "source": "hanxue-live/.agents/sdd/assets/blueprint.md",
+      "sha256": "5e911d1dfce33b5382ed21cde42cf36aec9e0ae33e4b396dc862e5b7e05f16bc",
+      "distributed_sha256": "7c813fa366e6e50fc2977e74843480cc22aad3da7665b60e5c88722da8ef9423"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/spec.md",
+      "source": "hanxue-live/.agents/sdd/assets/spec.md",
+      "sha256": "80104246b6893ae7ada39889ae1957d38c5c4d9fc0439fdb3f136c6572a20560",
+      "distributed_sha256": "80104246b6893ae7ada39889ae1957d38c5c4d9fc0439fdb3f136c6572a20560"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/status.md",
+      "source": "hanxue-live/.agents/sdd/assets/status.md",
+      "sha256": "a18bb59421847480c1547a954ff4c329d08a22bec25a8c2f3461613cf3b65fd2",
+      "distributed_sha256": "b3a5071d97ba643daf09029c98baf6083c2e26ad3198f02f1aecc9e406fe91b6"
+    },
+    {
+      "path": "source/project/.agents/sdd/references/delegation.md",
+      "source": "hanxue-live/.agents/sdd/references/delegation.md",
+      "sha256": "c5df35bb495aab701b5d4c7332a6f67e137d7d5dffde17aa3689251624eed70e",
+      "distributed_sha256": "ba488639d7071ab0ab65790a8bf3c76a375487945a25b3b12554b2d297e8456a"
+    },
+    {
+      "path": "source/project/.agents/sdd/references/governance.md",
+      "source": "hanxue-live/.agents/sdd/references/governance.md",
+      "sha256": "ca0c847d0566c4cc4597f7c4985a4ac8b6c5bb34d78fb9d24792d38ae35d9a7c",
+      "distributed_sha256": "d0511d0662e8fc40aab19efc561a0705e4f61d96172b5c5968ad2d0af9fd9e82"
+    },
+    {
+      "path": "source/project/.agents/sdd/scripts/govern.py",
+      "source": "hanxue-live/.agents/sdd/scripts/govern.py",
+      "sha256": "0878424a661b8a733f4c09c40e06220361fbbbeed32ba1e7787f2bf58f76e87e",
+      "distributed_sha256": "535393e1f98374cd2e0209839a0807a5a87d0c32764c9625af67e84d6b1ab207"
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-commit/SKILL.md",
+      "source": "hanxue-live/.agents/skills/sdd-commit/SKILL.md",
+      "sha256": "ca9e581c0eef56dd2ec7226cfa702d1a5cd6dc12f36136e5f808eb75a994d167",
+      "distributed_sha256": "2ced638d02a8dda99dc878123f56d46eb48ac9803c9d9616c0456fb121759576"
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-commit/agents/openai.yaml",
+      "source": "hanxue-live/.agents/skills/sdd-commit/agents/openai.yaml",
+      "sha256": "b94188ddbf29c76752b4e04593893caa2777263602ded6dc73500882d2898af9",
+      "distributed_sha256": "dc89ee3f31731ae3e43f8b90d65715634a0dcd3eeef4ca83199d77fbe6c4a567"
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-commit/references/providers.md",
+      "source": "hanxue-live/.agents/skills/sdd-commit/references/providers.md",
+      "sha256": "dc8328d291c209688521d85d9f0db1faa1a9b09bd6b682639cc5cba1774d1361",
+      "distributed_sha256": "dc8328d291c209688521d85d9f0db1faa1a9b09bd6b682639cc5cba1774d1361"
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-doc/SKILL.md",
+      "source": "hanxue-live/.agents/skills/sdd-doc/SKILL.md",
+      "sha256": "ad23501089c8789f4cf8da41b7d75f0871824f0ea4227d909f199c848e037f7f",
+      "distributed_sha256": "1711e00f34bd7016047fd5c150c81856b19ac88475f5a8f0b5eb6ba73142ee65"
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-doc/agents/openai.yaml",
+      "source": "hanxue-live/.agents/skills/sdd-doc/agents/openai.yaml",
+      "sha256": "e4c569de6873c64bb9ad02692eb24bd5e2be7f65b8eae083965c5525f971dbc3",
+      "distributed_sha256": "d9f284b94e382794ff0429238f8a2f6c380da6b4d6132fe71a0fb669420cf245"
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-imp/SKILL.md",
+      "source": "hanxue-live/.agents/skills/sdd-imp/SKILL.md",
+      "sha256": "8bfed0d581019a4b113f0605b4460f2285d57d00c80cc31422d424094438a5f9",
+      "distributed_sha256": "2e50b8914a2ef6c024aaf9b1d2bd9b2f8d512b0856e377d9f394c859e6d043f6"
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-imp/agents/openai.yaml",
+      "source": "hanxue-live/.agents/skills/sdd-imp/agents/openai.yaml",
+      "sha256": "b4f2a6c7b298b12965ee8c3945314929e2924796db0c2ce8eeda8696ac173af0",
+      "distributed_sha256": "2e34750660edd7e4f3868b6c5834cf9b56bc68c3dbafd86c7cf724b22355cfdf"
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-review-loop/SKILL.md",
+      "source": "hanxue-live/.agents/skills/sdd-review-loop/SKILL.md",
+      "sha256": "23be535e8c1545c6445d0ed488099fbd1ef60e9e716175a9c22f9d2a94abb63e",
+      "distributed_sha256": "067242b0e91fbc57673006966bb15e35aa04d53cb0da60f999670a613f99ed79"
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-review-loop/agents/openai.yaml",
+      "source": "hanxue-live/.agents/skills/sdd-review-loop/agents/openai.yaml",
+      "sha256": "e5ded1de505d4a7edfbd9a0290bf9b4e890d39c40a5f22e6bf7612d54645b70b",
+      "distributed_sha256": "5989e5e8c6adfc59eeb67c1fdb85603b583f68a6f8697f915c367fe7ba418b7f"
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-test-loop/SKILL.md",
+      "source": "hanxue-live/.agents/skills/sdd-test-loop/SKILL.md",
+      "sha256": "4e9afa26ef743f88e33a32ba85b01fa1ae6612ad0d28732358977b1857370c7e",
+      "distributed_sha256": "fb0508aea335ed905559fc0df635998bd9f58054756aa96f70fcb05c598843a4"
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-test-loop/agents/openai.yaml",
+      "source": "hanxue-live/.agents/skills/sdd-test-loop/agents/openai.yaml",
+      "sha256": "26d96ffa94694eadc916d53ff9828211c7c962345d96d1c691c7af10547f0bf7",
+      "distributed_sha256": "6d2e412235983e8f784894682e7568142c162f0df56f368e4d211976ec64365d"
+    },
+    {
+      "path": "source/project/.agents/sdd/references/observability-baseline.md",
+      "source": "hanxue-live/.agents/sdd/references/observability-baseline.md",
+      "sha256": "dae828f2987ab68f80da7b0c809df4f14afe2af272af7f376bdf2be723674a78",
+      "distributed_sha256": "d053b6e9db60fe13b203dd79238e74a4ef483878c20dd90506c076a6c4db8388"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/event-1.0.0.schema.json",
+      "source": "hanxue-live/.agents/sdd/assets/observability/event-1.0.0.schema.json",
+      "sha256": "7aebd2949c01312cd6469072dd09959ee8bed98376badf276da0b18f85228b50",
+      "distributed_sha256": "7aebd2949c01312cd6469072dd09959ee8bed98376badf276da0b18f85228b50"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/README.md",
+      "source": "hanxue-live/.agents/sdd/assets/observability/README.md",
+      "sha256": "f854fc98ab93fa0a65b8f9e07aec48172b94ddd19d68eb9deb06720c46cd2d97",
+      "distributed_sha256": "f854fc98ab93fa0a65b8f9e07aec48172b94ddd19d68eb9deb06720c46cd2d97"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/check.py",
+      "source": "hanxue-live/.agents/sdd/assets/observability/check.py",
+      "sha256": "a1feb00edafac80017b86d5e439890c59e907b483a65b2bb1135bc8b6617c011",
+      "distributed_sha256": "a1feb00edafac80017b86d5e439890c59e907b483a65b2bb1135bc8b6617c011"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/java/pom.xml",
+      "source": "hanxue-live/.agents/sdd/assets/observability/java/pom.xml",
+      "sha256": "de9cc0bc4869a13dd4c589e3d74b1c88879902523e67537b111ecf6e8e7edcaf",
+      "distributed_sha256": "de9cc0bc4869a13dd4c589e3d74b1c88879902523e67537b111ecf6e8e7edcaf"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/java/src/main/java/local/sdd/Example.java",
+      "source": "hanxue-live/.agents/sdd/assets/observability/java/src/main/java/local/sdd/Example.java",
+      "sha256": "dc56041dcd91cc8b5125249c80cb32c9574046025eb178836a5e296c68401711",
+      "distributed_sha256": "dc56041dcd91cc8b5125249c80cb32c9574046025eb178836a5e296c68401711"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/java/src/main/java/local/sdd/IsolationProbe.java",
+      "source": "hanxue-live/.agents/sdd/assets/observability/java/src/main/java/local/sdd/IsolationProbe.java",
+      "sha256": "bf6d0ede3ad069d9f4cb128fc0fb0527cdfd71a39b1407c095686991c7e27b48",
+      "distributed_sha256": "bf6d0ede3ad069d9f4cb128fc0fb0527cdfd71a39b1407c095686991c7e27b48"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/java/src/main/java/local/sdd/BusinessDemo.java",
+      "source": "hanxue-live/.agents/sdd/assets/observability/java/src/main/java/local/sdd/BusinessDemo.java",
+      "sha256": "6f78a37f8a4769eb94094e38f725e3ec4632bba14f0fe5f5cb82735979b7fc41",
+      "distributed_sha256": "6f78a37f8a4769eb94094e38f725e3ec4632bba14f0fe5f5cb82735979b7fc41"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/java/src/main/java/local/sdd/BusinessDemoTest.java",
+      "source": "hanxue-live/.agents/sdd/assets/observability/java/src/main/java/local/sdd/BusinessDemoTest.java",
+      "sha256": "86c88798de97128ee3596e447e5afd2997b771cf37a9cc60257f9b97bf349a61",
+      "distributed_sha256": "86c88798de97128ee3596e447e5afd2997b771cf37a9cc60257f9b97bf349a61"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/node/example.js",
+      "source": "hanxue-live/.agents/sdd/assets/observability/node/example.js",
+      "sha256": "517292f407234115ceb608342e735eb13c63c152a6cd0a3c2147622072b88ad4",
+      "distributed_sha256": "517292f407234115ceb608342e735eb13c63c152a6cd0a3c2147622072b88ad4"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/node/package-lock.json",
+      "source": "hanxue-live/.agents/sdd/assets/observability/node/package-lock.json",
+      "sha256": "f4fe68773e128f099da195a16342d8e17fccc7631e2561d60e408c661319c752",
+      "distributed_sha256": "f4fe68773e128f099da195a16342d8e17fccc7631e2561d60e408c661319c752"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/node/package.json",
+      "source": "hanxue-live/.agents/sdd/assets/observability/node/package.json",
+      "sha256": "7434b650f9a101938862c7d15972af6e7cb8f7aba27e838ec27bd1bf2a0f350f",
+      "distributed_sha256": "7434b650f9a101938862c7d15972af6e7cb8f7aba27e838ec27bd1bf2a0f350f"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/go/go.mod",
+      "source": "hanxue-live/.agents/sdd/assets/observability/go/go.mod",
+      "sha256": "036db0198c97b4c1adc0e5aa1e651d75a392bd5db14a1e4f48c202175a021e24",
+      "distributed_sha256": "036db0198c97b4c1adc0e5aa1e651d75a392bd5db14a1e4f48c202175a021e24"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/go/go.sum",
+      "source": "hanxue-live/.agents/sdd/assets/observability/go/go.sum",
+      "sha256": "b7b6176bb3042af774f66a595d34b69d4ce2b55b4aa94ee1bece1cb59a44ed90",
+      "distributed_sha256": "b7b6176bb3042af774f66a595d34b69d4ce2b55b4aa94ee1bece1cb59a44ed90"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/go/main.go",
+      "source": "hanxue-live/.agents/sdd/assets/observability/go/main.go",
+      "sha256": "019ad4047e1462d956c4cd7e29f0f14452a1b10710b50e4166f6a170a432d8cf",
+      "distributed_sha256": "019ad4047e1462d956c4cd7e29f0f14452a1b10710b50e4166f6a170a432d8cf"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/python/example.py",
+      "source": "hanxue-live/.agents/sdd/assets/observability/python/example.py",
+      "sha256": "ceb9bad66fb10d96d48f45b49961e6810c418a22cb066b81cb351aadd9b49e86",
+      "distributed_sha256": "ceb9bad66fb10d96d48f45b49961e6810c418a22cb066b81cb351aadd9b49e86"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/python/requirements.lock",
+      "source": "hanxue-live/.agents/sdd/assets/observability/python/requirements.lock",
+      "sha256": "7bac3e17e71fc0688687cee42835b2a7948eae3ab29d4c4291173aa051fd105d",
+      "distributed_sha256": "7bac3e17e71fc0688687cee42835b2a7948eae3ab29d4c4291173aa051fd105d"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/android/build.gradle",
+      "source": "hanxue-live/.agents/sdd/assets/observability/android/build.gradle",
+      "sha256": "3c3fc43beca35fbf6d0ef33204bbfb8720624ae23219732c153a731c5351cb1d",
+      "distributed_sha256": "3c3fc43beca35fbf6d0ef33204bbfb8720624ae23219732c153a731c5351cb1d"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/android/settings.gradle",
+      "source": "hanxue-live/.agents/sdd/assets/observability/android/settings.gradle",
+      "sha256": "2962f304147f5ccccae9c9089954391819833d61898a6820545bac6149055b48",
+      "distributed_sha256": "2962f304147f5ccccae9c9089954391819833d61898a6820545bac6149055b48"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/rust/Cargo.lock",
+      "source": "hanxue-live/.agents/sdd/assets/observability/rust/Cargo.lock",
+      "sha256": "ed9e916882ee9d10ebf94ef558fd175911161b18a371ea8fc0cffa54a472522b",
+      "distributed_sha256": "ed9e916882ee9d10ebf94ef558fd175911161b18a371ea8fc0cffa54a472522b"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/rust/Cargo.toml",
+      "source": "hanxue-live/.agents/sdd/assets/observability/rust/Cargo.toml",
+      "sha256": "e4252c64cb6deccdd3553f2ae68b40851ecbc88d4be96ffd2a985e9a3fdaafac",
+      "distributed_sha256": "e4252c64cb6deccdd3553f2ae68b40851ecbc88d4be96ffd2a985e9a3fdaafac"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/rust/src/main.rs",
+      "source": "hanxue-live/.agents/sdd/assets/observability/rust/src/main.rs",
+      "sha256": "e25087002be603528157f6d1bbafd539f819d02c7fb6b296d40fca9d7ea45b4d",
+      "distributed_sha256": "e25087002be603528157f6d1bbafd539f819d02c7fb6b296d40fca9d7ea45b4d"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/android/app/build.gradle",
+      "source": "hanxue-live/.agents/sdd/assets/observability/android/app/build.gradle",
+      "sha256": "e2a9998a1b2216180ed05b41f6e1101b676568fc1dd05461ab4cfad20eb856fb",
+      "distributed_sha256": "e2a9998a1b2216180ed05b41f6e1101b676568fc1dd05461ab4cfad20eb856fb"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/android/app/src/main/AndroidManifest.xml",
+      "source": "hanxue-live/.agents/sdd/assets/observability/android/app/src/main/AndroidManifest.xml",
+      "sha256": "8a1f6b0c05f89ea27d5c1ecfc601d8a1ff851a2b5a178c094170d1df1e1c5cdf",
+      "distributed_sha256": "8a1f6b0c05f89ea27d5c1ecfc601d8a1ff851a2b5a178c094170d1df1e1c5cdf"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/android/app/src/main/java/local/sdd/androidexample/MainActivity.java",
+      "source": "hanxue-live/.agents/sdd/assets/observability/android/app/src/main/java/local/sdd/androidexample/MainActivity.java",
+      "sha256": "a0ceb7b317f012fcba5a259b7995c3714eadef4ee2721d536249fc161bebd958",
+      "distributed_sha256": "a0ceb7b317f012fcba5a259b7995c3714eadef4ee2721d536249fc161bebd958"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/observability/language-status.json",
+      "source": "hanxue-live/.agents/sdd/assets/observability/language-status.json",
+      "sha256": "a4093188149b03596d1fb5ba10169a32d97c7daf3b83ba81135c69706142b5fd",
+      "distributed_sha256": "a4093188149b03596d1fb5ba10169a32d97c7daf3b83ba81135c69706142b5fd"
+    }
+  ]
+}
