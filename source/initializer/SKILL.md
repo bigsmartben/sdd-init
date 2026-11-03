@@ -19,6 +19,8 @@ description: 用户要求安装或升级项目 SDD 工作流时使用；安装�
 4. 修改过的同名资源、遮蔽入口或退役 Skill 会在写入前报告。旧 sdd-test-loop／sdd-review-loop 不随升级静默删除；有这些入口的存量项目需先按单独明确范围处理，再安装新入口，避免两套流程并存。
 5. 核对安装内容、导航、重复执行与保护行为；报告新增、更新、保留和阻塞。安装不代表方案确认、实现完成或人工验收通过，不升级其他项目。
 
+默认目录和工程资产规则随包安装至项目 `.agents/governance/repository.md`，`docs/index.md` 与该项目规则只在缺失时初始化。已有项目查其路径映射，按需归并后续规则；不因安装创建产品实体或迁移存量。
+
 共享约定见 [governance](references/governance.md)，模板在 assets；项目载荷为 `assets/repo-payload.zip`，不展开到用户级 Skills 或 Agent 目录。[托管片段](assets/agents-fragment.md)提供项目导航。已有文档只在明确的文档任务中按实际来源归并，不用模板覆盖。
 
 业务确有模型提示词需求时可参考 [prompting](assets/prompting.md)，沿用项目已有规范；仅开发工具使用 AI 不构成创建业务规范的理由。观测样例按实际项目需要使用，不由初始化确认架构选型。

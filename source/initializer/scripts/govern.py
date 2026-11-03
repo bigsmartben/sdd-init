@@ -343,7 +343,8 @@ def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes]]:
             is_shared = (len(parts) == 4 and parts[0:2] == (".agents", "sdd")
                          and parts[2] in ("scripts", "assets") and parts[3] in
                          ("govern.py", "blueprint.md", "spec.md", "status.md", "architecture-rule-catalog.md",
-                          "issue.md", "draft-pr.md", "prototype-reference.md", "acceptance.md"))
+                          "issue.md", "draft-pr.md", "prototype-reference.md", "acceptance.md",
+                          "experiment.md", "sequence.md", "contract.md", "test-plan.md"))
             is_shared = is_shared or (len(parts) == 4 and parts[:3] == (".agents", "sdd", "references")
                                       and parts[3] in ("delegation.md", "governance.md", "observability-baseline.md",
                                                        "scenarios.md", "prototype.md"))
@@ -364,7 +365,8 @@ def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes]]:
                                                         ("android", "app", "src", "main", "java", "local", "sdd", "androidexample", "MainActivity.java")))
             is_role = (len(parts) == 3 and parts[:2] == (".codex", "agents")
                        and parts[2] in {name + ".toml" for name in PROJECT_ROLES})
-            if not (is_skill or is_shared or is_role):
+            is_project_default = member in ('.agents/governance/repository.md', 'docs/index.md')
+            if not (is_skill or is_shared or is_role or is_project_default):
                 fail(f"项目 Skill 包包含非法路径: {member}")
             target = inside(root, root / rel)
             data = archive.read(member)
@@ -373,7 +375,8 @@ def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes]]:
             if target.exists() or target.is_symlink():
                 if target.is_symlink() or not target.is_file():
                     fail(f"拒绝覆盖已有符号链接或非普通文件: {target}")
-                if target.read_bytes() == data:
+                # Project-owned navigation and rules are seeded once, even on upgrade.
+                if is_project_default or target.read_bytes() == data:
                     continue
                 if not allow_update:
                     fail(f"项目 Skill/角色/工具文件已被修改: {target}；请审查后使用 init --update-skills 执行明确升级")
@@ -390,7 +393,9 @@ def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes]]:
                          '.agents/sdd/references/scenarios.md', '.agents/sdd/references/prototype.md',
                          '.agents/sdd/assets/issue.md', '.agents/sdd/assets/blueprint.md',
                          '.agents/sdd/assets/draft-pr.md', '.agents/sdd/assets/prototype-reference.md',
-                         '.agents/sdd/assets/acceptance.md'})
+                         '.agents/sdd/assets/acceptance.md', '.agents/sdd/assets/experiment.md',
+                         '.agents/sdd/assets/sequence.md', '.agents/sdd/assets/contract.md',
+                         '.agents/sdd/assets/test-plan.md', '.agents/governance/repository.md', 'docs/index.md'})
         if not required.issubset(members):
             fail("项目包缺少角色、调用策略、模板或必要引用")
     return changes

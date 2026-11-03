@@ -47,6 +47,12 @@ class BuildTests(unittest.TestCase):
         skill = builder.build(self.folder / "skill")
         target = self.folder / "project"
         target.mkdir()
+        index = target / "docs/index.md"
+        index.parent.mkdir()
+        index.write_bytes(b"# Project\nBlueprint: architecture/blueprint.md\n")
+        rules = target / ".agents/governance/repository.md"
+        rules.parent.mkdir(parents=True)
+        rules.write_bytes(b"# Existing project rules\n")
         (target / "architecture").mkdir()
         contract = target / "architecture/blueprint.md"
         contract.write_bytes(b"# Existing architecture\n")
@@ -58,6 +64,10 @@ class BuildTests(unittest.TestCase):
         result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)})
+
+        subprocess.run(command + ["--update-skills"], check=True, capture_output=True)
+        self.assertEqual(index.read_bytes(), b"# Project\nBlueprint: architecture/blueprint.md\n")
+        self.assertEqual(rules.read_bytes(), b"# Existing project rules\n")
 
     def test_new_install_has_only_current_skills_and_no_project_entities(self):
         skill = builder.build(self.folder / "skill")
@@ -72,7 +82,8 @@ class BuildTests(unittest.TestCase):
             {"sdd-doc", "sdd-imp", "sdd-accept", "sdd-commit"})
         for name in ("specs", "architecture", ".codex/config.toml", "plan.md"):
             self.assertFalse((target / name).exists(), name)
-        for name in ("issue.md", "blueprint.md", "draft-pr.md", "acceptance.md", "prototype-reference.md"):
+        for name in ("issue.md", "blueprint.md", "draft-pr.md", "acceptance.md", "prototype-reference.md",
+                     "experiment.md", "sequence.md", "contract.md", "test-plan.md"):
             self.assertTrue((target / ".agents/sdd/assets" / name).is_file(), name)
 
     def test_retired_skills_block_upgrade_before_writing(self):
@@ -99,7 +110,7 @@ class BuildTests(unittest.TestCase):
         broken = self.folder / "broken.zip"
         with zipfile.ZipFile(installer.PROJECT_PAYLOAD) as source, zipfile.ZipFile(broken, "w") as dest:
             for name in source.namelist():
-                if name != ".agents/sdd/assets/issue.md":
+                if name != ".agents/sdd/assets/test-plan.md":
                     dest.writestr(name, source.read(name))
         installer.PROJECT_PAYLOAD = broken
         target = self.folder / "project"

@@ -236,7 +236,7 @@ class GovernanceTests(unittest.TestCase):
         for target in targets:
             self.assertTrue((self.root / target.split("#")[0]).is_file(), target)
         governance = (self.root / ".agents/sdd/references/governance.md").read_text(encoding="utf-8")
-        self.assertIn("architecture/blueprint.md", governance)
+        self.assertIn("docs/blueprint.md", governance)
         self.assertTrue((self.root / ".agents/skills/sdd-imp/SKILL.md").is_file())
         self.assertFalse((self.root / "governance.md").exists())
         self.assertFalse((self.root / "specs").exists())
