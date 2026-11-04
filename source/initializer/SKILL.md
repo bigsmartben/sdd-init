@@ -1,58 +1,28 @@
 ---
 name: sdd-init
-description: 用户显式要求初始化或升级仓库 SDD 能力时使用；安装五个项目 Skill、共享资源及规则/索引入口，补齐缺失实体骨架，不安装自定义 Agent。
+description: 用户要求安装或升级项目 SDD 工作流时使用；安装五个项目 Skill、五个独立角色、共享模板和导航，保留既有正文及用户运行配置。
 ---
 
-# sdd-init — SDD 项目初始化器
+# SDD 初始化与升级
 
-## 规则
+明确自然语言安装或升级意图即可使用，无需精确口令。仅安装资源与导航，不启动设计、实施、部署验收或 Git 交付。
 
-- 仅负责安装/升级仓库 SDD 能力与缺失骨架，不启动需求设计、实施、独立 Loop 或远端交付。日常开发必须显式调用对应项目 Skill；已启动流程内的状态维护沿用授权。
-- 全局仅安装本 Skill；项目资源来自 `assets/repo-payload.zip`，安装到目标仓库，不展开到用户 Skill/Agent 目录。不安装自定义 Agent，不设置主会话模型或强度。
-- AGENTS 只有“规则”和“索引”两个职责区：规则说明入口约束、阅读顺序和两类沟通方式；索引说明 Skill 场景映射及关键文件职责。执行流程归 Skill，项目细则归现行规范，不在入口重复。
-- 沿用已有权威文件、术语及模块层级。新仓库使用默认路径；已有仓库先核对其入口与需求/架构/状态位置。默认路径与既有权威不一致时先明确映射，不运行会创建第二份权威的默认初始化。
-- 已有正文、非托管 AGENTS 内容与用户配置保留；实体骨架仅缺失时创建。重组非托管入口、迁移细则或删除重复内容需属于本次明确范围，不以初始化名义自动改写。
-- 发现 `AGENTS.override.md` 遮蔽或同名 Skill/配置冲突时报告具体清单；升级授权明确后才用 `--update-skills`。仅维护当前契约，不提供旧版迁移或兼容参数；不自动清理目标仓库的非托管内容。
+1. 核对目标仓库、现有 AGENTS、Issue／架构／PR 入口及实际安装范围。仅维护本 Skill 时不初始化当前仓库。
+2. 使用构建产物中的脚本，路径以实际安装位置为准：
 
-## 索引
+   `python <sdd-init>/scripts/govern.py --root <repo> inspect`
 
-| 资源 | 职责 |
-|---|---|
-| [托管片段](assets/agents-fragment.md) | 两区入口、沟通规则、Skill 映射和默认文件职责索引 |
-| `assets/repo-payload.zip` | 五个项目 Skill、共享工具、模板与执行约定 |
-| [初始化工具](scripts/govern.py) | 安装、冲突检查、托管片段合并与缺失骨架创建 |
-| [回归测试](scripts/test_govern.py) | 安装、幂等、保护与升级行为验证 |
-| [实体治理](references/governance.md) | Blueprint / Spec / Status 的唯一职责与执行边界 |
-| [提示词规范模板](assets/prompting.md) | 仅项目涉及业务模型提示词时读取，生成项目提示词契约；不作为运行时模型输入 |
+   `python <sdd-init>/scripts/govern.py --root <repo> init`
 
-### 执行
+   明确升级时使用 `init --update-skills`，沿用已有授权，不重复索取口令。
+3. 安装载荷中的 sdd-doc、sdd-imp、sdd-test-loop、sdd-review-loop、sdd-commit、五个项目角色及共享资源，将独立沟通原则托管块置于 AGENTS 首部，流程导航单独合并，保留管理块外的正文及原有换行。角色定义在项目 .codex/agents/；需要了解角色分工时读取[执行协作](references/delegation.md)。不创建独立 Spec、Status 或架构正文，角色包含默认模型，不设置推理强度，不改 .codex/config.toml 或用户级配置。
+4. 修改过的同名资源、遮蔽入口或退役 Skill 会在写入前报告。冲突入口按明确范围处理后再安装，避免多套流程并存。
+5. 核对安装内容、导航、重复执行与保护行为；报告新增、更新、保留和阻塞。安装不代表方案确认、实现完成或人工验收通过，不升级其他项目。
 
-1. 定位目标仓库，核对现有 AGENTS、权威路径和本次安装/升级范围；仅维护本 Skill 时不初始化当前仓库。
-2. 按明确范围执行：
+默认目录和工程资产规则随包安装至项目 `.agents/governance/repository.md`，`docs/index.md` 与该项目规则只在缺失时初始化。已有项目查其路径映射，按需归并后续规则；不因安装创建产品实体或迁移存量。
 
-```bash
-python ~/.agents/skills/sdd-init/scripts/govern.py --root <repo> init
-python ~/.agents/skills/sdd-init/scripts/govern.py --root <repo> init --name payment --name order
-# 仅明确升级时添加 --update-skills
-```
+需要解释项目流程时读取 [governance](references/governance.md)，模板在 assets；项目载荷为 `assets/repo-payload.zip`，不展开到用户级 Skills 或 Agent 目录。核对安装入口时读取[独立沟通原则片段](assets/communication-fragment.md)与[流程导航片段](assets/agents-fragment.md)。已有文档只在明确的文档任务中按实际来源归并，不用模板覆盖。
 
-3. 核对生成入口：规则和索引各司其职，链接可达，能力占位路径未被误称为现存文件。项目专属索引仅列实际权威路径及职责；不虚构文件、不复制规范正文。已有入口如需整体重组，报告具体差异并按本次授权处理。
-4. 项目已确认需求或现有实现涉及业务模型提示词时，执行下方“按需提示词规范”；仅开发工具使用 AI 不构成适用依据。无此需求时不创建规范或占位导航。
-5. 报告新增、保留、冲突与验证结果；初始化不代表设计确认、实现完成或验收通过。新会话读取更新，未显示时重启客户端。
+业务确有模型提示词需求时可参考 [prompting](assets/prompting.md)，沿用项目已有规范；仅开发工具使用 AI 不构成创建业务规范的理由。观测样例按实际项目需要使用，不由初始化确认架构选型。
 
-## 按需提示词规范
-
-由初始化 Agent 在脚本安装后按项目语义处理；`govern.py init` 不自动生成该规范，模板不加入全项目必装载荷。
-
-- 先定位已有提示词规范。不存在时，以 [assets/prompting.md](assets/prompting.md) 为基础生成 `docs/governance/prompting.md`，已有权威目录优先；仅保留实际用途的范式，沿用项目术语，接入真实需求、架构及观测规范引用，不补造业务决策、工具权限或状态规则。
-- 在 AGENTS 的项目文件索引和现有治理/文档导航加入实际路径与按需读取时机；同一入口不重复追加，不把规范正文复制进 AGENTS、Skills 或业务提示词。
-- 已有规范时保留正文与定制内容，不创建第二份权威；普通初始化只补缺失导航。仅明确升级范围包含提示词规范时归并通用条款，保留项目专属约定；冲突单独列出，不以模板覆盖。`--update-skills` 本身不授权覆盖项目规范。
-- 核对最终文件与导航链接、项目专属术语及引用；报告模板生成或归并的实际范围，不宣称存量提示词已合规或模型行为已验收。本文及模板不携带某个项目的 LIVE/PTT 规则、执行器分工或 ARC 编号。
-
-- 本地观测契约及接入状态见 `assets/observability/README.md`；随项目包安装到 `.agents/sdd/assets/observability/`，不自动启动共享栈或修改项目业务。
-
-## 所有项目的强制架构基线
-
-初始化、升级或维护本 Skill 时必读[运维与可观测基线](references/observability-baseline.md)。将其分发到 `.agents/sdd/references/observability-baseline.md`，由项目蓝图引用并映射 ARC；它是所有 SDD 项目的必备约束，不是规则候选。
-新骨架携带引用及映射；已有正文保持不覆盖，逐项报告当前权威架构的映射、冲突及待补项，由显式 sdd-doc 承接。升级完成仅表示资源安装，不宣称项目已遵循；未升级项目不会自动获得新资源。Review 必须按基线形成偏差、整改和复核闭环。
-
+例：对空项目执行 init 后，核对五个 Skill、五个角色和导航，再次执行应无新增变更；同名资源存在冲突时报告路径并停止，不将部分安装报告为成功。

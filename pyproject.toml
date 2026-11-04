@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sdd-init"
+version = "0.1.0"
+description = "Install the user-level SDD initializer skill"
+requires-python = ">=3.11"
+readme = "README.md"
+
+[project.scripts]
+sdd-init = "sdd_init.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

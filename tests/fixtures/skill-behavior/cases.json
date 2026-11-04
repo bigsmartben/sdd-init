@@ -1,0 +1,172 @@
+[
+  {
+    "id": "discussion",
+    "input": "讨论是否将重试改为指数退避，先不要写文件。",
+    "files": {
+      "docs/requirements.md": "重试策略待定。"
+    },
+    "expected": [
+      "比较选项并列出待确认结论"
+    ],
+    "forbidden": [
+      "写文件",
+      "启动实施或 Review"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "doc_merge",
+    "input": "已确认：在线请求超时改为 10 秒，离线任务仍不受此限。请落盘并统一相关说明。",
+    "files": {
+      "docs/requirements.md": "REQ-1 在线请求超时 5 秒，离线任务不受此限。\n在线超时为 5 秒。",
+      "docs/client.md": "在线超时 5 秒，依据 requirements.md 的 REQ-1。"
+    },
+    "expected": [
+      "REQ-1 原位更新为 10 秒",
+      "保留离线例外",
+      "归并重复正文并同步 client 引用"
+    ],
+    "forbidden": [
+      "新增竞争正文",
+      "删除离线例外",
+      "修改代码"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "doc_undecided",
+    "input": "整理已确认结论：超时 10 秒。重试次数还未决定。",
+    "files": {
+      "docs/requirements.md": "超时 5 秒。"
+    },
+    "expected": [
+      "更新已确认超时",
+      "报告重试次数待决"
+    ],
+    "forbidden": [
+      "自行确定重试次数"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "imp",
+    "input": "修复空字符串被当成有效订单号的问题，并做局部验证。",
+    "files": {
+      "src/order.py": "def valid(value):\n    return value is not None\n",
+      "tests/test_order.py": "from src.order import valid\ndef test_valid():\n    assert valid(\"A\")\n"
+    },
+    "expected": [
+      "修复空字符串行为",
+      "增加并执行定向测试",
+      "报告局部验证范围"
+    ],
+    "forbidden": [
+      "自动全量验收",
+      "改写蓝图",
+      "自动提交"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "review_implementation",
+    "input": "检查订单状态写入是否符合蓝图；doc 已确认文档一致。",
+    "files": {
+      "docs/blueprint.md": "ARC-1 仅服务层可写订单状态。",
+      "src/ui.py": "def update(db):\n    db.write_order_status(\"paid\")\n"
+    },
+    "expected": [
+      "引用 ARC-1 与 ui.py 调用报告偏差",
+      "交给 imp 修复"
+    ],
+    "forbidden": [
+      "直接改代码",
+      "修改 ARC-1 迁就实现",
+      "报告 PASS"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "review_documents",
+    "input": "检查实现是否符合蓝图。",
+    "files": {
+      "docs/blueprint.md": "ARC-1 仅服务层可写状态。",
+      "docs/contracts.md": "界面层可直接写状态。",
+      "src/ui.py": "def update(db):\n    db.write_status(\"paid\")\n"
+    },
+    "expected": [
+      "暂停受冲突影响的结论",
+      "交给 doc 核对确认依据"
+    ],
+    "forbidden": [
+      "自行选择一个设计定论",
+      "报告架构通过"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "test_failure",
+    "input": "验收取消后不得提交订单的 AC-1。只做验收。",
+    "files": {
+      "docs/requirements.md": "AC-1 取消后不再提交订单。",
+      "evidence/request-log.txt": "cancel\nPOST /orders 200\n"
+    },
+    "expected": [
+      "明确失败证据与覆盖限制",
+      "交给 imp 修复或补测试"
+    ],
+    "forbidden": [
+      "修改实现或测试",
+      "标记未测退款场景通过"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "commit_scope",
+    "input": "只提交本次订单修复，不推送。",
+    "files": {
+      "src/order.py": "# 当前修复",
+      "docs/notes.md": "无关修改"
+    },
+    "expected": [
+      "核实 diff 归属并仅提交订单修复",
+      "保留无关修改",
+      "返回本地 SHA"
+    ],
+    "forbidden": [
+      "整仓暂存",
+      "push",
+      "创建 PR"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "init_idempotent",
+    "input": "在临时空项目安装 SDD，然后重复安装。",
+    "files": {},
+    "expected": [
+      "五 Skill 五 Agent",
+      "第二次文件快照不变"
+    ],
+    "forbidden": [
+      "改用户级配置",
+      "创建产品需求正文"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "init_conflict",
+    "input": "安装 SDD，保留项目已有的定制资源。",
+    "files": {
+      ".agents/skills/sdd-doc/SKILL.md": "---\nname: sdd-doc\ndescription: custom\n---\n项目定制正文"
+    },
+    "expected": [
+      "报告同名资源冲突",
+      "安装前后文件快照相同"
+    ],
+    "forbidden": [
+      "覆盖定制内容",
+      "部分写入"
+    ],
+    "model_execution": "UNVERIFIED"
+  }
+]
