@@ -15,6 +15,19 @@ builder = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(builder)
 
 
+def project_entries(root):
+    """Installation may create only its stable one-byte lock during preflight."""
+    lock = root / ".sdd-init.lock"
+    if lock.exists():
+        assert lock.read_bytes() == b"\0", lock
+    return [p for p in root.iterdir() if p != lock]
+
+
+def project_files(root):
+    project_entries(root)
+    return [p for p in builder.source_files(root) if p != root / ".sdd-init.lock"]
+
+
 class BuildTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
@@ -61,10 +74,10 @@ class BuildTests(unittest.TestCase):
         result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(contract.read_bytes(), b"# Existing architecture\n")
-        before = {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)}
+        before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
         result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)})
+        self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
         subprocess.run(command + ["--update-skills"], check=True, capture_output=True)
         self.assertEqual(index.read_bytes(), b"# Project\nBlueprint: architecture/blueprint.md\n")
@@ -132,7 +145,7 @@ class BuildTests(unittest.TestCase):
                         denied = subprocess.run(command, capture_output=True)
                         self.assertNotEqual(denied.returncode, 0)
                         self.assertEqual(agents.read_bytes(), before)
-                        self.assertEqual(list(target.iterdir()), [agents])
+                        self.assertEqual(project_entries(target), [agents])
                     options = ["--update-skills"] if kind in ("legacy", "upgrade") else []
                     result = subprocess.run(command + options, capture_output=True)
                     self.assertEqual(result.returncode, 0, result.stderr)
@@ -153,11 +166,11 @@ class BuildTests(unittest.TestCase):
                         else:
                             self.assertIn(prefix + suffix, installed)
                     self.assertEqual((target / ".agents/sdd/references/visual-confirmation.md").read_bytes(), source)
-                    before = {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)}
+                    before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
                     for repeat in ([], ["--update-skills"], []):
                         result = subprocess.run(command + repeat, capture_output=True)
                         self.assertEqual(result.returncode, 0, result.stderr)
-                        self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)})
+                        self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
     def test_conclusion_first_rule_new_install_and_previous_version_upgrade(self):
         skill = builder.build(self.folder / "skill")
@@ -184,9 +197,9 @@ class BuildTests(unittest.TestCase):
         body = "# 用户正文\r\n保持这些规则。\n"
         agents.write_bytes((body + agents.read_text(encoding="utf-8").replace(current, old)).encode("utf-8"))
         rule.write_text("# 可视化沟通与确认规范\n\n每次需要用户判断时，按以下顺序执行：\n", encoding="utf-8")
-        before = {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)}
+        before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
         self.assertNotEqual(run().returncode, 0)
-        self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)})
+        self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
         result = run("--update-skills")
         self.assertEqual(result.returncode, 0, result.stderr)
         installed = agents.read_bytes().decode("utf-8")
@@ -194,11 +207,11 @@ class BuildTests(unittest.TestCase):
         self.assertIn(body, installed)
         self.assertEqual(installed.count("先给结论"), 1)
         self.assertEqual(rule.read_bytes(), source)
-        before = {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)}
+        before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
         for args in ((), ("--update-skills",)):
             result = run(*args)
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)})
+            self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
     def test_bom_preserved_at_start_on_install_and_upgrade(self):
         skill = builder.build(self.folder / "skill")
@@ -232,12 +245,12 @@ class BuildTests(unittest.TestCase):
             blocker.parent.mkdir(parents=True)
             blocker.write_bytes(b"user-owned file")
             (target / "AGENTS.md").write_bytes(b"existing body\r\n")
-            before = {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)}
+            before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
             for args in ([], ["--update-skills"]):
                 result = subprocess.run([sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
                                          "--root", str(target), "init", *args], capture_output=True)
                 self.assertNotEqual(result.returncode, 0)
-                self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)})
+                self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
     def test_managed_block_errors_and_override_leave_project_unchanged(self):
         skill = builder.build(self.folder / "skill")
@@ -253,11 +266,11 @@ class BuildTests(unittest.TestCase):
                 (target / "AGENTS.md").write_text(content, encoding="utf-8")
                 if content.startswith("override"):
                     (target / "AGENTS.override.md").write_text(nstart if content.endswith("marker") else "custom", encoding="utf-8")
-                before = {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)}
+                before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
                 result = subprocess.run([sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
                                          "--root", str(target), "init", *options], capture_output=True)
                 self.assertNotEqual(result.returncode, 0, content)
-                self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)})
+                self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
     def test_old_workflow_entries_block_upgrade_before_writing(self):
         skill = builder.build(self.folder / "skill")
@@ -274,14 +287,14 @@ class BuildTests(unittest.TestCase):
                     old = target / entry
                     old.parent.mkdir(parents=True)
                     old.write_bytes(b"customized legacy instructions\n")
-                    before = {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)}
+                    before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
                     result = subprocess.run(
                         [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
                          "--root", str(target), "init", *options],
                         capture_output=True, text=True, encoding="utf-8")
                     self.assertNotEqual(result.returncode, 0)
                     self.assertIn(old.parent.name if old.name == "SKILL.md" else old.name, result.stderr)
-                    self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)})
+                    self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
     def test_obsolete_navigation_blocks_without_mutation(self):
         skill = builder.build(self.folder / "skill")
@@ -291,14 +304,14 @@ class BuildTests(unittest.TestCase):
                 entry = target / rel
                 entry.parent.mkdir(parents=True)
                 entry.write_text("用户正文\n[测试](../.agents/sdd/assets/test-plan.md)\n", encoding="utf-8")
-                before = {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)}
+                before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
                 result = subprocess.run(
                     [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
                      "--root", str(target), "init", *(["--update-skills"] if upgrade else [])],
                     capture_output=True, text=True, encoding="utf-8")
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn(str(entry.resolve()), result.stderr)
-                self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)})
+                self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
     def test_distribution_is_generic_and_reference_paths_resolve(self):
         skill = builder.build(self.folder / "skill")
@@ -331,7 +344,7 @@ class BuildTests(unittest.TestCase):
                                  "--root", str(target), "init"], capture_output=True, text=True, encoding="utf-8")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("非法路径", result.stderr)
-        self.assertEqual(list(target.iterdir()), [agents])
+        self.assertEqual(project_entries(target), [agents])
         self.assertEqual(agents.read_bytes(), b"existing rules\r\n")
 
     def test_deploy_skill_upgrade_and_missing_payload_protection(self):
@@ -353,7 +366,7 @@ class BuildTests(unittest.TestCase):
                     [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
                      "--root", str(target), "init"], capture_output=True)
                 self.assertNotEqual(result.returncode, 0)
-                self.assertEqual(list(target.iterdir()), [])
+                self.assertEqual(project_entries(target), [])
         with zipfile.ZipFile(archive_path, "w") as archive:
             for name, data in entries.items():
                 archive.writestr(name, data)
@@ -390,7 +403,7 @@ class BuildTests(unittest.TestCase):
                 target.mkdir()
                 with self.assertRaises(ValueError):
                     installer.cmd_init(target, installer.build_parser().parse_args(["init"]))
-                self.assertEqual(list(target.iterdir()), [])
+                self.assertEqual(project_entries(target), [])
 
 
 if __name__ == "__main__":

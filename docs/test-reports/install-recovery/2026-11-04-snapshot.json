@@ -1,0 +1,15 @@
+{
+  "base_commit": "c64045efbd6f1496140446339f93faaa767ee8ac",
+  "scope": "uncommitted implementation and tests",
+  "sha256": {
+    "source/initializer/scripts/govern.py": "f0739891bc587c536bcae0b9d223ef61e5ff31a66fb578226a96ca52cb3dba9b",
+    "source/initializer/scripts/project_install.py": "10ea42c2c1f42242b28cfafa6eb561b6a9d546abfb9be3616d3150f99f42d460",
+    "source/project/.agents/sdd/scripts/govern.py": "fcbd3d6d5a882e26ac911f21b9130d10c81526bc951a1da75554eab9114f6101",
+    "source/initializer/scripts/test_govern.py": "d54ce7c56a16a3bad0871787466e43586787aebe460f0b616c9b69b9b1c762e4",
+    "src/sdd_init/installer.py": "0389ff6b9f61f282c734b30d6e28ee9ab6eb742acef6e2b7fabdd2f4c1bffd69",
+    "tests/test_project_install.py": "d3eada30e4fbab3766f681678e421610f090225b21826f9296bc16f709ddd49a",
+    "tests/test_build.py": "e34d8f90faed6ce15a659af49429d41ca34f3ba88696c28c84418250ff7c1302",
+    "tests/test_roles.py": "a9d0d769642b6483a7ef1540dd36fce14220f883adcebc57ea48293551ca3d54",
+    "tests/test_user_install.py": "28d3a40d7c0ff35332d6fd7a8f1c0836e202200658da0c6a6e80a315c573f52f"
+  }
+}

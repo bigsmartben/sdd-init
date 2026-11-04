@@ -59,7 +59,7 @@ python -B -m unittest discover -s tests -v
 python -B scripts/build_release.py --output .build/candidate/sdd-init
 ```
 
-构建后可运行安装及存量工具回归检查：
+构建后可运行安装资源回归检查：
 
 ```powershell
 python -B .build/sdd-init/scripts/test_govern.py
@@ -71,11 +71,12 @@ python -B .build/sdd-init/scripts/test_govern.py
 python -B source/project/.agents/sdd/scripts/doc_check.py --root . README.md
 ```
 
-检查范围与限制见[文档校验 CLI](source/project/.agents/sdd/references/doc-check.md)；Python 包构建与安装冒烟验证见[开发验证](docs/installation.md#开发验证)。旧 Spec／Status 工具保留供存量记录使用，不作为新流程门禁。
+检查范围与限制见[文档校验 CLI](source/project/.agents/sdd/references/doc-check.md)；Python 包构建与安装冒烟验证见[开发验证](docs/installation.md#开发验证)。旧治理命令的退役决定与当前实现边界见[蓝图](docs/blueprint.md#旧治理命令退役边界)。
 
 ## 进一步阅读
 
 - [维护约定](AGENTS.md)：写入范围、授权与交付边界。
+- [产品与架构蓝图](docs/blueprint.md)：全产品用例、分发安装链路、组件职责与架构边界。
 - [工程协作职责 Spec](specs/platform-independent-sdd/spec.md)：已确认需求及验收条件。
 - [来源盘点](docs/inventory.md)与[导入清单](baselines/import-manifest.json)：导入范围、历史差异与来源追溯。
 - [实施证据](docs/workflow-evidence.md)：实际验证记录及限制。

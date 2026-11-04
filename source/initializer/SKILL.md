@@ -17,7 +17,9 @@ description: 用户要求安装或升级项目 SDD 工作流时使用；安装�
    明确升级时使用 `init --update-skills`，沿用已有授权，不重复索取口令。
 3. 安装载荷中的 sdd-doc、sdd-imp、sdd-test-loop、sdd-review-loop、sdd-commit、sdd-deploy、五个项目角色及共享资源，将独立沟通原则托管块置于 AGENTS 首部，流程导航单独合并，保留管理块外的正文及原有换行。角色定义在项目 .codex/agents/；需要了解角色分工时读取[执行协作](references/delegation.md)。不创建独立 Spec、Status 或架构正文，角色包含默认模型，不设置推理强度，不改 .codex/config.toml 或用户级配置。
 4. 修改过的同名资源、遮蔽入口或退役 Skill 会在写入前报告。冲突入口按明确范围处理后再安装，避免多套流程并存。
-5. 核对安装内容、导航、重复执行与保护行为；报告新增、更新、保留和阻塞。
+5. 同一项目安装互斥；普通写入失败恢复本次文件，异常终止后的下次 init 先恢复未完成操作。恢复记录位于目标仓库 `.sdd-init-recovery/`；遇到外部修改或恢复失败时保留记录并报告路径，解除冲突后重新执行同一安装命令，不删除记录后强制覆盖。核对安装内容、导航、重复执行与保护行为；报告新增、更新、保留和阻塞。
+
+初始化器只提供 inspect／init。旧 start、record、attest、check、finish、commit 命令已退役，不保留兼容入口；历史文档不迁移，项目工作由现行 Skills 承担，文档机械检查使用 doc_check.py。
 
 默认目录和工程资产规则随包安装至项目 `.agents/sdd/references/sdd-repository-governance.md`，`docs/index.md` 与该项目规则只在缺失时初始化。已有项目查其路径映射，按需归并后续规则；不因安装创建产品实体或迁移存量。
 

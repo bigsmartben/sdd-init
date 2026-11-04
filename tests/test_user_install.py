@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -64,6 +65,22 @@ class UserInstallTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             install(self.resources, self.skills)
         self.assertFalse(self.skills.exists())
+
+    def test_missing_recovery_module_rejected_and_old_install_can_upgrade(self):
+        recovery = self.resources / "scripts/project_install.py"
+        data = recovery.read_bytes()
+        recovery.unlink()
+        manifest = self.resources / "build-manifest.json"
+        manifest.write_text(json.dumps({"schema_version": 1, "files": snapshot(self.resources)}))
+        with self.assertRaisesRegex(ValueError, "project_install.py"):
+            install(self.resources, self.skills)
+        self.assertFalse(self.skills.exists())
+        # Model an already installed, intact older release without this module.
+        shutil.copytree(self.resources, self.skills / "sdd-init")
+        recovery.write_bytes(data)
+        manifest.write_text(json.dumps({"schema_version": 1, "files": snapshot(self.resources)}))
+        self.assertEqual(install(self.resources, self.skills), "Updated")
+        self.assertEqual((self.skills / "sdd-init/scripts/project_install.py").read_bytes(), data)
 
     def test_failed_publish_rolls_back(self):
         install(self.resources, self.skills)

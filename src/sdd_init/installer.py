@@ -33,6 +33,10 @@ def verified(folder: Path) -> dict[str, str]:
 
 def install(resources: Path, skills_dir: Path) -> str:
     expected = verified(resources)
+    # New releases require the recovery implementation. Older managed targets
+    # remain verifiable so they can upgrade without a manual reinstall.
+    if "scripts/project_install.py" not in expected:
+        raise ValueError(f"Incomplete distribution: missing scripts/project_install.py: {resources}")
     skills_dir = skills_dir.expanduser().absolute()
     for path in (skills_dir, *skills_dir.parents):
         if path.is_symlink() or (hasattr(path, "is_junction") and path.is_junction()):

@@ -8,7 +8,7 @@ import tomllib
 import unittest
 import zipfile
 
-from test_build import builder
+from test_build import builder, project_entries, project_files
 
 ROLE_MODELS = {
     "sdd-designer": "gpt-6-astra",
@@ -37,7 +37,7 @@ class RoleTests(unittest.TestCase):
 
     def snapshot(self):
         return {p.relative_to(self.target): p.read_bytes()
-                for p in self.target.rglob("*") if p.is_file()}
+                for p in project_files(self.target)}
 
     def test_exact_roles_are_project_scoped_with_default_models_and_no_effort(self):
         self.assertEqual([p for p in self.skill.rglob("*.toml") if p.stem in ROLES], [])
@@ -135,7 +135,7 @@ class RoleTests(unittest.TestCase):
                 installer.PROJECT_PAYLOAD = broken
                 with self.assertRaises(ValueError):
                     installer.cmd_init(self.target, installer.build_parser().parse_args(["init"]))
-                self.assertEqual(list(self.target.iterdir()), [])
+                self.assertEqual(project_entries(self.target), [])
 
     def test_payload_cannot_install_user_runtime_configuration_or_unknown_roles(self):
         for entry in (".codex/config.toml", ".codex/agents/unlisted.toml"):
@@ -151,4 +151,4 @@ class RoleTests(unittest.TestCase):
                 installer.PROJECT_PAYLOAD = broken
                 with self.assertRaises(ValueError):
                     installer.cmd_init(self.target, installer.build_parser().parse_args(["init"]))
-                self.assertEqual(list(self.target.iterdir()), [])
+                self.assertEqual(project_entries(self.target), [])
