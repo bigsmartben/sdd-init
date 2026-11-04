@@ -1,0 +1,127 @@
+from __future__ import annotations
+
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import unittest
+
+ROOT = Path(__file__).resolve().parents[1]
+CLI = ROOT / 'source/project/.agents/sdd/scripts/doc_check.py'
+spec = importlib.util.spec_from_file_location('doc_check', CLI)
+doc = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(doc)
+
+
+class DocCheckTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name).resolve()
+
+    def put(self, name, text):
+        p = self.root / name
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(text if isinstance(text, bytes) else text.encode('utf-8'))
+        return p
+
+    def check(self, *paths):
+        return doc.Checker(self.root).run(list(paths))
+
+    def codes(self, result):
+        return [d['code'] for d in result['diagnostics']]
+
+    def test_unicode_duplicate_headings_reference_links_and_balanced_paths(self):
+        self.put('docs/目标 (v1).md', '# 标题\n## 重复\n## 重复\n<a id="explicit"></a>\n')
+        self.put('index.md', '[a](<docs/目标 (v1).md#重复-1>)\n'
+                 '[b](docs/%E7%9B%AE%E6%A0%87%20(v1).md#explicit)\n'
+                 '[ref][Target]\n[Target]: <docs/目标 (v1).md#标题> "title"\n'
+                 '[skip](https://example.invalid/no-network)\n')
+        result = self.check('index.md')
+        self.assertEqual(result['diagnostics'], [])
+        self.assertEqual(result['files'], ['index.md'])
+
+    def test_missing_targets_anchors_references_have_source_lines(self):
+        self.put('target.md', '# Real\n')
+        self.put('input.md', '[a](missing.md)\n[b](target.md#absent)\n[x][undefined]\n')
+        result = self.check('input.md')
+        self.assertEqual([(x['line'], x['code']) for x in result['diagnostics']],
+                         [(1, 'DOC007'), (2, 'DOC008'), (3, 'DOC009')])
+
+    def test_code_comments_frontmatter_and_escaped_links_are_not_prose(self):
+        self.put('input.md', '---\nexample: "[x](absent.md)"\n---\n# Doc\n'
+                 '```md\n[x](absent.md)\n### ignored\n```\n'
+                 '`[x](absent.md)`\n<!-- [x](absent.md) -->\n'
+                 '    [x](absent.md)\n\\[x](absent.md)\n')
+        self.assertEqual(self.check('input.md')['diagnostics'], [])
+
+    def test_table_columns_escaped_and_code_pipes(self):
+        self.put('input.md', '| A | B |\n| --- | --- |\n| a\\|b | `x|y` |\n| bad |\n')
+        result = self.check('input.md')
+        self.assertEqual([(x['line'], x['code']) for x in result['diagnostics']], [(4, 'DOC004')])
+
+    def test_duplicate_declarations_but_not_references_or_result_rows(self):
+        self.put('input.md', '- FR-001: one\nSee FR-001.\n- FR-001: two\n'
+                 '| ID | Given |\n| --- | --- |\n| AC-001 | one |\n| AC-001 | two |\n'
+                 '\n| ID | Result |\n| --- | --- |\n| AC-001 | PASS |\n| AC-001 | FAIL |\n')
+        result = self.check('input.md')
+        self.assertEqual([(x['line'], x['code']) for x in result['diagnostics']],
+                         [(3, 'DOC005'), (7, 'DOC005')])
+
+    def test_encoding_bom_unclosed_fence_and_frontmatter(self):
+        self.put('bom.md', b'\xef\xbb\xbf# OK\r\n')
+        self.put('bad.md', b'\xff')
+        self.put('fence.md', '# Heading\n```python\npass\n')
+        self.put('front.md', '---\nname: missing close\n')
+        self.assertEqual(self.check('bom.md')['errors'], 0)
+        self.assertEqual(self.codes(self.check('bad.md')), ['DOC001'])
+        self.assertEqual(self.codes(self.check('fence.md')), ['DOC002'])
+        self.assertEqual(self.codes(self.check('front.md')), ['DOC002'])
+
+    def test_input_boundary_dedup_no_files_and_directory_exclusions(self):
+        self.put('docs/a.md', '# A\n')
+        self.put('docs/.build/b.md', '[bad](none.md)\n')
+        self.assertEqual(self.check('docs', 'docs/a.md')['files'], ['docs/a.md'])
+        self.assertEqual(self.codes(self.check('../outside.md')), ['DOC000'])
+        self.put('docs/a.md', '[outside](../../outside.md)\n')
+        self.assertEqual(self.codes(self.check('docs/a.md')), ['DOC007'])
+        (self.root / 'empty').mkdir()
+        self.assertEqual(self.codes(self.check('empty')), ['DOC000'])
+
+    def test_cli_json_exit_codes_and_no_mutation(self):
+        self.put('input.md', '# Title\n### Jump\n')
+        before = {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        command = [sys.executable, '-B', '-X', 'utf8', str(CLI), '--root', str(self.root), '--format', 'json']
+        result = subprocess.run(command + ['input.md'], capture_output=True, text=True, encoding='utf-8')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)['warnings'], 1)
+        self.assertEqual(subprocess.run(command + ['--strict', 'input.md'], capture_output=True).returncode, 1)
+        self.assertEqual(subprocess.run(command + ['missing.md'], capture_output=True).returncode, 1)
+        self.assertEqual(subprocess.run(command, capture_output=True).returncode, 2)
+        after = {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        self.assertEqual(before, after)
+
+    def test_setext_headings_and_non_markdown_fragment_warning(self):
+        self.put('target.md', 'Hello\n=====\n')
+        self.put('page.html', '<div id="x"></div>')
+        self.put('input.md', '[ok](target.md#hello)\n[html](page.html#x)\n')
+        result = self.check('input.md')
+        self.assertEqual(result['errors'], 0)
+        self.assertEqual(self.codes(result), ['DOC010'])
+
+    def test_text_diagnostics_and_semantic_non_goal(self):
+        self.put('input.md', '# Requirements\n- FR-001: timeout is 5 seconds\n- FR-002: timeout is 10 seconds\n')
+        self.assertEqual(self.check('input.md')['errors'], 0)  # Conflicts need Agent judgment.
+        self.put('input.md', '[missing](missing.md)\n')
+        result = subprocess.run(
+            [sys.executable, '-B', '-X', 'utf8', str(CLI), '--root', str(self.root), 'input.md'],
+            capture_output=True, text=True, encoding='utf-8')
+        self.assertEqual(result.returncode, 1)
+        self.assertIn('input.md:1: error DOC007:', result.stdout)
+        self.assertIn('mechanical only', result.stdout)
+
+
+if __name__ == '__main__':
+    unittest.main()

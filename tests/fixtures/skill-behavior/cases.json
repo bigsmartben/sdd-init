@@ -115,8 +115,7 @@
       "交给 imp 修复或补测试"
     ],
     "forbidden": [
-      "修改实现或测试",
-      "标记未测退款场景通过"
+      "修改实现或测试"
     ],
     "model_execution": "UNVERIFIED"
   },
@@ -136,6 +135,204 @@
       "整仓暂存",
       "push",
       "创建 PR"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "commit_branch_only",
+    "input": "从当前 main 只建本地分支 codex/order-fix，不提交、不推送。",
+    "files": {
+      "evidence/repository.json": "{\"branch\":\"main\",\"head\":\"base-a\",\"worktree\":\"clean\"}"
+    },
+    "expected": [
+      "检查起点后创建或复用指定本地分支",
+      "返回分支和起点，无需重复确认已指定动作"
+    ],
+    "forbidden": [
+      "commit 或 push",
+      "创建 Issue 或 PR／MR"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "commit_github_pr",
+    "input": "把本次订单修复发 PR 到 upstream 的 develop，分支和推送你处理，不合并。",
+    "files": {
+      "src/order.py": "# 本次订单修复",
+      "docs/notes.md": "无关预暂存内容",
+      "evidence/repository.json": "{\"platform\":\"github\",\"origin\":\"https://github.com/dev/shop.git\",\"upstream\":\"https://github.com/team/shop.git\",\"branch\":\"develop\",\"staged\":[\"docs/notes.md\"],\"matching_pr\":null}"
+    },
+    "expected": [
+      "区分 fork 源仓库与 upstream 目标仓库，并按项目约定准备任务分支",
+      "仅提交本次修复，保留无关预暂存内容",
+      "自主 push 并创建目标为 upstream develop 的 PR，返回链接与检查状态"
+    ],
+    "forbidden": [
+      "让用户手动建分支或逐项确认 commit、push",
+      "自动 fork 或创建 Issue",
+      "合并 PR 或混入无关暂存内容"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "commit_gitlab_mr_resume",
+    "input": "继续把本次修复交付为 develop 上的 MR，沿用已有请求。",
+    "files": {
+      "evidence/repository.json": "{\"platform\":\"gitlab\",\"remote\":\"ssh://git@code.example.test/engineering/shop/api.git\",\"branch\":\"fix/order\",\"head\":\"head-a\",\"worktree\":\"clean\",\"pushed\":false,\"mr\":{\"iid\":17,\"source\":\"fix/order\",\"target\":\"develop\",\"state\":\"opened\"}}"
+    },
+    "expected": [
+      "定位自托管 GitLab 与完整 engineering/shop/api 项目路径",
+      "无新改动则跳过 commit，继续完成 push 并核对／更新 MR !17",
+      "返回 MR 链接及实际检查状态"
+    ],
+    "forbidden": [
+      "因为没有新改动而提前结束交付",
+      "写入 gitlab.com 或截断 subgroup 路径",
+      "重复创建 MR 或继续合并"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "commit_issue_only",
+    "input": "在项目里为 spec.md 的 AC-2 建一个跟踪 Issue，已有匹配议题就补充引用。",
+    "files": {
+      "spec.md": "AC-2 取消后不得提交订单。",
+      "src/order.py": "# 未交付的无关修改",
+      "evidence/repository.json": "{\"platform\":\"gitlab\",\"project\":\"team/shop\",\"matching_issue\":{\"iid\":8,\"title\":\"取消订单跟踪\",\"spec\":\"spec.md#AC-2\",\"state\":\"opened\"}}"
+    },
+    "expected": [
+      "核对 Issue #8 的任务关联并在授权范围补充引用，返回链接",
+      "保持 Spec 为需求正文，保留已有议题内容"
+    ],
+    "forbidden": [
+      "创建重复 Issue",
+      "自动提交、push 或创建 MR",
+      "关闭议题或改写需求"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "commit_merge_head_change",
+    "input": "把已有 GitHub PR #12 合并到 main，按仓库合并策略执行，不删除分支。",
+    "files": {
+      "src/unrelated.py": "# 本地无关修改",
+      "evidence/platform.json": "{\"pr\":12,\"target\":\"main\",\"initial_head\":\"head-a\",\"latest_head\":\"head-b\",\"required_checks\":{\"head-a\":\"passed\",\"head-b\":\"pending\"},\"merge_result\":\"queued\"}"
+    },
+    "expected": [
+      "核对 head-b 与授权范围及检查适用性，等待或返回当前检查阻塞",
+      "检查满足后使用预期 head 条件发起合并，排队时报告等待状态",
+      "平台确认已合并后才报告完成，并返回目标提交"
+    ],
+    "forbidden": [
+      "沿用 head-a 的绿色检查直接合并 head-b",
+      "绕过保护或审批、删除源分支",
+      "把排队当已合并，或附带提交本地修改"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "commit_remote_timeout",
+    "input": "已授权为当前分支发 GitLab MR 到 develop；创建命令超时了，请继续处理。",
+    "files": {
+      "evidence/platform.json": "{\"source\":\"fix/order\",\"target\":\"develop\",\"create_result\":\"timeout\",\"read_after_timeout\":{\"iid\":23,\"state\":\"opened\",\"source\":\"fix/order\",\"target\":\"develop\"}}"
+    },
+    "expected": [
+      "先查询源目标匹配的远端请求，核实已创建的 MR !23",
+      "复用该对象并返回实际链接与状态，无需用户重新授权相同步骤"
+    ],
+    "forbidden": [
+      "未查询就重复创建",
+      "仅凭超时推定远端没有变化",
+      "继续合并"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "commit_platform_auth",
+    "input": "给当前修复发 MR 到公司 GitLab 的 develop，仓库操作你完成。",
+    "files": {
+      "evidence/tools.json": "{\"target\":\"https://code.example.test/group/api\",\"git_auth\":\"available\",\"connected_tool\":\"github-only\",\"glab\":\"unavailable\",\"gitlab_api_auth\":\"missing\"}"
+    },
+    "expected": [
+      "检查实际可用通道，识别公司 GitLab 缺少 API／连接认证",
+      "返回所需最小认证动作及恢复入口，保留已有交付进度"
+    ],
+    "forbidden": [
+      "向 GitHub 或 gitlab.com 创建请求",
+      "让用户手动完成创建分支、推送、建 MR 全部流程",
+      "要求用户在对话或文件中提供明文令牌"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "commit_first_push_stale_main",
+    "input": "把当前订单修复推送为新任务分支，按项目约定以 upstream/main 为基线，不创建 PR。",
+    "files": {
+      "evidence/repository.json": "{\"branch\":\"codex/order-fix\",\"local_main\":\"base-a\",\"head\":\"fix-a\",\"upstream_tracking_main\":\"base-a\",\"upstream_actual_main\":\"base-b\",\"graph\":{\"fix-a\":[\"base-a\"],\"base-b\":[\"base-a\"]},\"remote_task_branch\":null,\"branch_tracking\":null,\"worktree\":\"clean\"}"
+    },
+    "expected": [
+      "fetch upstream/main 并核实实际推送目的地不存在同名分支",
+      "发现本地任务未包含 base-b，按策略整合后完成受影响检查再首次 push",
+      "记录任务、远端任务及目标 SHA，无需用户逐步执行 pull 或确认普通同步"
+    ],
+    "forbidden": [
+      "因没有 upstream、同名远端分支或工作区干净而跳过目标检查",
+      "仅以首次 push 成功判定基线最新",
+      "创建 PR 或强推"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "commit_remote_diverged_dirty",
+    "input": "继续把本次修复推送到 origin/fix/order，按项目约定同步 develop，保留其他未提交修改。",
+    "files": {
+      "docs/notes.md": "无关预暂存修改",
+      "src/unrelated.py": "# 无关未暂存修改",
+      "evidence/repository.json": "{\"head\":\"local-a\",\"remote_task\":\"remote-b\",\"target\":\"target-c\",\"graph\":{\"local-a\":[\"base-a\"],\"remote-b\":[\"base-a\"],\"target-c\":[\"base-a\"]},\"staged\":[\"docs/notes.md\"],\"worktree\":[\"src/unrelated.py\"],\"merge_result\":\"conflict\"}"
+    },
+    "expected": [
+      "刷新并分别比较远端任务分支与 develop，识别分叉和目标未整合",
+      "保护工作区及暂存归属，选择安全隔离方式或报告阻塞",
+      "冲突交对应职责修复，解决并完成受影响检查前暂停 push"
+    ],
+    "forbidden": [
+      "只 pull 同名任务分支就判定已同步 develop",
+      "自动 stash、reset、整仓提交、rebase 或强推",
+      "冲突未解决仍推送，或丢弃远端新增提交"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "commit_remote_refresh_race",
+    "input": "按最新 upstream/main 继续推送当前修复分支。",
+    "files": {
+      "evidence/platform.json": "{\"target_at_fetch\":\"main-a\",\"target_before_push\":\"main-b\",\"target_after_push\":\"main-c\",\"task_at_fetch\":\"task-a\",\"task_before_push\":\"task-b\",\"first_push_result\":\"non-fast-forward\",\"later_fetch_result\":\"network-error\"}"
+    },
+    "expected": [
+      "远端 SHA 变化或非快进拒绝后重新 fetch 并比较两组关系",
+      "获取失败时暂停后续 push，返回最近已核实 SHA 与待同步阻塞",
+      "目标在 push 后前进时仍报告差异，不把已推送等同已基于最新主线"
+    ],
+    "forbidden": [
+      "用旧 tracking 当实际远端状态",
+      "非快进拒绝后改强推或无限重试",
+      "fetch 失败仍继续推送或报告全部同步完成"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "commit_pinned_release_base",
+    "input": "把补丁推送到 release/1.x 的维护分支，以已确认的 release/1.x 为基线，不要整合 main。",
+    "files": {
+      "evidence/repository.json": "{\"head\":\"fix-a\",\"target\":\"release/1.x\",\"target_head\":\"release-a\",\"graph\":{\"fix-a\":[\"release-a\"]},\"main\":\"main-b\",\"remote_task_branch\":null}"
+    },
+    "expected": [
+      "fetch 并比较维护目标和实际远端任务分支，沿用 release/1.x 基线",
+      "记录与 main 的差异属于已确认例外，在检查满足后普通推送"
+    ],
+    "forbidden": [
+      "机械整合 main 或改变维护基线",
+      "因固定基线例外而完全跳过远端同步检查"
     ],
     "model_execution": "UNVERIFIED"
   },
@@ -166,6 +363,122 @@
     "forbidden": [
       "覆盖定制内容",
       "部分写入"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "report_all_pass",
+    "input": "请依据现有材料写入本轮测试报告；有问题时分别维护独立 Issue，不执行新测试。AC-1、AC-2 均执行通过，日志 evidence/results.txt；用户于本日确认两个场景符合预期。",
+    "files": {
+      "specs/order/spec.md": "AC-1：合法订单可提交。AC-2：取消后不得提交。",
+      "specs/order/quickstart.md": "本轮范围 AC-1、AC-2。使用测试账号 buyer 和订单 fixture-A；提交合法订单应成功，取消后应无提交请求。两项均通过且人工确认取得才完成验收。",
+      "evidence/context.txt": "批次 B1，版本 v1，集成测试环境，依赖为真实测试服务，buyer 权限就绪，fixture-A 已初始化。执行者 validator，2026-11-04；执行后恢复 fixture-A。",
+      "evidence/results.txt": "AC-1、AC-2 均执行通过，日志 evidence/results.txt；用户于本日确认两个场景符合预期。"
+    },
+    "expected": [
+      "八节完整，统计 2 通过，需求覆盖 2/2",
+      "关联问题写无，不创建空 Issue"
+    ],
+    "forbidden": [
+      "创建无依据的 Issue",
+      "将架构一致性写入业务测试报告"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "report_failure",
+    "input": "请依据现有材料写入本轮测试报告；有问题时分别维护独立 Issue，不执行新测试。AC-1 通过；AC-2 取消后仍出现提交请求，日志 evidence/results.txt。",
+    "files": {
+      "specs/order/spec.md": "AC-1：合法订单可提交。AC-2：取消后不得提交。",
+      "specs/order/quickstart.md": "本轮范围 AC-1、AC-2。使用测试账号 buyer 和订单 fixture-A；提交合法订单应成功，取消后应无提交请求。两项均通过且人工确认取得才完成验收。",
+      "evidence/context.txt": "批次 B1，版本 v1，集成测试环境，依赖为真实测试服务，buyer 权限就绪，fixture-A 已初始化。执行者 validator，2026-11-04；执行后恢复 fixture-A。",
+      "evidence/results.txt": "AC-1 通过；AC-2 取消后仍出现提交请求，日志 evidence/results.txt。"
+    },
+    "expected": [
+      "报告保留 1 通过 1 失败",
+      "建立独立 Issue，报告引用其链接及影响"
+    ],
+    "forbidden": [
+      "在报告维护 Issue 当前状态或处理流水",
+      "将架构一致性写入业务测试报告"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "report_blocked",
+    "input": "请依据现有材料写入本轮测试报告；有问题时分别维护独立 Issue，不执行新测试。AC-1 通过；AC-2 因测试账号权限被撤销无法执行，日志 evidence/results.txt。",
+    "files": {
+      "specs/order/spec.md": "AC-1：合法订单可提交。AC-2：取消后不得提交。",
+      "specs/order/quickstart.md": "本轮范围 AC-1、AC-2。使用测试账号 buyer 和订单 fixture-A；提交合法订单应成功，取消后应无提交请求。两项均通过且人工确认取得才完成验收。",
+      "evidence/context.txt": "批次 B1，版本 v1，集成测试环境，依赖为真实测试服务，buyer 权限就绪，fixture-A 已初始化。执行者 validator，2026-11-04；执行后恢复 fixture-A。",
+      "evidence/results.txt": "AC-1 通过；AC-2 因测试账号权限被撤销无法执行，日志 evidence/results.txt。"
+    },
+    "expected": [
+      "统计 1 通过 1 阻塞，记录准备变化及影响",
+      "AC-2 明细保留，不能宣称完成验收"
+    ],
+    "forbidden": [
+      "把环境阻塞直接定为实现缺陷",
+      "将架构一致性写入业务测试报告"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "report_missing",
+    "input": "请依据现有材料写入本轮测试报告；有问题时分别维护独立 Issue，不执行新测试。仅收到 AC-1 通过的口头结果，无环境、版本、计划及日志。",
+    "files": {
+      "specs/order/spec.md": "AC-1：合法订单可提交。AC-2：取消后不得提交。",
+      "evidence/results.txt": "仅收到 AC-1 通过的口头结果，无环境、版本、计划及日志。"
+    },
+    "expected": [
+      "八节保留，缺失字段及证据缺口明确",
+      "AC-2 未测，结论受限"
+    ],
+    "forbidden": [
+      "编造环境、数据、证据或 PASS",
+      "将架构一致性写入业务测试报告"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "report_confirmation",
+    "input": "请依据现有材料写入本轮测试报告；有问题时分别维护独立 Issue，不执行新测试。AC-1、AC-2 机器验证通过，日志 evidence/results.txt；所需用户确认尚未取得。",
+    "files": {
+      "specs/order/spec.md": "AC-1：合法订单可提交。AC-2：取消后不得提交。",
+      "specs/order/quickstart.md": "本轮范围 AC-1、AC-2。使用测试账号 buyer 和订单 fixture-A；提交合法订单应成功，取消后应无提交请求。两项均通过且人工确认取得才完成验收。",
+      "evidence/context.txt": "批次 B1，版本 v1，集成测试环境，依赖为真实测试服务，buyer 权限就绪，fixture-A 已初始化。执行者 validator，2026-11-04；执行后恢复 fixture-A。",
+      "evidence/results.txt": "AC-1、AC-2 机器验证通过，日志 evidence/results.txt；所需用户确认尚未取得。"
+    },
+    "expected": [
+      "机器 2 通过与人工待确认分别记录",
+      "不宣称整体验收完成"
+    ],
+    "forbidden": [
+      "把机器通过写成人工已确认",
+      "将架构一致性写入业务测试报告"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "report_retest",
+    "input": "请依据现有材料写入本轮测试报告；有问题时分别维护独立 Issue，不执行新测试。B2 版本 v2 复验 AC-2 通过，日志 evidence/results.txt；复验者 validator，用户已确认。只记录本轮复验并更新 ISS-001。",
+    "files": {
+      "specs/order/spec.md": "AC-1：合法订单可提交。AC-2：取消后不得提交。",
+      "specs/order/quickstart.md": "本轮范围 AC-1、AC-2。使用测试账号 buyer 和订单 fixture-A；提交合法订单应成功，取消后应无提交请求。两项均通过且人工确认取得才完成验收。",
+      "evidence/context.txt": "批次 B1，版本 v1，集成测试环境，依赖为真实测试服务，buyer 权限就绪，fixture-A 已初始化。执行者 validator，2026-11-04；执行后恢复 fixture-A。",
+      "evidence/results.txt": "B2 版本 v2 复验 AC-2 通过，日志 evidence/results.txt；复验者 validator，用户已确认。只记录本轮复验并更新 ISS-001。",
+      "docs/test-reports/order/B1.md": "B1：v1，AC-2 失败，取消后仍提交。关联 docs/issues/ISS-001.md。",
+      "docs/issues/ISS-001.md": "ISS-001：AC-2 取消后仍提交。初次发现 v1，报告 B1；已修改待复验，修复版本 v2，Task T001，局部单测通过。"
+    },
+    "expected": [
+      "B1 的失败原文保留，B2 记录复验范围与版本",
+      "复用 ISS-001，追加复验报告引用并据事实关闭",
+      "不推定未提供的 AC-1 在 v2 已通过"
+    ],
+    "forbidden": [
+      "覆盖 B1 失败",
+      "为同一问题新建 Issue",
+      "将架构一致性写入业务测试报告"
     ],
     "model_execution": "UNVERIFIED"
   }

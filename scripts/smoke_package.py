@@ -25,7 +25,9 @@ def main():
         before = {p.relative_to(project): p.read_bytes() for p in project.rglob("*") if p.is_file()}
         subprocess.run(command, check=True)
         assert before == {p.relative_to(project): p.read_bytes() for p in project.rglob("*") if p.is_file()}
-        assert len(list((project / ".agents/skills").glob("*/SKILL.md"))) == 5
+        assert {p.parent.name for p in (project / ".agents/skills").glob("*/SKILL.md")} == {
+            "sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit", "sdd-deploy"
+        }
         assert len(list((project / ".codex/agents").glob("*.toml"))) == 5
         subprocess.run(initialize, check=True)
         assert before == {p.relative_to(project): p.read_bytes() for p in project.rglob("*") if p.is_file()}

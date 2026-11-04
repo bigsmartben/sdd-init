@@ -2,14 +2,12 @@
 """Minimal Architecture + Spec + Status governance helper for Codex.
 
 No external dependencies. Completion and commit are separate commands.
-This tool verifies document structure, IDs and recorded snapshot freshness; it does
+This tool verifies document structure, IDs and recorded evidence; it does
 NOT determine whether an implementation actually meets architectural semantics.
 """
 from __future__ import annotations
 
 import argparse
-import hashlib
-import os
 from pathlib import Path
 import re
 import subprocess
@@ -91,14 +89,14 @@ def overwrite(path: Path, data: str) -> None:
 
 
 def blueprint_template() -> str:
-    return read(ASSETS / "blueprint.md").replace(
+    return read(ASSETS / "blueprint_template.md").replace(
         "../references/observability-baseline.md",
         "../.agents/sdd/references/observability-baseline.md")
 
 
 def spec_template(name: str) -> str:
-    return read(ASSETS / "spec.md").replace("{CAPABILITY}", name).replace(
-        "../references/governance.md", "../../.agents/sdd/references/governance.md")
+    return read(ASSETS / "spec_template.md").replace("{CAPABILITY}", name).replace(
+        "../references/sdd-repository-governance.md", "../../.agents/sdd/references/sdd-repository-governance.md")
 
 
 def ac_ids(spec: str) -> list[str]:
@@ -118,7 +116,7 @@ def make_status(name: str, ids: list[str], arcs: list[str] | None = None,
         rows = "（尚无有效 AC；待 Spec 确认后由实施迭代初始化验收记录）"
     if not arch_rows:
         arch_rows = "（当前规格未引用正式 ARC；如适用请在 Spec 中引用）"
-    text = (read(ASSETS / "status.md")
+    text = (read(ASSETS / "status_template.md")
             .replace("{CAPABILITY}", name).replace("{ROWS}", rows)
             .replace("{ARC_ROWS}", arch_rows))
     text = text.replace("- Iteration: -", f"- Iteration: {iteration}")
@@ -138,14 +136,15 @@ def gate_info(text: str, gate: str) -> tuple[str, str, str]:
     return tuple(fields)
 
 
-def update_gate(text: str, gate: str, result: str, evidence: str, stamp: str) -> str:
+def update_gate(text: str, gate: str, result: str, evidence: str) -> str:
     prefix = GATES[gate]
-    for field, value in (("Gate", result), ("Evidence", evidence), ("Snapshot", stamp)):
+    for field, value in (("Gate", result), ("Evidence", evidence)):
         pattern = rf"(?m)^(- {prefix} {field}:)\s*.*$"
         if not re.search(pattern, text):
             fail(f"Status 缺失 {prefix} {field} 字段；请使用当前模板补齐")
         text = re.sub(pattern, lambda match: f"{match.group(1)} {value}", text, count=1)
-    return text
+    # Legacy snapshots belong to the archived gate, never the new result.
+    return re.sub(rf"(?m)^- {prefix} Snapshot:[^\r\n]*(?:\r?\n|$)", "", text)
 
 
 def evidence_value(value: str) -> str:
@@ -180,70 +179,6 @@ def git(root: Path, *args: str) -> bytes | None:
         return r.stdout if r.returncode == 0 else None
     except FileNotFoundError:
         return None
-
-
-def snapshot(root: Path) -> str | None:
-    """Fingerprint the Git working-tree content, independent of HEAD identity.
-
-    Read cached index object IDs for unchanged files, overlay dirty working-tree
-    files and untracked files. Exclude runtime status and installed skill files.
-    A commit with identical file content does NOT invalidate verified evidence.
-    This is a conservative repository-wide snapshot, not a semantic test.
-    """
-    indexed = git(root, "ls-files", "--stage", "-z")
-    dirty = git(root, "diff", "--name-only", "-z", "--")
-    untracked = git(root, "ls-files", "--others", "--exclude-standard", "-z")
-    filemode = git(root, "config", "--bool", "core.filemode")
-    trust_filemode = filemode is None or filemode.strip() != b"false"
-    if indexed is None or dirty is None or untracked is None:
-        return None
-
-    def skip(name: str) -> bool:
-        return (bool(re.fullmatch(r"specs/[^/]+/status\.md", name))
-                or name.startswith(".agents/skills/") or name.startswith(".git/"))
-
-    entries: dict[str, str] = {}
-    for raw in indexed.split(b"\0"):
-        if not raw:
-            continue
-        metadata, sep, raw_name = raw.partition(b"\t")
-        if not sep:
-            return None
-        parts = metadata.split()
-        if len(parts) != 3 or parts[2] != b"0":
-            return None  # unresolved merge conflict
-        name = raw_name.decode("utf-8", "surrogateescape")
-        if not skip(name):
-            entries[name] = parts[0].decode() + ":" + parts[1].decode()
-
-    modified = {x.decode("utf-8", "surrogateescape") for x in
-                (dirty + untracked).split(b"\0") if x}
-    for name in modified:
-        if skip(name):
-            continue
-        path = root / name
-        if not path.exists() and not path.is_symlink():
-            entries.pop(name, None)
-            continue
-        # git hash-object --path honors clean filters and works with SHA256 repos.
-        blob = git(root, "hash-object", f"--path={name}", "--", name)
-        if blob is None:
-            return None
-        if path.is_symlink():
-            mode = "120000"
-        elif not trust_filemode:
-            # Windows and other filemode-insensitive filesystems use the index
-            # mode; os.access(X_OK) does not describe Git's executable bit there.
-            mode = entries.get(name, "100644:").partition(":")[0]
-        else:
-            mode = "100755" if os.access(path, os.X_OK) else "100644"
-        entries[name] = mode + ":" + blob.decode().strip()
-
-    h = hashlib.sha256()
-    for name, identity in sorted(entries.items()):
-        h.update(name.encode("utf-8", "surrogateescape") + b"\0")
-        h.update(identity.encode() + b"\0")
-    return h.hexdigest()[:20]
 
 
 def git_checked(root: Path, *args: str) -> bytes:
@@ -301,7 +236,7 @@ def within_scope(path: str, scope: set[str]) -> bool:
 # contains repository-local skills; storing nested SKILL.md files unpacked under
 # ~/.agents/skills/sdd-init would risk discovering them as global skills.
 PROJECT_PAYLOAD = ASSETS / "repo-payload.zip"
-PROJECT_SKILLS = {'sdd-doc', 'sdd-imp', 'sdd-test-loop', 'sdd-review-loop', 'sdd-commit'}
+PROJECT_SKILLS = {'sdd-doc', 'sdd-imp', 'sdd-test-loop', 'sdd-review-loop', 'sdd-commit', 'sdd-deploy'}
 PROJECT_ROLE_MODELS = {
     'sdd-designer': 'gpt-6-astra',
     'sdd-coder': 'gpt-6.1-sol',
@@ -345,14 +280,15 @@ def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes]]:
                         and parts[2] in PROJECT_SKILLS and parts[3] == "SKILL.md")
                         or (len(parts) == 5 and parts[0:2] == (".agents", "skills")
                         and parts[2] in PROJECT_SKILLS and parts[3:] == ("agents", "openai.yaml"))
-                        or (parts == (".agents", "skills", "sdd-commit", "references", "providers.md")))
+                        or (parts == (".agents", "skills", "sdd-commit", "references", "git-remote.md")))
             is_shared = (len(parts) == 4 and parts[0:2] == (".agents", "sdd")
                          and parts[2] in ("scripts", "assets") and parts[3] in
-                         ("govern.py", "blueprint.md", "spec.md", "status.md", "architecture-rule-catalog.md",
-                          "issue.md", "draft-pr.md", "prototype-reference.md", "acceptance.md",
-                          "experiment.md", "sequence.md", "sequence-flows.md", "module-design.md", "contract.md", "test-plan.md"))
+                         ("govern.py", "blueprint_template.md", "spec_template.md", "status_template.md", "architecture-rule-catalog.md",
+                          "prototype_reference_template.md", "quickstart_template.md", "plan_template.md",
+                          "test_report_template.md", "issue_template.md", "review_template.md", "sequence_template.md", "contract_template.md"))
+            is_shared = is_shared or parts == (".agents", "sdd", "scripts", "doc_check.py")
             is_shared = is_shared or (len(parts) == 4 and parts[:3] == (".agents", "sdd", "references")
-                                      and parts[3] in ("delegation.md", "governance.md", "document-writing.md", "observability-baseline.md",
+                                      and parts[3] in ("delegation.md", "sdd-repository-governance.md", "document-writing.md", "doc-check.md", "architecture-rules.md", "observability-baseline.md",
                                                        "scenarios.md", "prototype.md", "visual-confirmation.md"))
             is_shared = is_shared or (len(parts) == 5 and parts[:4] == (".agents", "sdd", "assets", "observability")
                                       and parts[4] in ("README.md", "event-1.0.0.schema.json"))
@@ -371,7 +307,7 @@ def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes]]:
                                                         ("android", "app", "src", "main", "java", "local", "sdd", "androidexample", "MainActivity.java")))
             is_role = (len(parts) == 3 and parts[:2] == (".codex", "agents")
                        and parts[2] in {name + ".toml" for name in PROJECT_ROLES})
-            is_project_default = member in ('.agents/governance/repository.md', 'docs/index.md')
+            is_project_default = member in ('.agents/sdd/references/sdd-repository-governance.md', 'docs/index.md')
             if not (is_skill or is_shared or is_role or is_project_default):
                 fail(f"项目 Skill 包包含非法路径: {member}")
             target = inside(root, root / rel)
@@ -395,19 +331,19 @@ def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes]]:
         found = {x for x in members if x.startswith('.agents/skills/') and x.endswith('/SKILL.md')}
         expected = {f'.agents/skills/{s}/SKILL.md' for s in PROJECT_SKILLS}
         if found != expected:
-            fail("项目 Skill 包不包含完整的五个仓库级 Skill")
+            fail("项目 Skill 包不包含完整的六个仓库级 Skill")
         required = {f'.agents/skills/{name}/agents/openai.yaml' for name in PROJECT_SKILLS}
         required.update(f'.codex/agents/{name}.toml' for name in PROJECT_ROLES)
-        required.update({'.agents/sdd/references/visual-confirmation.md', '.agents/sdd/references/document-writing.md', '.agents/sdd/references/delegation.md', '.agents/sdd/references/governance.md',
-                         '.agents/skills/sdd-commit/references/providers.md',
+        required.update({'.agents/sdd/scripts/govern.py', '.agents/sdd/scripts/doc_check.py', '.agents/sdd/references/doc-check.md', '.agents/sdd/references/architecture-rules.md', '.agents/sdd/assets/status_template.md',
+                         '.agents/sdd/references/visual-confirmation.md', '.agents/sdd/references/document-writing.md', '.agents/sdd/references/delegation.md', '.agents/sdd/references/sdd-repository-governance.md',
+                         '.agents/skills/sdd-commit/references/git-remote.md',
                          '.agents/sdd/references/observability-baseline.md',
                          '.agents/sdd/references/scenarios.md', '.agents/sdd/references/prototype.md',
-                         '.agents/sdd/assets/issue.md', '.agents/sdd/assets/blueprint.md',
-                         '.agents/sdd/assets/draft-pr.md', '.agents/sdd/assets/prototype-reference.md',
-                         '.agents/sdd/assets/acceptance.md', '.agents/sdd/assets/experiment.md',
-                         '.agents/sdd/assets/sequence.md', '.agents/sdd/assets/sequence-flows.md',
-                         '.agents/sdd/assets/module-design.md', '.agents/sdd/assets/contract.md',
-                         '.agents/sdd/assets/test-plan.md', '.agents/governance/repository.md', 'docs/index.md'})
+                         '.agents/sdd/assets/spec_template.md', '.agents/sdd/assets/blueprint_template.md',
+                         '.agents/sdd/assets/prototype_reference_template.md',
+                         '.agents/sdd/assets/quickstart_template.md', '.agents/sdd/assets/plan_template.md', '.agents/sdd/assets/test_report_template.md', '.agents/sdd/assets/issue_template.md', '.agents/sdd/assets/review_template.md',
+                         '.agents/sdd/assets/sequence_template.md',
+                         '.agents/sdd/assets/contract_template.md', '.agents/sdd/references/sdd-repository-governance.md', 'docs/index.md'})
         if not required.issubset(members):
             fail("项目包缺少角色、调用策略、模板或必要引用")
     return changes
@@ -488,8 +424,26 @@ def cmd_init(root: Path, args: argparse.Namespace) -> int:
     retired.extend(root / ".codex/agents" / (name + ".toml")
                    for name in ("sdd-requirements", "sdd-architect", "sdd-planner", "sdd-implementer", "sdd-acceptor")
                    if (root / ".codex/agents" / (name + ".toml")).exists())
+    retired_resources = (
+        ".agents/skills/sdd-commit/references/providers.md",
+        *(f".agents/sdd/assets/{name}.md" for name in
+          ("issue", "draft-pr", "test-plan", "acceptance", "module-design")),
+    )
+    retired.extend(root / rel for rel in retired_resources
+                   if (root / rel).exists() or (root / rel).is_symlink())
+    # Navigation is project-owned: report incompatible links, never overwrite it.
+    for rel in ("docs/index.md", ".agents/sdd/references/sdd-repository-governance.md"):
+        entry = inside(root, root / rel)
+        if entry.is_file():
+            links = re.findall(r"\]\(([^)]+)\)", read(entry))
+            obsolete = {"providers.md", "issue.md", "draft-pr.md", "test-plan.md",
+                        "acceptance.md", "module-design.md"}
+            if any("://" not in link and "sdd" in link
+                   and link.split("#")[0].rsplit("/", 1)[-1] in obsolete
+                   for link in links):
+                retired.append(entry)
     if retired:
-        fail("发现旧流程 Skill/角色，请在单独迁移范围内处理后再安装：" + ", ".join(str(p) for p in retired))
+        fail("发现需迁移的 SDD 资源或导航，请保留项目正文并处理以下冲突后再安装：" + ", ".join(str(p) for p in retired))
     # Preflight local skill conflicts BEFORE touching the repo.
     skill_changes = project_payload(root, args.update_skills)
     override = inside(root, root / "AGENTS.override.md")
@@ -506,7 +460,7 @@ def cmd_init(root: Path, args: argparse.Namespace) -> int:
     else:
         out("KEEP    AGENTS.md")
     install_project_payload(root, skill_changes)
-    out("已安装五个项目 Skills、五个独立角色及其默认模型、共享模板与导航；保留既有正文和用户运行配置，不创建需求、架构或状态实体，不设置角色推理强度。安装不代表人工验收通过。")
+    out("已安装六个项目 Skills、五个独立角色及其默认模型、共享模板与导航；保留既有正文和用户运行配置，不创建需求、架构或状态实体，不设置角色推理强度。")
     return 0
 
 
@@ -529,8 +483,10 @@ def cmd_start(root: Path, args: argparse.Namespace) -> int:
     branch_raw = git(root, "branch", "--show-current")
     if branch_raw and branch_raw.strip():
         data = data.replace("- Branch: -", "- Branch: " + branch_raw.decode("utf-8", "replace").strip(), 1)
+    if state in ("COMPLETED", "BLOCKED"):
+        data += "\n## 历史迭代记录\n\n" + "\n".join("> " + line for line in original.splitlines()) + "\n"
     overwrite(status, data)
-    out("新迭代已启动；旧状态由 Git/PR 保留（如需）；Spec 不变。")
+    out("新迭代已启动；旧状态及证据已保留；Spec 不变。")
     return 0
 
 
@@ -546,25 +502,25 @@ def cmd_record(root: Path, args: argparse.Namespace) -> int:
         fail("只有 IN_PROGRESS 或已完成迭代的显式复核可记录验收；先 start")
     if args.result in ("PASS", "FAIL"):
         evidence_value(args.evidence)
-    stamp = snapshot(root)
-    if args.result == "PASS" and not stamp:
-        fail("当前仓库无 Git HEAD，无法绑定验证快照；请先建立 Git 基线")
-    if args.result == "UNVERIFIED":
-        evidence, stamp = "-", "-"
-    else:
-        evidence, stamp = args.evidence.strip(), stamp or "-"
+    evidence = "-" if args.result == "UNVERIFIED" else args.evidence.strip()
     matches = 0
+    previous = []
 
     def replace(m: re.Match) -> str:
         nonlocal matches
         if m.group(2) != item:
             return m.group(0)
         matches += 1
-        return f"{m.group(1)}{args.result}{m.group(4)}{evidence}{m.group(6)}{stamp}{m.group(8)}"
+        if (m.group(3) != "UNVERIFIED" or m.group(5).strip() not in ("", "-")
+                or m.group(7).strip() not in ("", "-")):
+            previous.append(m.group(0))
+        return f"{m.group(1)}{args.result}{m.group(4)}{evidence}{m.group(6)}-{m.group(8)}"
 
     updated = ROW.sub(replace, original)
     if matches != 1:
         fail("Status 中未找到唯一对应 AC 行；请先核对 Spec/Status 结构")
+    if previous:
+        updated += "\n- 原始记录：" + previous[0] + "\n"
     overwrite(status, updated)
     return 0
 
@@ -575,9 +531,6 @@ def cmd_attest(root: Path, args: argparse.Namespace) -> int:
     status = read(status_path)
     if state_of(status) not in ("IN_PROGRESS", "COMPLETED"):
         fail("只有 IN_PROGRESS 或 COMPLETED 的显式审查可登记 Loop Gate")
-    stamp = snapshot(root)
-    if args.result == "PASS" and not stamp:
-        fail("当前无法建立 Git 内容快照，不能将 Gate 标记 PASS")
     evidence = evidence_value(args.evidence) if args.result != "UNVERIFIED" else "-"
     which = "ARC" if args.gate == "review" else "AC"
     wanted = arc_refs(read(spec_path)) if which == "ARC" else ac_ids(read(spec_path))
@@ -585,11 +538,15 @@ def cmd_attest(root: Path, args: argparse.Namespace) -> int:
     if args.result == "PASS":
         for item in wanted:
             value = rows.get(item)
-            if not value or value[0] != "PASS" or value[1] in ("-", "") or value[2] != stamp:
-                fail(f"Gate 尚不能通过：{item} 缺少当前快照上的 PASS 证据")
+            if not value or value[0] != "PASS" or value[1] in ("-", ""):
+                fail(f"Gate 尚不能通过：{item} 缺少 PASS 证据")
         if args.gate == "review" and not wanted:
             out("NOTICE 当前 Spec 未关联 ARC；独立架构复核须确认不存在遗漏的适用全局约束")
-    new_status = update_gate(status, args.gate, args.result, evidence, stamp or "-")
+    old_result, old_evidence, old_stamp = gate_info(status, args.gate)
+    new_status = update_gate(status, args.gate, args.result, evidence)
+    if (old_result not in ("UNVERIFIED", "MISSING") or old_evidence not in ("-", "", "MISSING")
+            or old_stamp not in ("-", "", "MISSING")):
+        new_status += f"\n- 原始 {GATES[args.gate]} Gate 记录：{old_result}；{old_evidence}；历史 Snapshot {old_stamp}\n"
     overwrite(status_path, new_status)
     return 0
 
@@ -604,7 +561,7 @@ def validate(root: Path, name: str, strict: bool, require_gates: bool = False) -
     else:
         arch_data = read(blueprint)
         if any(w in arch_data for w in BAD_WORDS):
-            warnings.append("架构蓝图仍含待确认占位内容；不应宣称治理已完成")
+            warnings.append("架构蓝图仍含待确认占位内容")
     arch_ids = set(ARC.findall(arch_data))
     spec_path, status_path = paths(root, name)
     if not spec_path.is_file():
@@ -638,13 +595,10 @@ def validate(root: Path, name: str, strict: bool, require_gates: bool = False) -
         errors.append(f"{name}: Status 缺少 {id_}，需要对齐当前 Spec；不得继承旧 PASS")
     for id_ in sorted(set(rows) - required):
         errors.append(f"{name}: Status 含有过期 {id_}，需要对齐当前 Spec")
-    current = snapshot(root)
     for id_, (result, evidence, verified) in sorted(rows.items()):
         if result == "PASS":
             if evidence in ("", "-"):
                 errors.append(f"{name}/{id_}: PASS 没有验证证据")
-            if not current or verified != current:
-                warnings.append(f"{name}/{id_}: STALE，验证快照已改变或无法确认；需要重新验证")
         elif result != "PASS":
             warnings.append(f"{name}/{id_}: {result}，尚未通过验收")
     # Review/Test are explicitly invoked independent audits, not implicit imp steps.
@@ -655,9 +609,6 @@ def validate(root: Path, name: str, strict: bool, require_gates: bool = False) -
         elif result == "PASS":
             if evidence in ("", "-", "MISSING"):
                 errors.append(f"{name}: {label} Gate PASS 缺少证据")
-            if verified != current or not current:
-                if require_gates:
-                    warnings.append(f"{name}: {label} Gate STALE，需在最新代码快照上复核")
         elif result == "FAIL":
             # An actual observed failure must not be ignored simply because an
             # audit is not required for normal implementation completion.
@@ -679,7 +630,7 @@ def validate(root: Path, name: str, strict: bool, require_gates: bool = False) -
 def cmd_check(root: Path, args: argparse.Namespace) -> int:
     names = list(dict.fromkeys(require_name(name) for name in args.name)) if args.name else sorted(p.parent.name for p in (root / "specs").glob("*/spec.md"))
     if not names:
-        out("未发现存量 Spec；新流程使用 Issue，不需创建本地 Spec。")
+        out("未发现 Spec；需求正文由 sdd-doc 按已确认内容写入。")
         return 1 if args.strict else 0
     errors, warnings = [], []
     for name in names:
@@ -732,7 +683,7 @@ def cmd_commit(root: Path, args: argparse.Namespace) -> int:
     if errors or warnings:
         for msg in errors + warnings:
             out(f"BLOCKED {msg}")
-        fail("证据不完整或当前代码快照已变化，不能 Commit")
+        fail("证据不完整，不能 Commit")
 
     scope = approved_paths(root, args.include)
     scope.update({spec_path.relative_to(root).as_posix(), status_path.relative_to(root).as_posix()})
@@ -773,7 +724,7 @@ def build_parser() -> argparse.ArgumentParser:
     a = subs.add_parser("start", help="新迭代重置 Status，不影响 Spec")
     a.add_argument("--name", required=True)
     a.add_argument("--iteration", required=True)
-    a = subs.add_parser("record", help="在真正完成验证后登记某个 AC/ARC 的证据与 Git 快照")
+    a = subs.add_parser("record", help="在真正完成验证后登记某个 AC/ARC 的实际版本与证据")
     a.add_argument("--name", required=True)
     id_group = a.add_mutually_exclusive_group(required=True)
     id_group.add_argument("--ac", help="本能力 Spec 的验收 ID")
@@ -785,9 +736,9 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--gate", choices=["review", "test"], required=True)
     a.add_argument("--result", choices=["PASS", "FAIL", "UNVERIFIED"], required=True)
     a.add_argument("--evidence", default="")
-    a = subs.add_parser("check", help="检查 SSOT 链接、Status AC/ARC 和证据快照新鲜度")
+    a = subs.add_parser("check", help="检查 SSOT 链接、Status AC/ARC 和证据")
     a.add_argument("--name", action="append", help="指定能力名；可重复指定以批量检查多个 Spec；缺省检查全部")
-    a.add_argument("--strict", action="store_true", help="当前要求的验收未完成、快照失效或模板占位均视为失败")
+    a.add_argument("--strict", action="store_true", help="当前要求的验收未完成或模板占位均视为失败")
     a.add_argument("--require-gates", action="store_true", help="显式要求 review/test 两个独立 Loop Gate 也 PASS（默认不要求）")
     a = subs.add_parser("finish", help="完成验收后更新 Status")
     a.add_argument("--name", required=True)
@@ -802,7 +753,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         root = require_root(args.root)
         if args.cmd not in ("init", "inspect"):
-            out("LEGACY: 本命令仅处理存量 Spec/Status，不读取 Issue，不作为新流程门禁。")
+            out("本命令处理 Spec/Status 记录，不替代实际验证。")
         return {
             "inspect": cmd_inspect,
             "init": cmd_init,

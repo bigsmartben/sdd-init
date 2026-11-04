@@ -51,7 +51,7 @@ class BuildTests(unittest.TestCase):
         index = target / "docs/index.md"
         index.parent.mkdir()
         index.write_bytes(b"# Project\nBlueprint: architecture/blueprint.md\n")
-        rules = target / ".agents/governance/repository.md"
+        rules = target / ".agents/sdd/references/sdd-repository-governance.md"
         rules.parent.mkdir(parents=True)
         rules.write_bytes(b"# Existing project rules\n")
         (target / "architecture").mkdir()
@@ -80,12 +80,28 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(
             {p.parent.name for p in (target / ".agents/skills").glob("*/SKILL.md")},
-            {"sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit"})
+            {"sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit", "sdd-deploy"})
         for name in ("specs", "architecture", ".codex/config.toml", "plan.md"):
             self.assertFalse((target / name).exists(), name)
-        for name in ("issue.md", "blueprint.md", "draft-pr.md", "acceptance.md", "prototype-reference.md",
-                     "experiment.md", "sequence.md", "contract.md", "test-plan.md"):
+        for name in ("spec_template.md", "blueprint_template.md", "plan_template.md", "quickstart_template.md", "prototype_reference_template.md",
+                     "test_report_template.md", "issue_template.md", "review_template.md", "sequence_template.md", "contract_template.md"):
             self.assertTrue((target / ".agents/sdd/assets" / name).is_file(), name)
+        assets = target / ".agents/sdd/assets"
+        self.assertEqual(
+            {p.name for p in assets.glob("*.md")},
+            {"spec_template.md", "blueprint_template.md", "status_template.md",
+             "plan_template.md", "quickstart_template.md", "prototype_reference_template.md",
+             "test_report_template.md", "issue_template.md", "review_template.md", "sequence_template.md", "contract_template.md",
+             "architecture-rule-catalog.md"})
+        checker = target / ".agents/sdd/scripts/doc_check.py"
+        checked = subprocess.run(
+            [sys.executable, "-B", "-X", "utf8", str(checker), "--root", str(target),
+             "--format", "json", ".agents", "docs"],
+            capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(checked.returncode, 0, checked.stdout + checked.stderr)
+        self.assertFalse((target / ".agents/sdd/assets/issue.md").exists())
+        for retired in ("draft-pr.md", "test-plan.md", "acceptance.md", "module-design.md"):
+            self.assertFalse((target / ".agents/sdd/assets" / retired).exists(), retired)
 
     def test_communication_install_upgrade_and_repetition(self):
         skill = builder.build(self.folder / "skill")
@@ -245,7 +261,10 @@ class BuildTests(unittest.TestCase):
 
     def test_old_workflow_entries_block_upgrade_before_writing(self):
         skill = builder.build(self.folder / "skill")
-        entries = [".agents/skills/sdd-accept/SKILL.md"] + [
+        entries = [".agents/skills/sdd-accept/SKILL.md",
+                   ".agents/skills/sdd-commit/references/providers.md"] + [
+            f".agents/sdd/assets/{name}.md" for name in
+            ("issue", "draft-pr", "test-plan", "acceptance", "module-design")] + [
             f".codex/agents/{name}.toml" for name in
             ("sdd-requirements", "sdd-architect", "sdd-planner", "sdd-implementer", "sdd-acceptor")]
         for i, entry in enumerate(entries):
@@ -263,6 +282,23 @@ class BuildTests(unittest.TestCase):
                     self.assertNotEqual(result.returncode, 0)
                     self.assertIn(old.parent.name if old.name == "SKILL.md" else old.name, result.stderr)
                     self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)})
+
+    def test_obsolete_navigation_blocks_without_mutation(self):
+        skill = builder.build(self.folder / "skill")
+        for rel in ("docs/index.md", ".agents/sdd/references/sdd-repository-governance.md"):
+            for upgrade in (False, True):
+                target = self.folder / (rel.replace("/", "-") + str(upgrade))
+                entry = target / rel
+                entry.parent.mkdir(parents=True)
+                entry.write_text("用户正文\n[测试](../.agents/sdd/assets/test-plan.md)\n", encoding="utf-8")
+                before = {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)}
+                result = subprocess.run(
+                    [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
+                     "--root", str(target), "init", *(["--update-skills"] if upgrade else [])],
+                    capture_output=True, text=True, encoding="utf-8")
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(str(entry.resolve()), result.stderr)
+                self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in builder.source_files(target)})
 
     def test_distribution_is_generic_and_reference_paths_resolve(self):
         skill = builder.build(self.folder / "skill")
@@ -298,13 +334,51 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(list(target.iterdir()), [agents])
         self.assertEqual(agents.read_bytes(), b"existing rules\r\n")
 
+    def test_deploy_skill_upgrade_and_missing_payload_protection(self):
+        skill = builder.build(self.folder / "skill")
+        archive_path = skill / "assets/repo-payload.zip"
+        with zipfile.ZipFile(archive_path) as archive:
+            entries = {name: archive.read(name) for name in archive.namelist()}
+        deploy_files = [".agents/skills/sdd-deploy/SKILL.md",
+                        ".agents/skills/sdd-deploy/agents/openai.yaml"]
+        for index, missing in enumerate(deploy_files):
+            with self.subTest(missing=missing):
+                with zipfile.ZipFile(archive_path, "w") as archive:
+                    for name, data in entries.items():
+                        if name != missing:
+                            archive.writestr(name, data)
+                target = self.folder / f"missing-{index}"
+                target.mkdir()
+                result = subprocess.run(
+                    [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
+                     "--root", str(target), "init"], capture_output=True)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(list(target.iterdir()), [])
+        with zipfile.ZipFile(archive_path, "w") as archive:
+            for name, data in entries.items():
+                archive.writestr(name, data)
+        target = self.folder / "upgrade"
+        target.mkdir()
+        command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
+                   "--root", str(target), "init"]
+        subprocess.run(command, check=True, capture_output=True)
+        for name in deploy_files:
+            (target / name).unlink()
+        agents = target / "AGENTS.md"
+        agents.write_text(agents.read_text(encoding="utf-8").replace(
+            "| 部署、启动或重启服务（默认 dev） | [sdd-deploy](.agents/skills/sdd-deploy/SKILL.md) |\n", ""), encoding="utf-8")
+        subprocess.run(command + ["--update-skills"], check=True, capture_output=True)
+        for name in deploy_files:
+            self.assertEqual((target / name).read_bytes(), entries[name])
+        self.assertIn("sdd-deploy", agents.read_text(encoding="utf-8"))
+
     def test_missing_new_template_rejected_before_writing(self):
         skill = builder.build(self.folder / "skill")
         spec = importlib.util.spec_from_file_location("candidate_govern", skill / "scripts/govern.py")
         installer = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(installer)
         original = installer.PROJECT_PAYLOAD
-        for missing in ("assets/test-plan.md", "assets/module-design.md", "assets/sequence-flows.md", "references/document-writing.md", "references/visual-confirmation.md"):
+        for missing in ("scripts/govern.py", "scripts/doc_check.py", "references/doc-check.md", "assets/status_template.md", "assets/spec_template.md", "assets/quickstart_template.md", "assets/plan_template.md", "assets/sequence_template.md", "assets/test_report_template.md", "assets/issue_template.md", "assets/review_template.md", "references/document-writing.md", "references/visual-confirmation.md"):
             with self.subTest(missing=missing):
                 broken = self.folder / (Path(missing).name + ".zip")
                 with zipfile.ZipFile(original) as source, zipfile.ZipFile(broken, "w") as dest:
