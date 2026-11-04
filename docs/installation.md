@@ -4,13 +4,7 @@
 
 ## 首次安装
 
-当前已推送并验证的分支安装命令：
-
-```powershell
-uvx --from git+https://github.com/bigsmartben/sdd-init.git@codex/workflow-contract-plan sdd-init install
-```
-
-合并到默认分支后，可使用以下不带版本的命令；合并前请使用上面的分支入口。
+默认安装命令（已合并至 main，并通过 GitHub HTTPS 安装验证）：
 
 ```powershell
 uvx --from git+https://github.com/bigsmartben/sdd-init.git sdd-init install
@@ -25,7 +19,7 @@ uvx --from git+https://github.com/bigsmartben/sdd-init.git sdd-init install
 ## 更新与冲突
 
 ```powershell
-uvx --refresh --from git+https://github.com/bigsmartben/sdd-init.git@codex/workflow-contract-plan sdd-init install
+uvx --refresh --from git+https://github.com/bigsmartben/sdd-init.git sdd-init install
 ```
 
 uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固定版本时，将 Git URL 写成 `git+https://github.com/bigsmartben/sdd-init.git@<tag-or-commit>`。[uv 工具说明](https://docs.astral.sh/uv/guides/tools/)

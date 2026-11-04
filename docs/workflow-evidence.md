@@ -98,6 +98,12 @@ Git 实验只操作临时本地仓库，使用显式 fetch、提交关系比较�
 
 未修改真实用户级安装或其他项目，未执行推送、产品部署及人工验收。观测多语言示例的 full_baseline 仍为 UNVERIFIED，Java 历史媒体示例冲突仍保留且未执行，共享栈当前状态未验证；这些实现缺口不由文档或安装测试通过来消除。
 
+## 2026-11-04 默认分支安装验证
+
+[PR #2](https://github.com/bigsmartben/sdd-init/pull/2) 已合并至 main，合并提交 `8c5ed74949ac3e2a6d8b60f6c913654026aaa867`。执行 `python -B scripts/smoke_package.py --from git+https://github.com/bigsmartben/sdd-init.git` 通过：从 GitHub 解析默认分支、构建并安装用户级 Skill、重复安装、初始化临时项目、核对五 Skills／五角色、确认用户级重装不修改项目以及项目重复初始化稳定。实际使用入口见[安装说明](installation.md)。测试未改动真实用户级安装；Codex UI 加载与调用仍未人工验收。
+
+以下为合并前的分支验证记录。
+
 ## 2026-11-04 uv 用户级安装入口
 
 按本轮用户确认的一条 uvx 命令安装方式实现；使用入口与更新操作见[安装说明](installation.md)。Python CLI／用户级安装逻辑位于 `src/sdd_init/`，`setup.py` 调用既有构建器将完整资源放入 wheel，`MANIFEST.in` 保证源码包具备重建输入。项目载荷继续保留为 ZIP，不注册成多个用户级 Skills。
