@@ -83,9 +83,10 @@ class BuildTests(unittest.TestCase):
             {"sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit"})
         for name in ("specs", "architecture", ".codex/config.toml", "plan.md"):
             self.assertFalse((target / name).exists(), name)
-        for name in ("issue.md", "blueprint.md", "draft-pr.md", "acceptance.md", "prototype-reference.md",
+        for name in ("spec.md", "module-design.md", "blueprint.md", "draft-pr.md", "acceptance.md", "prototype-reference.md",
                      "experiment.md", "sequence.md", "contract.md", "test-plan.md"):
             self.assertTrue((target / ".agents/sdd/assets" / name).is_file(), name)
+        self.assertFalse((target / ".agents/sdd/assets/issue.md").exists())
 
     def test_communication_install_upgrade_and_repetition(self):
         skill = builder.build(self.folder / "skill")
@@ -304,7 +305,7 @@ class BuildTests(unittest.TestCase):
         installer = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(installer)
         original = installer.PROJECT_PAYLOAD
-        for missing in ("assets/test-plan.md", "assets/module-design.md", "assets/sequence-flows.md", "references/document-writing.md", "references/visual-confirmation.md"):
+        for missing in ("assets/spec.md", "assets/module-design.md", "assets/test-plan.md", "assets/acceptance.md", "assets/sequence-flows.md", "references/document-writing.md", "references/visual-confirmation.md"):
             with self.subTest(missing=missing):
                 broken = self.folder / (Path(missing).name + ".zip")
                 with zipfile.ZipFile(original) as source, zipfile.ZipFile(broken, "w") as dest:

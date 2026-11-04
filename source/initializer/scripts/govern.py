@@ -349,7 +349,7 @@ def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes]]:
             is_shared = (len(parts) == 4 and parts[0:2] == (".agents", "sdd")
                          and parts[2] in ("scripts", "assets") and parts[3] in
                          ("govern.py", "blueprint.md", "spec.md", "status.md", "architecture-rule-catalog.md",
-                          "issue.md", "draft-pr.md", "prototype-reference.md", "acceptance.md",
+                          "draft-pr.md", "prototype-reference.md", "acceptance.md",
                           "experiment.md", "sequence.md", "sequence-flows.md", "module-design.md", "contract.md", "test-plan.md"))
             is_shared = is_shared or (len(parts) == 4 and parts[:3] == (".agents", "sdd", "references")
                                       and parts[3] in ("delegation.md", "governance.md", "document-writing.md", "observability-baseline.md",
@@ -402,7 +402,7 @@ def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes]]:
                          '.agents/skills/sdd-commit/references/providers.md',
                          '.agents/sdd/references/observability-baseline.md',
                          '.agents/sdd/references/scenarios.md', '.agents/sdd/references/prototype.md',
-                         '.agents/sdd/assets/issue.md', '.agents/sdd/assets/blueprint.md',
+                         '.agents/sdd/assets/spec.md', '.agents/sdd/assets/blueprint.md',
                          '.agents/sdd/assets/draft-pr.md', '.agents/sdd/assets/prototype-reference.md',
                          '.agents/sdd/assets/acceptance.md', '.agents/sdd/assets/experiment.md',
                          '.agents/sdd/assets/sequence.md', '.agents/sdd/assets/sequence-flows.md',
@@ -679,7 +679,7 @@ def validate(root: Path, name: str, strict: bool, require_gates: bool = False) -
 def cmd_check(root: Path, args: argparse.Namespace) -> int:
     names = list(dict.fromkeys(require_name(name) for name in args.name)) if args.name else sorted(p.parent.name for p in (root / "specs").glob("*/spec.md"))
     if not names:
-        out("未发现存量 Spec；新流程使用 Issue，不需创建本地 Spec。")
+        out("未发现 Spec；需求正文由 sdd-doc 按已确认内容写入。")
         return 1 if args.strict else 0
     errors, warnings = [], []
     for name in names:
@@ -802,7 +802,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         root = require_root(args.root)
         if args.cmd not in ("init", "inspect"):
-            out("LEGACY: 本命令仅处理存量 Spec/Status，不读取 Issue，不作为新流程门禁。")
+            out("本命令处理 Spec/Status 记录，不替代实际验证。")
         return {
             "inspect": cmd_inspect,
             "init": cmd_init,

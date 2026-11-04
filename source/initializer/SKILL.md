@@ -7,7 +7,7 @@ description: 用户要求安装或升级项目 SDD 工作流时使用；安装�
 
 明确自然语言安装或升级意图即可使用，无需精确口令。仅安装资源与导航，不启动设计、实施、部署验收或 Git 交付。
 
-1. 核对目标仓库、现有 AGENTS、Issue／架构／PR 入口及实际安装范围。仅维护本 Skill 时不初始化当前仓库。
+1. 核对目标仓库、现有 AGENTS、Spec／架构／PR 入口及实际安装范围。仅维护本 Skill 时不初始化当前仓库。
 2. 使用构建产物中的脚本，路径以实际安装位置为准：
 
    `python <sdd-init>/scripts/govern.py --root <repo> inspect`

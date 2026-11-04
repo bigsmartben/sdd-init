@@ -12,11 +12,11 @@
 
 ## 文档与产物落点
 
-项目文档放在 `docs/` 下，直接按用途命名。研发规则位于 `.agents/governance/`（repository.md、coding.md、test-data.md、environment.md 等按需建立），Skills 位于 `.agents/skills/`。根 AGENTS 只导航，`docs/index.md` 维护项目实际映射。已有权威需求、蓝图、时序或契约沿用映射，新文档按以下默认位置创建。
+能力需求放在 `specs/<能力>/spec.md`，其他项目文档放在 `docs/` 下，直接按用途命名。研发规则位于 `.agents/governance/`（repository.md、coding.md、test-data.md、environment.md 等按需建立），Skills 位于 `.agents/skills/`。根 AGENTS 只导航，`docs/index.md` 维护项目实际映射。已有权威需求、蓝图、时序或契约沿用映射，新文档按以下默认位置创建。
 
 | 产物 | 默认落点 |
 |---|---|
-| 能力规格或权威正文引用 | `docs/capabilities/<能力>/requirements.md` |
+| 能力需求 Spec | `specs/<能力>/spec.md` |
 | 中、高保真产品原型及静态资源 | `docs/capabilities/<能力>/prototypes/<用例>/index.html`，旁设 `assets/` |
 | 实验记录与复现代码 | `docs/capabilities/<能力>/experiments/<验证主题>/README.md` ↔ `tests/experiments/<能力>/<验证主题>/`，能力和主题同名 |
 | 架构边界与不变量 | `docs/blueprint.md` |

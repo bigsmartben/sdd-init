@@ -14,5 +14,5 @@
 | 蓝图与实现一致性检查及整改后复核 | [sdd-review-loop](.agents/skills/sdd-review-loop/SKILL.md) |
 | 授权的 Git 交付 | [sdd-commit](.agents/skills/sdd-commit/SKILL.md) |
 
-[协作约定](.agents/sdd/references/governance.md)、[场景提示](.agents/sdd/references/scenarios.md)与[执行协作](.agents/sdd/references/delegation.md)按需读取。五个独立角色安装在 .codex/agents/，场景与模型建议见执行协作；角色含默认模型，不设置推理强度，不要求全员启动。实体模板在 .agents/sdd/assets/，按任务裁剪；项目索引仅指向实际 Issue、Blueprint 和 PR，不虚构占位文件。
+[协作约定](.agents/sdd/references/governance.md)、[场景提示](.agents/sdd/references/scenarios.md)与[执行协作](.agents/sdd/references/delegation.md)按需读取。五个独立角色安装在 .codex/agents/，场景与模型建议见执行协作；角色含默认模型，不设置推理强度，不要求全员启动。实体模板在 .agents/sdd/assets/，按任务裁剪；项目索引仅指向实际 Spec、Blueprint 和 PR，不虚构占位文件。
 <!-- sdd-contract-governance:end -->

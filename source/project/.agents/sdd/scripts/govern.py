@@ -484,7 +484,7 @@ def validate(root: Path, name: str, strict: bool, require_gates: bool = False) -
 def cmd_check(root: Path, args: argparse.Namespace) -> int:
     names = list(dict.fromkeys(require_name(name) for name in args.name)) if args.name else sorted(p.parent.name for p in (root / "specs").glob("*/spec.md"))
     if not names:
-        out("未发现存量 Spec；新流程使用 Issue，不需创建本地 Spec。")
+        out("未发现 Spec；需求正文由 sdd-doc 按已确认内容写入。")
         return 1 if args.strict else 0
     errors, warnings = [], []
     for name in names:
@@ -569,7 +569,7 @@ def cmd_commit(root: Path, args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(description="Legacy Spec/Status utility; not required by the Issue workflow")
+    p = argparse.ArgumentParser(description="Spec/Status evidence utility")
     p.add_argument("--root", default=".", help="要治理的仓库目录（默认当前目录）")
     subs = p.add_subparsers(dest="cmd", required=True)
     subs.add_parser("inspect", help="只读盘点，不修改任何文件")
@@ -605,7 +605,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         root = require_root(args.root)
         if args.cmd != "inspect":
-            out("LEGACY: Spec/Status only; not an Issue workflow gate or human acceptance result.")
+            out("Spec/Status records do not prove human acceptance.")
         return {
             "inspect": cmd_inspect,
             "start": cmd_start,
