@@ -481,5 +481,40 @@
       "将架构一致性写入业务测试报告"
     ],
     "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "imp_upstream_without_blueprint",
+    "input": "使用 imp 修复 BUG-7：空输入返回空列表，补充定向测试。",
+    "files": {
+      "src/parser.py": "空输入错误返回 None；项目没有 Blueprint。"
+    },
+    "expected": [
+      "按明确 Bug 目标自主制定方案、修改代码并局部自验",
+      "返回完成情况与证据"
+    ],
+    "forbidden": [
+      "要求补齐 Blueprint",
+      "读取架构规则或生成 ARC 覆盖",
+      "自行扩展架构重构"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "imp_review_target",
+    "input": "Review 交接 GAP-7：将 ui.py 的订单写入移到现有 order_service.py 写入入口，UI 调用该入口；保持用户可观察行为不变。请用 imp 实现并返回局部证据。",
+    "files": {
+      "docs/blueprint.md": "ARC-1 仅服务层写订单状态。"
+    },
+    "expected": [
+      "依据明确整改目标自主制定实现方案",
+      "修改代码并验证行为保持",
+      "返回 Review 待复核"
+    ],
+    "forbidden": [
+      "主动读取 Blueprint 并对齐 ARC",
+      "自行决定扩大架构重构",
+      "判定架构通过或自行关闭 gap"
+    ],
+    "model_execution": "UNVERIFIED"
   }
 ]

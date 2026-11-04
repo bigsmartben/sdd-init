@@ -135,9 +135,9 @@ flowchart TD
 | CLI 与用户级安装器 | 解析 install 和目标 Skills 目录，验证资源与旧安装，暂存替换；不初始化项目 | [cli.py](../src/sdd_init/cli.py)、[installer.py](../src/sdd_init/installer.py) |
 | 项目初始化器 | inspect 盘点；init 校验允许路径、必要资源、角色与入口冲突，合并托管导航，写入项目载荷；安装互斥、恢复记录及回滚由内部 project_install 模块承担，遵循[已确认边界](#项目安装的互斥与恢复边界) | [初始化 Skill](../source/initializer/SKILL.md)、[govern.py](../source/initializer/scripts/govern.py)、[project_install.py](../source/initializer/scripts/project_install.py) |
 | sdd-doc | 从确认内容与执行证据归并正式文档，维护关联并执行写后检查；模板不授予设计权 | [Skill](../source/project/.agents/skills/sdd-doc/SKILL.md) |
-| sdd-imp | 生成并执行同一 Plan／Task 清单，修改实现与测试，完成局部自验 | [Skill](../source/project/.agents/skills/sdd-imp/SKILL.md) |
+| sdd-imp | 交付明确的上游任务，生成并执行同一 Plan／Task 清单，修改代码并完成局部自验 | [Skill](../source/project/.agents/skills/sdd-imp/SKILL.md) |
 | sdd-test-loop | 根据 Spec 验收行为，返回问题与复验事实，判定 Test Gate | [Skill](../source/project/.agents/skills/sdd-test-loop/SKILL.md) |
-| sdd-review-loop | 检查架构落地与规则执行，返回 gap 和复核事实，判定 Review Gate | [Skill](../source/project/.agents/skills/sdd-review-loop/SKILL.md) |
+| sdd-review-loop | 检查架构落地与规则执行，明确整改目标，返回 gap 和复核事实，判定 Review Gate | [Skill](../source/project/.agents/skills/sdd-review-loop/SKILL.md) |
 | sdd-deploy | 根据部署意图探测环境、准备依赖并验证服务就绪；不随实施自动触发 | [Skill](../source/project/.agents/skills/sdd-deploy/SKILL.md) |
 | sdd-commit | 根据授权终点管理本地 Git 与远端协作；远端摘要不替代本地权威文档 | [Skill](../source/project/.agents/skills/sdd-commit/SKILL.md) |
 | 文档校验器 | 只读检查所选 Markdown 的编码、结构、编号及本地引用，输出诊断与退出码；不判定语义或 Gate | [工具说明](../source/project/.agents/sdd/references/doc-check.md) |
