@@ -81,7 +81,7 @@ class RoleTests(unittest.TestCase):
         self.assertEqual(self.install().returncode, 0)
         for name, model in ROLE_MODELS.items():
             role = self.target / ".codex/agents" / (name + ".toml")
-            role.write_bytes(role.read_bytes().replace(f'model = "{model}"\n'.encode(), b""))
+            role.write_bytes(role.read_bytes().replace(b'\r\n', b'\n').replace(f'model = "{model}"\n'.encode(), b""))
         config = self.target / ".codex/config.toml"
         config.write_bytes(b'model = "main-model"\nmodel_reasoning_effort = "xhigh"\n')
         before = self.snapshot()
@@ -105,6 +105,8 @@ class RoleTests(unittest.TestCase):
         entry = ".codex/agents/sdd-designer.toml"
         with zipfile.ZipFile(self.skill / "assets/repo-payload.zip") as archive:
             original = {name: archive.read(name) for name in archive.namelist()}
+        # Mutate the intended TOML fields under either LF or CRLF source checkouts.
+        original[entry] = original[entry].replace(b"\r\n", b"\n")
         cases = {
             "missing": None,
             "malformed": b"name = [",

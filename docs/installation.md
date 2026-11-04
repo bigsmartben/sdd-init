@@ -20,7 +20,7 @@ uvx --from git+https://github.com/bigsmartben/sdd-init.git sdd-init install
 
 在需要的仓库中打开 Codex，选择 sdd-init（支持该快捷入口的客户端可输入 `/sdd-init`）。CLI／IDE 可输入 `$sdd-init` 或通过 `/skills` 选择；也可明确要求“使用 sdd-init 初始化当前仓库”。未发现新 Skill 时重启 Codex。安装器不修改客户端命令注册或用户配置。[Codex 官方 Skill 文档](https://learn.chatgpt.com/docs/build-skills)
 
-只有此时才将五个项目 Skills、五个角色和共享资源展开到目标仓库。初始化与项目升级继续使用现有 Skill 的冲突保护规则。
+只有此时才将六个项目 Skills、五个角色和共享资源展开到目标仓库。初始化与项目升级继续使用现有 Skill 的冲突保护规则。
 
 ## 更新与冲突
 

@@ -115,13 +115,13 @@ class GovernanceTests(unittest.TestCase):
             module.cmd_init(self.root, module.build_parser().parse_args(["init"]))
         self.assertEqual(list(self.root.iterdir()), [])
 
-    def test_global_single_skill_and_local_five(self):
+    def test_global_single_skill_and_local_six(self):
         from zipfile import ZipFile
         with ZipFile(GOV.parent.parent / "assets/repo-payload.zip") as archive:
-            self.assertEqual(len([n for n in archive.namelist() if n.endswith("/SKILL.md")]), 5)
+            self.assertEqual(len([n for n in archive.namelist() if n.endswith("/SKILL.md")]), 6)
         self.run_cmd("init")
         self.assertEqual({p.parent.name for p in (self.root / ".agents/skills").glob("*/SKILL.md")},
-                         {"sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit"})
+                         {"sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit", "sdd-deploy"})
         self.assertFalse((self.root / ".agents/skills/sdd-init").exists())
         result = subprocess.run([sys.executable, str(self.root / ".agents/sdd/scripts/govern.py"),
                                  "--root", str(self.root), "inspect"], capture_output=True, text=True, encoding="utf-8")
@@ -239,14 +239,14 @@ class GovernanceTests(unittest.TestCase):
         agents = (self.root / "AGENTS.md").read_text(encoding="utf-8")
         import re
         targets = re.findall(r"\]\(([^)]+)\)", agents)
-        self.assertIn(".agents/sdd/references/governance.md", targets)
+        self.assertIn(".agents/sdd/references/sdd-repository-governance.md", targets)
         self.assertIn(".agents/sdd/references/delegation.md", targets)
         for target in targets:
             self.assertTrue((self.root / target.split("#")[0]).is_file(), target)
-        governance = (self.root / ".agents/sdd/references/governance.md").read_text(encoding="utf-8")
+        governance = (self.root / ".agents/sdd/references/sdd-repository-governance.md").read_text(encoding="utf-8")
         self.assertIn("docs/blueprint.md", governance)
         self.assertTrue((self.root / ".agents/skills/sdd-imp/SKILL.md").is_file())
-        self.assertFalse((self.root / "governance.md").exists())
+        self.assertFalse((self.root / "sdd-repository-governance.md").exists())
         self.assertFalse((self.root / "specs").exists())
 
     def test_init_rejects_shadowed_root_agents_override(self):
@@ -281,7 +281,7 @@ class GovernanceTests(unittest.TestCase):
         result = self.run_cmd("start", "--name", "payment", "--iteration", "phase-b", ok=False)
         self.assertNotEqual(result.returncode, 0)
 
-    def test_git_snapshot_freshness_and_finish(self):
+    def test_recorded_evidence_retains_version_and_finish(self):
         self.approved_contract()
         self.git("init", "-q")
         self.git("config", "user.email", "dev@example.test")
@@ -295,13 +295,14 @@ class GovernanceTests(unittest.TestCase):
         self.pass_both_gates()
         self.run_cmd("check", "--strict")
         (self.root / "main.py").write_text("print('changed')\n", encoding="utf-8")
-        result = self.run_cmd("check", "--strict", ok=False)
-        self.assertEqual(result.returncode, 1)
-        self.assertIn("STALE", result.stdout)
-        # User has actually re-validated the altered code; record their new evidence.
+        # Version changes do not automatically reclassify historical evidence.
+        self.run_cmd("check", "--strict")
+        # A separately authorized recheck records new evidence and preserves the old row.
         self.run_cmd("record", "--name", "payment", "--ac", "AC-001", "--result", "PASS", "--evidence", "pytest test_payment.py: 12 passed after change")
         self.run_cmd("record", "--name", "payment", "--arc", "ARC-001", "--result", "PASS", "--evidence", "dependency audit: passed after change")
         self.pass_both_gates()
+        status = (self.root / "specs/payment/status.md").read_text(encoding="utf-8")
+        self.assertIn("原始记录：| AC-001 | PASS | pytest test_payment.py: 12 passed", status)
         # sdd-imp finishes WITHOUT committing; explicit sdd-commit submits exactly once.
         self.run_cmd("finish", "--name", "payment")
         self.assertIn("- State: COMPLETED", (self.root / "specs/payment/status.md").read_text(encoding="utf-8"))
@@ -309,12 +310,59 @@ class GovernanceTests(unittest.TestCase):
         self.assertEqual(subprocess.run(["git", "-C", str(self.root), "diff", "--cached", "--name-only"], capture_output=True, text=True, encoding="utf-8").stdout.strip(), "")
         self.run_cmd("commit", "--name", "payment", "--include", "main.py")
         self.assertEqual(subprocess.run(["git", "-C", str(self.root), "rev-list", "--count", "HEAD"], capture_output=True, text=True, encoding="utf-8").stdout.strip(), "2")
-        self.run_cmd("check", "--strict")  # commit does not stale evidence
+        self.run_cmd("check", "--strict")
         again = self.run_cmd("commit", "--name", "payment", "--include", "main.py", ok=False)
         self.assertIn("重复提交", again.stderr)
         self.assertNotEqual(again.returncode, 0)
         self.run_cmd("start", "--name", "payment", "--iteration", "r2")
-        self.assertIn("UNVERIFIED", (self.root / "specs/payment/status.md").read_text(encoding="utf-8"))
+        next_status = (self.root / "specs/payment/status.md").read_text(encoding="utf-8")
+        self.assertIn("UNVERIFIED", next_status)
+        self.assertIn("> - Iteration: r1", next_status)
+        self.assertIn("pytest test_payment.py: 12 passed", next_status)
+        self.run_cmd("check", "--name", "payment")
+
+    def test_legacy_records_keep_historical_evidence_for_both_tools(self):
+        self.approved_contract()
+        self.run_cmd("start", "--name", "payment", "--iteration", "r1")
+        status = self.root / "specs/payment/status.md"
+        initial = status.read_text(encoding="utf-8")
+        initial = initial.replace("| AC-001 | UNVERIFIED | - | - |",
+                                  "| AC-001 | PASS | commit v1: original output | old-fingerprint |")
+        initial = initial.replace("| ARC-001 | UNVERIFIED | - | - |",
+                                  "| ARC-001 | UNVERIFIED | - | old-arc-fingerprint |")
+        initial += "\n- Test Snapshot: old-gate-fingerprint\n"
+        for script in (GOV, self.root / ".agents/sdd/scripts/govern.py"):
+            with self.subTest(tool=str(script)):
+                status.write_text(initial, encoding="utf-8")
+                def run(*args):
+                    return subprocess.run([sys.executable, str(script), "--root", str(self.root), *args],
+                                          capture_output=True, text=True, encoding="utf-8")
+                result = run("record", "--name", "payment", "--ac", "AC-001", "--result", "FAIL",
+                             "--evidence", "commit v2: failed output")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                content = status.read_text(encoding="utf-8")
+                self.assertIn("原始记录：| AC-001 | PASS | commit v1: original output | old-fingerprint |", content)
+                self.assertIn("| AC-001 | FAIL | commit v2: failed output | - |", content)
+                result = run("check", "--name", "payment", "--strict")
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("FAIL", result.stdout)
+                self.assertEqual(status.read_text(encoding="utf-8"), content)
+                result = run("record", "--name", "payment", "--ac", "AC-001", "--result", "PASS",
+                             "--evidence", "commit v3: recheck passed")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                result = run("record", "--name", "payment", "--arc", "ARC-001", "--result", "PASS",
+                             "--evidence", "commit v3: architecture evidence")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                result = run("attest", "--name", "payment", "--gate", "test", "--result", "PASS",
+                             "--evidence", "commit v3: test evidence")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                final = status.read_text(encoding="utf-8")
+                self.assertIn("commit v1: original output | old-fingerprint", final)
+                self.assertIn("原始记录：| ARC-001 | UNVERIFIED | - | old-arc-fingerprint |", final)
+                self.assertIn("commit v2: failed output", final)
+                self.assertIn("commit v3: recheck passed", final)
+                self.assertIn("历史 Snapshot old-gate-fingerprint", final)
+                self.assertNotIn("- Test Snapshot: old-gate-fingerprint", final)
 
     def test_speckit_inspired_spec_has_single_verifiable_acceptance_contract(self):
         self.bootstrap()
@@ -360,7 +408,7 @@ class GovernanceTests(unittest.TestCase):
         self.assertIn("specs/payment/status.md", committed)
         self.assertNotIn("unrelated.txt", committed)
         self.assertTrue((self.root / "unrelated.txt").exists())
-        self.assertNotEqual(self.run_cmd("check", "--name", "payment", "--strict", ok=False).returncode, 0)  # unrelated code makes old evidence stale
+        self.run_cmd("check", "--name", "payment", "--strict")  # unrelated changes do not erase evidence
 
     def test_finish_rejects_staged_unrelated_and_does_not_claim_complete(self):
         self.approved_contract()
@@ -453,7 +501,7 @@ class GovernanceTests(unittest.TestCase):
                 if "://" not in link and not link.startswith("#"):
                     self.assertTrue((path.parent / link.split("#")[0]).is_file(), (path, link))
 
-    def test_commit_rejects_early_and_stale_without_changing_status(self):
+    def test_commit_rejects_early_and_preserves_recorded_evidence(self):
         self.approved_contract()
         self.git("init", "-q")
         self.git("config", "user.email", "dev@example.test")
@@ -467,9 +515,8 @@ class GovernanceTests(unittest.TestCase):
         self.run_cmd("record", "--name", "payment", "--arc", "ARC-001", "--result", "PASS", "--evidence", "arch")
         self.run_cmd("finish", "--name", "payment")
         (self.root / "impl.py").write_text("print('b')\n", encoding="utf-8")
-        bad = self.run_cmd("commit", "--name", "payment", "--include", "impl.py", ok=False)
-        self.assertNotEqual(bad.returncode, 0)
-        self.assertIn("快照", bad.stdout + bad.stderr)
+        # The caller decides whether changes require revalidation before authorizing commit.
+        self.run_cmd("commit", "--name", "payment", "--include", "impl.py")
         self.assertIn("COMPLETED", (self.root / "specs/payment/status.md").read_text(encoding="utf-8"))
 
     def test_init_preserves_existing_spec_without_backfilling_status(self):
@@ -492,7 +539,7 @@ class GovernanceTests(unittest.TestCase):
 
     def test_workflows_allow_natural_language_selection(self):
         self.run_cmd("init")
-        for name in ("sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit"):
+        for name in ("sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit", "sdd-deploy"):
             metadata = (self.root / f".agents/skills/{name}/agents/openai.yaml").read_text(encoding="utf-8")
             self.assertIn("allow_implicit_invocation: true", metadata)
         self.assertIn("allow_implicit_invocation: true", (GOV.parent.parent / "agents/openai.yaml").read_text(encoding="utf-8"))
