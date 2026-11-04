@@ -29,7 +29,7 @@ def safe_path(root: Path, relative: str) -> Path:
             break
         if linked(path):
             raise ValueError(f"Linked installation path: {path}")
-    if target == root or root not in target.resolve().parents:
+    if target == root or root.resolve() not in target.resolve().parents:
         raise ValueError(f"Path outside installation: {target}")
     return target
 

@@ -68,6 +68,24 @@ gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["init"]))
                                 capture_output=True, timeout=30)
         self.assertEqual(result.returncode, 79, result.stderr)
 
+    def test_safe_path_accepts_equivalent_resolved_root_and_rejects_escape(self):
+        # Simulate a Windows short-name root resolving to its long-name path.
+        original_resolve = Path.resolve
+        resolved_root = self.root.parent / "canonical-project"
+
+        def resolve_alias(path, *args, **kwargs):
+            if path == self.root:
+                return resolved_root
+            if path == self.root / ".sdd-init.lock":
+                return resolved_root / ".sdd-init.lock"
+            return original_resolve(path, *args, **kwargs)
+
+        with patch.object(Path, "resolve", resolve_alias):
+            self.assertEqual(self.tx.safe_path(self.root, ".sdd-init.lock"),
+                             self.root / ".sdd-init.lock")
+            with self.assertRaises(ValueError):
+                self.tx.safe_path(self.root, "../outside")
+
     def test_write_failure_restores_existing_and_new_files(self):
         (self.root / "AGENTS.md").write_bytes(b"personal rules\r\n")
         (self.root / "unrelated.txt").write_bytes(b"keep")
