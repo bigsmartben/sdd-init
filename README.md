@@ -8,6 +8,8 @@
 
 ## 维护入口
 
+用户安装、更新与仓库内调用见[安装说明](docs/installation.md)。Python 包入口位于 `src/sdd_init/`，打包配置位于 `pyproject.toml` 和 `setup.py`；打包复用现有资源构建器。
+
 | 目录 | 维护内容 |
 | --- | --- |
 | `source/initializer/` | 用户级 sdd-init 入口、元数据、安装器、原有回归测试及专属模板 |

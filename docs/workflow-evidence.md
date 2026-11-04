@@ -1,5 +1,20 @@
 # 工作流分发实施证据
 
+## 2026-11-04 uv 用户级安装入口
+
+按本轮用户确认的一条 uvx 命令安装方式实现；使用入口与更新操作见[安装说明](installation.md)。Python CLI／用户级安装逻辑位于 `src/sdd_init/`，`setup.py` 调用既有构建器将完整资源放入 wheel，`MANIFEST.in` 保证源码包具备重建输入。项目载荷继续保留为 ZIP，不注册成多个用户级 Skills。
+
+| 验证场景 | 本地结果 |
+|---|---|
+| 仓库测试 | `python -B -m unittest discover -s tests -v`：25/25 通过，含首次安装、重复、更新、定制／缺失／额外文件保护、损坏载荷零写入、并发拒绝与替换失败恢复 |
+| 原安装器回归 | 临时构建后的 `scripts/test_govern.py`：39/39 通过 |
+| 源码包到 wheel | `uv build --out-dir .build/dist` 成功，从源码包重建 wheel，资源包含在包内 |
+| wheel 与源码实际执行 | 分别运行 `scripts/smoke_package.py --from .build/dist/sdd_init-0.1.0-py3-none-any.whl` 与 `--from .`：成功；临时用户目录仅一个 Skill，目标项目五 Skills／五角色，重复执行稳定，用户级重装不改已有项目 |
+| Git 来源 | 临时 Git 仓库的 `git+file:///…` 测试被 uv 0.11.20 Windows 内部 URL 解析崩溃阻断；未将该项标为通过 |
+| CI | 增加 Ubuntu／Windows 矩阵、包构建及 wheel 冒烟步骤；尚未在远端运行 |
+
+全部安装使用隔离的临时目录，未修改真实用户级安装、其他项目或用户运行配置。未提交或推送，本轮需求尚未写入远端 Issue；GitHub HTTPS 安装须在版本推送后验证。Codex 实际加载与交互调用未人工验收，客户端 `/sdd-init` 快捷入口不可由 Python 包保证，官方 CLI 入口为 `$sdd-init`／`/skills`。本地结果不能替代这些未验证项。
+
 ## 2026-11-04 独立沟通规范分发验证
 
 最终源码完整回归：`python -B -m unittest discover -s tests -v` 通过 20/20；`python -B scripts/build_release.py --output .build/final-communication-20261104/sdd-init` 构建成功；`python -B .build/final-communication-20261104/sdd-init/scripts/test_govern.py` 通过 39/39。检查构建清单哈希、ZIP CRC 和载荷与源码逐字节一致，并确认分发入口及规范正文包含可视化对齐与结论先行两条原则。临时项目测试覆盖新装、上一版升级、原正文保护和重复执行；升级须显式使用 `--update-skills`。未修改用户级安装或其他实际项目；测试不证明真实 Agent 每次运行均遵循规范。
