@@ -10,10 +10,10 @@
 | 原安装器回归 | 临时构建后的 `scripts/test_govern.py`：39/39 通过 |
 | 源码包到 wheel | `uv build --out-dir .build/dist` 成功，从源码包重建 wheel，资源包含在包内 |
 | wheel 与源码实际执行 | 分别运行 `scripts/smoke_package.py --from .build/dist/sdd_init-0.1.0-py3-none-any.whl` 与 `--from .`：成功；临时用户目录仅一个 Skill，目标项目五 Skills／五角色，重复执行稳定，用户级重装不改已有项目 |
-| Git 来源 | 临时 Git 仓库的 `git+file:///…` 测试被 uv 0.11.20 Windows 内部 URL 解析崩溃阻断；未将该项标为通过 |
-| CI | 增加 Ubuntu／Windows 矩阵、包构建及 wheel 冒烟步骤；尚未在远端运行 |
+| Git 来源 | GitHub HTTPS 分支入口已通过 `scripts/smoke_package.py` 完整验证，解析提交 `fb65a977ab871ccbe1d747bcbb3c399912cf3989`；此前 Windows 本地 `git+file` 的 uv 崩溃不影响此 HTTPS 路径 |
+| CI | [提交 fb65a97 的远端 CI](https://github.com/bigsmartben/sdd-init/actions/runs/41777671560)：Ubuntu／Windows 两端全部通过，包含仓库测试、39 项安装器回归、源码包／wheel 构建及 wheel 冒烟 |
 
-全部安装使用隔离的临时目录，未修改真实用户级安装、其他项目或用户运行配置。未提交或推送，本轮需求尚未写入远端 Issue；GitHub HTTPS 安装须在版本推送后验证。Codex 实际加载与交互调用未人工验收，客户端 `/sdd-init` 快捷入口不可由 Python 包保证，官方 CLI 入口为 `$sdd-init`／`/skills`。本地结果不能替代这些未验证项。
+全部安装使用隔离的临时目录，未修改真实用户级安装、其他项目或用户运行配置。实现已提交并推送至 `codex/workflow-contract-plan`，GitHub HTTPS 分支安装与临时项目初始化全流程已通过；当前可用命令见安装说明。未合并至 main，不带版本的默认分支命令尚不可用；本轮需求未写入远端 Issue。Codex 实际加载与交互调用未人工验收，客户端 `/sdd-init` 快捷入口不可由 Python 包保证，官方 CLI 入口为 `$sdd-init`／`/skills`。本地结果不能替代这些未验证项。
 
 ## 2026-11-04 独立沟通规范分发验证
 
