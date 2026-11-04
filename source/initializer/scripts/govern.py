@@ -301,25 +301,31 @@ def within_scope(path: str, scope: set[str]) -> bool:
 # contains repository-local skills; storing nested SKILL.md files unpacked under
 # ~/.agents/skills/sdd-init would risk discovering them as global skills.
 PROJECT_PAYLOAD = ASSETS / "repo-payload.zip"
-PROJECT_SKILLS = {'sdd-accept', 'sdd-doc', 'sdd-imp', 'sdd-commit'}
-PROJECT_ROLES = {
-    'sdd-requirements', 'sdd-architect', 'sdd-planner', 'sdd-documenter',
-    'sdd-implementer', 'sdd-acceptor', 'sdd-delivery',
+PROJECT_SKILLS = {'sdd-doc', 'sdd-imp', 'sdd-test-loop', 'sdd-review-loop', 'sdd-commit'}
+PROJECT_ROLE_MODELS = {
+    'sdd-designer': 'gpt-6-astra',
+    'sdd-coder': 'gpt-6.1-sol',
+    'sdd-documenter': 'gpt-6.1-terra',
+    'sdd-validator': 'gpt-6.1-terra',
+    'sdd-delivery': 'gpt-6.1-terra',
 }
+PROJECT_ROLES = set(PROJECT_ROLE_MODELS)
 
 
 def validate_role(data: bytes, name: str) -> None:
-    """Validate distributed roles before any target write; preserve runtime choice."""
+    """Validate role model defaults before any target write; leave effort unset."""
     try:
         role = tomllib.loads(data.decode("utf-8"))
     except (UnicodeDecodeError, tomllib.TOMLDecodeError) as exc:
         fail(f"角色 {name} 配置无效: {exc}")
-    if set(role) != {"name", "description", "developer_instructions"}:
-        fail(f"角色 {name} 仅允许名称、说明与职责指令，不固定模型、强度或运行配置")
+    if set(role) != {"name", "description", "model", "developer_instructions"}:
+        fail(f"角色 {name} 必须且仅包含名称、说明、默认模型与职责指令，不允许推理强度或其他运行配置")
     if role["name"] != name:
         fail(f"角色文件与 name 不一致: {name}")
     if any(not isinstance(value, str) or not value.strip() for value in role.values()):
         fail(f"角色 {name} 字段必须是非空文本")
+    if role["model"] != PROJECT_ROLE_MODELS[name]:
+        fail(f"角色 {name} 默认模型必须为 {PROJECT_ROLE_MODELS[name]}")
 
 
 def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes]]:
@@ -344,10 +350,10 @@ def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes]]:
                          and parts[2] in ("scripts", "assets") and parts[3] in
                          ("govern.py", "blueprint.md", "spec.md", "status.md", "architecture-rule-catalog.md",
                           "issue.md", "draft-pr.md", "prototype-reference.md", "acceptance.md",
-                          "experiment.md", "sequence.md", "contract.md", "test-plan.md"))
+                          "experiment.md", "sequence.md", "sequence-flows.md", "module-design.md", "contract.md", "test-plan.md"))
             is_shared = is_shared or (len(parts) == 4 and parts[:3] == (".agents", "sdd", "references")
-                                      and parts[3] in ("delegation.md", "governance.md", "observability-baseline.md",
-                                                       "scenarios.md", "prototype.md"))
+                                      and parts[3] in ("delegation.md", "governance.md", "document-writing.md", "observability-baseline.md",
+                                                       "scenarios.md", "prototype.md", "visual-confirmation.md"))
             is_shared = is_shared or (len(parts) == 5 and parts[:4] == (".agents", "sdd", "assets", "observability")
                                       and parts[4] in ("README.md", "event-1.0.0.schema.json"))
             is_shared = is_shared or (parts[:4] == (".agents", "sdd", "assets", "observability")
@@ -369,6 +375,11 @@ def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes]]:
             if not (is_skill or is_shared or is_role or is_project_default):
                 fail(f"项目 Skill 包包含非法路径: {member}")
             target = inside(root, root / rel)
+            for parent in target.parents:
+                if parent == root:
+                    break
+                if (parent.exists() or parent.is_symlink()) and not parent.is_dir():
+                    fail(f"项目资源父路径不是目录: {parent}")
             data = archive.read(member)
             if is_role:
                 validate_role(data, rel.stem)
@@ -384,17 +395,18 @@ def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes]]:
         found = {x for x in members if x.startswith('.agents/skills/') and x.endswith('/SKILL.md')}
         expected = {f'.agents/skills/{s}/SKILL.md' for s in PROJECT_SKILLS}
         if found != expected:
-            fail("项目 Skill 包不包含完整的四个仓库级 Skill")
+            fail("项目 Skill 包不包含完整的五个仓库级 Skill")
         required = {f'.agents/skills/{name}/agents/openai.yaml' for name in PROJECT_SKILLS}
         required.update(f'.codex/agents/{name}.toml' for name in PROJECT_ROLES)
-        required.update({'.agents/sdd/references/delegation.md', '.agents/sdd/references/governance.md',
+        required.update({'.agents/sdd/references/visual-confirmation.md', '.agents/sdd/references/document-writing.md', '.agents/sdd/references/delegation.md', '.agents/sdd/references/governance.md',
                          '.agents/skills/sdd-commit/references/providers.md',
                          '.agents/sdd/references/observability-baseline.md',
                          '.agents/sdd/references/scenarios.md', '.agents/sdd/references/prototype.md',
                          '.agents/sdd/assets/issue.md', '.agents/sdd/assets/blueprint.md',
                          '.agents/sdd/assets/draft-pr.md', '.agents/sdd/assets/prototype-reference.md',
                          '.agents/sdd/assets/acceptance.md', '.agents/sdd/assets/experiment.md',
-                         '.agents/sdd/assets/sequence.md', '.agents/sdd/assets/contract.md',
+                         '.agents/sdd/assets/sequence.md', '.agents/sdd/assets/sequence-flows.md',
+                         '.agents/sdd/assets/module-design.md', '.agents/sdd/assets/contract.md',
                          '.agents/sdd/assets/test-plan.md', '.agents/governance/repository.md', 'docs/index.md'})
         if not required.issubset(members):
             fail("项目包缺少角色、调用策略、模板或必要引用")
@@ -426,45 +438,75 @@ def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
 
 
 
+def prepare_agents(original: str, allow_update: bool) -> str:
+    """Prepare both independent managed blocks without changing project-owned bytes."""
+    bom = "\ufeff" if original.startswith("\ufeff") else ""
+    original = original[len(bom):]
+    names = ("agent-communication", "sdd-contract-governance")
+    spans = {}
+    for name in names:
+        opening, closing = f"<!-- {name}:start -->", f"<!-- {name}:end -->"
+        if original.count(opening) != original.count(closing) or original.count(opening) > 1:
+            fail("AGENTS.md 治理片段不完整或重复")
+        if opening in original:
+            begin, end = original.index(opening), original.index(closing) + len(closing)
+            if end <= begin:
+                fail("AGENTS.md 治理片段顺序错误")
+            spans[name] = (begin, end)
+    ordered = sorted(spans.values())
+    if len(ordered) == 2 and ordered[0][1] > ordered[1][0]:
+        fail("AGENTS.md 治理片段嵌套或交叉")
+    newline = "\r\n" if "\r\n" in original else "\n"
+    templates = {
+        "agent-communication": read(ASSETS / "communication-fragment.md").strip(),
+        "sdd-contract-governance": read(ASSETS / "agents-fragment.md").strip(),
+    }
+    for name, (begin, end) in spans.items():
+        if original[begin:end].replace("\r\n", "\n") != templates[name] and not allow_update:
+            fail("已有不同版本的 AGENTS.md 治理片段；确认升级后使用 init --update-skills")
+    # Replace only owned ranges. Navigation stays where it was; communication moves first.
+    body = original
+    for name, (begin, end) in sorted(spans.items(), key=lambda item: item[1][0], reverse=True):
+        replacement = "" if name == "agent-communication" else templates[name].replace("\n", newline)
+        body = body[:begin] + replacement + body[end:]
+    if "sdd-contract-governance" not in spans:
+        if not body:
+            body = "# Project Agent Guidance" + newline + newline
+        elif not body.endswith(newline + newline):
+            body += newline + newline
+        body += templates["sdd-contract-governance"].replace("\n", newline) + newline
+    communication = templates["agent-communication"].replace("\n", newline)
+    # Reuse existing separator when already at the front, ensuring byte-stable repeats.
+    separator = "" if spans.get("agent-communication", (-1,))[0] == 0 else newline + newline
+    return bom + communication + separator + body
+
+
 def cmd_init(root: Path, args: argparse.Namespace) -> int:
     # Retired entrypoints must not silently coexist with the new workflow.
-    retired = [root / ".agents/skills" / name for name in ("sdd-test-loop", "sdd-review-loop")
+    retired = [root / ".agents/skills" / name for name in ("sdd-accept",)
                if (root / ".agents/skills" / name).exists()]
+    retired.extend(root / ".codex/agents" / (name + ".toml")
+                   for name in ("sdd-requirements", "sdd-architect", "sdd-planner", "sdd-implementer", "sdd-acceptor")
+                   if (root / ".codex/agents" / (name + ".toml")).exists())
     if retired:
-        fail("发现退役 Skill，请在单独迁移范围内处理后再安装：" + ", ".join(str(p) for p in retired))
+        fail("发现旧流程 Skill/角色，请在单独迁移范围内处理后再安装：" + ", ".join(str(p) for p in retired))
     # Preflight local skill conflicts BEFORE touching the repo.
     skill_changes = project_payload(root, args.update_skills)
-    # Codex prioritizes root AGENTS.override.md over AGENTS.md. A shadowed
-    # guidance file would make initialization appear successful but ineffective.
     override = inside(root, root / "AGENTS.override.md")
-    if override.exists() and MARK_START not in read(override):
-        fail("根目录存在 AGENTS.override.md，Codex 会优先读取它并忽略 AGENTS.md；请先处理覆盖关系再初始化，避免治理规则未生效")
+    if override.exists() or override.is_symlink():
+        fail("根目录存在 AGENTS.override.md；请先处理覆盖关系再初始化，避免治理规则未生效")
     agents = inside(root, root / "AGENTS.md")
-    fragment = read(ASSETS / "agents-fragment.md")
-    if agents.exists():
-        old_agents = read(agents)
-        if MARK_START in old_agents and fragment.strip() not in old_agents and not args.update_skills:
-            fail("已有不同版本的 AGENTS.md 治理片段；确认升级后使用 init --update-skills")
-    if not agents.exists():
-        create(agents, "# Project Agent Guidance\n\n" + fragment)
+    if agents.is_symlink() or (agents.exists() and not agents.is_file()):
+        fail("拒绝覆盖 AGENTS.md 符号链接或非普通文件")
+    original = agents.read_bytes().decode("utf-8") if agents.exists() else ""
+    candidate = prepare_agents(original, args.update_skills)
+    if candidate != original:
+        agents.write_bytes(candidate.encode("utf-8"))
+        out("UPDATED AGENTS.md" if original else "CREATED AGENTS.md")
     else:
-        original = read(agents)
-        if MARK_START in original:
-            if fragment.strip() in original:
-                out("KEEP    AGENTS.md 治理片段已是当前版本")
-            else:
-                marker_end = "<!-- sdd-contract-governance:end -->"
-                begin = original.find(MARK_START)
-                end = original.find(marker_end, begin)
-                if end < 0 or original.find(MARK_START, begin + 1) >= 0:
-                    fail("AGENTS.md 治理片段不完整或重复")
-                overwrite(agents, original[:begin] + fragment.strip() + original[end + len(marker_end):])
-        else:
-            # Explicit sdd-init authorizes minimally appending the marked block.
-            # Preserve all prior project instructions; never replace them.
-            overwrite(agents, original.rstrip() + "\n\n" + fragment)
+        out("KEEP    AGENTS.md")
     install_project_payload(root, skill_changes)
-    out("已安装四个项目 Skills、七个独立角色、共享模板与导航；保留既有正文和用户运行配置，不创建需求、架构或状态实体，不固定模型或推理强度。安装不代表人工验收通过。")
+    out("已安装五个项目 Skills、五个独立角色及其默认模型、共享模板与导航；保留既有正文和用户运行配置，不创建需求、架构或状态实体，不设置角色推理强度。安装不代表人工验收通过。")
     return 0
 
 

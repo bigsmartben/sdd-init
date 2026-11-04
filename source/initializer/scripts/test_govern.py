@@ -115,13 +115,13 @@ class GovernanceTests(unittest.TestCase):
             module.cmd_init(self.root, module.build_parser().parse_args(["init"]))
         self.assertEqual(list(self.root.iterdir()), [])
 
-    def test_global_single_skill_and_local_four(self):
+    def test_global_single_skill_and_local_five(self):
         from zipfile import ZipFile
         with ZipFile(GOV.parent.parent / "assets/repo-payload.zip") as archive:
-            self.assertEqual(len([n for n in archive.namelist() if n.endswith("/SKILL.md")]), 4)
+            self.assertEqual(len([n for n in archive.namelist() if n.endswith("/SKILL.md")]), 5)
         self.run_cmd("init")
         self.assertEqual({p.parent.name for p in (self.root / ".agents/skills").glob("*/SKILL.md")},
-                         {"sdd-doc", "sdd-imp", "sdd-accept", "sdd-commit"})
+                         {"sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit"})
         self.assertFalse((self.root / ".agents/skills/sdd-init").exists())
         result = subprocess.run([sys.executable, str(self.root / ".agents/sdd/scripts/govern.py"),
                                  "--root", str(self.root), "inspect"], capture_output=True, text=True, encoding="utf-8")
@@ -131,11 +131,19 @@ class GovernanceTests(unittest.TestCase):
         self.run_cmd("init")
         import tomllib
         roles = list((self.root / ".codex/agents").glob("*.toml"))
-        self.assertEqual(len(roles), 7)
+        expected_models = {
+            "sdd-designer": "gpt-6-astra",
+            "sdd-coder": "gpt-6.1-sol",
+            "sdd-documenter": "gpt-6.1-terra",
+            "sdd-validator": "gpt-6.1-terra",
+            "sdd-delivery": "gpt-6.1-terra",
+        }
+        self.assertEqual({path.stem for path in roles}, set(expected_models))
         for path in roles:
             data = tomllib.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(data["name"], path.stem)
-            self.assertEqual(set(data), {"name", "description", "developer_instructions"})
+            self.assertEqual(set(data), {"name", "description", "model", "developer_instructions"})
+            self.assertEqual(data["model"], expected_models[path.stem])
         self.assertFalse((self.root / ".codex/config.toml").exists())
         self.assertFalse((self.root / "architecture").exists())
         self.assertFalse((self.root / "specs").exists())
@@ -224,7 +232,7 @@ class GovernanceTests(unittest.TestCase):
         self.assertIn("MY OWN RULES\n", (self.root / "AGENTS.md").read_text(encoding="utf-8"))
         self.run_cmd("init")
         self.assertEqual((self.root / "AGENTS.md").read_text(encoding="utf-8").count("sdd-contract-governance:start"), 1)
-        self.assertTrue((self.root / "AGENTS.md").read_text(encoding="utf-8").startswith("MY OWN RULES\n"))
+        self.assertTrue((self.root / "AGENTS.md").read_text(encoding="utf-8").startswith("<!-- agent-communication:start -->"))
 
     def test_init_writes_persistent_repo_guidance_without_extra_documents(self):
         self.run_cmd("init")
@@ -314,10 +322,10 @@ class GovernanceTests(unittest.TestCase):
         status = (self.root / "specs/payment/status.md").read_text(encoding="utf-8")
         self.assertIn("Given：前提", spec)
         self.assertIn("When：触发", spec)
-        self.assertIn("Then：可观察结果", spec)
-        self.assertIn("边界条件与失败场景", spec)
+        self.assertIn("Then：结果与通过标准", spec)
+        self.assertIn("边界、失败、并发、取消与恢复", spec)
         self.assertIn("FR-001", spec)
-        self.assertIn("SC-001", spec)
+        self.assertNotIn("| SC-001 |", spec)  # No competing acceptance table.
         self.assertEqual(sum(1 for x in spec.splitlines() if x.startswith("| AC-001 |")), 1)
         self.assertIn("| AC-001 | UNVERIFIED | - | - |", status)
         self.assertNotIn("| SC-001 |", status)
@@ -484,11 +492,11 @@ class GovernanceTests(unittest.TestCase):
 
     def test_workflows_allow_natural_language_selection(self):
         self.run_cmd("init")
-        for name in ("sdd-doc", "sdd-imp", "sdd-accept", "sdd-commit"):
+        for name in ("sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit"):
             metadata = (self.root / f".agents/skills/{name}/agents/openai.yaml").read_text(encoding="utf-8")
             self.assertIn("allow_implicit_invocation: true", metadata)
         self.assertIn("allow_implicit_invocation: true", (GOV.parent.parent / "agents/openai.yaml").read_text(encoding="utf-8"))
-        for name in ("sdd-test-loop", "sdd-review-loop"):
+        for name in ("sdd-accept",):
             self.assertFalse((self.root / ".agents/skills" / name).exists())
 
     def test_inspect_read_only(self):

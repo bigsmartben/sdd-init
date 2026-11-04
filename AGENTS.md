@@ -1,6 +1,14 @@
+<!-- agent-communication:start -->
+## 首要沟通原则：可视化对齐意图
+
+凡需用户确认、选择、Review 或验收，按[可视化沟通与确认规范](source/project/.agents/sdd/references/visual-confirmation.md)先给结论，聚焦一个核心决策，提供简明可视化及明确判断点，细节按需展开。已确认且无实质变化的授权内工作直接执行，不重复请求确认。
+<!-- agent-communication:end -->
+
 # sdd-init 维护约定
 
 先读 [README](README.md) 的仓库定位、当前关联 Issue 和必要来源；按任务契约确定写入范围和完成条件。当前治理升级以 [Issue #1](https://github.com/bigsmartben/sdd-init/issues/1) 为依据，本文件只约束维护行为。
+
+## 维护边界
 
 - 已确认需求以关联 GitHub Issue 为唯一正文；README 只保留定位与导航，计划和状态引用需求并记录各自的方案或事实，不复制需求正文、不建立独立 Spec。HTML、Blueprint 和 Draft PR 的职责及引用关系按 Issue 中已确认约定执行。
 - 维护通用流程与资源时，沿用目标项目的业务事实和已确认决定，不从模板补造业务需求、组件库选型或产品架构。本仓库自身的维护任务按实际对象取证，无需虚构产品页面或产品架构。
