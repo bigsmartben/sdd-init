@@ -94,7 +94,7 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(
             {p.parent.name for p in (target / ".agents/skills").glob("*/SKILL.md")},
             {"sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit", "sdd-deploy"})
-        for name in ("specs", "architecture", ".codex/config.toml", "plan.md"):
+        for name in ("specs", "architecture", ".codex/config.toml", "plan.md", "docs/code-review-rules.md"):
             self.assertFalse((target / name).exists(), name)
         for name in ("spec_template.md", "blueprint_template.md", "plan_template.md", "quickstart_template.md", "prototype_reference_template.md",
                      "test_report_template.md", "issue_template.md", "review_template.md", "sequence_template.md", "contract_template.md"):
@@ -105,7 +105,7 @@ class BuildTests(unittest.TestCase):
             {"spec_template.md", "blueprint_template.md", "status_template.md",
              "plan_template.md", "quickstart_template.md", "prototype_reference_template.md",
              "test_report_template.md", "issue_template.md", "review_template.md", "sequence_template.md", "contract_template.md",
-             "architecture-rule-catalog.md"})
+             "architecture-rule-catalog.md", "code-review-rules_template.md"})
         checker = target / ".agents/sdd/scripts/doc_check.py"
         checked = subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(checker), "--root", str(target),
@@ -115,6 +115,21 @@ class BuildTests(unittest.TestCase):
         self.assertFalse((target / ".agents/sdd/assets/issue.md").exists())
         for retired in ("draft-pr.md", "test-plan.md", "acceptance.md", "module-design.md"):
             self.assertFalse((target / ".agents/sdd/assets" / retired).exists(), retired)
+
+    def test_project_code_review_rules_survive_install_and_upgrade(self):
+        skill = builder.build(self.folder / "skill")
+        target = self.folder / "project"
+        rules = target / "docs/code-review-rules.md"
+        rules.parent.mkdir(parents=True)
+        content = "# Code Review Rules\n\nCR-001 用户确认的项目规则。\n".encode("utf-8")
+        rules.write_bytes(content)
+        command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
+                   "--root", str(target), "init"]
+        for options in ([], ["--update-skills"], []):
+            result = subprocess.run(command + options, capture_output=True, text=True, encoding="utf-8")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual(rules.read_bytes(), content)
+            self.assertTrue((target / ".agents/sdd/assets/code-review-rules_template.md").is_file())
 
     def test_communication_install_upgrade_and_repetition(self):
         skill = builder.build(self.folder / "skill")
@@ -391,7 +406,7 @@ class BuildTests(unittest.TestCase):
         installer = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(installer)
         original = installer.PROJECT_PAYLOAD
-        for missing in ("scripts/govern.py", "scripts/doc_check.py", "references/doc-check.md", "assets/status_template.md", "assets/spec_template.md", "assets/quickstart_template.md", "assets/plan_template.md", "assets/sequence_template.md", "assets/test_report_template.md", "assets/issue_template.md", "assets/review_template.md", "references/document-writing.md", "references/visual-confirmation.md"):
+        for missing in ("scripts/govern.py", "scripts/doc_check.py", "references/doc-check.md", "assets/status_template.md", "assets/code-review-rules_template.md", "assets/spec_template.md", "assets/quickstart_template.md", "assets/plan_template.md", "assets/sequence_template.md", "assets/test_report_template.md", "assets/issue_template.md", "assets/review_template.md", "references/document-writing.md", "references/visual-confirmation.md"):
             with self.subTest(missing=missing):
                 broken = self.folder / (Path(missing).name + ".zip")
                 with zipfile.ZipFile(original) as source, zipfile.ZipFile(broken, "w") as dest:

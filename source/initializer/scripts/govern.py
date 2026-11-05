@@ -103,7 +103,7 @@ def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes, b
                         or (parts == (".agents", "skills", "sdd-commit", "references", "git-remote.md")))
             is_shared = (len(parts) == 4 and parts[0:2] == (".agents", "sdd")
                          and parts[2] in ("scripts", "assets") and parts[3] in
-                         ("govern.py", "blueprint_template.md", "spec_template.md", "status_template.md", "architecture-rule-catalog.md",
+                         ("govern.py", "code-review-rules_template.md", "blueprint_template.md", "spec_template.md", "status_template.md", "architecture-rule-catalog.md",
                           "prototype_reference_template.md", "quickstart_template.md", "plan_template.md",
                           "test_report_template.md", "issue_template.md", "review_template.md", "sequence_template.md", "contract_template.md"))
             is_shared = is_shared or parts == (".agents", "sdd", "scripts", "doc_check.py")
@@ -161,6 +161,7 @@ def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes, b
                          '.agents/sdd/references/observability-baseline.md',
                          '.agents/sdd/references/scenarios.md', '.agents/sdd/references/prototype.md',
                          '.agents/sdd/assets/spec_template.md', '.agents/sdd/assets/blueprint_template.md',
+                         '.agents/sdd/assets/code-review-rules_template.md',
                          '.agents/sdd/assets/prototype_reference_template.md',
                          '.agents/sdd/assets/quickstart_template.md', '.agents/sdd/assets/plan_template.md', '.agents/sdd/assets/test_report_template.md', '.agents/sdd/assets/issue_template.md', '.agents/sdd/assets/review_template.md',
                          '.agents/sdd/assets/sequence_template.md',

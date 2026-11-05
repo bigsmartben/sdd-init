@@ -9,7 +9,9 @@
 
 - **测试发现了哪些问题，修复后是否已复验关闭？** 查独立 Issue 记录及关联的发现／复验报告；初次记录使用 [Issue 模板](../.agents/sdd/assets/issue_template.md)；以 Issue 入口和编号交接，修复方案查关联的 imp Plan／Task。
 
-- **架构规则是否落实，检查项偏差是否修复并复核？** 查架构 Review 记录；初次落盘使用 [Review 模板](../.agents/sdd/assets/review_template.md)，修复方案引用 imp 的 Plan／Task。
+- **项目的 Code Review Rules 在哪里？** 用户决定维护时机，通过 [sdd-doc](../.agents/skills/sdd-doc/SKILL.md) 按[规则模板](../.agents/sdd/assets/code-review-rules_template.md)生成或更新；首次生成后将此处指向项目规则正文。
+
+- **Code Review Rules 是否落实，检查项偏差是否修复并复核？** 查架构 Review 记录；初次落盘使用 [Review 模板](../.agents/sdd/assets/review_template.md)，修复方案引用 imp 的 Plan／Task。
 
 - **本轮改什么、按什么顺序执行？** 查当前 Plan（Task 清单）；输出结构见 [Plan 模板](../.agents/sdd/assets/plan_template.md)，生成与执行规则见 [sdd-imp](../.agents/skills/sdd-imp/SKILL.md)。
 

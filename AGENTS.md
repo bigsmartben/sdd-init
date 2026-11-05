@@ -1,7 +1,7 @@
 <!-- agent-communication:start -->
 ## 首要沟通原则：可视化对齐意图
 
-凡需用户确认、选择、Review 或验收，按[可视化沟通与确认规范](source/project/.agents/sdd/references/visual-confirmation.md)先给结论，聚焦一个核心决策，提供简明可视化及明确判断点，细节按需展开。已确认且无实质变化的授权内工作直接执行，不重复请求确认。
+凡需用户确认、选择、Review 或验收，按[可视化沟通与确认规范](.agents/sdd/references/visual-confirmation.md)先给结论，聚焦一个核心决策，提供简明可视化及明确判断点，细节按需展开。已确认且无实质变化的授权内工作直接执行，不重复请求确认。
 <!-- agent-communication:end -->
 
 # sdd-init 维护约定
@@ -19,3 +19,24 @@
 - 允许信息架构、结构布局、交互和业务状态符合性检查；排除纯视觉样式与像素还原检查。原型模拟、局部自验、正式系统验收分别取证。
 - 纯文档变更核对内容、链接和编码；打包或工具变更运行相称测试。
 - 已有 Git 授权在范围内沿用；远端交付、push、merge 按任务实际授权执行，不从建仓推定后续所有远端动作均已授权。
+
+
+<!-- sdd-contract-governance:start -->
+## 项目入口
+
+- [项目文档与实际路径映射](docs/index.md)
+- [工程资产、默认落点与可视化对齐](.agents/sdd/references/sdd-repository-governance.md)
+
+## 索引
+
+| 工作 | 入口 |
+| --- | --- |
+| 固化确认内容与原型文档 | [sdd-doc](.agents/skills/sdd-doc/SKILL.md) |
+| 实施、修复、重构与局部自验 | [sdd-imp](.agents/skills/sdd-imp/SKILL.md) |
+| 需求行为验收与整改后复验 | [sdd-test-loop](.agents/skills/sdd-test-loop/SKILL.md) |
+| 蓝图与实现一致性检查及整改后复核 | [sdd-review-loop](.agents/skills/sdd-review-loop/SKILL.md) |
+| 部署、启动或重启服务（默认 dev） | [sdd-deploy](.agents/skills/sdd-deploy/SKILL.md) |
+| Git 与 GitHub／GitLab 分支、Issue、PR／MR 及合并 | [sdd-commit](.agents/skills/sdd-commit/SKILL.md) |
+
+[协作约定](.agents/sdd/references/sdd-repository-governance.md)、[场景提示](.agents/sdd/references/scenarios.md)与[执行协作](.agents/sdd/references/delegation.md)按需读取。五个独立角色位于 .codex/agents/，职责、模型及按需使用规则见执行协作。实体模板在 .agents/sdd/assets/，按任务裁剪；项目索引仅指向实际 Spec、Blueprint 和 Plan。
+<!-- sdd-contract-governance:end -->

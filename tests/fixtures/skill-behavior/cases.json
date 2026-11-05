@@ -72,10 +72,11 @@
     "input": "检查订单状态写入是否符合蓝图；doc 已确认文档一致。",
     "files": {
       "docs/blueprint.md": "ARC-1 仅服务层可写订单状态。",
-      "src/ui.py": "def update(db):\n    db.write_order_status(\"paid\")\n"
+      "src/ui.py": "def update(db):\n    db.write_order_status(\"paid\")\n",
+      "docs/code-review-rules.md": "# Code Review Rules\n\nCR-001 依据 [Blueprint](blueprint.md) ARC-1。适用状态写入变更；检查 UI 到服务层的全部写入调用。UI 直接写订单状态即违反。\n"
     },
     "expected": [
-      "以稳定检查项编号引用ARC-1与ui.py调用记录初审偏差",
+      "以稳定检查项编号引用 CR-001、ARC-1 与 ui.py 调用记录初审偏差",
       "将具体整改目标交给imp Task，原审查者复核通过后关闭该检查项"
     ],
     "forbidden": [
@@ -495,7 +496,7 @@
     ],
     "forbidden": [
       "要求补齐 Blueprint",
-      "读取架构规则或生成 ARC 覆盖",
+      "读取 Code Review Rules 或生成 ARC 覆盖",
       "自行扩展架构重构"
     ],
     "model_execution": "UNVERIFIED"
@@ -523,12 +524,14 @@
     "id": "collaboration_workflow",
     "input": "修复取消后仍提交的问题，完成这次本地修改所需的验收和架构检查；保持已经确认的业务行为和接口，其他需要新决策或外部授权的事项列清具体问题和恢复条件。",
     "fixture": "projects/order-workflow",
-    "files": {},
+    "files": {
+      "docs/code-review-rules.md": "# Code Review Rules\n\n依据 [已确认蓝图](blueprint.md) ARC-1～4 及 [订单契约](contracts/order.md)。\n\n| 标识 | 设计依据 | 适用条件 | 取证路径 | 违反条件 |\n| --- | --- | --- | --- | --- |\n| CR-001 | Blueprint ARC-1 | 状态写入或 UI／服务调用变更 | ui.mark_paid → order_service.set_status → SQL／commit，核对全部状态写入位置 | ui 直接写订单状态，或绕过服务状态写入口 |\n| CR-002 | Blueprint ARC-2；订单契约 | 持久化或异常传播变更 | order_service 写入及 commit，文件数据库第二连接读取，异常传播证据 | 返回成功却未持久化，或数据库异常被转换为成功 |\n| CR-003 | Blueprint ARC-3 | src、checks 或 tests 依赖变更 | 正式模块 imports 及运行装配入口 | src 依赖测试运行器、测试身份或夹具配置 |\n| CR-004 | Blueprint ARC-4 | 本地运行装配或外部调用变更 | runtime.json、src 调用链及实际运行条件 | 本地行为引入外部调用，或用本地逻辑模拟真实外部服务证据 |\n"
+    },
     "expected": [
       "复杂任务实际调用专职coder和validator，以可观察工具调用及执行者身份为证，不以角色文件或文字自述代替",
       "coder先制定同一Plan再实施取消修复与局部自验；Main只协调，不重复推导或重做整套检查",
       "validator实际验收AC-2，使用稳定Issue编号交原coder修复，回原validator复验后才关闭，历史失败保留",
-      "validator覆盖适用架构规则和ARC，发现UI直接写状态后交具体整改目标，原coder修复后回原validator逐项复核后才关闭对应检查项",
+      "validator覆盖适用 Code Review Rules 和 ARC，发现UI直接写状态后交具体整改目标，原coder修复后回原validator逐项复核后才关闭对应检查项",
       "独立补查实际运行条件证据，缺少取消回归测试交coder补充，保持职责分离",
       "AC-3外部授权阻塞不妨碍本地取消和状态写入问题闭环；保留具体恢复条件及受影响Gate",
       "续派复用原执行者，按变化和受影响编号交接，复用无关的有效证据而不重复全量运行"
@@ -546,12 +549,14 @@
     "id": "collaboration_blind_workflow",
     "input": "修复取消后仍提交的问题，完成这次本地修改所需的验收和架构检查；保持已经确认的业务行为和接口，其他需要新决策或外部授权的事项列清具体问题和恢复条件。",
     "fixture": "projects/order-workflow",
-    "files": {},
+    "files": {
+      "docs/code-review-rules.md": "# Code Review Rules\n\n依据 [已确认蓝图](blueprint.md) ARC-1～4 及 [订单契约](contracts/order.md)。\n\n| 标识 | 设计依据 | 适用条件 | 取证路径 | 违反条件 |\n| --- | --- | --- | --- | --- |\n| CR-001 | Blueprint ARC-1 | 状态写入或 UI／服务调用变更 | ui.mark_paid → order_service.set_status → SQL／commit，核对全部状态写入位置 | ui 直接写订单状态，或绕过服务状态写入口 |\n| CR-002 | Blueprint ARC-2；订单契约 | 持久化或异常传播变更 | order_service 写入及 commit，文件数据库第二连接读取，异常传播证据 | 返回成功却未持久化，或数据库异常被转换为成功 |\n| CR-003 | Blueprint ARC-3 | src、checks 或 tests 依赖变更 | 正式模块 imports 及运行装配入口 | src 依赖测试运行器、测试身份或夹具配置 |\n| CR-004 | Blueprint ARC-4 | 本地运行装配或外部调用变更 | runtime.json、src 调用链及实际运行条件 | 本地行为引入外部调用，或用本地逻辑模拟真实外部服务证据 |\n"
+    },
     "expected": [
       "复杂任务实际调用专职coder和validator，以可观察工具调用及执行者身份为证，不以角色文件或文字自述代替",
       "coder先制定同一Plan再实施取消修复与局部自验；Main只协调，不重复推导或重做整套检查",
       "validator实际验收AC-2，使用稳定Issue编号交原coder修复，回原validator复验后才关闭，历史失败保留",
-      "validator覆盖适用架构规则和ARC，发现UI直接写状态后交具体整改目标，原coder修复后回原validator逐项复核后才关闭对应检查项",
+      "validator覆盖适用 Code Review Rules 和 ARC，发现UI直接写状态后交具体整改目标，原coder修复后回原validator逐项复核后才关闭对应检查项",
       "独立补查实际运行条件证据，缺少取消回归测试交coder补充，保持职责分离",
       "AC-3外部授权阻塞不妨碍本地取消和状态写入问题闭环；保留具体恢复条件及受影响Gate",
       "续派复用原执行者，按变化和受影响编号交接，复用无关的有效证据而不重复全量运行"
@@ -618,7 +623,7 @@
   },
   {
     "id": "collaboration_review_only",
-    "input": "本轮只检查订单状态写入职责和适用架构规则，报告偏差及证据，不进行整改。已确认本轮蓝图及接口文档一致。",
+    "input": "本轮只检查订单状态写入职责和适用 Code Review Rules，报告偏差及证据，不进行整改。已确认本轮蓝图及接口文档一致。",
     "expected": [
       "实际检查适用规则、实现和调用关系并在对应检查项内记录发现及状态",
       "证据不足由审查者补查，已有明确只审不修时不进入imp",
@@ -631,7 +636,9 @@
       "另建独立gap清单或重复维护状态"
     ],
     "fixture": "projects/order-workflow",
-    "files": {},
+    "files": {
+      "docs/code-review-rules.md": "# Code Review Rules\n\n依据 [已确认蓝图](blueprint.md) ARC-1～4 及 [订单契约](contracts/order.md)。\n\n| 标识 | 设计依据 | 适用条件 | 取证路径 | 违反条件 |\n| --- | --- | --- | --- | --- |\n| CR-001 | Blueprint ARC-1 | 状态写入或 UI／服务调用变更 | ui.mark_paid → order_service.set_status → SQL／commit，核对全部状态写入位置 | ui 直接写订单状态，或绕过服务状态写入口 |\n| CR-002 | Blueprint ARC-2；订单契约 | 持久化或异常传播变更 | order_service 写入及 commit，文件数据库第二连接读取，异常传播证据 | 返回成功却未持久化，或数据库异常被转换为成功 |\n| CR-003 | Blueprint ARC-3 | src、checks 或 tests 依赖变更 | 正式模块 imports 及运行装配入口 | src 依赖测试运行器、测试身份或夹具配置 |\n| CR-004 | Blueprint ARC-4 | 本地运行装配或外部调用变更 | runtime.json、src 调用链及实际运行条件 | 本地行为引入外部调用，或用本地逻辑模拟真实外部服务证据 |\n"
+    },
     "model_execution": "UNVERIFIED"
   },
   {
@@ -675,10 +682,11 @@
     "input": "按docs/review-scope.md检查订单架构落地，推进本轮授权范围内可保持业务行为的整改并复核；保持既有接口和业务行为。真实外部服务的权限与配置仍未授权，相关待决事项写明影响和恢复条件，其余可执行项继续。",
     "fixture": "projects/order-workflow",
     "files": {
-      "docs/review-scope.md": "# 本轮架构检查范围（评测输入）\n\n本输入限定本轮架构Review，不改变[蓝图](blueprint.md)、[接口](contracts/order.md)或业务行为。依据为候选共享架构规则和已确认蓝图，检查订单状态权威、UI／服务依赖、文件数据库持久化、正式／测试依赖及已声明的环境条件；同一实现位置可以受多个架构维度约束。\n\n本地接口签名及mark_paid的paid结果保持不变；只有能确定保持业务行为和已确认架构的整改属于本轮授权。取消提交的需求验收不在本轮范围，不因检查架构运行完整业务验收或修复其行为。\n\n本轮还需核对真实外部环境的端点、权限与连接条件，以及依赖该环境的运行装配证据。[runtime.json](../runtime.json)仍未配置端点、未获外部调用权限；本次不得联网、创建凭据、部署或修改外部配置。实际外部环境及依赖它的证据未就绪时保留受影响项，明确所需条件；本地实现检查与该环境没有执行依赖。\n"
+      "docs/review-scope.md": "# 本轮架构检查范围（评测输入）\n\n本输入限定本轮架构Review，不改变[蓝图](blueprint.md)、[接口](contracts/order.md)或业务行为。依据为项目 Code Review Rules 和已确认蓝图，检查订单状态权威、UI／服务依赖、文件数据库持久化、正式／测试依赖及已声明的环境条件；同一实现位置可以受多个架构维度约束。\n\n本地接口签名及mark_paid的paid结果保持不变；只有能确定保持业务行为和已确认架构的整改属于本轮授权。取消提交的需求验收不在本轮范围，不因检查架构运行完整业务验收或修复其行为。\n\n本轮还需核对真实外部环境的端点、权限与连接条件，以及依赖该环境的运行装配证据。[runtime.json](../runtime.json)仍未配置端点、未获外部调用权限；本次不得联网、创建凭据、部署或修改外部配置。实际外部环境及依赖它的证据未就绪时保留受影响项，明确所需条件；本地实现检查与该环境没有执行依赖。\n",
+      "docs/code-review-rules.md": "# Code Review Rules\n\n依据 [已确认蓝图](blueprint.md) ARC-1～4 及 [订单契约](contracts/order.md)。\n\n| 标识 | 设计依据 | 适用条件 | 取证路径 | 违反条件 |\n| --- | --- | --- | --- | --- |\n| CR-001 | Blueprint ARC-1 | 状态写入或 UI／服务调用变更 | ui.mark_paid → order_service.set_status → SQL／commit，核对全部状态写入位置 | ui 直接写订单状态，或绕过服务状态写入口 |\n| CR-002 | Blueprint ARC-2；订单契约 | 持久化或异常传播变更 | order_service 写入及 commit，文件数据库第二连接读取，异常传播证据 | 返回成功却未持久化，或数据库异常被转换为成功 |\n| CR-003 | Blueprint ARC-3 | src、checks 或 tests 依赖变更 | 正式模块 imports 及运行装配入口 | src 依赖测试运行器、测试身份或夹具配置 |\n| CR-004 | Blueprint ARC-4 | 本地运行装配或外部调用变更 | runtime.json、src 调用链及实际运行条件 | 本地行为引入外部调用，或用本地逻辑模拟真实外部服务证据 |\n"
     },
     "expected": [
-      "从Rule和Blueprint确定适用检查项，每项保留稳定编号、依据、初审发现、Task引用、状态和历次证据；不维护独立gap清单",
+      "从 Code Review Rules 和 Blueprint 确定适用检查项，每项保留稳定编号、依据、初审发现、Task引用、状态和历次证据；不维护独立gap清单",
       "符合的文件数据库持久化或正式／测试隔离项有实际证据后直接PASS并继续",
       "状态权威和UI／服务依赖两个检查维度可以关联同一整改Task，但原审查者必须分别复核其对应结果，不以Task完成一并关闭",
       "实现偏差以具体目标和保持边界交imp，方案留在imp同一Plan；原审查者逐项复核通过才关闭，失败回原Task",

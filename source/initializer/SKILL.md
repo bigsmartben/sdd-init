@@ -21,7 +21,7 @@ description: 用户要求安装或升级项目 SDD 工作流时使用；安装�
 
 初始化器只提供 inspect／init。旧 start、record、attest、check、finish、commit 命令已退役，不保留兼容入口；历史文档不迁移，项目工作由现行 Skills 承担，文档机械检查使用 doc_check.py。
 
-默认目录和工程资产规则随包安装至项目 `.agents/sdd/references/sdd-repository-governance.md`，`docs/index.md` 与该项目规则只在缺失时初始化。已有项目查其路径映射，按需归并后续规则；不因安装创建产品实体或迁移存量。
+默认目录和工程资产规则随包安装至项目 `.agents/sdd/references/sdd-repository-governance.md`，`docs/index.md` 与该项目规则只在缺失时初始化。已有项目查其路径映射，按需归并后续规则。项目 Code Review Rules 的维护时机由用户决定，明确请求后通过 sdd-doc 生成或更新；安装和升级仅分发模板，不生成项目规则或迁移存量。
 
 需要解释项目流程时读取 [governance](references/sdd-repository-governance.md)，模板在 assets；项目载荷为 `assets/repo-payload.zip`，不展开到用户级 Skills 或 Agent 目录。核对安装入口时读取[独立沟通原则片段](assets/communication-fragment.md)与[流程导航片段](assets/agents-fragment.md)。已有文档只在明确的文档任务中按实际来源归并，不用模板覆盖。
 

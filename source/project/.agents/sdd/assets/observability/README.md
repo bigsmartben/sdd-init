@@ -1,6 +1,6 @@
 # SDD 本地观测资源（契约 1.0.0）
 
-规范以[架构 Rule](../../references/architecture-rules.md)及[观测基线](../../references/observability-baseline.md)为准。以下端点、SDK 和后端描述属于参考实现及历史验证环境，不是通用架构选型；本机共享栈当前运行状态未在本轮验证。
+规范以[架构原则](../../references/architecture-rules.md)及[观测基线](../../references/observability-baseline.md)为准。以下端点、SDK 和后端描述属于参考实现及历史验证环境，不是通用架构选型；本机共享栈当前运行状态未在本轮验证。
 
 以下历史接入示例使用的共享栈位于本机 `C:/Users/24598/Projects/otel-stack`；该示例复用共享 Compose，项目侧配置身份、端点、接入与记录策略；目标项目的部署及共享方式由其已确认环境设计确定。此目录的参考契约由 sdd-init 分发；初始化器只安装资源，不启动栈或修改业务。SQLite 非必需。实际共享栈版本和部署以其仓库为准。
 
