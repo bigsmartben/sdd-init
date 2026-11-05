@@ -1,0 +1,3 @@
+COMMAND: python -B .agents/sdd/scripts/doc_check.py --root . docs/test-reports/order/2026-11-05-review.md
+EXIT: 0
+Checked 1 Markdown files: 0 errors, 0 warnings (mechanical only)

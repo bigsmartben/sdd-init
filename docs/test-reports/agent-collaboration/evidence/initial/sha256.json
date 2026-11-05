@@ -1,0 +1,11 @@
+{
+  ".agents/sdd/references/sdd-repository-governance.md": "dbd59db90c7e1abc60bff0db74cdc85f4ae1301e86f65c4ecb902fb66466d116",
+  ".agents/sdd/references/delegation.md": "6263c0708c6ec7332b3e612e9d419a9f4ad53151acfb345f200cc7d3b4f0a29d",
+  ".agents/skills/sdd-imp/SKILL.md": "82deb2dc3eff2bf8bb2ac7c5600f90501c8a0aeb9812041ae4243363473f8767",
+  ".agents/skills/sdd-test-loop/SKILL.md": "09be09dca89d893b983ecd2a4700d9a1218d68db8b1e2debd070e2074438c88f",
+  ".agents/skills/sdd-review-loop/SKILL.md": "d120f6ca710339a79e7cba4d99cf6ce38d0dcae365c0b02415e882405fa0676b",
+  "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+  "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+  "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+  "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311"
+}

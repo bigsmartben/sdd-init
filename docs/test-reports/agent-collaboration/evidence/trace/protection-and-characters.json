@@ -1,0 +1,81 @@
+{
+  "protected_files": 125,
+  "changed": [],
+  "added": [],
+  "method": "SHA-256 of every file under repository .agents/, repository .codex/, and C:/Users/24598/.agents/skills/sdd-init; compared with pre-implementation snapshot.",
+  "character_baseline": [
+    {
+      "path": "source/project/.agents/sdd/references/sdd-repository-governance.md",
+      "han": 3733,
+      "non_whitespace": 6544
+    },
+    {
+      "path": "source/project/.agents/sdd/references/delegation.md",
+      "han": 1068,
+      "non_whitespace": 1732
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-imp/SKILL.md",
+      "han": 1200,
+      "non_whitespace": 1829
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-test-loop/SKILL.md",
+      "han": 918,
+      "non_whitespace": 1558
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-review-loop/SKILL.md",
+      "han": 992,
+      "non_whitespace": 1589
+    },
+    {
+      "path": "source/project/.codex/agents/sdd-coder.toml",
+      "han": 194,
+      "non_whitespace": 455
+    },
+    {
+      "path": "source/project/.codex/agents/sdd-validator.toml",
+      "han": 156,
+      "non_whitespace": 405
+    }
+  ],
+  "character_final": [
+    {
+      "path": "source/project/.agents/sdd/references/sdd-repository-governance.md",
+      "han": 3902,
+      "non_whitespace": 6759
+    },
+    {
+      "path": "source/project/.agents/sdd/references/delegation.md",
+      "han": 1327,
+      "non_whitespace": 2083
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-imp/SKILL.md",
+      "han": 1221,
+      "non_whitespace": 1855
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-test-loop/SKILL.md",
+      "han": 937,
+      "non_whitespace": 1621
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-review-loop/SKILL.md",
+      "han": 995,
+      "non_whitespace": 1630
+    },
+    {
+      "path": "source/project/.codex/agents/sdd-coder.toml",
+      "han": 215,
+      "non_whitespace": 486
+    },
+    {
+      "path": "source/project/.codex/agents/sdd-validator.toml",
+      "han": 188,
+      "non_whitespace": 444
+    }
+  ],
+  "counting": "CJK U+3400–U+4DBF and U+4E00–U+9FFF; all non-whitespace characters. Same seven distribution-source files before/after."
+}

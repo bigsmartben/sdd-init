@@ -1,0 +1,121 @@
+"""Prepare fresh, isolated model-evaluation workspaces from maintained fixtures.
+
+This copies candidate rules without invoking an installer or a model. Evaluation
+criteria remain outside the executor's project; model results are never inferred.
+"""
+import argparse
+import hashlib
+import json
+from pathlib import Path, PurePosixPath
+import shutil
+
+ROOT = Path(__file__).resolve().parents[1]
+CORPUS = ROOT / "tests/fixtures/skill-behavior"
+
+
+def relative_path(raw):
+    path = PurePosixPath(raw)
+    if not raw or path.is_absolute() or any(part in ("..", ".", "") for part in raw.split("/")) or "\\" in raw or ":" in raw:
+        raise ValueError(f"Unsafe fixture path: {raw}")
+    return path
+
+
+def load_cases(path=CORPUS / "cases.json"):
+    cases = json.loads(path.read_text(encoding="utf-8"))
+    ids = [case["id"] for case in cases]
+    if len(ids) != len(set(ids)):
+        raise ValueError("Duplicate case ID")
+    for case in cases:
+        relative_path(case["id"])
+    return {case["id"]: case for case in cases}
+
+
+def tree_files(root):
+    if root.is_symlink() or not root.is_dir():
+        raise ValueError(f"Fixture source must be an existing ordinary directory: {root}")
+    result = {}
+    for path in sorted(root.rglob("*")):
+        if path.is_symlink():
+            raise ValueError(f"Symlink is not a fixture input: {path}")
+        if path.is_file() and "__pycache__" not in path.parts and path.suffix != ".pyc":
+            result[path.relative_to(root).as_posix()] = path.read_bytes()
+    return result
+
+
+def prepare_case(case, output, *, candidate=ROOT / "source/project", corpus=CORPUS):
+    """Create a new case directory after validating every input path."""
+    output = Path(output)
+    if output.exists() or output.is_symlink():
+        raise FileExistsError(f"Output already exists: {output}")
+    # A linked parent could silently write into an unrelated installation.
+    for parent in output.parents:
+        if parent.is_symlink():
+            raise ValueError(f"Linked output parent: {parent}")
+    payload = tree_files(candidate)
+    rules = dict(payload)
+    if "fixture" in case:
+        fixture = corpus / str(relative_path(case["fixture"]))
+        if not fixture.is_dir():
+            raise ValueError(f"Missing fixture: {fixture}")
+        for parent in (fixture, *fixture.parents):
+            if parent == corpus.parent:
+                break
+            if parent.is_symlink():
+                raise ValueError(f"Linked fixture path: {parent}")
+        payload.update(tree_files(fixture))
+    for name, content in case.get("files", {}).items():
+        payload[str(relative_path(name))] = content.encode("utf-8")
+    for name in payload:
+        relative_path(name)
+        if any(parent.as_posix() in payload for parent in PurePosixPath(name).parents if str(parent) != "."):
+            raise ValueError(f"Fixture file shadows a parent directory: {name}")
+    if case.get("fixture") and any(payload.get(name) != content for name, content in rules.items() if name.startswith((".agents/", ".codex/"))):
+        raise ValueError("Fixture must not override candidate rules")
+    project = output / "project"
+    project.mkdir(parents=True)
+    for name, content in payload.items():
+        path = project / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+    (project / "AGENTS.md").write_text(
+        "# 隔离评测项目\n\n本目录是评测测试资产。先读 README.md 和 docs/index.md；"
+        "共享治理见 [.agents/sdd/references/sdd-repository-governance.md](.agents/sdd/references/sdd-repository-governance.md)，"
+        "执行协作见 [.agents/sdd/references/delegation.md](.agents/sdd/references/delegation.md)。"
+        "Skill 与角色以本目录候选快照为准。仅在本目录内执行当前用户任务，不修改维护仓库的安装副本或外部项目。\n",
+        encoding="utf-8")
+    (project / "TASK.txt").write_text(case["input"] + "\n", encoding="utf-8")
+    manifest = {
+        "case": case["id"],
+        "candidate_source": str(candidate.resolve()),
+        "files": {name: hashlib.sha256(content).hexdigest() for name, content in sorted(rules.items())},
+        "preparation_only": True,
+        "model_execution": "UNVERIFIED",
+    }
+    (output / "candidate-manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (output / "evaluation.json").write_text(json.dumps({
+        "case": case["id"], "expected": case["expected"], "forbidden": case["forbidden"],
+        "setup": case.get("evaluation_setup"),
+        "model_execution": "UNVERIFIED",
+    }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return project
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--case", action="append", required=True, dest="case_ids")
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    cases = load_cases()
+    if len(args.case_ids) != len(set(args.case_ids)):
+        parser.error("Repeated --case")
+    if args.output.exists() or args.output.is_symlink():
+        parser.error(f"Output already exists: {args.output}")
+    for name in args.case_ids:
+        if name not in cases:
+            parser.error(f"Unknown case: {name}")
+    for name in args.case_ids:
+        print(prepare_case(cases[name], args.output / name))
+
+
+if __name__ == "__main__":
+    main()

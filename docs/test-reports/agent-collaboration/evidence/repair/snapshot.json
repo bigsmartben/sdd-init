@@ -1,0 +1,23 @@
+{
+  "scope": "EVAL-ISS-001 and EVAL-GAP-001 local repair; awaiting validator",
+  "command": [
+    "C:\\Users\\24598\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_order.py",
+    "-v"
+  ],
+  "local_exit": 0,
+  "files": {
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/ui.py": "874792eff2f888d16c67e58f21bf0a7c2087cade0aab5343857d2743cf921c16",
+    "tests/test_order.py": "68335dcf0a00ed7e9730b3f8e36c6d0de7ee6f642b02e0db7335cf8e9f150de5"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+  "sqlite": "3.50.4",
+  "runtime": {
+    "environment": "isolated-local-fixture",
+    "database": "per-scenario temporary SQLite file",
+    "external_endpoint": null,
+    "external_call_authorized": false,
+    "network_access_in_this_run": false
+  },
+  "source_sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b"
+  }
+}

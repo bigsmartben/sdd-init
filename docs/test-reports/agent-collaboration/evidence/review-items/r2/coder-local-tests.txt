@@ -1,0 +1,11 @@
+Command: python -B -m unittest discover -s tests -p test_order.py -k mark_paid -v
+test_mark_paid_database_errors_propagate (test_order.OrderTests.test_mark_paid_database_errors_propagate) ... ok
+test_mark_paid_delegates_to_service (test_order.OrderTests.test_mark_paid_delegates_to_service) ... ok
+test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok
+test_mark_paid_unknown_order_raises (test_order.OrderTests.test_mark_paid_unknown_order_raises) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.038s
+
+OK
+Exit code: 0

@@ -1,0 +1,10 @@
+{
+  "executor": "/root/boundary_main",
+  "utc": "2026-11-04T23:19:29.3562558Z",
+  "command": "python -B -m unittest discover -s tests -p test_order_input.py -v",
+  "exit_code": 0,
+  "output": "test_existing_invalid_inputs_are_still_rejected (test_order_input.CreateOrderInputTests.test_existing_invalid_inputs_are_still_rejected) ... ok\r\ntest_valid_id_is_preserved_with_pending_status_and_commit (test_order_input.CreateOrderInputTests.test_valid_id_is_preserved_with_pending_status_and_commit) ... ok\r\ntest_whitespace_only_id_is_rejected_without_insert (test_order_input.CreateOrderInputTests.test_whitespace_only_id_is_rejected_without_insert) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.001s\r\n\r\nOK\r\n",
+  "source_sha256": "22DFE4F33D3A018F3D50CA8518202367E3206FD68A098D4EDBB6570A651D6F3B",
+  "tests_sha256": "287595D77E3B1103426C587B55A106D9EA81306303796FEC4469F71409CD8B62",
+  "environment": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]\r\n3.50.4\r\n"
+}

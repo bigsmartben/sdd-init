@@ -1,0 +1,8 @@
+{
+  "provenance": "Transcription by the dispatching Main of the actual spawn_agent message arguments in this chat. Original rollout stores message encrypted, so this readable dispatch record is not independently decrypted evidence. Use call_id/fork_turns and project TASK.txt plus execution trace for cross-checks.",
+  "call_id": "call_1e694c9eed304f06a338eaf46821cb34",
+  "agent_type": "default",
+  "task_name": "blind_main",
+  "fork_turns": "none",
+  "message": "工作根目录：C:/Users/24598/Documents/github/sdd-init/.build/agent-collaboration/20261105-live-r2/collaboration_blind_workflow/project。请先读该目录AGENTS.md、README.md、docs/index.md，并按其现行规则处理用户任务：修复取消后仍提交的问题，完成这次本地修改所需的验收和架构检查；保持已经确认的业务行为和接口，其他需要新决策或外部授权的事项列清具体问题和恢复条件。用户授权该目录内本地实施、测试、审查及必要记录。仅在此目录工作；不读父目录中的评估材料或其他case，不改维护仓库/已安装资源/真实外部服务，不做Git或网络操作。你不是唯一执行者，保留其他执行者修改。将实际执行的证据保存到本项目 evidence/，最后返回目标覆盖、实际结果、未完成项与证据路径。"
+}

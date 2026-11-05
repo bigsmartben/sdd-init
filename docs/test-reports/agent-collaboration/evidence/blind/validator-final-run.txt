@@ -1,0 +1,69 @@
+Command: python -B checks/acceptance.py
+[
+  {
+    "scenario": "AC-1",
+    "result": "PASS",
+    "accepted": true,
+    "persisted_status": "submitted",
+    "expected_accepted": true,
+    "expected_status": "submitted"
+  },
+  {
+    "scenario": "AC-2",
+    "result": "PASS",
+    "accepted": false,
+    "persisted_status": "cancelled",
+    "expected_accepted": false,
+    "expected_status": "cancelled"
+  },
+  {
+    "scenario": "AC-3",
+    "result": "BLOCKED",
+    "reason": "No external call is performed by this fixture; authorized endpoint and permission are required",
+    "endpoint_configured": false,
+    "authorized": false
+  }
+]
+Exit code: 3
+Command: python -B checks/runtime_details.py
+{
+  "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+  "sqlite": "3.50.4",
+  "runtime": {
+    "environment": "isolated-local-fixture",
+    "database": "per-scenario temporary SQLite file",
+    "external_endpoint": null,
+    "external_call_authorized": false,
+    "network_access_in_this_run": false
+  },
+  "source_sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "610036df97e97297bf0e9f8e29ba87ab91484690334bb3072875dc7a5e3a3c67",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "3e3de4dc74371f73bfb9a6aa8df56aa8084096761a457d38f46cb5d19ce82ac7"
+  }
+}
+Exit code: 0
+Command: Get-FileHash tests/test_order.py -Algorithm SHA256
+
+Algorithm : SHA256
+Hash      : D80B43E6F5E75FD69A917EE7F73C6B9946FDEB1E7AD08D8ADF5EED92F8BA0765
+Path      : C:\Users\24598\Documents\github\sdd-init\.build\agent-collaboration\20261105-live-r2\collaboration_blind_workflow\project\tests\test_order.py
+
+
+Command: python -B -m unittest discover -s tests -v
+test_cancelled_submit_does_not_write_or_commit (test_order.OrderTests.test_cancelled_submit_does_not_write_or_commit) ... ok
+test_cancelled_submit_preserves_persisted_status (test_order.OrderTests.test_cancelled_submit_preserves_persisted_status) ... ok
+test_mark_paid_database_error_propagates (test_order.OrderTests.test_mark_paid_database_error_propagates) ... ok
+test_mark_paid_delegates_to_service (test_order.OrderTests.test_mark_paid_delegates_to_service) ... ok
+test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok
+test_mark_paid_unknown_order_raises (test_order.OrderTests.test_mark_paid_unknown_order_raises) ... ok
+test_normal_submit (test_order.OrderTests.test_normal_submit) ... ok
+test_submit_read_error_propagates (test_order.OrderTests.test_submit_read_error_propagates) ... ok
+test_submit_write_and_commit_errors_propagate (test_order.OrderTests.test_submit_write_and_commit_errors_propagate) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.141s
+
+OK
+Exit code: 0

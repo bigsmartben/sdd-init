@@ -1,0 +1,12 @@
+{
+  "source_stable_during_build": true,
+  "project_payload_byte_match": true,
+  "source_count": 67,
+  "packaged_count": 67,
+  "shared_projection_byte_match": true,
+  "shared_count": 46,
+  "governance_sha256": "07cb48c65bda5aaf83c52caa098e314a0cf56f48ee7a429c237795cc1262bdef",
+  "delegation_sha256": "704258d7e5b47950fa22e7f956a54e7acbbfc086cde44249cdc82aea499efd55",
+  "product_payload_contains_tests": false,
+  "build_exit": 0
+}

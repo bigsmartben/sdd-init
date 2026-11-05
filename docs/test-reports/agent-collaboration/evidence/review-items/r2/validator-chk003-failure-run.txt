@@ -1,0 +1,4 @@
+read: same exception propagated; no success returned
+write: same exception propagated; no success returned
+commit: same exception propagated; no success returned
+Exit code: 0

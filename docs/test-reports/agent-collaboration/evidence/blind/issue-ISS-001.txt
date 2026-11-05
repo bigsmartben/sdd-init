@@ -1,0 +1,30 @@
+# Issue：ISS-001 取消后提交覆盖状态
+
+## 1. 问题事实
+
+- 类型：实现缺陷；依据 [AC-2](../../specs/order/spec.md)。
+- 初次发现：2026-11-05，validator；隔离本地夹具，源码快照及运行环境见[初验原始证据](../../evidence/validator-initial.txt)。
+- 复现：新建 ORDER-1，取消后提交并重开 SQLite；预期 false、cancelled，实际 true、submitted。`src/order_service.py` 的提交路径无条件写入 submitted。
+- 影响：取消状态可被覆盖，AC-2 失败。
+
+## 2. 当前处理状态
+
+- 承接者：coder。
+- 修复 Task：[T001](../plans/order-repair.md#t001保护取消状态)。
+- 当前状态：已复验关闭。
+- 阻塞与恢复条件：无。
+
+## 3. 处理与复验历史
+
+| 时间／执行者 | 动作与处理结果 | 修复版本／Task／局部自验证据 | 复验报告／用例与版本 | 状态变化及依据 |
+|---|---|---|---|---|
+| 2026-11-05／validator | 初验发现缺陷 | 不适用 | [初验 AC-2](../test-reports/order/initial.md) | 待处理；实际结果违反 AC-2 |
+| 2026-11-05／coder | 完成修复与局部单测 | [T001](../plans/order-repair.md#t001保护取消状态)、[证据](../../evidence/coder-local-tests.txt) | 待复验 | 已修改待复验；coder 返回 |
+| 2026-11-05／validator | AC-2 及 AC-1 修复后通过 | [T001](../plans/order-repair.md#t001保护取消状态) | [复验](../test-reports/order/retest.md) | 已修改待复验 → 已复验关闭；validator 判定 |
+
+## 4. 关联入口
+
+[需求](../../specs/order/spec.md)；[初验报告](../test-reports/order/initial.md)。
+
+
+

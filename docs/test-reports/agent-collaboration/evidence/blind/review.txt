@@ -1,0 +1,41 @@
+# 架构 Review 记录：订单／本轮
+
+## 1. 范围与上下文
+
+- 范围：订单服务、适配层、持久化及验证资产的架构边界；依据 [Blueprint](../../blueprint.md)、[契约](../../contracts/order.md)、[架构规范](../../../.agents/sdd/references/architecture-rules.md)及[观测基线](../../../.agents/sdd/references/observability-baseline.md)。文档前置检查见[预检](../../../evidence/doc-precheck.md)。
+- 初审：validator，2026-11-05，隔离本地工作区；源码哈希、Python 与 SQLite 版本见[初验原始证据](../../../evidence/validator-initial.txt)，未采集 Git 版本。逐项依据和位置见[初审证据](../../../evidence/validator-initial-findings.md)。
+- 修复边界：保持业务行为、接口和已确认架构；本地目录内实施与检查。
+- 交接目标：GAP-001 使 mark_paid 经服务写入，保持现存订单 paid 持久化、接口及不存在订单 ValueError；具体方案归[实施计划](../../plans/order-repair.md)。
+
+## 2. 检查项与初审结果
+
+| 检查编号 | 依据与检查项 | 对象与范围 | 方法／预期 | 实际结果与证据／快照 | 初审结论 | Gap 编号 |
+|---|---|---|---|---|---|---|
+| CHK-001 | ARC-1 状态写入归属 | src/ui.py mark_paid | 检查调用链 | 直接 UPDATE／commit，详见[初审](../../../evidence/validator-initial-findings.md) | FAIL | GAP-001 |
+| CHK-002 | ARC-2 持久化与异常 | 服务与 SQLite | 静态调用链及重开状态 | 静态路径符合，AC-1 重开通过；提交／commit 故障传播缺动态证据 | UNVERIFIED | 故障路径待复核 |
+| CHK-003 | ARC-3 正式测试隔离 | src、checks、tests | 检查依赖装配 | 所检查正式模块无测试依赖，验证资产调用正式模块 | PASS | 无 |
+| CHK-004 | ARC-4 外部边界 | src、本地场景 | 检查调用和运行事实 | src 无网络调用，本地场景未触网；外部回执仍阻塞 | PASS（本地边界） | 无 |
+| CHK-005 | 测试工程、环境和断言 | checks、tests | 临时数据与覆盖检查 | 临时 SQLite 隔离、重开并清理；初始单测缺取消和错误路径 | UNVERIFIED | 待复核 |
+| CHK-006 | SDD-OBS-01 观测隔离 | src | 检查业务对观测的依赖 | 无观测依赖的源码范围未发现违例 | PASS（所检查范围） | 无 |
+| CHK-007 | SDD-OBS-02/03 文字事实与日志契约 | 项目范围与 Blueprint | 检查适用性及证据 | 无正式观测机制，强制基线与项目范围的适用性待确认 | BLOCKED | GAP-002 |
+| CHK-008 | 媒体与脚手架专项 | 项目范围 | 检查相关入口 | Blueprint 与源码无媒体或生成机制；非已实现拒收 | 不适用 | 无 |
+| CHK-009 | 并发、重试、恢复及视觉交互专项 | 项目范围 | 检查机制及界面 | 无这些机制或页面 | 不适用 | 无 |
+
+## 3. Gap 与修复跟踪
+
+| Gap 编号／检查编号 | 偏差或缺口及影响 | 类型／承接者 | imp Task 引用 | 修复状态 | 修复结果与版本证据 | 阻塞与恢复条件 |
+|---|---|---|---|---|---|---|
+| GAP-001／CHK-001 | 适配层直接写库，违反状态写入归属 | 实现偏差／coder | [T002](../../plans/order-repair.md#t002paid-写入委托服务) | 已复核关闭 | [coder 局部证据](../../../evidence/coder-local-tests.txt)、[源码快照](../../../evidence/coder-after.txt) | 无 |
+| GAP-002／CHK-007 | 观测基线强制条款与 Blueprint 无正式观测系统的适用性及事实范围未明确 | 设计待决／Main | 不适用 | 阻塞 | 无观测机制，见[初审](../../../evidence/validator-initial-findings.md) | 用户／设计决策者确认适用性与范围；若适用，明确授权及可执行契约后实施验证 |
+
+## 4. 复核与 Gate
+
+| 批次／时间／复核者 | 检查／Gap 编号 | 修复后快照 | 范围与方法 | 实际结果及证据 | 复核结论／Gap 状态 |
+|---|---|---|---|---|---|
+| 2026-11-05／validator | GAP-001、CHK-002、CHK-005 | [源码及测试哈希](../../../evidence/validator-final-run.txt) | 调用链、行为保持、读写及 commit 故障注入 | 委托与 paid 持久化符合；AC-1／2 重开通过，异常传播断言通过；[复核证据](../../../evidence/validator-final-findings.md) | PASS；GAP-001 已复核关闭 |
+
+- 初始 Review Gate：非 PASS；GAP-001 待整改复核，GAP-002 BLOCKED，ARC-2 故障动态证据缺口。见[执行者结论](../../../evidence/validator-initial-findings.md)。
+- 最终 Review Gate：BLOCKED；GAP-002 待决。ARC-3/4 等未受影响项按[影响分析](../../../evidence/validator-final-findings.md)复用初审证据。故障注入不证明真实磁盘故障或回滚机制。
+- 后续：GAP-002 按上述恢复条件处理。
+
+

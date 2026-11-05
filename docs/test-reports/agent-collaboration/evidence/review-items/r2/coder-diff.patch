@@ -1,0 +1,70 @@
+--- before/src/ui.py
++++ after/src/ui.py
+@@ -1,6 +1,6 @@
+ """UI adapter surface in the evaluation fixture (there is no graphical UI)."""
++from . import order_service
+ 
+ 
+ def mark_paid(connection, order_id):
+-    connection.execute("UPDATE orders SET status = ? WHERE order_id = ?", ("paid", order_id))
+-    connection.commit()
++    order_service.set_status(connection, order_id, "paid")
+--- before/tests/test_order.py
++++ after/tests/test_order.py
+@@ -1,7 +1,9 @@
+ """Existing local tests; acceptance is a separate checks entry point."""
+ from pathlib import Path
++import sqlite3
+ import tempfile
+ import unittest
++from unittest import mock
+ 
+ from src import order_service, storage, ui
+ 
+@@ -19,8 +21,46 @@
+         self.assertTrue(order_service.submit_order(self.connection, "ORDER-1"))
+         self.assertEqual(order_service.read_status(self.connection, "ORDER-1"), "submitted")
+ 
++    def test_mark_paid_delegates_to_service(self):
++        connection = object()
++        with mock.patch.object(order_service, "set_status") as set_status:
++            self.assertIsNone(ui.mark_paid(connection, "ORDER-1"))
++        set_status.assert_called_once_with(connection, "ORDER-1", "paid")
++
++    def test_mark_paid_unknown_order_raises(self):
++        changes_before = self.connection.total_changes
++        with self.assertRaisesRegex(ValueError, "order not found"):
++            ui.mark_paid(self.connection, "MISSING")
++        self.assertEqual(self.connection.total_changes, changes_before)
++        self.assertEqual(order_service.read_status(self.connection, "ORDER-1"), "pending")
++
++    def test_mark_paid_database_errors_propagate(self):
++        for failing_operation in ("read", "write", "commit"):
++            with self.subTest(failing_operation=failing_operation):
++                connection = mock.Mock()
++                cursor = mock.Mock()
++                cursor.fetchone.return_value = ("pending",)
++                failure = sqlite3.OperationalError(f"{failing_operation} failed")
++
++                def execute(statement, parameters):
++                    if failing_operation == "read" or (
++                        failing_operation == "write" and statement.startswith("UPDATE")
++                    ):
++                        raise failure
++                    return cursor
++
++                connection.execute.side_effect = execute
++                if failing_operation == "commit":
++                    connection.commit.side_effect = failure
++                with self.assertRaises(sqlite3.OperationalError) as raised:
++                    ui.mark_paid(connection, "ORDER-1")
++                self.assertIs(raised.exception, failure)
++                if failing_operation != "commit":
++                    connection.commit.assert_not_called()
++
+     def test_mark_paid_is_persisted(self):
+         ui.mark_paid(self.connection, "ORDER-1")
++        self.connection.close()
+         other = storage.connect(self.path)
+         try:
+             self.assertEqual(order_service.read_status(other, "ORDER-1"), "paid")

@@ -1,0 +1,3 @@
+Command: python -B .agents/sdd/scripts/doc_check.py --root . evidence/doc-precheck.md docs/index.md docs/status.md docs/plans/paid-delegation.md docs/test-reports/order/architecture-review.md
+Checked 5 Markdown files: 0 errors, 0 warnings (mechanical only)
+Exit code: 0

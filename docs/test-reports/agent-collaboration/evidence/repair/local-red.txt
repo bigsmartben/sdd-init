@@ -1,0 +1,26 @@
+COMMAND: C:\Users\24598\AppData\Local\Programs\Python\Python314\python.exe -B -X utf8 -m unittest discover -s tests -p test_order.py -v
+EXIT: 1
+test_cancelled_submit_preserves_persisted_state (test_order.OrderTests.test_cancelled_submit_preserves_persisted_state) ... FAIL
+test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok
+test_normal_submit (test_order.OrderTests.test_normal_submit) ... ok
+
+======================================================================
+FAIL: test_cancelled_submit_preserves_persisted_state (test_order.OrderTests.test_cancelled_submit_preserves_persisted_state)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\24598\Documents\github\sdd-init\.build\agent-collaboration\20261105-live\collaboration_workflow\project\tests\test_order.py", line 30, in test_cancelled_submit_preserves_persisted_state
+    self.assertEqual((accepted, status), (False, "cancelled"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (True, 'submitted') != (False, 'cancelled')
+
+First differing element 0:
+True
+False
+
+- (True, 'submitted')
++ (False, 'cancelled')
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.044s
+
+FAILED (failures=1)

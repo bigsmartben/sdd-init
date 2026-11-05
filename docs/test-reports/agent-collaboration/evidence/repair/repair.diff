@@ -1,0 +1,41 @@
+--- seed/src/order_service.py
++++ repaired/src/order_service.py
+@@ -26,6 +26,7 @@
+ 
+ 
+ def submit_order(connection, order_id):
+-    read_status(connection, order_id)
++    if read_status(connection, order_id) == "cancelled":
++        return False
+     set_status(connection, order_id, "submitted")
+     return True
+--- seed/src/ui.py
++++ repaired/src/ui.py
+@@ -1,6 +1,6 @@
+ """UI adapter surface in the evaluation fixture (there is no graphical UI)."""
++from src import order_service
+ 
+ 
+ def mark_paid(connection, order_id):
+-    connection.execute("UPDATE orders SET status = ? WHERE order_id = ?", ("paid", order_id))
+-    connection.commit()
++    order_service.set_status(connection, order_id, "paid")
+--- seed/tests/test_order.py
++++ repaired/tests/test_order.py
+@@ -19,6 +19,16 @@
+         self.assertTrue(order_service.submit_order(self.connection, "ORDER-1"))
+         self.assertEqual(order_service.read_status(self.connection, "ORDER-1"), "submitted")
+ 
++    def test_cancelled_submit_preserves_persisted_state(self):
++        order_service.cancel_order(self.connection, "ORDER-1")
++        accepted = order_service.submit_order(self.connection, "ORDER-1")
++        other = storage.connect(self.path)
++        try:
++            status = order_service.read_status(other, "ORDER-1")
++        finally:
++            other.close()
++        self.assertEqual((accepted, status), (False, "cancelled"))
++
+     def test_mark_paid_is_persisted(self):
+         ui.mark_paid(self.connection, "ORDER-1")
+         other = storage.connect(self.path)

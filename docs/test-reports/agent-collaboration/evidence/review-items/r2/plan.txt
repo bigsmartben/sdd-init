@@ -1,0 +1,27 @@
+# Plan：paid 写入服务委托整改
+
+## 1. 目标与依据
+
+- 目标与范围：将 UI paid 写入移交既有服务入口，保持所有函数接口、已有订单 paid 结果及文件持久化、数据库异常和未知订单契约语义。仅改 `src/ui.py`、必要测试及 coder 证据；不修改提交／取消逻辑，不运行 acceptance 或业务验收，不改外部配置。
+- 上游任务：[CHK-001 与 CHK-002](../test-reports/order/architecture-review.md)，[初审证据](../../evidence/validator-chk001-002-initial.md)，[初始快照](../../evidence/validator-chk001-002-initial-run.txt)，[接口契约](../contracts/order.md)。
+- 实施前：`src/ui.py:4-6` 直接 UPDATE／commit；服务提供 set_status，原有 paid 持久化测试。
+
+## 2. Task 清单
+
+### T001：mark_paid 委托服务入口并保留 paid 契约
+
+- 依据：CHK-001、CHK-002 共用整改目标，分别复核。
+- 改动范围：`src/ui.py`、`tests/test_order.py`；保留原测试及其他业务源码。
+- 实施内容：调用 `order_service.set_status(connection, order_id, "paid")`，移除适配层直接 SQL／commit；增加委托参数、未知订单 ValueError、数据库读写及 commit 错误传播定向测试，既有 paid 文件测试加强为关闭重开后读取；不改提交或取消行为。
+- 依赖：无；计划输出后直接实施，不依赖全范围初审、总 Gate 或文档审批。
+- 完成条件与局部自验：`python -B -m unittest discover -s tests -p test_order.py -k mark_paid -v` 通过，保存输出、退出码、前后哈希及差异；局部单测不代替独立架构复核。
+- 状态：完成。
+- 结果与证据：4 项定向单测通过、退出 0；[输出](../../evidence/coder-local-tests.txt)、[修复后快照](../../evidence/coder-after.json)、[差异](../../evidence/coder-diff.patch)。
+
+## 3. 交付核对
+
+- T001 覆盖 CHK-001／002 目标，实施与局部自验完成。
+- 实现无阻塞；原 validator 已分别复核关闭，见[Review](../test-reports/order/architecture-review.md)。
+- UI→服务→SQLite 责任链及两项架构符合性已由原 validator 复核；未执行整体业务验收或取消提交验证。
+
+

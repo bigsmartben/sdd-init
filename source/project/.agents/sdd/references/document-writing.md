@@ -23,7 +23,7 @@ sdd-doc 每次写入遵循[仓库治理](sdd-repository-governance.md)，核对�
 | 原型引用与确认 | [原型规则](prototype.md)、[引用模板](../assets/prototype_reference_template.md) | 核对入口、固定版本、模拟边界及确认来源；沿用规则规定的版本保留、冲突及重新确认条件，原型代码归 coder |
 | 测试报告 | [测试范围约束](sdd-repository-governance.md#测试范围约束)、[报告模板](../assets/test_report_template.md)、test 与 imp 返回证据 | 按报告模板核对必备内容、统计与明细、未执行项及批次归属；核对问题引用，Gate 与人工确认取自对应执行者或用户反馈 |
 | Issue | [Issue 模板](../assets/issue_template.md)、发现报告、imp 返回及验收执行者结论 | 按 Issue 模板核对稳定身份、处理历史及报告／Task 引用；状态变更核对修复、复验或人工反馈来源，不自动迁移历史或创建平台议题 |
-| 架构 Review 记录 | [Review 模板](../assets/review_template.md)、sdd-review-loop 与 imp 返回证据 | 落盘检查范围、逐项结果、gap、修复状态及复核；保留初审和版本，修复方案仅引用 imp Task，关闭与 Gate 取自复核执行者；不重复维护通用报告 |
+| 架构 Review 记录 | [Review 模板](../assets/review_template.md)、sdd-review-loop 与 imp 返回证据 | 在各检查项下落盘依据、初审、Task 引用、状态和复核；保留初审和版本，修复方案仅引用 imp Task，关闭与 Gate 取自复核执行者；不另建独立差异清单或重复维护通用报告 |
 | 实施 Plan | [Plan 模板](../assets/plan_template.md)、sdd-imp 清单及证据 | 保留同一计划、依赖、完成条件、状态与证据；不重新拆分方案或用格式检查判定完成 |
 | Quickstart | 测试范围约束、[指南模板](../assets/quickstart_template.md) | 承接已确认范围、数据、场景／AC、适用原型及契约；操作与观察点足以判断多步骤过程；不补定范围和标准，不复制结果 |
 | Status／当前任务 | 测试报告、执行者状态；新建时用[状态模板](../assets/status_template.md) | 报告引用、版本、覆盖及状态对应；只引用逐项结果、Gate 和人工反馈 |

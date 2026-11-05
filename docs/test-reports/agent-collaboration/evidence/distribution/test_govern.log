@@ -1,0 +1,30 @@
+test_architecture_rule_catalog_is_not_project_authority (__main__.GovernanceTests.test_architecture_rule_catalog_is_not_project_authority) ... ok
+test_baseline_distribution_and_existing_blueprint_preservation (__main__.GovernanceTests.test_baseline_distribution_and_existing_blueprint_preservation) ... ok
+test_config_with_existing_agent_subtable_merges_correctly (__main__.GovernanceTests.test_config_with_existing_agent_subtable_merges_correctly) ... ok
+test_conflicting_codex_config_requires_explicit_upgrade (__main__.GovernanceTests.test_conflicting_codex_config_requires_explicit_upgrade) ... ok
+test_embedded_spec_template_limits_implementation_choices (__main__.GovernanceTests.test_embedded_spec_template_limits_implementation_choices) ... ok
+test_existing_agents_preserved_and_merged_once (__main__.GovernanceTests.test_existing_agents_preserved_and_merged_once) ... ok
+test_global_single_skill_and_local_six (__main__.GovernanceTests.test_global_single_skill_and_local_six) ... ok
+test_init_idempotent_and_add_singleton (__main__.GovernanceTests.test_init_idempotent_and_add_singleton) ... ok
+test_init_preserves_existing_spec_without_backfilling_status (__main__.GovernanceTests.test_init_preserves_existing_spec_without_backfilling_status) ... ok
+test_init_protects_local_customizations_unless_approved (__main__.GovernanceTests.test_init_protects_local_customizations_unless_approved) ... ok
+test_init_rejects_legacy_entity_creation_options (__main__.GovernanceTests.test_init_rejects_legacy_entity_creation_options) ... ok
+test_init_rejects_shadowed_root_agents_override (__main__.GovernanceTests.test_init_rejects_shadowed_root_agents_override) ... ok
+test_init_writes_persistent_repo_guidance_without_extra_documents (__main__.GovernanceTests.test_init_writes_persistent_repo_guidance_without_extra_documents) ... ok
+test_inspect_read_only (__main__.GovernanceTests.test_inspect_read_only) ... ok
+test_installed_reference_links_resolve (__main__.GovernanceTests.test_installed_reference_links_resolve) ... ok
+test_installed_roles_and_user_owned_main_model (__main__.GovernanceTests.test_installed_roles_and_user_owned_main_model) ... ok
+test_merges_existing_config_and_preserves_unrelated_keys (__main__.GovernanceTests.test_merges_existing_config_and_preserves_unrelated_keys) ... ok
+test_missing_baseline_rejected_before_install (__main__.GovernanceTests.test_missing_baseline_rejected_before_install) ... ok
+test_observability_payload_conflict_and_explicit_upgrade (__main__.GovernanceTests.test_observability_payload_conflict_and_explicit_upgrade) ... ok
+test_payload_missing_required_reference_fails_before_writing (__main__.GovernanceTests.test_payload_missing_required_reference_fails_before_writing) ... ok
+test_reject_invalid_slug (__main__.GovernanceTests.test_reject_invalid_slug) ... ok
+test_runtime_claims_do_not_leak_into_repo_guidance (__main__.GovernanceTests.test_runtime_claims_do_not_leak_into_repo_guidance) ... ok
+test_speckit_inspired_spec_has_single_verifiable_acceptance_contract (__main__.GovernanceTests.test_speckit_inspired_spec_has_single_verifiable_acceptance_contract) ... ok
+test_user_main_model_and_effort_survive_all_init_modes (__main__.GovernanceTests.test_user_main_model_and_effort_survive_all_init_modes) ... ok
+test_workflows_allow_natural_language_selection (__main__.GovernanceTests.test_workflows_allow_natural_language_selection) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 24.331s
+
+OK

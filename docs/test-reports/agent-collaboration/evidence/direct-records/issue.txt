@@ -1,0 +1,31 @@
+# Issue：EVAL-ISS-001 取消后提交仍被接受
+
+本记录属于隔离评测夹具中的种入缺陷，不是 sdd-init 产品缺陷。
+
+## 1. 问题事实
+
+- 编号、标题与类型：EVAL-ISS-001；取消后提交仍被接受；实现缺陷及缺失取消回归测试。
+- 关联依据与受影响场景：[订单 Spec AC-2](../../specs/order/spec.md)；新建、取消后再提交。
+- 初次发现：2026-11-05，sdd-validator；初始源码哈希和环境见[发现批次](../test-reports/2026-11-05-initial.md)。
+- 复现：按[验收指南 AC-2](../../specs/order/quickstart.md)执行；预期提交返回 false 且数据库状态仍为 cancelled，实际返回 true 且状态为 submitted。
+- 影响：取消后的订单被覆盖为提交状态；影响评测夹具 AC-2 的业务行为。
+
+## 2. 当前处理状态
+
+- 承接者：sdd-coder。
+- 修复 Task：本轮 Plan T004（`../../../../../../../docs/plans/agent-collaboration.md`）；修复方案和任务进度由 imp 维护。
+- 当前状态：已复验关闭。
+- 阻塞与恢复条件：无；本地修复在已授权范围内。
+
+## 3. 处理与复验历史
+
+| 时间／执行者 | 动作与处理结果 | 修复版本／Task／局部自验证据 | 复验报告／用例与版本 | 状态变化及依据 |
+|---|---|---|---|---|
+| 2026-11-05／sdd-validator | AC-2 发现失败；缺少取消后提交定向回归 | 不适用 | [发现批次](../test-reports/2026-11-05-initial.md) | 待处理；记录发现事实 |
+| 2026-11-05／Main | 与 EVAL-GAP-001 一并交原 coder 修复 | T004（`../../../../../../../docs/plans/agent-collaboration.md`） | 待复验 | 处理中；已交接 |
+| 2026-11-05／原 sdd-coder | 修复并补取消回归；新增测试修复前失败、修复后 3 项定向测试通过 | 修复快照（`../../../repair-evidence/snapshot.json`）、修复前（`../../../repair-evidence/local-red.txt`）、修复后（`../../../repair-evidence/local-green.txt`） | 待原 validator 复验 | 已修改待复验；局部自验不关闭 Issue |
+| 2026-11-05／原 sdd-validator | 按 AC-2 重走取消、提交并重开 SQLite | 修复快照（`../../../repair-evidence/snapshot.json`） | 复验 AC-2（`../../../validator-retest/AC-2.log`）、结果与哈希（`../../../validator-retest/result.json`） | 已复验关闭；返回 false、状态 cancelled |
+
+## 4. 关联入口
+
+[发现批次](../test-reports/2026-11-05-initial.md)、[Spec](../../specs/order/spec.md)、本轮 Plan（`../../../../../../../docs/plans/agent-collaboration.md`）。

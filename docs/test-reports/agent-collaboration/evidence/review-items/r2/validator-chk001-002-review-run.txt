@@ -1,0 +1,37 @@
+Command: python -B checks/runtime_details.py
+{
+  "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+  "sqlite": "3.50.4",
+  "runtime": {
+    "environment": "isolated-local-fixture",
+    "database": "per-scenario temporary SQLite file",
+    "external_endpoint": null,
+    "external_call_authorized": false,
+    "network_access_in_this_run": false
+  },
+  "source_sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "3e3de4dc74371f73bfb9a6aa8df56aa8084096761a457d38f46cb5d19ce82ac7"
+  }
+}
+Exit code: 0
+Command: Get-FileHash tests/test_order.py -Algorithm SHA256
+
+Algorithm : SHA256
+Hash      : 39D0B0339C826A3AA34CD1A8A666686219891F218AA37A2767B12F917AD599A8
+Path      : C:\Users\24598\Documents\github\sdd-init\.build\agent-collaboration\20261105-review-items-r2\collaboration_review_check_items\project\tests\test_order.py
+
+
+Command: python -B -m unittest discover -s tests -p test_order.py -k mark_paid -v
+test_mark_paid_database_errors_propagate (test_order.OrderTests.test_mark_paid_database_errors_propagate) ... ok
+test_mark_paid_delegates_to_service (test_order.OrderTests.test_mark_paid_delegates_to_service) ... ok
+test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok
+test_mark_paid_unknown_order_raises (test_order.OrderTests.test_mark_paid_unknown_order_raises) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.043s
+
+OK
+Exit code: 0

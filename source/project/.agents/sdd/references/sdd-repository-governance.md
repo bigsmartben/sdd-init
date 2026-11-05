@@ -61,7 +61,9 @@ Agent 在已确认边界内执行契约、实现、修复、测试、部署及�
 
 需求与架构讨论允许自由探索，不设固定流程、模板填报或架构符合性门禁。用户要求写入 Blueprint 时，sdd-doc 按已确认内容和模板整理，不新增设计或 Blueprint Skill。
 
-Agent 按任务意图和 Task Contract 自主选择、接续下表 Skill，默认 Main 执行，无需用户输入指令名。Skill 表示职责，不绑定固定 Agent；模型、委派及交接按[执行约定](delegation.md)。
+Main 按任务意图和 Task Contract 自主选择、接续下表 Skill，无需用户输入指令名；imp、test、review 等有对应专职执行者的复杂任务默认委派专职角色，简单局部任务可由 Main 完成。部署与 Git 按各自入口的默认职责执行。Skill 表示职责；模型、委派及交接按[执行约定](delegation.md)。
+
+Main 负责对齐目标、范围、授权和完成条件，协调角色间矛盾，核对目标覆盖，并在授权内自动接续可执行工作直至任务完成或具体阻塞。角色报告完成不代表整个任务完成；只暂停确需新决策或外部授权的受影响项及其依赖项，其余工作继续。阻塞记录具体待决问题、承接者和恢复条件，不能以“后续专项”替代当前可执行工作。Gate FAIL 是当前结果，不是停止授权内整改的理由；Review 与 Test 各自按其判据更新状态。
 
 架构 Review 要求前置文档一致、依据明确，复用 sdd-doc 的写入检查。文档冲突交 sdd-doc，设计未决或契约缺口回讨论，实现偏差交 sdd-imp；各流程返回结论与证据，正式文档由 sdd-doc 归并。
 
@@ -115,7 +117,7 @@ Agent 准备环境、证据与操作指引，用户查看、操作、判断或�
 
 ## 实施和独立审查
 
-实施按 [sdd-imp](../../skills/sdd-imp/SKILL.md)先生成 Plan／Task 清单再执行，简单授权任务可由 Main 直接完成；Goal 仅在用户或更高优先级指令明确要求时创建。Main 按[执行协作](delegation.md)协调闭环、核对关键差异，出现缺口、矛盾、失败或相关变化才深入检查局部。
+实施按 [sdd-imp](../../skills/sdd-imp/SKILL.md)先生成 Plan／Task 清单再执行；Goal 仅在用户或更高优先级指令明确要求时创建。Main 按[执行协作](delegation.md)协调闭环、核对关键差异，出现缺口、矛盾、失败或相关变化才深入检查局部。
 
 | 执行者 | 范围与边界 |
 |---|---|
@@ -126,7 +128,7 @@ Agent 准备环境、证据与操作指引，用户查看、操作、判断或�
 
 COMPLETED 表示本轮实现完成：上游任务目标实现覆盖、局部自验、对应版本证据齐备且无阻塞，已知失败已处理。Review/Test Gate 不作为默认前置，也不在实施后固定追加。
 
-按任务目标、风险与授权选择 Loop；Review 按架构约束记录并核验跨模块关系，Test 对多 Spec 分别记录并核验相关跨能力行为。实现修复后返回对应流程复核，要求独立审查时由原独立审查者复核；Gate 判据分别见 [Review](../../skills/sdd-review-loop/SKILL.md) 与 [Test](../../skills/sdd-test-loop/SKILL.md)。
+按任务目标、风险与授权选择 Loop；Review 按架构约束记录并核验跨模块关系，Test 对多 Spec 分别记录并核验相关跨能力行为。实现修复后返回对应流程复核；Gate 判据分别见 [Review](../../skills/sdd-review-loop/SKILL.md) 与 [Test](../../skills/sdd-test-loop/SKILL.md)。
 
 ## 交付
 

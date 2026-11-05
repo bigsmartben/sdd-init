@@ -1,0 +1,402 @@
+{
+  "method": "Derived extraction of original spawn_agent/followup_task non-message parameters. Opaque encrypted message values omitted with their SHA-256 retained. This is not a decryption or a complete transcript. Match call_id to app subAgentActivity and original JSONL line hash.",
+  "source_export": "rollout-agent-calls.json",
+  "source_export_sha256": "ceb0b6fc6b10eb03c5ff178af44be6a3fbd14bdbfa89b94de9090282f7e86598",
+  "source_original_events": 134,
+  "calls": [
+    {
+      "source_session": "rollout-2026-11-05T07-15-36-01a1a8d8-b2dc-70b2-8ece-af5d33fff8fd.jsonl",
+      "line": 44,
+      "original_line_sha256": "9843d8e671489ce2452e0db51944d045f14bd23ce37acb4837c2714ebc17a82f",
+      "timestamp": "2026-11-04T23:16:18.522Z",
+      "name": "spawn_agent",
+      "call_id": "call_b17fe6a2c09a40099e913819e3fa04ed",
+      "parameters": {
+        "task_name": "validator",
+        "agent_type": "sdd-validator",
+        "fork_turns": "none"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "f1b83f3ff493fa0ae51555d258c8a83b501ad1f5e20717d83e3c58481d1b8517"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-15-36-01a1a8d8-b2dc-70b2-8ece-af5d33fff8fd.jsonl",
+      "line": 52,
+      "original_line_sha256": "65ebb6d971010536212c3a52bde09cd4385b0aaeb854fc806ba05b21408b6321",
+      "timestamp": "2026-11-04T23:16:28.007Z",
+      "name": "spawn_agent",
+      "call_id": "call_fe2ccb5f4d61465c8db1f76cbbf9062f",
+      "parameters": {
+        "task_name": "documenter",
+        "agent_type": "sdd-documenter",
+        "fork_turns": "none"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "cb4cd189b232198bfb9bbfc0f6bbe50957b7bcd141066561ebf27b416e84e5b2"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-15-36-01a1a8d8-b2dc-70b2-8ece-af5d33fff8fd.jsonl",
+      "line": 103,
+      "original_line_sha256": "88501450ba7a97e357d5285251a4ec8f6df92acbe8f204dff1732c60f587994f",
+      "timestamp": "2026-11-04T23:17:20.385Z",
+      "name": "spawn_agent",
+      "call_id": "call_8f9a82fada7747afaa0dfef2fa8068f8",
+      "parameters": {
+        "task_name": "coder",
+        "agent_type": "sdd-coder",
+        "fork_turns": "none"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "5c66e7933ff1924792802d3445aadf921e781d542d10151d9abedc3857d712c2"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-15-36-01a1a8d8-b2dc-70b2-8ece-af5d33fff8fd.jsonl",
+      "line": 145,
+      "original_line_sha256": "e3e7bb8da1919bce0f51dbaf1068882f27760d4570b997330cc1f26765c15072",
+      "timestamp": "2026-11-04T23:17:47.621Z",
+      "name": "followup_task",
+      "call_id": "call_6ac4280827c0477094e90514b64a2f70",
+      "parameters": {
+        "target": "validator"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "3e48523e3f9845aa71ebd17021ae534f6b28e79413452e4c0ba32e03486cb29f"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-15-36-01a1a8d8-b2dc-70b2-8ece-af5d33fff8fd.jsonl",
+      "line": 236,
+      "original_line_sha256": "80a0e0d572d6b6a91a9951db88f0b21fc462aa7d3bb35909e8cccdcc875eea50",
+      "timestamp": "2026-11-04T23:20:13.515Z",
+      "name": "followup_task",
+      "call_id": "call_de89b6d0ab9c497dbc124b2eadec421a",
+      "parameters": {
+        "target": "validator"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "959654f810430fd6da2155ade650e082a077f3cf9bd4bfd8e9610c17adeafecf"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-17-29-01a1a8da-6db5-7842-9b0a-5e1dc6c21092.jsonl",
+      "line": 45,
+      "original_line_sha256": "70282360c68ec35c3a3803a839932bee45b8a78dadbe42ba5f3e6ee8b3cb395f",
+      "timestamp": "2026-11-04T23:18:05.549Z",
+      "name": "spawn_agent",
+      "call_id": "call_589caa413f534229b00d7fa393128147",
+      "parameters": {
+        "task_name": "test_only_validator",
+        "agent_type": "sdd-validator",
+        "fork_turns": "none"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "88baa5cc706171a324234491f05d2bf72649110da66dc5685162ab40bff5195a"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-17-29-01a1a8da-6db5-7842-9b0a-5e1dc6c21092.jsonl",
+      "line": 51,
+      "original_line_sha256": "897bb94079f194a8e773d75b9e7ed8366a8ac6db6c6dbed319d6ba5598254dff",
+      "timestamp": "2026-11-04T23:18:13.752Z",
+      "name": "spawn_agent",
+      "call_id": "call_627816924c9c4bafb724888702f42d8f",
+      "parameters": {
+        "task_name": "review_only_validator",
+        "agent_type": "sdd-validator",
+        "fork_turns": "none"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "617e5e2b4c8d1e27197003be4779159ac5e0c33fd1313254fa662f5df3292dbe"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-17-29-01a1a8da-6db5-7842-9b0a-5e1dc6c21092.jsonl",
+      "line": 83,
+      "original_line_sha256": "677133c84ea87fbf852abad87bf5665cb8dd2cfcd76f4f003429ddd58c191acf",
+      "timestamp": "2026-11-04T23:18:59.116Z",
+      "name": "followup_task",
+      "call_id": "call_9ef07ae76ccc4f61bc3b69ff9143e2da",
+      "parameters": {
+        "target": "test_only_validator"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "ff52457108d98d4fb27a5ca4da0fccc2a94995835fb1811dca756edfa0ac48c2"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-17-29-01a1a8da-6db5-7842-9b0a-5e1dc6c21092.jsonl",
+      "line": 121,
+      "original_line_sha256": "52a278dde461687c16e8b08648427c377e6e7368c29edb1d049c923fd3489f59",
+      "timestamp": "2026-11-04T23:19:44.878Z",
+      "name": "spawn_agent",
+      "call_id": "call_234f7b5fc41749be95c6b9fd72efd68b",
+      "parameters": {
+        "task_name": "boundary_reports",
+        "agent_type": "sdd-documenter",
+        "fork_turns": "none"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "d93ea456b62e1b05066ec11b023ea20489e139220aae833a0e373a575b0cb32b"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-17-29-01a1a8da-6db5-7842-9b0a-5e1dc6c21092.jsonl",
+      "line": 219,
+      "original_line_sha256": "12bfab40d6f1707dbff3ad4e88c42709ccc6d09a04493629e5addc704e3cdead",
+      "timestamp": "2026-11-04T23:23:03.260Z",
+      "name": "followup_task",
+      "call_id": "call_d0e167975a1c4e63a23e68f93249cfa7",
+      "parameters": {
+        "target": "review_only_validator"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "18e6cc35e4526a3330f4054ae08313d303cece0a652cac7d0a6d8af6de54b954"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-17-29-01a1a8da-6db5-7842-9b0a-5e1dc6c21092.jsonl",
+      "line": 236,
+      "original_line_sha256": "d5be379b3b9dac8b356911550693329290886f7dd54c27670268c84741e5e6b2",
+      "timestamp": "2026-11-04T23:23:19.777Z",
+      "name": "followup_task",
+      "call_id": "call_0585e886d4854b988159588464c36e73",
+      "parameters": {
+        "target": "boundary_reports"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "a48318c6441983b251f493c7a9d6f8b96c7cf6e83145a6ee540a2be70d1e0ef2"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-17-29-01a1a8da-6db5-7842-9b0a-5e1dc6c21092.jsonl",
+      "line": 274,
+      "original_line_sha256": "fa23613e9847c939f651b90d7a7334b2df090a793ca92e9c5cf9df3a2fc0679a",
+      "timestamp": "2026-11-04T23:25:47.733Z",
+      "name": "followup_task",
+      "call_id": "call_e58be547b40d4e0bafc5edffb4cb1ef5",
+      "parameters": {
+        "target": "review_only_validator"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "cdd6c2ac53a0a01fbd0f0dfe07007a6fd61d56e2345e724523e1212e05b9c0a0"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-17-29-01a1a8da-6db5-7842-9b0a-5e1dc6c21092.jsonl",
+      "line": 305,
+      "original_line_sha256": "3763a477dc7ebc9795f5caa4d907a3766cf731736f20b82f9734f8ca948fc61c",
+      "timestamp": "2026-11-04T23:26:29.728Z",
+      "name": "followup_task",
+      "call_id": "call_b0472b0a74974539bb8a117d19573ec6",
+      "parameters": {
+        "target": "boundary_reports"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "cf33911c4dbb457e9c24546aa7e209dc5056b5bde1125d800fcd9afe466a29b8"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-03-56-01a1a8ce-0530-7fe2-bba4-d1f3efdedc0c.jsonl",
+      "line": 146,
+      "original_line_sha256": "4ed550943b50c6d03da48197bb48f2be64a540dc5a20c2cf4356b6b6a464f14e",
+      "timestamp": "2026-11-04T23:08:32.814Z",
+      "name": "spawn_agent",
+      "call_id": "call_0947132466d14f51bcb2643e656a3ebf",
+      "parameters": {
+        "task_name": "coder",
+        "agent_type": "sdd-coder"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "fc0ac5c31b7e909ab53246a3fc36f2dd32460939961267937c76329d58d96dff"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-03-56-01a1a8ce-0530-7fe2-bba4-d1f3efdedc0c.jsonl",
+      "line": 152,
+      "original_line_sha256": "396a3b44443e0856f1d138fa928ce36929f2e30dfc6addde3510cfdd8f982dfd",
+      "timestamp": "2026-11-04T23:08:52.064Z",
+      "name": "spawn_agent",
+      "call_id": "call_2efb8978fb1541198e0b67a99b0e82f6",
+      "parameters": {
+        "task_name": "documenter",
+        "agent_type": "sdd-documenter"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "d345b746ad3ad465fcb01c62e1d0378373e3309d9e305d0528acfcc41fa81500"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-03-56-01a1a8ce-0530-7fe2-bba4-d1f3efdedc0c.jsonl",
+      "line": 158,
+      "original_line_sha256": "e90d2f6c51a19bf46d6d12967f0d397f82537e9d42776340fdadccd1221e56bd",
+      "timestamp": "2026-11-04T23:09:04.405Z",
+      "name": "spawn_agent",
+      "call_id": "call_8e41322381754fc68bb40d780834c5f4",
+      "parameters": {
+        "task_name": "validator",
+        "agent_type": "sdd-validator"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "5da5be986768164767d481f5e66d4d9ba859289c7d84415f269cb466d527484d"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-03-56-01a1a8ce-0530-7fe2-bba4-d1f3efdedc0c.jsonl",
+      "line": 178,
+      "original_line_sha256": "c6d5c5662ca5f84dd5cea0a8020c481686e17ad347ba99e66ab4bb1e22e5fa4a",
+      "timestamp": "2026-11-04T23:09:32.603Z",
+      "name": "followup_task",
+      "call_id": "call_a72f49503ca249dcb00008d14fc309a0",
+      "parameters": {
+        "target": "coder"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "fb8c82a3f5fee3a086c8f9286670a8b7a8148b3dc9646713638fb486355bf174"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-03-56-01a1a8ce-0530-7fe2-bba4-d1f3efdedc0c.jsonl",
+      "line": 275,
+      "original_line_sha256": "46e1f38c69a17f967f35aa7379bf219db3e74198f9ac7b024d6e5bd953b64ad8",
+      "timestamp": "2026-11-04T23:11:50.334Z",
+      "name": "followup_task",
+      "call_id": "call_31948fa5f03c40a4a568ce3d9c271fe1",
+      "parameters": {
+        "target": "validator"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "3eb9832cc52a5a5a07eac0df8c06defc2022c23f379f08639641523550c42925"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-03-56-01a1a8ce-0530-7fe2-bba4-d1f3efdedc0c.jsonl",
+      "line": 307,
+      "original_line_sha256": "7aada9594fcbe8ef5a716be55ff848ea51ea35ff114d03fdf1c18ae3de040a01",
+      "timestamp": "2026-11-04T23:12:51.837Z",
+      "name": "followup_task",
+      "call_id": "call_0d0f7cfa83c747d8b555c1fd4ddb21fb",
+      "parameters": {
+        "target": "documenter"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "686a2c6cf091422ff1e6aef953479f19723159bfc734beb143fa9222e0d950db"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-03-56-01a1a8ce-0530-7fe2-bba4-d1f3efdedc0c.jsonl",
+      "line": 362,
+      "original_line_sha256": "60835eb47f4d19a5b7351dbd0a87b85c6c3a76721f35421997d0d46a7a24d6fc",
+      "timestamp": "2026-11-04T23:14:24.239Z",
+      "name": "followup_task",
+      "call_id": "call_89874bd4361d4d51b6162ce7bec425a5",
+      "parameters": {
+        "target": "coder"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "aa746b0fe4c27206198d61f374a79bb067d6055c180760d59df51e4e7158fd33"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-03-56-01a1a8ce-0530-7fe2-bba4-d1f3efdedc0c.jsonl",
+      "line": 416,
+      "original_line_sha256": "6b5a573d23ba28ddeece16875a4fb5503c72f32aead691dd7c94648a608f4760",
+      "timestamp": "2026-11-04T23:15:36.266Z",
+      "name": "spawn_agent",
+      "call_id": "call_1e694c9eed304f06a338eaf46821cb34",
+      "parameters": {
+        "task_name": "blind_main",
+        "agent_type": "default",
+        "fork_turns": "none"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "c129ec2a4c42279b3690521e9778988e28f09bf06d34012a633e93ef712448a4"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-03-56-01a1a8ce-0530-7fe2-bba4-d1f3efdedc0c.jsonl",
+      "line": 514,
+      "original_line_sha256": "00cc55cbe3890a491bc65a740734f2ff6fd3d09e7fdee532cc90c09e78b8e42e",
+      "timestamp": "2026-11-04T23:17:29.633Z",
+      "name": "spawn_agent",
+      "call_id": "call_23c59332b7d34b61a5e82997ec6a82c5",
+      "parameters": {
+        "task_name": "boundary_main",
+        "agent_type": "default",
+        "fork_turns": "none"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "c038da6809be8566ca27ed42220a810130ad606385fb3bc78a2d414ead6f491f"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-03-56-01a1a8ce-0530-7fe2-bba4-d1f3efdedc0c.jsonl",
+      "line": 675,
+      "original_line_sha256": "334cd2a95b63490b831352c55ff313b9c6c526cd0855f72771c9f7fe411bac0b",
+      "timestamp": "2026-11-04T23:23:36.924Z",
+      "name": "followup_task",
+      "call_id": "call_4112428d7d1e41f68404584d5d0434ee",
+      "parameters": {
+        "target": "validator"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "37a3c0b58c6952e438d1a62fdfe7b4468e3ddbeab14494e866f18056078644f2"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-03-56-01a1a8ce-0530-7fe2-bba4-d1f3efdedc0c.jsonl",
+      "line": 680,
+      "original_line_sha256": "b0913a43faf8dab85a6bfa97af3b1d621a74cb0f6dea8aeb585619cd213d407e",
+      "timestamp": "2026-11-04T23:23:49.846Z",
+      "name": "followup_task",
+      "call_id": "call_05b1a398d57c4cfaa0828ca45e3379d7",
+      "parameters": {
+        "target": "documenter"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "e1b79961fe6df7fad0c49930204510084d4df507f4385104e51cfe7c1431879d"
+      }
+    },
+    {
+      "source_session": "rollout-2026-11-05T07-03-56-01a1a8ce-0530-7fe2-bba4-d1f3efdedc0c.jsonl",
+      "line": 730,
+      "original_line_sha256": "d904061e7397aad45df1b8e7f8e8c83a25c57cf34de64844dc468cb3e6499741",
+      "timestamp": "2026-11-04T23:25:37.379Z",
+      "name": "followup_task",
+      "call_id": "call_f7cb36bbb8924536899560d84264b652",
+      "parameters": {
+        "target": "boundary_main"
+      },
+      "message": {
+        "visibility": "opaque encrypted in source rollout; omitted here",
+        "sha256": "e16a41dcf544c3fe41f0a29ad10aa2ff573efce74c496212b15033b4af375b69"
+      }
+    }
+  ]
+}

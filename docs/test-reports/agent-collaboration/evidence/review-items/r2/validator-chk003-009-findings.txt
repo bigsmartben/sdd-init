@@ -1,0 +1,53 @@
+# 后续架构检查事实
+
+快照及运行时以 `evidence/validator-chk001-002-review-run.txt` 为准；前两项各自复核通过，见对应日志及交接。未运行 acceptance 或完整业务回归。检查依据为 review-scope、Blueprint ARC-1～4、订单契约和架构规则；未访问外部环境。
+
+## CHK-003 文件 SQLite 持久化与 commit／异常边界
+初审 PASS：`src/storage.py:5-9` 使用调用者指定路径建立 SQLite 文件表；`src/order_service.py:4-8,18-21,28-31` 执行数据库写入并 commit 后才从 submit 返回 true，异常无捕获转换。定向 mark_paid 测试实际关闭数据库后重开读 paid；`evidence/validator-chk001-002-review-run.txt` 记录通过。另对 submit 用 mock 注入 read、UPDATE、commit 三类 `sqlite3.OperationalError`，各断言同一异常传播而未返回成功，read／write 阶段断言 commit 未调用，输出和退出码见 `evidence/validator-chk003-failure-run.txt`。这不是实际磁盘故障或回滚测试，未声称覆盖此类机制。执行命令为 PowerShell 将下述脚本通过管道传给 `python -B -`：
+
+```python
+from unittest import mock
+import sqlite3
+from src import order_service
+for stage in ('read', 'write', 'commit'):
+    conn = mock.Mock()
+    cursor = mock.Mock()
+    cursor.fetchone.return_value = ('pending',)
+    error = sqlite3.OperationalError(stage)
+    def execute(sql, params):
+        if stage == 'read' or (stage == 'write' and sql.startswith('UPDATE')):
+            raise error
+        return cursor
+    conn.execute.side_effect = execute
+    if stage == 'commit':
+        conn.commit.side_effect = error
+    try:
+        order_service.submit_order(conn, 'ORDER-1')
+    except sqlite3.OperationalError as actual:
+        assert actual is error
+        print(stage + ': same exception propagated; no success returned')
+    else:
+        raise AssertionError(stage + ': no exception')
+    if stage != 'commit':
+        conn.commit.assert_not_called()
+```
+
+## CHK-004 正式／测试依赖隔离
+初审 PASS：检查全部 src 文件及引用，`ui.py:2` 仅依赖正式服务，`storage.py:2` 依赖标准库；无测试、运行器、测试身份或夹具配置引用，亦无动态加载。`tests/test_order.py:8`、`checks/acceptance.py:10` 引用 src；反向依赖未发现。仅静态审查，未执行 acceptance。
+
+## CHK-005 本地环境装配和网络边界
+初审 PASS：runtime_details 显示 Python 3.14.6、SQLite 3.50.4 及 isolated-local-fixture、临时 SQLite 与禁止网络配置；定向测试实际使用临时文件并关闭重开。检查 src 未见网络调用，局部修复无外部依赖。该结论仅覆盖本地环境。
+
+## CHK-006 外部端点／权限／连接条件
+初审 BLOCKED：`runtime.json` 的端点为 null、授权 false、网络许可 false；未尝试网络，也不能确认远端实际权限或连接。Main／有权人员须明确获授权的测试端点、调用权限及网络条件，取得实际外部验证授权后执行；当前不得配置、连网或创建凭据。
+
+## CHK-007 依赖真实外部环境的运行装配
+初审 BLOCKED：依赖 CHK-006 的端点、权限、连接条件及已确认的外部装配入口；现有 `checks/acceptance.py:14-22` 始终 BLOCKED，没有实际外部调用，不能以本地配置证明装配。由 Main／有权人员明确外部装配与核验入口、提供条件并授权操作后再核实。与本地修复无依赖。
+
+## CHK-008 观测职责及必要文字事实／日志契约
+初审 BLOCKED：Blueprint 声明无正式观测系统，src 未见观测依赖；SDD-OBS-02/03 强制要求必要文字事实持久化及日志契约，不能仅凭项目声明推定豁免或实现。Main 与用户／设计决策者需明确隔离评测夹具的基线适用性及必要事实范围；若适用，再确认契约及授权并验证。SDD-OBS-01 未见业务依赖观测；未实施的机制不能称已验证。
+
+## CHK-009 媒体、后台运行控制及脚手架
+初审不适用，不计 PASS：Blueprint 明确无媒体、后台服务、脚手架生成机制，源码未见相关入口。没有媒体拒收能力的实现或测试，不可声称已实现。同步函数无并发或重试恢复机制，相关机制不在范围。
+
+Review Gate BLOCKED：CHK-001／002 各自复核 PASS，CHK-003／004／005 PASS，CHK-006／007／008 BLOCKED，CHK-009 不适用；并非所有适用项通过。各项应保留初审和处理历史，待条件具备后按各自编号补查。

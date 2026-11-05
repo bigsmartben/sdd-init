@@ -1,0 +1,155 @@
+# 架构 Review：订单状态及运行边界
+
+## 1. 范围与上下文
+
+- 依据：[本轮范围](../../review-scope.md)、[Blueprint](../../blueprint.md)、[接口](../../contracts/order.md)、[架构规范](../../../.agents/sdd/references/architecture-rules.md)与[观测基线](../../../.agents/sdd/references/observability-baseline.md)；[文档预检](../../../evidence/doc-precheck.md)。
+- 审查对象：状态权威、UI／服务依赖、文件持久化、正式／测试依赖与声明环境及跨模块关系。取消提交需求验收不在范围；不访问外部环境。
+- 执行者 validator；初始快照与环境见[首批运行证据](../../../evidence/validator-chk001-002-initial-run.txt)，禁止 Git，以哈希标识。后续各项注明实际快照。实际顺序：先完成 CHK-001／002 的 T001 整改及分别复核，再检查 CHK-003 至 CHK-009。
+- 修复边界：保持业务行为、接口和既定架构；本轮不修改取消提交逻辑、外部配置或部署。
+
+## 2. 检查项及闭环
+
+### CHK-001：订单状态权威
+
+- 依据与对象：ARC-1；`src/ui.py`、`src/order_service.py`、SQLite 状态写入链。
+- 检查方法与预期：核对实际调用与写入位置；服务为唯一业务写入口。
+- 初审事实：2026-11-05 validator，初始快照中 UI 直接 UPDATE／commit；违反 ARC-1，FAIL。[证据](../../../evidence/validator-chk001-002-initial.md)。
+- 整改交接：coder 使状态写入归服务，保持函数接口、现存订单 paid 持久化及业务行为，不修取消提交。
+- imp Task：[T001](../../plans/paid-delegation.md#t001mark_paid-委托服务入口并保留-paid-契约)。
+- 当前状态与结论：已复核关闭／PASS；coder 完成 T001，validator 核对 UI→服务→SQLite 写入责任链。
+
+| 批次／时间／执行者 | 处理或复核范围与方法 | 快照、实际结果及证据 | 本项结论与状态 |
+|---|---|---|---|
+| 初始目录／2026-11-05／validator | 识别检查范围 | 尚未检查 | 待检查／未执行 |
+| 处理／2026-11-05／coder | T001 实施及定向单测 | [测试输出](../../../evidence/coder-local-tests.txt)、[快照](../../../evidence/coder-after.json) | 已修改待复核 |
+| 复核／2026-11-05／validator | 检查 UI→服务 set_status→UPDATE／commit | UI 无直接写入；[复核及快照](../../../evidence/validator-chk001-002-review-run.txt) | PASS／已复核关闭 |
+
+### CHK-002：UI／服务依赖
+
+- 依据与对象：ARC-1、接口；`src/ui.py` 到服务的依赖。
+- 检查方法与预期：检查 mark_paid 调用链，应经既有服务入口写入。
+- 初审事实：2026-11-05 validator，初始快照直接操作数据库，没有调用服务，FAIL。[证据](../../../evidence/validator-chk001-002-initial.md)。
+- 整改交接：coder 保持签名及现存订单 paid 可观察结果，使其使用服务入口；验证调用、持久化及契约异常。
+- imp Task：[T001](../../plans/paid-delegation.md#t001mark_paid-委托服务入口并保留-paid-契约)。
+- 当前状态与结论：已复核关闭／PASS；validator 核对服务委托与行为保持。
+
+| 批次／时间／执行者 | 处理或复核范围与方法 | 快照、实际结果及证据 | 本项结论与状态 |
+|---|---|---|---|
+| 初始目录／2026-11-05／validator | 识别检查范围 | 尚未检查 | 待检查／未执行 |
+| 处理／2026-11-05／coder | T001 实施及定向单测 | [测试输出](../../../evidence/coder-local-tests.txt)、[快照](../../../evidence/coder-after.json) | 已修改待复核 |
+| 复核／2026-11-05／validator | 调用参数、文件重开、未知订单与数据库异常 | 定向断言通过；[复核及快照](../../../evidence/validator-chk001-002-review-run.txt) | PASS／已复核关闭 |
+
+### CHK-003：文件 SQLite 持久化及 commit／异常边界
+
+- 依据与对象：ARC-2、业务实体持久化规则及订单契约。
+- 检查方法与预期：核对 storage 与服务写入、commit 路径及文件重开，注入读／写／commit 异常。
+- 初审事实：2026-11-05 validator，修复后快照；文件 SQLite 重开 paid；submit 读、UPDATE、commit 模拟异常原样传播，不返回成功。非实际磁盘故障或回滚测试。 [故障注入输出](../../../evidence/validator-chk003-failure-run.txt)。
+- 整改交接：不适用。
+- imp Task：不适用。
+- 当前状态与结论：符合／PASS
+
+| 批次／时间／执行者 | 处理或复核范围与方法 | 快照、实际结果及证据 | 本项结论与状态 |
+|---|---|---|---|
+| 初始目录／2026-11-05／validator | 识别检查范围 | 尚未检查 | 待检查／未执行 |
+| 初审／2026-11-05／validator | 上述检查方法 | [快照与环境](../../../evidence/validator-chk001-002-review-run.txt)；[故障注入输出](../../../evidence/validator-chk003-failure-run.txt) | 符合／PASS |
+
+
+### CHK-004：正式／测试依赖隔离
+
+- 依据与对象：ARC-3、正式实现与测试实现隔离。
+- 检查方法与预期：静态检查 src 全部引用及 tests、checks 对 src 的依赖方向。
+- 初审事实：2026-11-05 validator，修复后快照；未发现正式模块依赖测试、运行器、测试身份或夹具配置。 [检查事实](../../../evidence/validator-chk003-009-findings.md)。
+- 整改交接：不适用。
+- imp Task：不适用。
+- 当前状态与结论：符合／PASS
+
+| 批次／时间／执行者 | 处理或复核范围与方法 | 快照、实际结果及证据 | 本项结论与状态 |
+|---|---|---|---|
+| 初始目录／2026-11-05／validator | 识别检查范围 | 尚未检查 | 待检查／未执行 |
+| 初审／2026-11-05／validator | 上述检查方法 | [快照与环境](../../../evidence/validator-chk001-002-review-run.txt)；[检查事实](../../../evidence/validator-chk003-009-findings.md) | 符合／PASS |
+
+
+### CHK-005：本地环境装配与网络边界
+
+- 依据与对象：ARC-4、runtime.json、环境架构规范。
+- 检查方法与预期：检查 runtime、src 网络调用及定向测试的文件装配。
+- 初审事实：2026-11-05 validator，修复后快照；本地 Python、SQLite 与隔离配置可用，临时文件重开；src 未见网络调用，结论限本地。 [运行快照](../../../evidence/validator-chk001-002-review-run.txt)。
+- 整改交接：不适用。
+- imp Task：不适用。
+- 当前状态与结论：符合／PASS
+
+| 批次／时间／执行者 | 处理或复核范围与方法 | 快照、实际结果及证据 | 本项结论与状态 |
+|---|---|---|---|
+| 初始目录／2026-11-05／validator | 识别检查范围 | 尚未检查 | 待检查／未执行 |
+| 初审／2026-11-05／validator | 上述检查方法 | [快照与环境](../../../evidence/validator-chk001-002-review-run.txt)；[运行快照](../../../evidence/validator-chk001-002-review-run.txt) | 符合／PASS |
+
+
+### CHK-006：真实外部端点、权限与连接条件
+
+- 依据与对象：review-scope、环境架构规范。
+- 检查方法与预期：检查 runtime 的端点、权限与网络许可，不访问外网。
+- 初审事实：2026-11-05 validator，修复后快照；端点为 null，授权和网络许可均为 false；远端权限及连接未核实。 [检查事实](../../../evidence/validator-chk003-009-findings.md)。
+- 整改交接：不适用。
+- imp Task：不适用。
+- 当前状态与结论：阻塞／BLOCKED；Main／有权人员须提供获授权测试端点、调用权限和网络条件，并取得实际外部验证授权。
+
+| 批次／时间／执行者 | 处理或复核范围与方法 | 快照、实际结果及证据 | 本项结论与状态 |
+|---|---|---|---|
+| 初始目录／2026-11-05／validator | 识别检查范围 | 尚未检查 | 待检查／未执行 |
+| 初审／2026-11-05／validator | 上述检查方法 | [快照与环境](../../../evidence/validator-chk001-002-review-run.txt)；[检查事实](../../../evidence/validator-chk003-009-findings.md) | 阻塞／BLOCKED；Main／有权人员须提供获授权测试端点、调用权限和网络条件，并取得实际外部验证授权。 |
+
+
+### CHK-007：依赖真实外部环境的运行装配
+
+- 依据与对象：review-scope、环境架构规范；依赖 CHK-006 条件。
+- 检查方法与预期：检查外部环境依赖及实际装配核验入口。
+- 初审事实：2026-11-05 validator，修复后快照；依赖 CHK-006；现有 acceptance 入口始终 BLOCKED，无实际外部调用。 [检查事实](../../../evidence/validator-chk003-009-findings.md)。
+- 整改交接：不适用。
+- imp Task：不适用。
+- 当前状态与结论：阻塞／BLOCKED；Main／有权人员明确外部装配与核验入口，提供 CHK-006 条件并授权操作后核实。
+
+| 批次／时间／执行者 | 处理或复核范围与方法 | 快照、实际结果及证据 | 本项结论与状态 |
+|---|---|---|---|
+| 初始目录／2026-11-05／validator | 识别检查范围 | 尚未检查 | 待检查／未执行 |
+| 初审／2026-11-05／validator | 上述检查方法 | [快照与环境](../../../evidence/validator-chk001-002-review-run.txt)；[检查事实](../../../evidence/validator-chk003-009-findings.md) | 阻塞／BLOCKED；Main／有权人员明确外部装配与核验入口，提供 CHK-006 条件并授权操作后核实。 |
+
+
+### CHK-008：观测职责隔离、必要事实与日志契约
+
+- 依据与对象：SDD-OBS-01/02/03、Blueprint。
+- 检查方法与预期：检查 SDD-OBS-01/02/03 与项目范围及源码观测依赖。
+- 初审事实：2026-11-05 validator，修复后快照；源码未见业务依赖观测；Blueprint 无正式观测系统，与必要文字事实持久化及日志契约的基线适用性待确定，未实现机制不称已验证。 [检查事实](../../../evidence/validator-chk003-009-findings.md)。
+- 整改交接：不适用。
+- imp Task：不适用。
+- 当前状态与结论：阻塞／BLOCKED；Main 与用户／设计决策者确认基线适用性和必要事实范围；若适用，再确认契约、授权并验证。
+
+| 批次／时间／执行者 | 处理或复核范围与方法 | 快照、实际结果及证据 | 本项结论与状态 |
+|---|---|---|---|
+| 初始目录／2026-11-05／validator | 识别检查范围 | 尚未检查 | 待检查／未执行 |
+| 初审／2026-11-05／validator | 上述检查方法 | [快照与环境](../../../evidence/validator-chk001-002-review-run.txt)；[检查事实](../../../evidence/validator-chk003-009-findings.md) | 阻塞／BLOCKED；Main 与用户／设计决策者确认基线适用性和必要事实范围；若适用，再确认契约、授权并验证。 |
+
+
+### CHK-009：媒体、后台运行控制与脚手架专项适用性
+
+- 依据与对象：Blueprint 及架构专项规则。
+- 检查方法与预期：检查 Blueprint 与源码中的媒体、后台运行控制和脚手架入口。
+- 初审事实：2026-11-05 validator，修复后快照；无媒体、后台服务或脚手架生成机制；同步函数无并发、重试恢复机制。未声称媒体拒收已实现。 [检查事实](../../../evidence/validator-chk003-009-findings.md)。
+- 整改交接：不适用。
+- imp Task：不适用。
+- 当前状态与结论：不适用；不计 PASS。
+
+| 批次／时间／执行者 | 处理或复核范围与方法 | 快照、实际结果及证据 | 本项结论与状态 |
+|---|---|---|---|
+| 初始目录／2026-11-05／validator | 识别检查范围 | 尚未检查 | 待检查／未执行 |
+| 初审／2026-11-05／validator | 上述检查方法 | [快照与环境](../../../evidence/validator-chk001-002-review-run.txt)；[检查事实](../../../evidence/validator-chk003-009-findings.md) | 不适用；不计 PASS。 |
+
+
+## 3. Gate 与未完成项
+
+- Review Gate：BLOCKED，validator 对同一修复后快照的结论见[逐项事实](../../../evidence/validator-chk003-009-findings.md)。
+- CHK-006／007 外部条件与装配待 Main／有权人员处理；CHK-008 适用性待 Main 与决策者确认。各项恢复条件见各自区块。
+
+
+
+
+

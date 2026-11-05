@@ -1,0 +1,10 @@
+COMMAND: C:\Users\24598\AppData\Local\Programs\Python\Python314\python.exe -B -X utf8 -m unittest discover -s tests -p test_order.py -v
+EXIT: 0
+test_cancelled_submit_preserves_persisted_state (test_order.OrderTests.test_cancelled_submit_preserves_persisted_state) ... ok
+test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok
+test_normal_submit (test_order.OrderTests.test_normal_submit) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.045s
+
+OK

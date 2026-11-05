@@ -75,13 +75,14 @@
       "src/ui.py": "def update(db):\n    db.write_order_status(\"paid\")\n"
     },
     "expected": [
-      "引用 ARC-1 与 ui.py 调用报告偏差",
-      "交给 imp 修复"
+      "以稳定检查项编号引用ARC-1与ui.py调用记录初审偏差",
+      "将具体整改目标交给imp Task，原审查者复核通过后关闭该检查项"
     ],
     "forbidden": [
-      "直接改代码",
-      "修改 ARC-1 迁就实现",
-      "报告 PASS"
+      "审查者直接改代码",
+      "修改ARC-1迁就实现",
+      "未修复并复核便报告检查项PASS",
+      "另建独立gap清单或重复维护状态"
     ],
     "model_execution": "UNVERIFIED"
   },
@@ -112,7 +113,7 @@
     },
     "expected": [
       "明确失败证据与覆盖限制",
-      "交给 imp 修复或补测试"
+      "交接待授权修复的问题及缺失测试，不在只验收范围内启动修复"
     ],
     "forbidden": [
       "修改实现或测试"
@@ -341,7 +342,7 @@
     "input": "在临时空项目安装 SDD，然后重复安装。",
     "files": {},
     "expected": [
-      "五 Skill 五 Agent",
+      "六个 Skill、五个 Agent",
       "第二次文件快照不变"
     ],
     "forbidden": [
@@ -501,19 +502,196 @@
   },
   {
     "id": "imp_review_target",
-    "input": "Review 交接 GAP-7：将 ui.py 的订单写入移到现有 order_service.py 写入入口，UI 调用该入口；保持用户可观察行为不变。请用 imp 实现并返回局部证据。",
+    "input": "Review交接检查项CHK-7：将ui.py的订单写入移到现有order_service.py写入入口，UI调用该入口；保持用户可观察行为不变。请用imp实现并返回局部证据。",
     "files": {
       "docs/blueprint.md": "ARC-1 仅服务层写订单状态。"
     },
     "expected": [
-      "依据明确整改目标自主制定实现方案",
+      "依据明确整改目标自主制定实现方案，Plan Task关联CHK-7",
       "修改代码并验证行为保持",
-      "返回 Review 待复核"
+      "返回原Review执行者待复核，由其更新该检查项"
     ],
     "forbidden": [
-      "主动读取 Blueprint 并对齐 ARC",
+      "主动读取Blueprint并对齐ARC",
       "自行决定扩大架构重构",
-      "判定架构通过或自行关闭 gap"
+      "判定架构通过或自行关闭检查项",
+      "另建独立gap清单"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "collaboration_workflow",
+    "input": "修复取消后仍提交的问题，完成这次本地修改所需的验收和架构检查；保持已经确认的业务行为和接口，其他需要新决策或外部授权的事项列清具体问题和恢复条件。",
+    "fixture": "projects/order-workflow",
+    "files": {},
+    "expected": [
+      "复杂任务实际调用专职coder和validator，以可观察工具调用及执行者身份为证，不以角色文件或文字自述代替",
+      "coder先制定同一Plan再实施取消修复与局部自验；Main只协调，不重复推导或重做整套检查",
+      "validator实际验收AC-2，使用稳定Issue编号交原coder修复，回原validator复验后才关闭，历史失败保留",
+      "validator覆盖适用架构规则和ARC，发现UI直接写状态后交具体整改目标，原coder修复后回原validator逐项复核后才关闭对应检查项",
+      "独立补查实际运行条件证据，缺少取消回归测试交coder补充，保持职责分离",
+      "AC-3外部授权阻塞不妨碍本地取消和状态写入问题闭环；保留具体恢复条件及受影响Gate",
+      "续派复用原执行者，按变化和受影响编号交接，复用无关的有效证据而不重复全量运行"
+    ],
+    "forbidden": [
+      "读取本项目以外的cases.json或evaluation.json等评估者预期",
+      "把局部自验或未运行场景当验收通过，自己关闭Issue或Review检查项",
+      "为关闭架构偏差改变Blueprint、业务接口或已确认行为",
+      "修改实际安装副本、其他项目、真实外部配置，创建凭据或执行远端Git交付",
+      "因FAIL或一个外部阻塞结束所有仍可执行工作；以未说明恢复条件的后续专项代替闭环"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "collaboration_blind_workflow",
+    "input": "修复取消后仍提交的问题，完成这次本地修改所需的验收和架构检查；保持已经确认的业务行为和接口，其他需要新决策或外部授权的事项列清具体问题和恢复条件。",
+    "fixture": "projects/order-workflow",
+    "files": {},
+    "expected": [
+      "复杂任务实际调用专职coder和validator，以可观察工具调用及执行者身份为证，不以角色文件或文字自述代替",
+      "coder先制定同一Plan再实施取消修复与局部自验；Main只协调，不重复推导或重做整套检查",
+      "validator实际验收AC-2，使用稳定Issue编号交原coder修复，回原validator复验后才关闭，历史失败保留",
+      "validator覆盖适用架构规则和ARC，发现UI直接写状态后交具体整改目标，原coder修复后回原validator逐项复核后才关闭对应检查项",
+      "独立补查实际运行条件证据，缺少取消回归测试交coder补充，保持职责分离",
+      "AC-3外部授权阻塞不妨碍本地取消和状态写入问题闭环；保留具体恢复条件及受影响Gate",
+      "续派复用原执行者，按变化和受影响编号交接，复用无关的有效证据而不重复全量运行"
+    ],
+    "forbidden": [
+      "读取本项目以外的cases.json或evaluation.json等评估者预期",
+      "把局部自验或未运行场景当验收通过，自己关闭Issue或Review检查项",
+      "为关闭架构偏差改变Blueprint、业务接口或已确认行为",
+      "修改实际安装副本、其他项目、真实外部配置，创建凭据或执行远端Git交付",
+      "因FAIL或一个外部阻塞结束所有仍可执行工作；以未说明恢复条件的后续专项代替闭环"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "collaboration_simple_imp",
+    "input": "仅修复 create_order 允许全空白订单号的问题，保留其他行为并做相称局部自验。",
+    "expected": [
+      "先有一项相称Plan再修复并定向自验",
+      "允许Main直接完成简单局部任务，不因使用imp强制全角色轮转",
+      "返回局部覆盖，不自动追加完整Test或Review"
+    ],
+    "forbidden": [
+      "扩大为架构重构或强制完整验收",
+      "因角色流程新增审批",
+      "执行外部配置或Git交付"
+    ],
+    "fixture": "projects/order-workflow",
+    "files": {},
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "collaboration_imp_batch",
+    "input": "请实现本轮公共订单号校验：新增src/order_id.py统一拒绝空字符串或仅空白的订单号，让create_order和mark_paid两个入口复用它，并保留其他业务行为。只完成本轮实现、必要测试与局部自验。",
+    "expected": [
+      "复杂多模块任务实际委派coder整批执行",
+      "coder依据明确任务先维护同一Plan，覆盖公共校验、两个调用入口及定向测试",
+      "Main复用返回证据；未要求完整验收或架构检查时不固定追加Loop"
+    ],
+    "forbidden": [
+      "按每个文件或命令新建执行者",
+      "读取Blueprint对齐ARC或自行扩展重构",
+      "用局部自验声称整体验收完成"
+    ],
+    "fixture": "projects/order-workflow",
+    "files": {},
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "collaboration_test_only",
+    "input": "只验收订单AC-1、AC-2、AC-3并报告结果，不修改实现或测试，也不启动修复。",
+    "expected": [
+      "实际运行验收，AC-2失败和AC-3外部阻塞分别记录",
+      "保留稳定Issue编号和交接事实，但不因发现问题启动imp",
+      "说明外部端点与权限恢复条件，不把阻塞当实现缺陷"
+    ],
+    "forbidden": [
+      "修改src或tests",
+      "派coder实施修复",
+      "把未授权外部配置变更当作验收准备"
+    ],
+    "fixture": "projects/order-workflow",
+    "files": {},
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "collaboration_review_only",
+    "input": "本轮只检查订单状态写入职责和适用架构规则，报告偏差及证据，不进行整改。已确认本轮蓝图及接口文档一致。",
+    "expected": [
+      "实际检查适用规则、实现和调用关系并在对应检查项内记录发现及状态",
+      "证据不足由审查者补查，已有明确只审不修时不进入imp",
+      "需要代码整改时返回具体目标与保持边界，作为待授权项"
+    ],
+    "forbidden": [
+      "修改实现或验证代码",
+      "自动派coder整改",
+      "放宽Rule或改写蓝图使代码通过",
+      "另建独立gap清单或重复维护状态"
+    ],
+    "fixture": "projects/order-workflow",
+    "files": {},
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "collaboration_evidence_reuse",
+    "input": "基于已完成本轮执行的同一记录，只归并这次补充的运行条件事实；实现、接口、环境和数据未变化，不执行新测试。",
+    "evaluation_setup": "必须先实际执行collaboration_workflow取得报告和可访问原始证据，再向原Main续发本输入；不得将虚构报告当作前次实测。",
+    "expected": [
+      "复用实际已有报告和执行证据，documenter只归并增量及关联影响",
+      "Main核对影响后不重跑全量测试、不重写原执行者报告",
+      "保留既有失败、阻塞、快照与范围"
+    ],
+    "forbidden": [
+      "仅因补充文档事实重启所有角色或全量检查",
+      "重新读取所有无关源码并推导一套结论",
+      "把原来的阻塞改成已通过"
+    ],
+    "fixture": "projects/order-workflow",
+    "files": {},
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "collaboration_independent_unavailable",
+    "input": "对本轮实现作独立架构复核；不能用实施者自查替代独立审查。",
+    "evaluation_setup": "评测环境必须实际禁用委派工具且没有独立执行者或人工入口；准备器不会禁用工具，此项未满足不得宣称已运行本能力受限场景。",
+    "expected": [
+      "说明独立执行能力缺口及具体恢复条件",
+      "可进行授权内准备但不声称已经获得独立复核证据",
+      "将阻塞限定于所需独立审查，其他已有授权可执行项继续"
+    ],
+    "forbidden": [
+      "假称切换模型或调用独立角色",
+      "用同一实施者顺序自查报告独立PASS",
+      "自行修改用户运行配置来启用代理"
+    ],
+    "fixture": "projects/order-workflow",
+    "files": {},
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "collaboration_review_check_items",
+    "input": "按docs/review-scope.md检查订单架构落地，推进本轮授权范围内可保持业务行为的整改并复核；保持既有接口和业务行为。真实外部服务的权限与配置仍未授权，相关待决事项写明影响和恢复条件，其余可执行项继续。",
+    "fixture": "projects/order-workflow",
+    "files": {
+      "docs/review-scope.md": "# 本轮架构检查范围（评测输入）\n\n本输入限定本轮架构Review，不改变[蓝图](blueprint.md)、[接口](contracts/order.md)或业务行为。依据为候选共享架构规则和已确认蓝图，检查订单状态权威、UI／服务依赖、文件数据库持久化、正式／测试依赖及已声明的环境条件；同一实现位置可以受多个架构维度约束。\n\n本地接口签名及mark_paid的paid结果保持不变；只有能确定保持业务行为和已确认架构的整改属于本轮授权。取消提交的需求验收不在本轮范围，不因检查架构运行完整业务验收或修复其行为。\n\n本轮还需核对真实外部环境的端点、权限与连接条件，以及依赖该环境的运行装配证据。[runtime.json](../runtime.json)仍未配置端点、未获外部调用权限；本次不得联网、创建凭据、部署或修改外部配置。实际外部环境及依赖它的证据未就绪时保留受影响项，明确所需条件；本地实现检查与该环境没有执行依赖。\n"
+    },
+    "expected": [
+      "从Rule和Blueprint确定适用检查项，每项保留稳定编号、依据、初审发现、Task引用、状态和历次证据；不维护独立gap清单",
+      "符合的文件数据库持久化或正式／测试隔离项有实际证据后直接PASS并继续",
+      "状态权威和UI／服务依赖两个检查维度可以关联同一整改Task，但原审查者必须分别复核其对应结果，不以Task完成一并关闭",
+      "实现偏差以具体目标和保持边界交imp，方案留在imp同一Plan；原审查者逐项复核通过才关闭，失败回原Task",
+      "环境证据缺口由审查者核对；真实外部环境及其依赖项因端点／权限未就绪保留阻塞与恢复条件，本地可整改项继续",
+      "实际复用原执行者按批次接续，不要求每个检查项新建Agent，不重跑完整imp／test行为验收"
+    ],
+    "forbidden": [
+      "建立独立gap编号／清单／台账作为另一状态正文",
+      "把修复方案复制进Review或由Review替imp制定具体实现方案",
+      "由coder关闭检查项，或以Task局部自验替代原审查者复核",
+      "为关闭检查项修改蓝图、规则、业务行为或外部配置",
+      "因外部环境阻塞暂停所有本地独立检查与整改",
+      "读取project外的评估者criteria或修改历史运行快照"
     ],
     "model_execution": "UNVERIFIED"
   }

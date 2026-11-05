@@ -1,0 +1,64 @@
+Command: python -B checks/runtime_details.py
+{
+  "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+  "sqlite": "3.50.4",
+  "runtime": {
+    "environment": "isolated-local-fixture",
+    "database": "per-scenario temporary SQLite file",
+    "external_endpoint": null,
+    "external_call_authorized": false,
+    "network_access_in_this_run": false
+  },
+  "source_sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b"
+  }
+}
+Exit code: 0
+Command: Get-FileHash tests/test_order.py -Algorithm SHA256
+
+Algorithm : SHA256
+Hash      : DC3D5EB12AC351E9203C9EF0CEBB1681B284215EFABE2F95528C12DADF5E8311
+Path      : C:\Users\24598\Documents\github\sdd-init\.build\agent-collaboration\20261105-review-items-r2\collaboration_review_check_items\project\tests\test_order.py
+
+
+Command: Get-Content src/order_service.py, src/ui.py
+"""Order operations in the intentionally imperfect evaluation fixture."""
+
+
+def create_order(connection, order_id):
+    if not isinstance(order_id, str) or not order_id:
+        raise ValueError("order_id is required")
+    connection.execute("INSERT INTO orders VALUES (?, ?)", (order_id, "pending"))
+    connection.commit()
+
+
+def read_status(connection, order_id):
+    row = connection.execute("SELECT status FROM orders WHERE order_id = ?", (order_id,)).fetchone()
+    if row is None:
+        raise ValueError("order not found")
+    return row[0]
+
+
+def set_status(connection, order_id, status):
+    read_status(connection, order_id)
+    connection.execute("UPDATE orders SET status = ? WHERE order_id = ?", (status, order_id))
+    connection.commit()
+
+
+def cancel_order(connection, order_id):
+    set_status(connection, order_id, "cancelled")
+
+
+def submit_order(connection, order_id):
+    read_status(connection, order_id)
+    set_status(connection, order_id, "submitted")
+    return True
+"""UI adapter surface in the evaluation fixture (there is no graphical UI)."""
+
+
+def mark_paid(connection, order_id):
+    connection.execute("UPDATE orders SET status = ? WHERE order_id = ?", ("paid", order_id))
+    connection.commit()

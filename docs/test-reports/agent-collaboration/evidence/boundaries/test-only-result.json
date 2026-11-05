@@ -1,0 +1,93 @@
+{
+  "timestamp_utc": "2026-11-04T23:18:30.230218+00:00",
+  "working_directory": "C:\\Users\\24598\\Documents\\github\\sdd-init\\.build\\agent-collaboration\\20261105-boundaries\\collaboration_test_only\\project",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "executor": "sdd-validator /root/boundary_main/test_only_validator",
+  "version_note": "Git operations prohibited by task; input file SHA-256 records actual snapshot.",
+  "input_sha256": {
+    "AGENTS.md": "5e26c3ce60ac79add98d797e72cfa167a4a936970b82b2e4f568fd7783594a54",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "420d202ed7ef52ac15e578eae6f9083005b286da3d95a23c89cebe886d8a531e",
+    "docs/index.md": "a07c6ddac82ca52876aeb32c5bb089ddafb08aff80a2dc7a513079995777ee05",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "specs/order/quickstart.md": "d4e6342af3d53e5478025bf5949c49c9d47ec9ae8b44c48263a524a1020643b7",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b"
+  },
+  "runs": [
+    {
+      "command": [
+        "C:\\Users\\24598\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "-B",
+        "checks/acceptance.py",
+        "--scenario",
+        "AC-1"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"result\": \"PASS\",\n    \"accepted\": true,\n    \"persisted_status\": \"submitted\",\n    \"expected_accepted\": true,\n    \"expected_status\": \"submitted\"\n  }\n]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\24598\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "-B",
+        "checks/acceptance.py",
+        "--scenario",
+        "AC-2"
+      ],
+      "exit_code": 1,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-2\",\n    \"result\": \"FAIL\",\n    \"accepted\": true,\n    \"persisted_status\": \"submitted\",\n    \"expected_accepted\": false,\n    \"expected_status\": \"cancelled\"\n  }\n]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\24598\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "-B",
+        "checks/acceptance.py",
+        "--scenario",
+        "AC-3"
+      ],
+      "exit_code": 3,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-3\",\n    \"result\": \"BLOCKED\",\n    \"reason\": \"No external call is performed by this fixture; authorized endpoint and permission are required\",\n    \"endpoint_configured\": false,\n    \"authorized\": false\n  }\n]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\24598\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "-B",
+        "checks/runtime_details.py"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"python\": \"3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]\",\n  \"sqlite\": \"3.50.4\",\n  \"runtime\": {\n    \"environment\": \"isolated-local-fixture\",\n    \"database\": \"per-scenario temporary SQLite file\",\n    \"external_endpoint\": null,\n    \"external_call_authorized\": false,\n    \"network_access_in_this_run\": false\n  },\n  \"source_sha256\": {\n    \"src/__init__.py\": \"10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded\",\n    \"src/order_service.py\": \"96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de\",\n    \"src/storage.py\": \"6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9\",\n    \"src/ui.py\": \"89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b\"\n  }\n}\n",
+      "stderr": ""
+    }
+  ],
+  "supplementary_runs": [
+    {
+      "timestamp_utc": "2026-11-04T23:19:19.446508+00:00",
+      "purpose": "Observe AC-1/AC-2 preconditions, trigger and results; fresh temporary SQLite per scenario",
+      "command": [
+        "C:\\Users\\24598\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+        "-B",
+        "-c",
+        "import json, tempfile\nfrom pathlib import Path\nfrom src import order_service as service, storage\nresults = []\nfor scenario in (\"AC-1\", \"AC-2\"):\n    with tempfile.TemporaryDirectory() as directory:\n        path = Path(directory) / \"orders.sqlite\"\n        conn = storage.connect(path)\n        try:\n            service.create_order(conn, \"ORDER-1\")\n            pending = service.read_status(conn, \"ORDER-1\")\n            cancelled = None\n            if scenario == \"AC-2\":\n                service.cancel_order(conn, \"ORDER-1\")\n                cancelled = service.read_status(conn, \"ORDER-1\")\n            accepted = service.submit_order(conn, \"ORDER-1\")\n            immediate = service.read_status(conn, \"ORDER-1\")\n        finally:\n            conn.close()\n        conn = storage.connect(path)\n        try:\n            reopened = service.read_status(conn, \"ORDER-1\")\n        finally:\n            conn.close()\n        results.append({\"scenario\": scenario, \"after_create\": pending, \"after_cancel_before_submit\": cancelled, \"submit_return\": accepted, \"after_submit\": immediate, \"after_reopen\": reopened})\nprint(json.dumps(results, ensure_ascii=False, indent=2))"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"after_create\": \"pending\",\n    \"after_cancel_before_submit\": null,\n    \"submit_return\": true,\n    \"after_submit\": \"submitted\",\n    \"after_reopen\": \"submitted\"\n  },\n  {\n    \"scenario\": \"AC-2\",\n    \"after_create\": \"pending\",\n    \"after_cancel_before_submit\": \"cancelled\",\n    \"submit_return\": true,\n    \"after_submit\": \"submitted\",\n    \"after_reopen\": \"submitted\"\n  }\n]\n",
+      "stderr": "",
+      "input_sha256": {
+        "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+        "specs/order/quickstart.md": "d4e6342af3d53e5478025bf5949c49c9d47ec9ae8b44c48263a524a1020643b7",
+        "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+        "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+        "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9"
+      },
+      "matches_initial_input_hashes": true
+    }
+  ]
+}

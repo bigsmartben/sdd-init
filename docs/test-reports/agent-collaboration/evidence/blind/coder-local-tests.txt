@@ -1,0 +1,16 @@
+Command: python -B -m unittest discover -s tests -p test_order.py -v
+test_cancelled_submit_does_not_write_or_commit (test_order.OrderTests.test_cancelled_submit_does_not_write_or_commit) ... ok
+test_cancelled_submit_preserves_persisted_status (test_order.OrderTests.test_cancelled_submit_preserves_persisted_status) ... ok
+test_mark_paid_database_error_propagates (test_order.OrderTests.test_mark_paid_database_error_propagates) ... ok
+test_mark_paid_delegates_to_service (test_order.OrderTests.test_mark_paid_delegates_to_service) ... ok
+test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok
+test_mark_paid_unknown_order_raises (test_order.OrderTests.test_mark_paid_unknown_order_raises) ... ok
+test_normal_submit (test_order.OrderTests.test_normal_submit) ... ok
+test_submit_read_error_propagates (test_order.OrderTests.test_submit_read_error_propagates) ... ok
+test_submit_write_and_commit_errors_propagate (test_order.OrderTests.test_submit_write_and_commit_errors_propagate) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.097s
+
+OK
+Exit code: 0

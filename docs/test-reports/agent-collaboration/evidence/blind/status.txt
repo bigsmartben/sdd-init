@@ -1,0 +1,38 @@
+# 订单 — 当前迭代状态
+
+## 当前迭代
+
+- 2026-11-05；T001／T002 实施及局部自验完成，见[计划](plans/order-repair.md)。Git 未使用；实际快照见各报告。
+
+## 需求验收
+
+| ID | Result | Evidence | Snapshot |
+|---|---|---|---|
+| AC-1 | PASS | [复验](test-reports/order/retest.md) | 报告所列哈希 |
+| AC-2 | PASS | [复验](test-reports/order/retest.md) | 报告所列哈希 |
+| AC-3 | BLOCKED | [复验](test-reports/order/retest.md) | 报告所列哈希 |
+
+## 架构约束验收
+
+| ID | Result | Evidence | Snapshot |
+|---|---|---|---|
+| GAP-001 | 已复核关闭 | [Review](test-reports/order/review.md) | 报告所列哈希 |
+| GAP-002 | BLOCKED | [Review](test-reports/order/review.md) | 报告所列哈希 |
+
+## 审查与验收 Gate
+
+- Review Gate：BLOCKED；[Review](test-reports/order/review.md)。
+- Test Gate：BLOCKED；[复验](test-reports/order/retest.md)。
+
+## 执行记录入口
+
+[初验](test-reports/order/initial.md)、[复验](test-reports/order/retest.md)、[Review](test-reports/order/review.md)。
+
+## 问题跟踪入口
+
+[ISS-001](issues/ISS-001.md) 已复验关闭。
+
+## 阻塞 / 待决策与恢复入口
+
+- AC-3：有权人员提供获授权真实服务端点和调用权限，并明确实际核验入口／协议；现有脚本即使配置就绪仍无条件 BLOCKED。
+- GAP-002：项目决策人确认 SDD-OBS-02/03 对本夹具的适用性及必要文字事实和日志契约范围；若适用，确定授权及可执行契约，再实施和复核。

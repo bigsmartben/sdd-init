@@ -6,7 +6,7 @@
 
 sdd-init 面向维护 SDD 工作流的维护者，以及在目标仓库中使用 Agent 的开发者。产品提供可构建、可安装的指令与工具资源，使需求整理、实施、验证、部署和交付具有明确的职责与产物归属。
 
-系统由 Python 分发安装工具与 Agent 执行的工作流资源组成。Skill 是职责指令，角色是可选执行分工，两者不是独立常驻服务。目标项目自行决定业务架构、技术选型和实际运行环境；本仓库不承载目标项目业务服务、业务数据库或部署实例。观测样例是可选参考资源，不代表目标项目采用了对应技术栈。
+系统由 Python 分发安装工具与 Agent 执行的工作流资源组成。Skill 是职责指令，实施、验收和 Review 等有对应专职执行者的复杂任务默认由角色执行并持续接续，简单局部任务可由 Main 完成；部署与 Git 按各自入口的默认职责执行。两者不是独立常驻服务。目标项目自行决定业务架构、技术选型和实际运行环境；本仓库不承载目标项目业务服务、业务数据库或部署实例。观测样例是可选参考资源，不代表目标项目采用了对应技术栈。
 
 ## 2. 使用终端与运行条件
 
@@ -62,7 +62,7 @@ Developer --> Work
 | PAC-05 | PUC-03 | 已有项目资源与项目自有正文 | 明确升级工作流 | 升级受管范围，保留既有正文及用户运行配置；AC-022、初始化入口 |
 | PAC-06 | PUC-03 | 载荷缺失必要资源或入口存在冲突 | 初始化或升级 | 写入前拒绝已识别的冲突，报告路径；AC-013、AC-020—AC-022 |
 | PAC-07 | PUC-04 | 已确认目标与已有授权 | 实施并验证任务 | Plan 承载执行，局部自验、需求验收及架构复核各自归属；AC-004、AC-008、AC-012 |
-| PAC-08 | PUC-04 | 测试缺陷或架构 gap 已发现 | 修复后复验／复核 | 问题记录及历史批次可追溯，由对应验证职责判定关闭；AC-020、AC-021 |
+| PAC-08 | PUC-04 | 测试缺陷或架构检查项偏差已发现 | 修复后复验／复核 | 问题或检查项记录及历史批次可追溯，由对应验证职责判定关闭；AC-020、AC-021 |
 | PAC-09 | PUC-04 | 用户指定 Git 交付终点或部署意图 | 执行对应 Skill | 在实际授权与环境中报告交付／运行状态；AC-003、AC-022 |
 
 ## 5. 部署与运行边界
@@ -123,7 +123,7 @@ flowchart TD
   Govern[初始化 govern.py] --> Payload[repo-payload.zip 与导航片段]
   Main[Main 按用户目标选择职责] --> Skills[六个项目 Skills]
   Skills --> Shared[共享规则、模板和检查工具]
-  Skills --> Roles[按需采用五个角色职责]
+  Skills --> Roles[按任务调用专职角色]
   Doc[sdd-doc] --> Check[doc_check.py 只读检查]
 ```
 
@@ -137,7 +137,7 @@ flowchart TD
 | sdd-doc | 从确认内容与执行证据归并正式文档，维护关联并执行写后检查；模板不授予设计权 | [Skill](../source/project/.agents/skills/sdd-doc/SKILL.md) |
 | sdd-imp | 交付明确的上游任务，生成并执行同一 Plan／Task 清单，修改代码并完成局部自验 | [Skill](../source/project/.agents/skills/sdd-imp/SKILL.md) |
 | sdd-test-loop | 根据 Spec 验收行为，返回问题与复验事实，判定 Test Gate | [Skill](../source/project/.agents/skills/sdd-test-loop/SKILL.md) |
-| sdd-review-loop | 检查架构落地与规则执行，明确整改目标，返回 gap 和复核事实，判定 Review Gate | [Skill](../source/project/.agents/skills/sdd-review-loop/SKILL.md) |
+| sdd-review-loop | 按检查项检查架构落地与规则执行，明确整改目标，返回检查和复核事实，判定 Review Gate | [Skill](../source/project/.agents/skills/sdd-review-loop/SKILL.md) |
 | sdd-deploy | 根据部署意图探测环境、准备依赖并验证服务就绪；不随实施自动触发 | [Skill](../source/project/.agents/skills/sdd-deploy/SKILL.md) |
 | sdd-commit | 根据授权终点管理本地 Git 与远端协作；远端摘要不替代本地权威文档 | [Skill](../source/project/.agents/skills/sdd-commit/SKILL.md) |
 | 文档校验器 | 只读检查所选 Markdown 的编码、结构、编号及本地引用，输出诊断与退出码；不判定语义或 Gate | [工具说明](../source/project/.agents/sdd/references/doc-check.md) |
@@ -149,7 +149,7 @@ flowchart TD
 | ZIP、wheel、构建清单 | 从源生成；清单记录文件哈希；生成物不反向成为源正文 |
 | 用户级安装目录 | 安装器依据 manifest 保护；定制或额外文件阻止自动替换 |
 | 目标项目导航与治理 | `docs/index.md` 和项目治理文件仅缺失时初始化；已有内容由项目维护，显式升级也不覆盖这两项 |
-| Spec、Blueprint、Plan 与证据 | 由目标项目维护；Spec 管详细需求，Blueprint 管高位设计，Plan 管执行；测试报告、Issue、Review 分别拥有批次事实、问题生命周期、架构 gap；Status 引用其结果 |
+| Spec、Blueprint、Plan 与证据 | 由目标项目维护；Spec 管详细需求，Blueprint 管高位设计，Plan 管执行；测试报告、Issue、Review 分别拥有批次事实、问题生命周期、架构检查项及其复核事实；Status 引用其结果 |
 | 历史导入与记录 | [baselines](../baselines/)及历史证据保留用于追溯；旧治理命令按下述退役边界处理，记录保留不意味着接口兼容 |
 
 ### 旧治理命令退役边界
@@ -167,7 +167,7 @@ flowchart TD
 | ARC-001 | 初始化器源、项目分发源、生成物及历史基线分离；共享资源只维护一份现行源 | [维护边界](../AGENTS.md#维护边界)、[README](../README.md#源码与维护入口) |
 | ARC-002 | 用户级入口更新与项目升级分别执行；初始化只安装工作流资源和导航，不创建项目需求、架构或状态正文，不修改用户运行配置 | [初始化入口](../source/initializer/SKILL.md)、Spec FR-002、FR-022 |
 | ARC-003 | 详细需求、高位架构、执行清单与验证事实各有唯一正文；引用不形成竞争权威 | Spec FR-001、FR-006、FR-007、FR-009、FR-021 |
-| ARC-004 | 实现与局部自验、需求验收、架构 Review 的职责分离；缺陷与 gap 由对应复验／复核关闭 | Spec FR-008、FR-020、FR-021 |
+| ARC-004 | 实现与局部自验、需求验收、架构 Review 的职责分离；缺陷与存在偏差的检查项由对应复验／复核关闭 | Spec FR-008、FR-020、FR-021 |
 | ARC-005 | 机械检查只能证明其声明范围内的结构与引用性质，不能代替 Agent 语义判断 | Spec FR-013 |
 | ARC-006 | 工作流只沿用任务实际授权；文档与实现完成不隐含远端交付或部署授权 | Spec FR-003、FR-022 |
 | ARC-007 | 分发规则及样例不代替目标项目的业务需求、组件库或产品架构决定；历史导入实现不覆盖已确认目标 | [维护边界](../AGENTS.md#维护边界)、Spec FR-012、FR-014 |

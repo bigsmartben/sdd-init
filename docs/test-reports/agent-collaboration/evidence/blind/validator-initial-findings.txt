@@ -1,0 +1,27 @@
+# 初始验收与架构审查证据
+
+执行范围：隔离项目本地 CLI／库，初始实现快照；不访问网络或真实外部服务。版本标识为 `evidence/validator-initial.txt` 中 runtime_details 输出的各 src 文件 SHA-256；本任务禁止 Git，未采集 commit。Python 3.14.6、SQLite 3.50.4，运行配置和完整输出同文件。
+
+## 初始验收
+
+命令 `python -B checks/acceptance.py`，退出 1：AC-1 PASS（true，重开文件数据库为 submitted）；AC-2 FAIL（取消后返回 true，重开为 submitted；期望 false、cancelled），问题 ISS-001；AC-3 BLOCKED，配置无端点、无调用权限，未访问网络。`python -B checks/runtime_details.py` 退出 0，运行事实及源哈希见原始输出。`python -B -m unittest discover -s tests -v` 退出 0、2 项通过，原始输出见 `evidence/validator-baseline-unittest.txt`；其仅覆盖正常提交及 paid 持久化，未覆盖取消后提交或数据库异常，不能替代验收。
+
+ISS-001：`src/order_service.py:28-31` submit 读取状态后无条件调用 `set_status(..., "submitted")` 并返回 true，覆盖 cancelled。整改目标为取消后不写入且返回 false，重开仍 cancelled；保持既有函数接口、pending 提交和持久化、数据库异常向上传播及无网络调用。复现入口同 AC-2 验收；修复后须重走 AC-1、AC-2 和受影响组合。
+
+AC-3 恢复需有权人员提供已授权测试服务端点及调用权限，并明确实际核验入口／协议；现有 `checks/acceptance.py:14-22` 无条件返回 BLOCKED，即使配置就绪也不会调用服务。不能用本地结果冒充外部回执；本轮无外部配置、凭据或调用授权。
+
+## 初始架构审查
+
+依据 `docs/blueprint.md` ARC-1～4、`docs/contracts/order.md`、`.agents/sdd/references/architecture-rules.md` 和 `observability-baseline.md`；结论限于上述初始源码快照。
+
+| 项目 | 结论与证据 |
+| --- | --- |
+| ARC-1 职责与状态所有权 | 偏差 GAP-001：`src/ui.py:4-6` 直接 UPDATE 并 commit；违反仅服务写入状态。`src/order_service.py:24-25` cancel 调用 `set_status`，`:28-30` submit 调用 `set_status`，`:18-21` 服务实际写入并 commit；`src/storage.py:5-9` 负责连接和建表。整改目标：`mark_paid` 通过服务 `set_status` 写入，保持接口及现有订单变为 paid 并持久化，不存在订单按契约抛 ValueError，不改变其他业务行为。 |
+| ARC-2 实体持久化与提交 | 静态路径符合：`storage.connect` 创建 SQLite 表，`create_order`、`set_status` 执行 SQL 后 commit，数据库异常未捕获转成功。AC-1 实际重开持久化通过。提交／commit 故障向上传播缺少动态证据，已交 coder 补必要测试，最终结论待复核。 |
+| ARC-3 正式／测试隔离 | 已检查 `src/__init__.py`、`order_service.py`、`storage.py`、`ui.py` 的引用与装配：无 tests、checks、测试身份或夹具配置依赖；`checks/acceptance.py:10`、`tests/test_order.py:6` 调用正式模块。符合所检查范围。 |
+| ARC-4 本地／外部边界 | src 模块静态无网络调用；本地 AC-1/2 使用临时文件，AC-3 未触网。符合本地调用边界；外部真实证据阻塞，不能推定通过。 |
+| 环境、测试工程与断言 | `checks/acceptance.py:23-37` 每场景独立临时 SQLite、关闭并重开，临时目录上下文清理；断言比较返回值和持久化状态。现有单测缺取消及错误路径，目标断言覆盖不足，已交 coder。无并发任务、重试或恢复机制，相关专项机制不适用；没有 UI 页面或人工视觉确认范围。 |
+| 业务与运维职责、观测 | 本项目无后台进程、流控、产品观测实现；不能将缺失机制称为已实现。SDD-OBS-01 关于观测不得控制业务在当前无观测依赖的源码范围内未发现违例。SDD-OBS-02/03 对必要文字事实持久化和日志契约的强制要求与 Blueprint 声明无正式观测系统之间，适用性及必要事实范围未明确，见 GAP-002。 |
+| 媒体、脚手架 | Blueprint 声明无媒体和脚手架生成机制，源码亦无相应入口；媒体保存／拒收操作与生成结构检查在本次项目范围不适用，不表示已经实现媒体拒收。 |
+
+GAP-002（设计待决，BLOCKED）：需由 Main 带回用户／设计决策者确认此隔离评测夹具是否适用 SDD-OBS-02/03 的必要文字事实与日志契约，以及若适用应覆盖何种事实及边界。恢复条件为明确适用性与经确认的范围；若适用，再确定授权及可执行契约后实施并验证。不得自行豁免强制基线，也不得自行增加会改变业务的观测机制。此待决不阻碍 ISS-001、GAP-001 本地整改及相关复验。

@@ -1,0 +1,106 @@
+{
+  "phase": "mechanism plus Review check-item convergence",
+  "protected_files": 125,
+  "changed": [],
+  "added": [],
+  "counting": "Same eight distribution-source files: CJK U+3400–U+4DBF and U+4E00–U+9FFF, plus non-whitespace characters; before is pre-task HEAD, after is current source. Counts are not tokens or runtime savings.",
+  "characters": [
+    {
+      "path": "source/project/.agents/sdd/references/sdd-repository-governance.md",
+      "before": {
+        "han": 3733,
+        "non_whitespace": 6544
+      },
+      "after": {
+        "han": 3902,
+        "non_whitespace": 6759
+      },
+      "final_sha256": "07cb48c65bda5aaf83c52caa098e314a0cf56f48ee7a429c237795cc1262bdef"
+    },
+    {
+      "path": "source/project/.agents/sdd/references/delegation.md",
+      "before": {
+        "han": 1068,
+        "non_whitespace": 1732
+      },
+      "after": {
+        "han": 1330,
+        "non_whitespace": 2083
+      },
+      "final_sha256": "ad052a27dcc4c9bbaba49eef1983e37d9e3e412e13a9c21ef761a4abc0a57d01"
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-imp/SKILL.md",
+      "before": {
+        "han": 1200,
+        "non_whitespace": 1829
+      },
+      "after": {
+        "han": 1233,
+        "non_whitespace": 1853
+      },
+      "final_sha256": "9270bad6d8978f0aa2c8dba141ed242ed0ae5170494edd071ab4404ed0551296"
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-test-loop/SKILL.md",
+      "before": {
+        "han": 918,
+        "non_whitespace": 1558
+      },
+      "after": {
+        "han": 937,
+        "non_whitespace": 1621
+      },
+      "final_sha256": "09be09dca89d893b983ecd2a4700d9a1218d68db8b1e2debd070e2074438c88f"
+    },
+    {
+      "path": "source/project/.agents/skills/sdd-review-loop/SKILL.md",
+      "before": {
+        "han": 992,
+        "non_whitespace": 1589
+      },
+      "after": {
+        "han": 1078,
+        "non_whitespace": 1722
+      },
+      "final_sha256": "294f8672184dfcf21036834f428f413817b80178eddab6b2ab31eace65efd234"
+    },
+    {
+      "path": "source/project/.codex/agents/sdd-coder.toml",
+      "before": {
+        "han": 194,
+        "non_whitespace": 455
+      },
+      "after": {
+        "han": 215,
+        "non_whitespace": 486
+      },
+      "final_sha256": "b8279bd40e5a6f8be5d5eb4c1a0f08fecdd14110202e6f4845719a9e9618c422"
+    },
+    {
+      "path": "source/project/.codex/agents/sdd-validator.toml",
+      "before": {
+        "han": 156,
+        "non_whitespace": 405
+      },
+      "after": {
+        "han": 188,
+        "non_whitespace": 444
+      },
+      "final_sha256": "2b7f7f1d77adb85a2289113280a8f6a13db867c01e7296068a0da402c8c8f4cc"
+    },
+    {
+      "path": "source/project/.agents/sdd/assets/review_template.md",
+      "before": {
+        "han": 778,
+        "non_whitespace": 1390
+      },
+      "after": {
+        "han": 774,
+        "non_whitespace": 1229
+      },
+      "final_sha256": "d0dbea7a6a97fa2642c064db31a43ec45ea86ced75522732617b74b34adb4a96"
+    }
+  ],
+  "case_definitions": 38
+}

@@ -1,0 +1,77 @@
+COMMAND: rg -n relevant governance, baseline, blueprint, contracts and src
+docs/blueprint.md:5:本地库和 CLI 支持新建、取消、提交及标记 paid，具体行为见 [Spec](../specs/order/spec.md)。本项目是评测测试资产；文件 SQLite 是已确认的持久化选择，不需要设计新的技术栈。没有 Web 页面、后台进程、媒体或正式观测系统。
+docs/blueprint.md:11:| ARC-1 | order_service 是订单状态写入的唯一业务入口；ui 适配层只调用服务，不直接执行状态写入 SQL。storage 仅负责连接和建表。 |
+docs/blueprint.md:12:| ARC-2 | 订单实体持久化到文件 SQLite；提交完成由实际数据库写入及 commit 承载，失败不返回提交成功。 |
+docs/blueprint.md:16:各模块只有同步函数交互，无并发任务或后台恢复机制。mark_paid 经现有服务的 set_status 入口写入，结果保持 paid；取消提交的行为以 AC-2 为准。接口见 [订单契约](contracts/order.md)。
+docs/blueprint.md:18:本轮运行范围无产品日志采集、传输、媒体、后台服务或脚手架生成机制；验收命令的 JSON 是测试原始输出。Review 仍须逐项判断适用规则、注明不适用依据，不能把缺少产品机制默认为已实现。
+docs/contracts/order.md:7:| create_order(connection, order_id) | 创建 pending 并 commit。 |
+docs/contracts/order.md:8:| cancel_order(connection, order_id) | 持久化为 cancelled。 |
+docs/contracts/order.md:9:| submit_order(connection, order_id) | pending 时持久化为 submitted 并返回 true；cancelled 时不写入并返回 false。 |
+docs/contracts/order.md:10:| set_status(connection, order_id, status) | 现有服务写入入口，持久化给定合法状态；mark_paid 使用 paid。 |
+docs/contracts/order.md:13:不存在的订单抛出 ValueError；数据库异常向上传播，不转为成功。函数不进行网络操作、日志采集、重试或部署。
+.agents/sdd/references/architecture-rules.md:11:### 业务实体持久化
+.agents/sdd/references/architecture-rules.md:13:业务代码中，所有业务实体的持久化必须写入数据库；日志、普通文件或仅驻留内存的缓存不能替代业务实体落库。业务状态的权威归属仍由业务领域承担，观测记录不作为业务持久化存储。数据库类型、数据模型、写入时机、持久化完成的判定条件及失败后的业务行为由项目设计明确，具体事务、重试和恢复机制由项目选择。
+.agents/sdd/references/architecture-rules.md:21:观测能力保持非侵入，遵循下方可观测性架构规范。技术流控与进程生命周期管理属于运行控制能力，通过已确认的接口、权限与策略作用于运行过程；其允许的控制行为及故障后果由项目契约明确，不套用观测能力“不得影响业务运行”的约束，也不因此改变业务规则或业务状态的权威归属。
+.agents/sdd/references/architecture-rules.md:31:### 可观测性架构规范
+.agents/sdd/references/architecture-rules.md:33:业务负责业务执行及权威业务数据；观测负责日志、指标及链路的采集、关联、导出与分析。链路表达跨调用关联与先后，不充当业务状态或新的业务执行通道；日志记录事实，指标提供统计，三者通过项目契约关联。
+.agents/sdd/references/architecture-rules.md:35:业务与观测的依赖、故障及资源隔离遵循[观测基线 SDD-OBS-01](observability-baseline.md#职责与隔离sdd-obs-01)。该专项正文同时约束观测对业务的影响，以及业务使用观测数据、工具实现功能的反向依赖。
+.agents/sdd/references/architecture-rules.md:37:### 日志规范
+.agents/sdd/references/architecture-rules.md:39:日志事件、结构、字段、级别、关联、脱敏、采集、传输、缓冲、持久化、轮转、保留与失败处理统一遵循[日志专项要求](observability-baseline.md#日志实现规范)。SDD-OBS-02/03 的媒体边界、必要文字持久化及跨语言契约继续适用。项目将策略落实为可核对的契约与配置。
+.agents/sdd/references/sdd-repository-governance.md:19:按系统用途分类，不按文件形式或技术模块名称分类；本节唯一维护分类与默认落点，项目实际路径沿用索引。
+.agents/sdd/references/sdd-repository-governance.md:42:| Issue | `docs/issues/<问题编号>.md`；沿用已有项目的唯一记录与索引，使用 [Issue 模板](../assets/issue_template.md) |
+.agents/sdd/references/sdd-repository-governance.md:75:| Spec | 具体需求的唯一正文：目标、详细行为、业务规则、条件、异常与可执行 AC；细化并追溯适用 Blueprint 条款，不重复同层级正文 |
+.agents/sdd/references/sdd-repository-governance.md:94:| sdd-commit | 代理 Git 与 GitHub／GitLab 协作，执行指定交付终点 | 授权范围、分支、Issue、PR／MR 及合并 | 对象链接与已核验的交付回执 |
+.agents/sdd/references/sdd-repository-governance.md:137:Git 与 GitHub／GitLab 仓库协作按 [sdd-commit](../../skills/sdd-commit/SKILL.md)执行，默认 Main 承担。用户指定交付终点后，Agent 在已有授权内自主完成所需分支、提交、推送、Issue、PR／MR 或合并步骤，不要求用户逐项操作或确认；只做终点必需的动作，目标歧义或范围实质变化时聚焦缺口确认。平台操作不改变 Spec 与报告权威；未指定终点仍只完成本地提交，PR／MR 创建不隐含合并，保护规则及审批按目标仓库执行。
+.agents/sdd/references/sdd-repository-governance.md:147:## 观测基线落实与审查
+.agents/sdd/references/sdd-repository-governance.md:149:- Review 逐项检查[观测基线](observability-baseline.md) SDD-OBS-01/02/03 及日志实现要求；必查业务故障隔离、媒体各写入与重试入口拒收、合法音频资产归属与隔离，分别提供证据。
+.agents/sdd/references/sdd-repository-governance.md:151:- 证据不足为 UNVERIFIED，契约冲突为 BLOCKED，证实违反为 FAIL；未整改或有检查缺口不得给 Review Gate PASS。偏差按[实施和独立审查](#实施和独立审查)闭环并更新同一最新快照。
+.agents/sdd/references/observability-baseline.md:1:# SDD 强制架构基线：运维与可观测
+.agents/sdd/references/observability-baseline.md:7:日志记录事实，指标表达统计，链路表达跨调用关联与先后；评测消费日志、指标及授权测试资产，不另立采集类别。业务负责执行与权威状态，通过明确接入点报告事实；观测负责格式化、存储、轮转、采集导出、统计与展示，不指定库、事件总线或进程。
+.agents/sdd/references/observability-baseline.md:9:观测可记录业务接口提供的事实或快照，保存受 SDD-OBS-02 约束；不得拥有或修改权威业务状态、改变业务语义或驱动业务决策。业务不得依赖观测数据、工具或评测结果实现功能，包括状态、流程推进与计费，须使用业务接口和权威数据。
+.agents/sdd/references/observability-baseline.md:11:非侵入要求适用于观测采集、导出、分析与评测；技术流控及进程生命周期见[运行控制职责](architecture-rules.md#业务与运维可靠性职责分离)。业务不得等待观测写入、导出或评测；观测异常、超时、不可用和缓冲饱和不得导致业务失败、反压或结果变化。观测不得对业务产生副作用，包括修改业务输入输出及状态、消费或关闭业务仍需的流和资源，或因观测重试重放业务。采集须非阻塞并隔离资源与生命周期，异步调用本身不证明隔离。
+.agents/sdd/references/observability-baseline.md:13:持久化与非阻塞同时成立，不得靠暂停、取消或拒绝业务保证日志完整。观测故障须暴露独立状态、错误及缺失证据，按项目策略缓冲恢复；无法保存时判记录要求未满足，不静默丢弃或伪装成功，不承诺无限故障无损。业务继续与记录完整分别取证。
+.agents/sdd/references/observability-baseline.md:15:<a id="debug-采集边界与原始交互持久化sdd-obs-02"></a>
+.agents/sdd/references/observability-baseline.md:17:## 日志、指标与媒体保存边界（SDD-OBS-02）
+.agents/sdd/references/observability-baseline.md:19:必要文字输入输出、执行及工具事实、状态和用量常态记录并持久化，以唯一事实记录（SSOT）供查询、观测和评测派生读取。Debug 只是日志级别，可按级别筛选；它不是独立观测功能、采集开关或媒体保存授权，不因级别设置停记、拒写或清空必要文字事实。流式、取消和中断保留实际部分内容、身份、顺序及缺失事实；生成、发送与呈现分开，缺失不补造，凭证和 API Key 排除在日志之外。
+.agents/sdd/references/observability-baseline.md:21:观测日志、指标、链路载荷、队列和归档不得保存原始音视频字节，包括 PCM、编码数据、base64 及其他等价表示；可以记录合法元数据、状态、统计和资产标识，不复制音视频内容。声纹测试、唤醒词等明确业务或测试目的需要的原始音频，由相应业务／测试能力独立管理资产；该例外不使资产成为观测日志，也不授权常规会话录音。原始视频没有已授权保存例外；未明确的其他例外不得推定。正常业务瞬时处理、传输和播放不属于本保存禁令。不得以 Debug 关闭证明媒体拒收，也不得将资产存在当作观测保存授权。
+.agents/sdd/references/observability-baseline.md:25:文字记录以精确持久化回执确认，不以控制台、内存、队列或发送代替；失败、缺失和未知须可识别。有限资源策略按下方日志实现规范明确，故障隔离遵循 SDD-OBS-01。
+.agents/sdd/references/observability-baseline.md:27:## 跨语言日志契约（SDD-OBS-03）
+.agents/sdd/references/observability-baseline.md:29:各语言、客户端与服务端共用唯一、版本化且机器可解析的日志契约，格式、编码及字段要求见下表。实现库和存储介质可因宿主而异，不降低内容与持久化要求。禁止用成功代替未知、生成代替呈现或媒体引用代替资产落地证据。
+.agents/sdd/references/observability-baseline.md:31:## 日志实现规范
+.agents/sdd/references/observability-baseline.md:33:项目唯一日志契约须将 SDD-OBS-01/02/03 落实为以下可检查内容；参数、载荷和技术机制由项目确认，未知项不得由示例默认值补定。
+.agents/sdd/references/observability-baseline.md:37:| 事件与结构 | 将 SDD-OBS-02 的必要文字事实具体化为必记事件清单，逐项明确触发条件与必需字段；定义事件身份、类型、实际发生阶段及版本化结构；重试关联同一事实，阶段与缺失语义遵循 SDD-OBS-02/03 |
+.agents/sdd/references/observability-baseline.md:40:| 采集与传输 | 明确事实接入点、采集与导出接口、编码、传输边界及错误处理；采集、队列受理、传输确认和持久化回执分别判定 |
+.agents/sdd/references/observability-baseline.md:42:| 持久化与生命周期 | 明确存储与回执、轮转触发、保留和清理策略及失败处理；通过实际回读和故障证据判断完整性 |
+.agents/sdd/references/observability-baseline.md:48:映射、升级归并、审查证据及整改闭环统一遵循[仓库治理的观测基线落实与审查](sdd-repository-governance.md#观测基线落实与审查)。
+src\ui.py:5:    connection.execute("UPDATE orders SET status = ? WHERE order_id = ?", ("paid", order_id))
+src\ui.py:6:    connection.commit()
+src\storage.py:7:    connection.execute("CREATE TABLE IF NOT EXISTS orders (order_id TEXT PRIMARY KEY, status TEXT NOT NULL)")
+src\storage.py:8:    connection.commit()
+src\order_service.py:4:def create_order(connection, order_id):
+src\order_service.py:7:    connection.execute("INSERT INTO orders VALUES (?, ?)", (order_id, "pending"))
+src\order_service.py:8:    connection.commit()
+src\order_service.py:11:def read_status(connection, order_id):
+src\order_service.py:12:    row = connection.execute("SELECT status FROM orders WHERE order_id = ?", (order_id,)).fetchone()
+src\order_service.py:18:def set_status(connection, order_id, status):
+src\order_service.py:19:    read_status(connection, order_id)
+src\order_service.py:20:    connection.execute("UPDATE orders SET status = ? WHERE order_id = ?", (status, order_id))
+src\order_service.py:21:    connection.commit()
+src\order_service.py:25:    set_status(connection, order_id, "cancelled")
+src\order_service.py:29:    read_status(connection, order_id)
+src\order_service.py:30:    set_status(connection, order_id, "submitted")
+EXIT: 0
+COMMAND: Get-FileHash -Algorithm SHA256 relevant files
+
+Algorithm Hash                                                             Path
+--------- ----                                                             ----
+SHA256    07CB48C65BDA5AAF83C52CAA098E314A0CF56F48EE7A429C237795CC1262BDEF C:\Users\24598\Documents\github\sdd-init\.build\agent-collaboration\20261105-boundaries\collaboration_review_only\project\.agents\sdd\references\sdd-repository-governance.md
+SHA256    3566AC7EE7245B3C7CEB479E9DB0FA11FCF8F10AD6C5CFD461EDC93D2C4B70DE C:\Users\24598\Documents\github\sdd-init\.build\agent-collaboration\20261105-boundaries\collaboration_review_only\project\.agents\sdd\references\observability-baseline.md
+SHA256    2DDDE09B2AF25B69CD9ADAFB9679EB08EC3F1A53B41B23F547F9E592B48CA64A C:\Users\24598\Documents\github\sdd-init\.build\agent-collaboration\20261105-boundaries\collaboration_review_only\project\.agents\sdd\references\architecture-rules.md
+SHA256    E853C765EF135E90905F08C26AD7CD8A5FFC1BF06A2C8A6E5FE35C79C9870B63 C:\Users\24598\Documents\github\sdd-init\.build\agent-collaboration\20261105-boundaries\collaboration_review_only\project\docs\blueprint.md
+SHA256    4696E66D66850D9B37A9C4D37754B88EF5088C9994138EDD497DB55F54CFDE83 C:\Users\24598\Documents\github\sdd-init\.build\agent-collaboration\20261105-boundaries\collaboration_review_only\project\docs\contracts\order.md
+SHA256    10A2558AAA2B9E1E596848196950162B8EA998F80F6D1B7086F8C6166FD8EDED C:\Users\24598\Documents\github\sdd-init\.build\agent-collaboration\20261105-boundaries\collaboration_review_only\project\src\__init__.py
+SHA256    96844B5FABA169A28C5F4CFB877A9644B83E81F0E63F5B726DE525294A69F6DE C:\Users\24598\Documents\github\sdd-init\.build\agent-collaboration\20261105-boundaries\collaboration_review_only\project\src\order_service.py
+SHA256    6881B113E593125682A4886546497D1F6BD07AE490BB1951DF4AEDC070B23FA9 C:\Users\24598\Documents\github\sdd-init\.build\agent-collaboration\20261105-boundaries\collaboration_review_only\project\src\storage.py
+SHA256    89EF1238B40556D5A7B3DC93DAEEB1A04B68A600C7C985D648A80A66F84CB25B C:\Users\24598\Documents\github\sdd-init\.build\agent-collaboration\20261105-boundaries\collaboration_review_only\project\src\ui.py
+
+

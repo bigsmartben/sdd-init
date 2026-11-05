@@ -1,0 +1,15 @@
+# 修复后验收与架构复核证据
+
+快照：`evidence/validator-final-run.txt` 中 runtime_details 给出完整 src SHA-256；order_service `610036df97e97297bf0e9f8e29ba87ab91484690334bb3072875dc7a5e3a3c67`，ui `3e3de4dc74371f73bfb9a6aa8df56aa8084096761a457d38f46cb5d19ce82ac7`，tests/test_order.py `d80b43e6f5e75fd69a917ee7f73c6b9946fdeb1e7ad08d8adf5eed92f8ba0765`，与交接一致。Python 3.14.6 / SQLite 3.50.4；禁止 Git，使用哈希标识快照。
+
+`python -B checks/acceptance.py` 退出 3：AC-1 PASS（true、重开 submitted）；AC-2 PASS（false、重开 cancelled）；AC-3 BLOCKED（无端点、无权限，无外部调用）。`python -B checks/runtime_details.py` 退出 0；`python -B -m unittest discover -s tests -v` 退出 0，9 项通过。原始输出及哈希见 `evidence/validator-final-run.txt`；初始失败和原版本见 `evidence/validator-initial.txt`，初审见 `evidence/validator-initial-findings.md`。
+
+ISS-001 可关闭：实际 AC-2 完整执行取消、提交、关闭并重开文件库，返回 false 且状态 cancelled；AC-1 同批通过。`tests/test_order.py:40-47` 另断言取消时只读且不 commit。Test Gate 为 BLOCKED，因 AC-3 尚未验证，不是全部目标通过。AC-3 恢复需有权人员提供获授权端点及调用权限，并明确实际核验入口／协议；`checks/acceptance.py:14-22` 当前无条件 BLOCKED，配置本身不足以执行真实核验。
+
+GAP-001 可关闭：`src/ui.py:2,5-6` 调用 `order_service.set_status`，后者 `src/order_service.py:18-21` 读取、UPDATE 并 commit；UI 不再直接写 SQL。`tests/test_order.py:80-89,100-106` 分别核对委托及参数、未知订单 ValueError 和通过真实文件 SQLite 跨组件读取 paid。原接口与现存订单 paid 可观察结果保持。
+
+ARC-2：AC-1、AC-2 验收实际重开文件库；`tests/test_order.py:49-78` 对读取、UPDATE、commit 注入 OperationalError 并断言同一异常向上传播，写失败还断言不 commit；`:91-98` 验证 UI 链路数据库异常向上传播。模拟异常证明调用边界与结果传播，不证明真实磁盘故障及回滚机制，后者不在本轮已确认要求中。ARC-2 受影响范围通过。
+
+其他影响分析：`coder-diff.patch` 表明正式源码仅提交状态分支及 UI 委托发生变化。复核两者均无网络与测试依赖，storage 未变且哈希一致；ARC-3/4、环境和无媒体／脚手架范围复用初审证据。新增测试与验收分别断言返回值、重开持久化、取消不写、委托、异常传播，足以覆盖本轮目标；真实外部核验和 GAP-002 不由本地测试替代。
+
+Review Gate 为 BLOCKED：GAP-001 已复核通过，但 GAP-002 关于 SDD-OBS-02/03 是否适用于本隔离夹具及必要文字事实范围仍待 Main 带回用户／设计决策者确认；恢复条件为明确适用性及确认范围，若适用须确定授权和可执行契约后实施并验证。未认定观测机制或媒体拒收已实现。

@@ -1,0 +1,28 @@
+# 订单架构 Review — 当前状态
+
+## 当前迭代
+
+2026-11-05；本轮限架构 Review 及授权内整改，快照和执行者见[Review](test-reports/order/architecture-review.md)。[T001](plans/paid-delegation.md) 实施及局部自验完成；validator 对 CHK-001／002 分别复核关闭。
+
+## 架构约束验收
+
+| ID | Result | Evidence | Snapshot |
+|---|---|---|---|
+| CHK-001／002 | PASS，已复核关闭 | [Review](test-reports/order/architecture-review.md) | 报告所列哈希 |
+| CHK-003／004／005 | PASS | [Review](test-reports/order/architecture-review.md) | 报告所列哈希 |
+| CHK-006／007／008 | BLOCKED | [Review](test-reports/order/architecture-review.md) | 报告所列哈希 |
+| CHK-009 | 不适用 | [Review](test-reports/order/architecture-review.md) | 报告所列哈希 |
+
+## 审查 Gate
+
+- Review Gate：BLOCKED；[执行者逐项结论](test-reports/order/architecture-review.md)。本轮未执行需求验收。
+
+## 执行记录入口
+
+[Review](test-reports/order/architecture-review.md)；[实施计划](plans/paid-delegation.md)。
+
+## 阻塞与恢复入口
+
+- CHK-006：Main／有权人员提供获授权端点、调用权限与网络条件并取得外部验证授权。
+- CHK-007：依赖 CHK-006，另须明确外部装配和核验入口并授权操作。
+- CHK-008：Main 与用户／设计决策者确认观测基线适用性与必要事实范围；若适用，确认契约和授权后验证。

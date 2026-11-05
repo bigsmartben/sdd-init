@@ -1,0 +1,12 @@
+# 首批架构检查事实
+
+本次仅检查 CHK-001／002；其他范围项待检查，不报告整体 Gate。依据 `docs/review-scope.md`、Blueprint ARC-1、订单契约及架构规则职责与依赖要求。执行者 validator；本项目快照、命令及哈希见 `evidence/validator-chk001-002-initial-run.txt`。未运行取消需求验收或全量回归。
+
+## CHK-001 订单状态权威
+初审 FAIL：`src/ui.py:4-6` 直接 UPDATE orders 并 commit，违背 order_service 唯一状态写入入口；`src/order_service.py:18-25` 服务 set_status 负责写入，cancel 使用该入口。整改交 coder：调整 UI 写入责任，使状态写入由服务入口承担；保持所有函数接口、已有订单 mark_paid 后 paid 持久化和既有业务行为，不修取消提交。复核 UI→服务→SQLite 跨模块链及行为保持。
+
+## CHK-002 UI／服务依赖
+初审 FAIL：`src/ui.py:4-6` 直接操作数据库，没有调用蓝图明确的 `order_service.set_status`。整改交 coder：使 mark_paid 使用既有服务入口，保持签名及 paid 可观察结果；补必要断言证明调用、真实文件持久化和契约异常。两项共享修复可合批，但分别复核。
+
+## r1 事实的哈希影响分析
+本项目 runtime_details 的 ui、order_service、storage、__init__ 哈希分别为 `89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b`、`96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de`、`6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9`、`10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded`；tests/test_order.py 为 `dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311`。与 r1 的 `evidence/validator-initial-run.txt` 同项相同；故可参考 r1 上 `python -B -m unittest discover -s tests -p test_order.py -k mark_paid -v` 的 1 项通过事实，环境同为 Python 3.14.6、SQLite 3.50.4。该事实只证明 r1 临时 SQLite 第二连接读到 paid，不证明服务委托，也不是 r2 实际运行或修复后证据。r2 对当前源码重新检查，其他 r1 结论不自动迁移。

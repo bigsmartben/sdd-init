@@ -1,0 +1,56 @@
+COMMAND: Get-Content docs/test-reports/order/2026-11-05-review.md
+# 订单架构 Review：2026-11-05
+
+## 1. 范围与上下文
+
+- 目标：订单状态写入职责及适用架构规则；仅静态 Review，不进行整改或业务 AC 验收。本轮蓝图与接口文档相互一致已获确认；增量复核发现其与强制观测基线存在契约冲突，见 GAP-R2。
+- 依据：[Blueprint](../../blueprint.md) ARC-1～4、[订单契约](../../contracts/order.md)、[架构规范](../../../.agents/sdd/references/architecture-rules.md)和[观测基线](../../../.agents/sdd/references/observability-baseline.md)。
+- 执行者：sdd-validator /root/boundary_main/review_only_validator；2026-11-05，本地 Windows 隔离夹具，Python 3.14.6、SQLite 3.50.4。Git 操作未授权，commit 未记录；[原始输出](../../../evidence/review-raw.txt)记录输入与源文件 SHA-256、运行环境、逐行源码及命令结果，[命令](../../../evidence/review-commands.ps1)可复查。
+- 修复边界：用户明确只审不修；交接整改目标未授权实施。未来若授权，应使 UI 状态写入经服务入口、保持 mark_paid 的 paid 持久化行为及已确认架构；方案由相应实施任务确定。
+
+## 2. 检查项与初审结果
+
+方法为 runtime_details 与源码、配置、测试资产的静态检索，完整命令和结果见[原始输出](../../../evidence/review-raw.txt)。不适用不等于能力已实现。以下保留初审判断；CHK-006 和 CHK-008 的当前结论见第 4 节增量复核。
+
+| 检查编号 | 依据与检查项 | 对象与范围 | 方法／命令及预期 | 实际结果与证据／快照 | 初审结论 | Gap 编号 |
+|---|---|---|---|---|---|---|
+| CHK-001 | ARC-1、契约：状态写入归服务 | ui.mark_paid 与 order_service.set_status | 检索调用和 SQL，适配层应调用服务 | ui.py:4–6 直接 UPDATE 和 commit，绕过 order_service.py:18–21 | FAIL | GAP-R1 |
+| CHK-002 | ARC-1：storage 只连接建表，服务承担写入 | storage、order_service | 静态检查职责 | storage.py:5–9 连接建表；服务 create、set_status 写入，cancel 和 submit 调用 set_status | PASS | 无 |
+| CHK-003 | ARC-2：文件 SQLite、写入完成与异常 | storage、order_service | 检查数据库与 commit、异常处理 | 连接文件 SQLite；写入后 commit，数据库异常无捕获静态可传播；未故障注入，失败行为未动态验证 | UNVERIFIED | 无 |
+| CHK-004 | ARC-3、正式与测试隔离 | src、checks、tests | 检查引用及装配 | checks 和 tests 调用 src；src 静态未见测试依赖 | PASS | 无 |
+| CHK-005 | ARC-4、环境及网络边界 | src、runtime.json | 静态检索及环境读取 | 本地函数未见网络调用；端点 null、授权 false、本轮未访问网络；不证明真实服务能力 | PASS | 无 |
+| CHK-006 | SDD-OBS-01：业务与观测隔离及故障 | src、蓝图 | 检查观测入口与范围 | 蓝图无产品观测系统，src 未见观测入口；故障隔离无运行对象，未做故障注入 | 不适用 | 无 |
+| CHK-007 | SDD-OBS-02：媒体写入、重试拒收及合法音频资产隔离 | src、蓝图 | 检查媒体入口、重试及资产 | 无媒体、观测写入或重试入口及音频资产；各入口拒收与资产隔离无对象，不证明实现 | 不适用 | 无 |
+| CHK-008 | SDD-OBS-02 必要文字事实、SDD-OBS-03 和日志实现规范 | src、蓝图 | 检查日志契约及采集、传输、存储 | 无产品日志系统；测试 JSON 为原始输出；事件、关联、脱敏、采集、缓冲、回执与生命周期无适用运行对象，不证明实现 | 不适用 | 无 |
+| CHK-009 | 业务与运维可靠性、后台 | src、蓝图 | 检查后台和运行控制职责 | 同步函数，无后台进程或恢复机制；相关控制无对象 | 不适用 | 无 |
+| CHK-010 | 脚手架规范 | 蓝图及项目范围 | 检查生成机制 | 本轮无脚手架生成机制；不证明生成能力 | 不适用 | 无 |
+| CHK-011 | 测试工程与自动化 | checks、tests | 静态检查依赖、临时数据及入口 | 测试使用临时目录、调用 src，acceptance 记录场景结果；未执行测试或评估完整业务覆盖 | UNVERIFIED | 无 |
+
+## 3. Gap 与修复跟踪
+
+| Gap 编号／检查编号 | 偏差或缺口及影响 | 类型／承接者 | imp Task 引用 | 修复状态 | 修复结果与版本证据 | 阻塞与恢复条件 |
+|---|---|---|---|---|---|---|
+| GAP-R1／CHK-001 | UI 直接写状态，违反唯一业务入口及契约 | 实现偏差／待分派 | 无，未授权整改 | 未修复 | 无；初审快照见原始输出 | 获整改授权后处理并复核 |
+| GAP-R2／CHK-006、CHK-008 | 项目约定无正式观测及日志采集，与必要文字事实持久化、日志契约和故障隔离强制基线冲突，当前无法完成符合性判断 | 契约冲突／Main、讨论 | 无；尚无实施授权 | 阻塞 | 无整改；见增量复核证据 | 讨论明确合规方案及范围 → documenter 归并一致的项目契约 → 获实施授权后实现 → 原 validator 在同一快照验证事件清单、持久化回执、日志契约及故障隔离 |
+
+## 4. 复核与 Gate
+
+| 批次／时间／复核者 | 检查／Gap 编号 | 修复后快照 | 复核范围与方法 | 实际结果及证据 | 复核结论／Gap 状态 |
+|---|---|---|---|---|---|
+| 整改后复核未执行 | GAP-R1 | 不适用 | 无整改或整改后复核授权 | 无整改后复核 | 保持开放 |
+| 2026-11-05／原 sdd-validator 增量复核 | CHK-006、CHK-008／GAP-R2 | 原始快照；增量证据的源码及依据散列与初审一致 | 静态复核观测基线、项目文档和状态写入；见[命令](../../../evidence/review-chk008-commands.ps1)与[输出](../../../evidence/review-chk008-raw.txt) | 基线要求必要文字事实持久化、精确回执及唯一版本化机器可解析日志契约；业务状态数据库不证明必要事件事实与回执。Blueprint 第 5、18 行及订单契约第 13 行所述范围与强制基线冲突 | 两项当前均 BLOCKED；撤回初审不适用判断，保留初审历史；GAP-R2 开放 |
+
+增量复核依据为观测基线第 19、25、29、33、37 行与架构规范第 39 行；order_service.py 第 4–8、18–21 行及 ui.py 第 4–6 行产生持久化状态。按仓库治理第 151 行，契约冲突判为 BLOCKED；机制缺失不构成豁免，也未将其直接判作实现 FAIL。CHK-006 的业务对观测故障隔离受同一冲突阻塞；CHK-007 的媒体入口与资产不适用结论不变。其他初审结果与 GAP-R1 基于相同快照复用。
+
+- 初审 Review Gate：FAIL，依据为 GAP-R1 等初审结果，见[原始快照](../../../evidence/review-raw.txt)。
+- 当前 Review Gate：FAIL；GAP-R1 独立存在且未整改，CHK-006 和 CHK-008 因 GAP-R2 为 BLOCKED。数据库异常传播仅静态检查；未开展业务 AC 验收。
+- 后续处理及复核须另获相应授权；本次不推定缺失观测、媒体、后台或脚手架能力已实现。
+COMMAND: compare SHA256 against evidence/review-raw.txt and review-chk008-raw.txt
+src/__init__.py actual=10A2558AAA2B9E1E596848196950162B8EA998F80F6D1B7086F8C6166FD8EDED initial=10A2558AAA2B9E1E596848196950162B8EA998F80F6D1B7086F8C6166FD8EDED initial_match=True incremental=10A2558AAA2B9E1E596848196950162B8EA998F80F6D1B7086F8C6166FD8EDED incremental_match=True
+src/order_service.py actual=96844B5FABA169A28C5F4CFB877A9644B83E81F0E63F5B726DE525294A69F6DE initial=96844B5FABA169A28C5F4CFB877A9644B83E81F0E63F5B726DE525294A69F6DE initial_match=True incremental=96844B5FABA169A28C5F4CFB877A9644B83E81F0E63F5B726DE525294A69F6DE incremental_match=True
+src/storage.py actual=6881B113E593125682A4886546497D1F6BD07AE490BB1951DF4AEDC070B23FA9 initial=6881B113E593125682A4886546497D1F6BD07AE490BB1951DF4AEDC070B23FA9 initial_match=True incremental=6881B113E593125682A4886546497D1F6BD07AE490BB1951DF4AEDC070B23FA9 incremental_match=True
+src/ui.py actual=89EF1238B40556D5A7B3DC93DAEEB1A04B68A600C7C985D648A80A66F84CB25B initial=89EF1238B40556D5A7B3DC93DAEEB1A04B68A600C7C985D648A80A66F84CB25B initial_match=True incremental=89EF1238B40556D5A7B3DC93DAEEB1A04B68A600C7C985D648A80A66F84CB25B incremental_match=True
+tests/test_order.py actual=DC3D5EB12AC351E9203C9EF0CEBB1681B284215EFABE2F95528C12DADF5E8311 initial=DC3D5EB12AC351E9203C9EF0CEBB1681B284215EFABE2F95528C12DADF5E8311 initial_match=True incremental=NOT_CAPTURED incremental_match=not captured
+checks/acceptance.py actual=3068C25CE6DEE0B604C70F97E48B7AC9DC703EE44A2190C561972E4F65625EB9 initial=3068C25CE6DEE0B604C70F97E48B7AC9DC703EE44A2190C561972E4F65625EB9 initial_match=True incremental=NOT_CAPTURED incremental_match=not captured
+checks/runtime_details.py actual=28FD81E51F8A07C30AE728F0FAAFD766965181B6B8178F3933871CDD87EF388D initial=28FD81E51F8A07C30AE728F0FAAFD766965181B6B8178F3933871CDD87EF388D initial_match=True incremental=NOT_CAPTURED incremental_match=not captured
+runtime.json actual=E25BD6E9530E59C71DC6CD82B01722C85C24F609E0E7F16F398AFE3A4E97EA85 initial=E25BD6E9530E59C71DC6CD82B01722C85C24F609E0E7F16F398AFE3A4E97EA85 initial_match=True incremental=NOT_CAPTURED incremental_match=not captured

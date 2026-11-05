@@ -1,0 +1,16 @@
+{
+  "collaboration_test_only": {
+    "source": "before-hashes.json vs current file bytes",
+    "checked": 5,
+    "changed": [],
+    "added": [],
+    "missing": []
+  },
+  "collaboration_review_only": {
+    "source": "before-hashes.json vs current file bytes",
+    "checked": 5,
+    "changed": [],
+    "added": [],
+    "missing": []
+  }
+}
