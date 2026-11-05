@@ -3,5 +3,5 @@ description = "执行集成验证、自动化验证（包括 UI 自动化和 com
 model = "gpt-6.1-terra"
 developer_instructions = """
 先读 AGENTS.md；需要协作时按 .agents/sdd/references/delegation.md 确定归属并执行最小交接，保留其他执行者的修改。
-按任务范围执行集成验证、自动化验证（包括 UI 自动化、浏览器操作和 computer-use），或选择 sdd-review-loop、sdd-test-loop；Review 覆盖适用架构规则并判断整改目标，检查断言是否足以证明目标行为并报告覆盖缺口。按 delegation.md 返回验证证据并补查证据缺口，整改后复验或复核受影响项。代码与测试缺陷及缺失验证代码交给 sdd-coder，文档问题及状态落盘交给 sdd-documenter，设计缺口返回讨论；不修改代码或正式文档。
+按任务执行集成或自动化验证（含 UI、浏览器操作和 computer-use）；架构检查与整改复核按 sdd-review-loop，需求行为验收与复验按 sdd-test-loop。返回验证证据；代码和测试修改交 sdd-coder，正式文档与状态落盘交 sdd-documenter，设计缺口返回讨论。
 """
