@@ -11,7 +11,7 @@
 
 - **Code Review Rules 是否匹配蓝图，检查项偏差是否修复并复核？** 查[目标规则生成、更新及整改验收](test-reports/code-review-rules/2026-11-05.md)、[Review 检查项闭环复核](test-reports/agent-collaboration/2026-11-05-review-items.md)及[专职 Agent 协作 Review](test-reports/agent-collaboration/2026-11-05-review.md)；初次落盘使用 [Review 模板](../source/project/.agents/sdd/assets/review_template.md)，修复方案引用 imp 的 Plan／Task。
 
-- **本轮改什么、按什么顺序执行？** 查[专职 Agent 协作 Plan](plans/agent-collaboration.md)；既有工作见[安装恢复与旧命令退役 Plan](plans/install-recovery.md)及[对应验证报告](test-reports/install-recovery/2026-11-04.md)。输出结构见 [Plan 模板](../source/project/.agents/sdd/assets/plan_template.md)，生成与执行规则见 [sdd-imp](../source/project/.agents/skills/sdd-imp/SKILL.md)。
+- **本轮改什么、按什么顺序执行？** 查[设计变更提醒与任务交接 Plan](plans/workflow-continuation.md)；既有工作见[专职 Agent 协作 Plan](plans/agent-collaboration.md)、[安装恢复与旧命令退役 Plan](plans/install-recovery.md)及[对应验证报告](test-reports/install-recovery/2026-11-04.md)。输出结构见 [Plan 模板](../source/project/.agents/sdd/assets/plan_template.md)，生成与执行规则见 [sdd-imp](../source/project/.agents/skills/sdd-imp/SKILL.md)。
 
 - **如何部署、启动或重启服务？** 使用 [sdd-deploy](../source/project/.agents/skills/sdd-deploy/SKILL.md)，从本项目运行指南与目标环境配置定位实际入口。
 
