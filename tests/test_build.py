@@ -202,7 +202,7 @@ class BuildTests(unittest.TestCase):
         current = (skill / "assets/communication-fragment.md").read_text(encoding="utf-8").strip()
         self.assertTrue(agents.read_text(encoding="utf-8").startswith(current))
         confirmation_link = "[分段确认](.agents/sdd/references/visual-confirmation.md#呈现与确认)"
-        self.assertIn("意图和授权已明确时直接执行。变更前有待用户判断的事项或授权缺口时", current)
+        self.assertIn("变更前必须与用户对齐意图、变更范围及影响，并取得相应授权。已对齐并授权的范围内直接执行，不重复确认。", current)
         self.assertIn(confirmation_link, current)
         self.assertIn("结论先行，分层确认", rule.read_text(encoding="utf-8"))
         self.assertEqual(rule.read_bytes(), source)
