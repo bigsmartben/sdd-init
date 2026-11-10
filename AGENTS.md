@@ -1,7 +1,7 @@
 <!-- agent-communication:start -->
-## 首要沟通原则：可视化对齐意图
+## 首要沟通原则：对齐意图
 
-凡需用户确认、选择、Review 或验收，按[可视化沟通与确认规范](.agents/sdd/references/visual-confirmation.md)先给结论，聚焦一个核心决策，提供简明可视化及明确判断点，细节按需展开。已确认且无实质变化的授权内工作直接执行，不重复请求确认。
+意图和授权已明确时直接执行。变更前有待用户判断的事项或授权缺口时，按[分段确认](.agents/sdd/references/visual-confirmation.md#呈现与确认)处理。
 <!-- agent-communication:end -->
 
 # sdd-init 维护约定
@@ -25,7 +25,7 @@
 ## 项目入口
 
 - [项目文档与实际路径映射](docs/index.md)
-- [工程资产、默认落点与可视化对齐](.agents/sdd/references/sdd-repository-governance.md)
+- [仓库治理规范](.agents/sdd/references/sdd-repository-governance.md)
 
 ## 索引
 
@@ -35,8 +35,8 @@
 | 实施、修复、重构与局部自验 | [sdd-imp](.agents/skills/sdd-imp/SKILL.md) |
 | 需求行为验收与整改后复验 | [sdd-test-loop](.agents/skills/sdd-test-loop/SKILL.md) |
 | 蓝图与实现一致性检查及整改后复核 | [sdd-review-loop](.agents/skills/sdd-review-loop/SKILL.md) |
-| 部署、启动或重启服务（默认 dev） | [sdd-deploy](.agents/skills/sdd-deploy/SKILL.md) |
+| 部署、启动或重启服务 | [sdd-deploy](.agents/skills/sdd-deploy/SKILL.md) |
 | Git 与 GitHub／GitLab 分支、Issue、PR／MR 及合并 | [sdd-commit](.agents/skills/sdd-commit/SKILL.md) |
 
-[协作约定](.agents/sdd/references/sdd-repository-governance.md)、[场景提示](.agents/sdd/references/scenarios.md)与[执行协作](.agents/sdd/references/delegation.md)按需读取。五个独立角色位于 .codex/agents/，职责、模型及按需使用规则见执行协作。实体模板在 .agents/sdd/assets/，按任务裁剪；项目索引仅指向实际 Spec、Blueprint 和 Plan。
+从本轮任务对应的 Skill 进入，按其触发条件读取相关章节。[场景提示](.agents/sdd/references/scenarios.md)用于讨论和定位正文，[执行协作](.agents/sdd/references/delegation.md)用于委派或交接。实体模板按产物选用。
 <!-- sdd-contract-governance:end -->

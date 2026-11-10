@@ -187,7 +187,7 @@ class BuildTests(unittest.TestCase):
                         self.assertEqual(result.returncode, 0, result.stderr)
                         self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
-    def test_conclusion_first_rule_new_install_and_previous_version_upgrade(self):
+    def test_confirmation_trigger_new_install_and_previous_version_upgrade(self):
         skill = builder.build(self.folder / "skill")
         target = self.folder / "project"
         target.mkdir()
@@ -201,7 +201,9 @@ class BuildTests(unittest.TestCase):
         source = (ROOT / "source/project/.agents/sdd/references/visual-confirmation.md").read_bytes()
         current = (skill / "assets/communication-fragment.md").read_text(encoding="utf-8").strip()
         self.assertTrue(agents.read_text(encoding="utf-8").startswith(current))
-        self.assertIn("先给结论", current)
+        confirmation_link = "[分段确认](.agents/sdd/references/visual-confirmation.md#呈现与确认)"
+        self.assertIn("意图和授权已明确时直接执行。变更前有待用户判断的事项或授权缺口时", current)
+        self.assertIn(confirmation_link, current)
         self.assertIn("结论先行，分层确认", rule.read_text(encoding="utf-8"))
         self.assertEqual(rule.read_bytes(), source)
         old = """<!-- agent-communication:start -->
@@ -220,7 +222,7 @@ class BuildTests(unittest.TestCase):
         installed = agents.read_bytes().decode("utf-8")
         self.assertTrue(installed.startswith(current.replace("\n", "\r\n")))
         self.assertIn(body, installed)
-        self.assertEqual(installed.count("先给结论"), 1)
+        self.assertEqual(installed.count(confirmation_link), 1)
         self.assertEqual(rule.read_bytes(), source)
         before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
         for args in ((), ("--update-skills",)):
@@ -394,7 +396,7 @@ class BuildTests(unittest.TestCase):
             (target / name).unlink()
         agents = target / "AGENTS.md"
         agents.write_text(agents.read_text(encoding="utf-8").replace(
-            "| 部署、启动或重启服务（默认 dev） | [sdd-deploy](.agents/skills/sdd-deploy/SKILL.md) |\n", ""), encoding="utf-8")
+            "| 部署、启动或重启服务 | [sdd-deploy](.agents/skills/sdd-deploy/SKILL.md) |\n", ""), encoding="utf-8")
         subprocess.run(command + ["--update-skills"], check=True, capture_output=True)
         for name in deploy_files:
             self.assertEqual((target / name).read_bytes(), entries[name])

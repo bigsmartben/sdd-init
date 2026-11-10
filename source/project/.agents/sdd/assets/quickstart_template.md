@@ -13,7 +13,7 @@
 - 环境、权限、依赖和数据：<执行所需准备及来源；常规数据、边界取值和执行顺序注明执行者从 Spec／AC 或任务约定推导的依据与覆盖，不改变范围和标准；不得记录凭证>。
 - 启动命令或实际访问入口：<可执行命令或入口>。
 
-Agent 按[测试范围约束](../references/sdd-repository-governance.md#测试范围约束)准备环境、操作指引和证据，sdd-doc 据已有依据和执行者准备内容整理指南；测试代码新增或修改交 sdd-imp。用户按需操作、审阅或反馈。需要用户判断时遵循[可视化沟通与确认规范](../references/visual-confirmation.md)。指南本身不触发实施或授予执行权限。
+Agent 按[测试范围约束](../references/sdd-repository-governance.md#测试范围约束)准备环境、操作指引和证据，sdd-doc 据已有依据和执行者准备内容整理指南；测试代码新增或修改交 sdd-imp。用户按需操作、审阅或反馈。需要用户判断时遵循[对齐意图与沟通规范](../references/visual-confirmation.md)。指南本身不触发实施或授予执行权限。
 
 ## 3. 场景验证
 

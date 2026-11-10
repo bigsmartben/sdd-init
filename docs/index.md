@@ -1,6 +1,6 @@
 # 项目文档
 
-按任务问题进入本项目实际权威章节；尚未建立正文时，使用下列模板。首次建立入口时以实际章节链接替代相应提示。工程资产与默认落点见[仓库治理](../source/project/.agents/sdd/references/sdd-repository-governance.md)。
+按任务问题进入本项目实际权威章节；尚未建立正文时，使用下列模板。首次建立入口时以实际章节链接替代相应提示。新增或调整产物时查[工程资产边界](../source/project/.agents/sdd/references/sdd-repository-governance.md#工程资产边界)及对应的[文档与产物落点](../source/project/.agents/sdd/references/sdd-repository-governance.md#文档与产物落点)。
 
 - **用户要完成什么，界面如何操作？** 查[工程协作职责 Spec](../specs/platform-independent-sdd/spec.md)；全产品用例见[蓝图](blueprint.md#3-用户用例)。本仓库以 CLI、指令与资源为主要接口。
 - **谁决定，什么条件下才能报告成功？** 查[产品与架构蓝图](blueprint.md)，公开协作入口见[关键协作索引](blueprint.md#8-关键协作索引与未决边界)；新增独立场景或契约时参考[场景时序模板](../source/project/.agents/sdd/assets/sequence_template.md)和[接口契约模板](../source/project/.agents/sdd/assets/contract_template.md)。

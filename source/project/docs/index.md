@@ -1,6 +1,6 @@
 # 项目文档
 
-按任务问题进入本项目实际权威章节；尚未建立正文时，使用下列模板。首次建立入口时以实际章节链接替代相应提示。工程资产与默认落点见[仓库治理](../.agents/sdd/references/sdd-repository-governance.md)。
+按任务问题进入本项目实际权威章节；尚未建立正文时，使用下列模板。首次建立入口时以实际章节链接替代相应提示。新增或调整产物时查[工程资产边界](../.agents/sdd/references/sdd-repository-governance.md#工程资产边界)及对应的[文档与产物落点](../.agents/sdd/references/sdd-repository-governance.md#文档与产物落点)。
 
 - **用户要完成什么，界面如何操作？** 查能力需求及其原型；初次编写使用[需求规格](../.agents/sdd/assets/spec_template.md)和[原型引用](../.agents/sdd/assets/prototype_reference_template.md)。
 - **谁决定，什么条件下才能报告成功？** 查[蓝图](../.agents/sdd/assets/blueprint_template.md)、[场景时序](../.agents/sdd/assets/sequence_template.md)、[接口契约](../.agents/sdd/assets/contract_template.md)的适用章节；此处链接为模板。
