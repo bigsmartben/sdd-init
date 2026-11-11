@@ -1,4 +1,0 @@
-interface:
-  display_name: "sdd-commit"
-policy:
-  allow_implicit_invocation: true

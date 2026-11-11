@@ -1,4 +1,0 @@
-interface:
-  display_name: "sdd-review-loop"
-policy:
-  allow_implicit_invocation: true
