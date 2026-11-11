@@ -47,7 +47,7 @@ uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固�
 ```powershell
 uv build --out-dir .build/dist
 python -B -m unittest discover -s tests -v
-python -B scripts/smoke_package.py --from .build/dist/sdd_init-0.5.1-py3-none-any.whl
+python -B scripts/smoke_package.py --from .build/dist/sdd_init-0.5.2-py3-none-any.whl
 ```
 
 `src/sdd_init/cli.py` 定义命令入口，`installer.py` 负责用户级安装；`setup.py` 在构建时调用 `scripts/build_release.py`，从 `source/` 生成内置资源。源码包包含构建所需输入，wheel 不要求访问原仓库。不要编辑 wheel、build 或 `.build` 内的资源。测试通过 `--skills-dir` 隔离安装位置；自定义位置只有位于客户端搜索范围时才可被发现。

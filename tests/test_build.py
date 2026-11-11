@@ -201,10 +201,10 @@ class BuildTests(unittest.TestCase):
         source = (ROOT / "source/project/.agents/sdd/references/visual-confirmation.md").read_bytes()
         current = (skill / "assets/communication-fragment.md").read_text(encoding="utf-8").strip()
         self.assertTrue(agents.read_text(encoding="utf-8").startswith(current))
-        confirmation_link = "[呈现与确认](.agents/sdd/references/visual-confirmation.md#呈现与确认)"
-        self.assertIn("变更前，先与用户确认要解决的问题和预期结果。用户确认后直接执行。已有确认继续有效，不重复授权与确认。", current)
+        confirmation_link = "[意图对齐](.agents/sdd/references/visual-confirmation.md#意图对齐)"
+        self.assertIn("必须呈现对用户意图的理解并请求确认，不以推断代替确认；已有确认沿用，新增或变化内容重新对齐。", current)
         self.assertIn(confirmation_link, current)
-        self.assertIn("变更前必须与用户对齐意图", rule.read_text(encoding="utf-8"))
+        self.assertIn("需求与方案分开讨论、分别确认", rule.read_text(encoding="utf-8"))
         self.assertEqual(rule.read_bytes(), source)
         old = """<!-- agent-communication:start -->
 ## 首要沟通原则：可视化对齐意图

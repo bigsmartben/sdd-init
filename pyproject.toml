@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sdd-init"
-version = "0.5.1"
+version = "0.5.2"
 description = "Install the user-level SDD initializer skill"
 requires-python = ">=3.11"
 readme = "README.md"
