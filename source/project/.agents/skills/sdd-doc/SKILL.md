@@ -13,7 +13,7 @@ description: 将已确认对话结论和执行证据归并到对应文档，完�
 4. 写后按[文档 CLI](../../sdd/references/doc-check.md)对本次修改及直接受影响的 Markdown 执行机械校验，处理或报告诊断；另行完成语义核对，不用 CLI 通过代替语义判断。
 5. 输出实际落点、关键归并、检查范围与结果及待决问题。缺少确认依据时返回讨论，不自行补定。
 
-用户明确要求生成或更新 Code Review Rules 时，读取[目标仓库的 Code Review Rules](../../sdd/references/sdd-repository-governance.md#目标仓库的-code-review-rules)的决策边界，并按默认落点或项目映射定位正文。对照[架构原则](../../sdd/references/architecture-rules.md)、已确认的 Blueprint 和契约，按[项目规则模板](../../sdd/assets/code-review-rules_template.md)将适用原则写成针对本项目入口和职责的可检查约束。同义规则原位归并，保留稳定标识；逐项核对受影响条款，明确撤销的约束从现行规则中移除。缺乏设计依据的归属或冲突列为待决。仅维护规则内容，执行证据归 Review。
+用户明确要求生成或更新 Code Review Rules 时，读取[目标仓库的 Code Review Rules](../../sdd/references/sdd-repository-governance.md#目标仓库的-code-review-rules)的决策边界，并按默认落点或项目映射定位正文。依据已确认的 Blueprint、契约与实际运行路径选用[架构规范](../../sdd/references/architecture-rules.md)中的适用约束，按[项目规则模板](../../sdd/assets/code-review-rules_template.md)写成针对本项目入口和职责的可检查规则。同义规则原位归并，保留稳定标识；逐项核对受影响条款，明确撤销的约束从现行规则中移除。缺乏设计依据的归属或冲突列为待决。仅维护规则内容，执行证据归 Review。
 
 需要角色交接时读取[执行协作](../../sdd/references/delegation.md)，按工作批次归并关联证据，简单任务沿用当前任务或既有载体并保留必备结构；正式记录仍按各流程完成要求归并。普通写入不加载实施、验收或交付流程。
 

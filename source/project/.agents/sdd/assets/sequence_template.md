@@ -40,4 +40,4 @@
 
 部署位置归蓝图部署视图，职责与依赖归组件视图，数据及结果语义归契约。活动图仅用于复杂分支、并行汇合或加工过程，区分控制流和对象流；与时序重复则不增加。状态机和 ER 按需放入对应契约章节，内部类图默认不要求。
 
-适用的观测约束遵循[观测基线](../references/observability-baseline.md)，规范映射归[观测专项审查记录](../references/observability-baseline.md#映射审查与闭环)。执行证据归测试报告，Status／Plan 引用报告；模板使用不自动迁移存量时序或提升 Gate。
+适用约束见[可观测性架构规范](../references/observability-baseline.md)，规则映射归[架构 Review 记录](review_template.md)。执行证据归测试报告，Status／Plan 引用报告；模板使用不自动迁移存量时序或提升 Gate。
