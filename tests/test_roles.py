@@ -27,10 +27,10 @@ class RoleTests(unittest.TestCase):
         self.target = self.folder / "project"
         self.target.mkdir()
 
-    def install(self, *args):
+    def install(self):
         return subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(self.skill / "scripts/govern.py"),
-             "--root", str(self.target), "init", *args],
+             "--root", str(self.target), "init"],
             capture_output=True, text=True, encoding="utf-8")
 
     def snapshot(self):
@@ -57,7 +57,7 @@ class RoleTests(unittest.TestCase):
         self.assertEqual(self.install().returncode, 0)
         self.assertEqual(before, self.snapshot())
 
-    def test_legacy_role_requires_migration_and_unrelated_roles_survive(self):
+    def test_same_name_role_conflicts_and_unrelated_roles_survive(self):
         role = self.target / ".codex/agents/sdd-documenter.toml"
         role.parent.mkdir(parents=True)
         role.write_bytes(b'name = "sdd-documenter"\nmodel = "my-role-model"\n')
@@ -67,13 +67,12 @@ class RoleTests(unittest.TestCase):
         custom = role.with_name("user-role.toml")
         custom.write_bytes(b'name = "user-role"\n')
         before = self.snapshot()
-        for args in ([], ["--update-skills"]):
-            result = self.install(*args)
-            self.assertNotEqual(result.returncode, 0)
-            self.assertIn("sdd-documenter.toml", result.stderr)
-            self.assertEqual(before, self.snapshot())
+        result = self.install()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("sdd-documenter.toml", result.stderr)
+        self.assertEqual(before, self.snapshot())
         role.rename(self.folder / "preserved-role.toml")
-        self.assertEqual(self.install("--update-skills").returncode, 0)
+        self.assertEqual(self.install().returncode, 0)
         self.assertTrue(config.read_bytes().startswith(original))
         self.assertEqual(custom.read_bytes(), before[custom.relative_to(self.target)])
 
@@ -82,7 +81,7 @@ class RoleTests(unittest.TestCase):
         config.parent.mkdir()
         original = b'[agents.sdd-coder]\nconfig_file = "local.toml"\n'
         config.write_bytes(original)
-        denied = self.install("--update-skills")
+        denied = self.install()
         self.assertNotEqual(denied.returncode, 0)
         self.assertEqual(config.read_bytes(), original)
         self.assertFalse((self.target / WORKFLOW).exists())
@@ -90,8 +89,7 @@ class RoleTests(unittest.TestCase):
         self.assertEqual(self.install().returncode, 0)
         desired = config.read_bytes()
         config.write_bytes(desired.replace(b"../.agents/skills/sdd-workflow/", b"../old/"))
-        self.assertNotEqual(self.install().returncode, 0)
-        self.assertEqual(self.install("--update-skills").returncode, 0)
+        self.assertEqual(self.install().returncode, 0)
         self.assertEqual(config.read_bytes(), desired)
 
     def test_invalid_shared_roles_fail_before_any_write(self):

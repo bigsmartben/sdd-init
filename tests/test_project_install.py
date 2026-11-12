@@ -45,10 +45,10 @@ class ProjectInstallTests(unittest.TestCase):
         return {p.relative_to(self.root).as_posix(): p.read_bytes()
                 for p in project_files(self.root)}
 
-    def run_init(self, *options, env=None):
+    def run_init(self, *, env=None):
         return subprocess.run([sys.executable, "-B", "-X", "utf8",
                                str(self.skill / "scripts/govern.py"),
-                               "--root", str(self.root), "init", *options],
+                               "--root", str(self.root), "init"],
                               capture_output=True, text=True, encoding="utf-8", timeout=30, env=env)
 
     def crash(self, hook):
@@ -144,9 +144,9 @@ gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["init"]))
 
         with patch.object(self.tx, "save", side_effect=fail_commit):
             with self.assertRaisesRegex(OSError, "commit failure"):
-                self.gov.cmd_init(self.root, self.gov.build_parser().parse_args(["init", "--update-skills"]))
+                self.gov.cmd_init(self.root, self.args)
         self.assertEqual(self.snapshot(), before)
-        self.assertEqual(self.run_init("--update-skills").returncode, 0)
+        self.assertEqual(self.run_init().returncode, 0)
         self.assertEqual(history.read_bytes(), b"historical evidence")
 
     def test_process_exit_is_recovered_before_next_install(self):
@@ -201,7 +201,7 @@ tx.replace_file = stop
         agents.write_bytes(b"external edit after crash")
         before = self.snapshot()
         for _ in range(2):
-            result = self.run_init("--update-skills")
+            result = self.run_init()
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("Recovery blocked", result.stderr)
             self.assertIn("AGENTS.md", result.stderr)

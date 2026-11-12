@@ -54,7 +54,7 @@ class GovernanceTests(unittest.TestCase):
         blueprint.parent.mkdir()
         original = b"# Existing project architecture\\n"
         blueprint.write_bytes(original)
-        self.run_cmd("init", "--update-skills")
+        self.run_cmd("init")
         self.assertEqual(blueprint.read_bytes(), original)
 
     def test_global_entry_and_local_six(self):
@@ -112,14 +112,13 @@ class GovernanceTests(unittest.TestCase):
         self.run_cmd("init")
         self.assertEqual(after, config.read_text(encoding="utf-8"))
 
-    def test_conflicting_codex_config_requires_explicit_upgrade(self):
+    def test_init_preserves_project_agent_settings(self):
         config = self.root / ".codex/config.toml"
         config.parent.mkdir()
         original = b'model = "other-model"\n[agents]\nenabled = false\n'
         config.write_bytes(original)
-        for args in ((), ("--update-skills",)):
-            self.run_cmd("init", *args)
-            self.assertTrue(config.read_bytes().startswith(original))
+        self.run_cmd("init")
+        self.assertTrue(config.read_bytes().startswith(original))
 
     def test_config_with_existing_agent_subtable_merges_correctly(self):
         import tomllib
@@ -132,16 +131,15 @@ class GovernanceTests(unittest.TestCase):
         self.assertEqual(result["agents"]["custom"]["description"],"local agent")
         self.assertNotIn("enabled", result["agents"])
 
-    def test_init_protects_legacy_project_customizations(self):
+    def test_init_protects_same_name_project_skill(self):
         path = self.root / ".agents/skills/sdd-doc/SKILL.md"
         path.parent.mkdir(parents=True)
         path.write_text("local customization", encoding="utf-8")
-        for args in ([], ["--update-skills"]):
-            denied = self.run_cmd("init", *args, ok=False)
-            self.assertNotEqual(denied.returncode, 0)
-            self.assertIn("sdd-doc", denied.stderr)
-            self.assertEqual(path.read_text(encoding="utf-8"), "local customization")
-            self.assertFalse((self.root / WORKFLOW).exists())
+        denied = self.run_cmd("init", ok=False)
+        self.assertNotEqual(denied.returncode, 0)
+        self.assertIn("sdd-doc", denied.stderr)
+        self.assertEqual(path.read_text(encoding="utf-8"), "local customization")
+        self.assertFalse((self.root / WORKFLOW).exists())
 
     def test_init_idempotent_and_add_singleton(self):
         self.bootstrap()
@@ -211,16 +209,15 @@ class GovernanceTests(unittest.TestCase):
         self.assertIn("设计模式", data)
 
 
-    def test_user_main_model_and_effort_survive_all_init_modes(self):
+    def test_user_main_model_and_effort_survive_init(self):
         import tomllib
         config = self.root / ".codex/config.toml"
         config.parent.mkdir()
         config.write_text('model = "my-discussion-model"\nmodel_reasoning_effort = "xhigh"\n', encoding="utf-8")
-        for args in [(), ("--update-skills",)]:
-            self.run_cmd("init", *args)
-            data = tomllib.loads(config.read_text(encoding="utf-8"))
-            self.assertEqual(data["model"], "my-discussion-model")
-            self.assertEqual(data["model_reasoning_effort"], "xhigh")
+        self.run_cmd("init")
+        data = tomllib.loads(config.read_text(encoding="utf-8"))
+        self.assertEqual(data["model"], "my-discussion-model")
+        self.assertEqual(data["model_reasoning_effort"], "xhigh")
 
 
     def test_installed_reference_links_resolve(self):
@@ -242,7 +239,7 @@ class GovernanceTests(unittest.TestCase):
         self.assertFalse(status.exists())
         self.assertEqual(spec.read_bytes(), before)
         status.write_text("manual checkpoint", encoding="utf-8")
-        self.run_cmd("init", "--update-skills")
+        self.run_cmd("init")
         self.assertEqual(status.read_text(encoding="utf-8"), "manual checkpoint")
 
     def test_init_rejects_legacy_entity_creation_options(self):

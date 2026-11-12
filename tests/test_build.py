@@ -66,15 +66,31 @@ class BuildTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             builder.build(ROOT / "source/not-an-output")
 
-    def test_generated_installer_is_idempotent_and_preserves_existing_contract(self):
+    def test_init_connects_cleaned_project_and_preserves_project_configuration(self):
         skill = builder.build(self.folder / "skill")
         target = self.folder / "project"
         target.mkdir()
         index = target / "docs/index.md"
         index.parent.mkdir()
-        index.write_bytes(b"# Project\nBlueprint: architecture/blueprint.md\n")
+        index_body = b"# Project\n[Previous template](../.agents/sdd/assets/spec_template.md)\n"
+        index.write_bytes(index_body)
         rules = target / "docs/repository-governance.md"
         rules.write_bytes(b"# Existing project rules\n")
+        agents = target / "AGENTS.md"
+        project_rules = b"# Existing project guidance\r\n"
+        agents.write_bytes(project_rules + (
+            b"\r\n<!-- sdd-contract-governance:start -->\r\n"
+            b"[Previous governance](.agents/sdd/references/sdd-repository-governance.md)\r\n"
+            b"<!-- sdd-contract-governance:end -->\r\n"
+        ))
+        config = target / ".codex/config.toml"
+        config.parent.mkdir()
+        project_config = b'model = "main-model"\r\n[mcp_servers.custom]\r\nurl = "https://example.invalid/mcp"\r\n'
+        config.write_bytes(project_config + (
+            b"\r\n# sdd-init roles:start\r\n[agents.sdd-coder]\r\n"
+            b'config_file = "agents/sdd-coder.toml"\r\n'
+            b"# sdd-init roles:end\r\n"
+        ))
         (target / "architecture").mkdir()
         contract = target / "architecture/blueprint.md"
         contract.write_bytes(b"# Existing architecture\n")
@@ -82,14 +98,18 @@ class BuildTests(unittest.TestCase):
         result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(contract.read_bytes(), b"# Existing architecture\n")
+        self.assertIn(project_rules, agents.read_bytes())
+        self.assertIn(WORKFLOW.encode(), agents.read_bytes())
+        self.assertNotIn(b"Previous governance", agents.read_bytes())
+        self.assertTrue(config.read_bytes().startswith(project_config))
+        self.assertIn(f'config_file = "../{WORKFLOW}/agents/sdd-coder.toml"'.encode(), config.read_bytes())
+        self.assertTrue((target / WORKFLOW).samefile(skill / "shared"))
+        self.assertEqual(index.read_bytes(), index_body)
+        self.assertEqual(rules.read_bytes(), b"# Existing project rules\n")
         before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
         result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
-
-        subprocess.run(command + ["--update-skills"], check=True, capture_output=True)
-        self.assertEqual(index.read_bytes(), b"# Project\nBlueprint: architecture/blueprint.md\n")
-        self.assertEqual(rules.read_bytes(), b"# Existing project rules\n")
 
     def test_new_install_has_only_current_skills_and_no_project_entities(self):
         skill = builder.build(self.folder / "skill")
@@ -133,8 +153,8 @@ class BuildTests(unittest.TestCase):
         rules.write_bytes(content)
         command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
                    "--root", str(target), "init"]
-        for options in ([], ["--update-skills"], []):
-            result = subprocess.run(command + options, capture_output=True, text=True, encoding="utf-8")
+        for _ in range(2):
+            result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertEqual(rules.read_bytes(), content)
             self.assertTrue((target / WORKFLOW / "sdd/assets/code-review-rules_template.md").is_file())
@@ -163,14 +183,7 @@ class BuildTests(unittest.TestCase):
                     if old is not None:
                         agents.write_bytes(old.encode("utf-8"))
                     command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(target), "init"]
-                    if kind in ("legacy", "upgrade"):
-                        before = agents.read_bytes()
-                        denied = subprocess.run(command, capture_output=True)
-                        self.assertNotEqual(denied.returncode, 0)
-                        self.assertEqual(agents.read_bytes(), before)
-                        self.assertEqual(project_entries(target), [agents])
-                    options = ["--update-skills"] if kind in ("legacy", "upgrade") else []
-                    result = subprocess.run(command + options, capture_output=True)
+                    result = subprocess.run(command, capture_output=True)
                     self.assertEqual(result.returncode, 0, result.stderr)
                     installed = agents.read_bytes().decode("utf-8")
                     self.assertTrue(installed.startswith("<!-- agent-communication:start -->"))
@@ -190,18 +203,17 @@ class BuildTests(unittest.TestCase):
                             self.assertIn(prefix + suffix, installed)
                     self.assertEqual((target / WORKFLOW / "sdd/references/visual-confirmation.md").read_bytes(), source)
                     before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
-                    for repeat in ([], ["--update-skills"], []):
-                        result = subprocess.run(command + repeat, capture_output=True)
-                        self.assertEqual(result.returncode, 0, result.stderr)
-                        self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
+                    result = subprocess.run(command, capture_output=True)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
     def test_confirmation_trigger_new_install_and_previous_version_upgrade(self):
         skill = builder.build(self.folder / "skill")
         target = self.folder / "project"
         target.mkdir()
         command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(target), "init"]
-        def run(*args):
-            return subprocess.run(command + list(args), capture_output=True)
+        def run():
+            return subprocess.run(command, capture_output=True)
         result = run()
         self.assertEqual(result.returncode, 0, result.stderr)
         agents = target / "AGENTS.md"
@@ -221,10 +233,7 @@ class BuildTests(unittest.TestCase):
 <!-- agent-communication:end -->"""
         body = "# 用户正文\r\n保持这些规则。\n"
         agents.write_bytes((body + agents.read_text(encoding="utf-8").replace(current, old)).encode("utf-8"))
-        before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
-        self.assertNotEqual(run().returncode, 0)
-        self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
-        result = run("--update-skills")
+        result = run()
         self.assertEqual(result.returncode, 0, result.stderr)
         installed = agents.read_bytes().decode("utf-8")
         self.assertTrue(installed.startswith(current.replace("\n", "\r\n")))
@@ -232,10 +241,9 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(installed.count(confirmation_link), 1)
         self.assertEqual(rule.read_bytes(), source)
         before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
-        for args in ((), ("--update-skills",)):
-            result = run(*args)
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
+        result = run()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
     def test_bom_preserved_at_start_on_install_and_upgrade(self):
         skill = builder.build(self.folder / "skill")
@@ -250,16 +258,15 @@ class BuildTests(unittest.TestCase):
             agents = target / "AGENTS.md"
             agents.write_bytes(original.encode("utf-8"))
             command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(target), "init"]
-            result = subprocess.run(command + (["--update-skills"] if upgrade else []), capture_output=True)
+            result = subprocess.run(command, capture_output=True)
             self.assertEqual(result.returncode, 0, result.stderr)
             data = agents.read_bytes()
             self.assertTrue(data.startswith(b"\xef\xbb\xbf<!-- agent-communication:start -->"))
             self.assertEqual(data.count(b"\xef\xbb\xbf"), 1)
             self.assertIn(body.encode("utf-8"), data)
-            for args in ([], ["--update-skills"]):
-                result = subprocess.run(command + args, capture_output=True)
-                self.assertEqual(result.returncode, 0, result.stderr)
-                self.assertEqual(agents.read_bytes(), data)
+            result = subprocess.run(command, capture_output=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(agents.read_bytes(), data)
 
     def test_blocked_payload_parent_fails_before_agents_write(self):
         skill = builder.build(self.folder / "skill")
@@ -270,11 +277,10 @@ class BuildTests(unittest.TestCase):
             blocker.write_bytes(b"user-owned file")
             (target / "AGENTS.md").write_bytes(b"existing body\r\n")
             before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
-            for args in ([], ["--update-skills"]):
-                result = subprocess.run([sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-                                         "--root", str(target), "init", *args], capture_output=True)
-                self.assertNotEqual(result.returncode, 0)
-                self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
+            result = subprocess.run([sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
+                                     "--root", str(target), "init"], capture_output=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
     def test_managed_block_errors_and_override_leave_project_unchanged(self):
         skill = builder.build(self.folder / "skill")
@@ -284,60 +290,35 @@ class BuildTests(unittest.TestCase):
                      nstart, nend, nstart + nend + nstart + nend,
                      cstart + nstart + nend + cend, cstart + nstart + cend + nend]
         for i, content in enumerate(malformed + ["override", "override-with-marker"]):
-            for options in ([], ["--update-skills"]):
-                target = self.folder / f"invalid-{i}-{len(options)}"
-                target.mkdir()
-                (target / "AGENTS.md").write_text(content, encoding="utf-8")
-                if content.startswith("override"):
-                    (target / "AGENTS.override.md").write_text(nstart if content.endswith("marker") else "custom", encoding="utf-8")
-                before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
-                result = subprocess.run([sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-                                         "--root", str(target), "init", *options], capture_output=True)
-                self.assertNotEqual(result.returncode, 0, content)
-                self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
+            target = self.folder / f"invalid-{i}"
+            target.mkdir()
+            (target / "AGENTS.md").write_text(content, encoding="utf-8")
+            if content.startswith("override"):
+                (target / "AGENTS.override.md").write_text(nstart if content.endswith("marker") else "custom", encoding="utf-8")
+            before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
+            result = subprocess.run([sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
+                                     "--root", str(target), "init"], capture_output=True)
+            self.assertNotEqual(result.returncode, 0, content)
+            self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
-    def test_old_workflow_entries_block_upgrade_before_writing(self):
+    def test_init_leaves_files_outside_the_current_workflow_scope(self):
         skill = builder.build(self.folder / "skill")
-        entries = [".agents/skills/sdd-accept/SKILL.md",
-                   ".agents/skills/sdd-commit/references/providers.md"] + [
-            f".agents/sdd/assets/{name}.md" for name in
-            ("issue", "draft-pr", "test-plan", "acceptance", "module-design")] + [
-            f".codex/agents/{name}.toml" for name in
-            ("sdd-requirements", "sdd-architect", "sdd-planner", "sdd-implementer", "sdd-acceptor")]
-        for i, entry in enumerate(entries):
-            for options in ([], ["--update-skills"]):
-                with self.subTest(entry=entry, options=options):
-                    target = self.folder / f"legacy-{i}-{len(options)}"
-                    old = target / entry
-                    old.parent.mkdir(parents=True)
-                    old.write_bytes(b"customized legacy instructions\n")
-                    before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
-                    result = subprocess.run(
-                        [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-                         "--root", str(target), "init", *options],
-                        capture_output=True, text=True, encoding="utf-8")
-                    self.assertNotEqual(result.returncode, 0)
-                    reserved = "/".join(old.relative_to(target).parts[:
-                        2 if entry.startswith(".agents/sdd/") else 3])
-                    self.assertIn(reserved, result.stderr)
-                    self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
-
-    def test_obsolete_navigation_blocks_without_mutation(self):
-        skill = builder.build(self.folder / "skill")
-        for rel in ("docs/index.md", ".agents/sdd/references/sdd-repository-governance.md"):
-            for upgrade in (False, True):
-                target = self.folder / (rel.replace("/", "-") + str(upgrade))
-                entry = target / rel
-                entry.parent.mkdir(parents=True)
-                entry.write_text("用户正文\n[测试](../.agents/sdd/assets/test-plan.md)\n", encoding="utf-8")
-                before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
-                result = subprocess.run(
-                    [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-                     "--root", str(target), "init", *(["--update-skills"] if upgrade else [])],
-                    capture_output=True, text=True, encoding="utf-8")
-                self.assertNotEqual(result.returncode, 0)
-                self.assertIn(str(entry.resolve()) if rel == "docs/index.md" else ".agents/sdd", result.stderr)
-                self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
+        target = self.folder / "project"
+        files = {
+            ".agents/sdd/assets/test-plan.md": b"# Project notes\n",
+            ".agents/skills/sdd-accept/SKILL.md": b"# Existing workflow notes\n",
+            ".codex/agents/sdd-architect.toml": b'name = "sdd-architect"\n',
+        }
+        for relative, content in files.items():
+            entry = target / relative
+            entry.parent.mkdir(parents=True, exist_ok=True)
+            entry.write_bytes(content)
+        result = subprocess.run(
+            [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
+             "--root", str(target), "init"], capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for relative, content in files.items():
+            self.assertEqual((target / relative).read_bytes(), content)
 
     def test_distribution_is_generic_and_reference_paths_resolve(self):
         skill = builder.build(self.folder / "skill")

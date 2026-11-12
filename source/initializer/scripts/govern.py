@@ -151,7 +151,7 @@ def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
     return 0
 
 
-def prepare_agents(original: str, allow_update: bool) -> str:
+def prepare_agents(original: str) -> str:
     """Prepare both independent managed blocks without changing project-owned bytes."""
     bom = "\ufeff" if original.startswith("\ufeff") else ""
     original = original[len(bom):]
@@ -174,9 +174,6 @@ def prepare_agents(original: str, allow_update: bool) -> str:
         "agent-communication": read(ASSETS / "communication-fragment.md").strip(),
         "sdd-contract-governance": read(ASSETS / "agents-fragment.md").strip(),
     }
-    for name, (begin, end) in spans.items():
-        if original[begin:end].replace("\r\n", "\n") != templates[name] and not allow_update:
-            fail("已有不同版本的 AGENTS.md 治理片段；确认升级后使用 init --update-skills")
     # Replace only owned ranges. Navigation stays where it was; communication moves first.
     body = original
     for name, (begin, end) in sorted(spans.items(), key=lambda item: item[1][0], reverse=True):
@@ -194,13 +191,13 @@ def prepare_agents(original: str, allow_update: bool) -> str:
     return bom + communication + separator + body
 
 
-def cmd_init(root: Path, args: argparse.Namespace) -> int:
+def cmd_init(root: Path, _: argparse.Namespace) -> int:
     with transaction.project_lock(root):
         transaction.recover(root)
-        return initialize(root, args)
+        return initialize(root)
 
 
-def prepare_config(original: str, allow_update: bool) -> str:
+def prepare_config(original: str) -> str:
     begin = "# sdd-init roles:start"
     end = "# sdd-init roles:end"
     newline = "\r\n" if "\r\n" in original else "\n"
@@ -220,8 +217,6 @@ def prepare_config(original: str, allow_update: bool) -> str:
             fail(".codex/config.toml 的 SDD 角色引用块不完整、重复或顺序错误")
         first, last = markers[0].start(), markers[1].start() + len(end)
         same_block = original[first:last].replace("\r\n", "\n") == block.replace("\r\n", "\n")
-        if not same_block and not allow_update:
-            fail("SDD 角色引用块已变化；确认更新后使用 init --update-skills")
         remaining = original[:first] + original[last:]
         candidate = original if same_block else original[:first] + block + original[last:]
     else:
@@ -261,28 +256,19 @@ def prepare_ignore(original: str) -> str:
     return original + separator + newline.join(entries) + newline
 
 
-def initialize(root: Path, args: argparse.Namespace) -> int:
+def initialize(root: Path) -> int:
     override = inside(root, root / "AGENTS.override.md")
     if override.exists():
         fail("根目录存在 AGENTS.override.md；请先处理覆盖关系再初始化，避免治理规则未生效")
 
-    old_skills = sorted(PROJECT_SKILLS | {"sdd-accept"})
-    legacy = [
-        ".agents/sdd",
-        *(f".agents/skills/{name}" for name in old_skills),
-        *(f".codex/agents/{name}.toml" for name in sorted(PROJECT_ROLES | {
-            "sdd-requirements", "sdd-architect", "sdd-planner", "sdd-implementer", "sdd-acceptor",
-        })),
+    project_entries = [
+        *(f".agents/skills/{name}" for name in sorted(PROJECT_SKILLS)),
+        *(f".codex/agents/{name}.toml" for name in sorted(PROJECT_ROLES)),
     ]
-    conflicts = [relative for relative in legacy
+    conflicts = [relative for relative in project_entries
                  if (root / relative).exists() or transaction.linked(root / relative)]
     if conflicts:
-        fail("发现旧版项目 SDD 资源，请先保留定制并迁出旧副本，再执行 init --update-skills: "
-             + ", ".join(conflicts))
-    index = inside(root, root / "docs/index.md")
-    old_links = rf"\]\([^)]*\.agents/(?:sdd/|skills/(?:{'|'.join(old_skills)})/)"
-    if index.is_file() and re.search(old_links, read(index)):
-        fail(f"项目导航仍引用旧版 SDD 路径，请先更新引用: {index}")
+        fail("项目中已有同名 SDD Skill 或角色，请处理后重新运行 init: " + ", ".join(conflicts))
 
     shared = shared_bundle()
     if shared.is_relative_to(root):
@@ -296,8 +282,8 @@ def initialize(root: Path, args: argparse.Namespace) -> int:
 
     changes = []
     for relative, prepare in (
-        ("AGENTS.md", lambda original: prepare_agents(original, args.update_skills)),
-        (".codex/config.toml", lambda original: prepare_config(original, args.update_skills)),
+        ("AGENTS.md", prepare_agents),
+        (".codex/config.toml", prepare_config),
         (".gitignore", prepare_ignore),
     ):
         target = inside(root, root / relative)
@@ -318,8 +304,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--root", default=".", help="要治理的仓库目录（默认当前目录）")
     subs = p.add_subparsers(dest="cmd", required=True)
     subs.add_parser("inspect", help="只读盘点，不修改任何文件")
-    a = subs.add_parser("init", help="接入用户级共享资源并合并项目引用")
-    a.add_argument("--update-skills", action="store_true", help="更新已有的 SDD 托管导航与角色引用")
+    subs.add_parser("init", help="接入用户级共享资源并同步项目中的 SDD 托管块")
     return p
 
 
