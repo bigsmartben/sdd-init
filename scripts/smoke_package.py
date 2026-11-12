@@ -4,6 +4,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import tomllib
 
 
 def main():
@@ -22,13 +23,20 @@ def main():
         project.mkdir()
         initialize = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(project), "init"]
         subprocess.run(initialize, check=True)
+        workflow = project / ".agents/skills/sdd-workflow"
+        self_shared = skills.with_name(f"{skills.name}-sdd-init-shared")
+        assert workflow.samefile(self_shared)
         before = {p.relative_to(project): p.read_bytes() for p in project.rglob("*") if p.is_file()}
         subprocess.run(command, check=True)
         assert before == {p.relative_to(project): p.read_bytes() for p in project.rglob("*") if p.is_file()}
-        assert {p.parent.name for p in (project / ".agents/skills").glob("*/SKILL.md")} == {
+        assert {p.parent.name for p in (workflow / "skills").glob("*/SKILL.md")} == {
             "sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit", "sdd-deploy"
         }
-        assert len(list((project / ".codex/agents").glob("*.toml"))) == 5
+        config = project / ".codex/config.toml"
+        roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
+        assert len(roles) == 5 and not (project / ".codex/agents").exists()
+        for name, reference in roles.items():
+            assert (config.parent / reference["config_file"]).samefile(self_shared / "agents" / f"{name}.toml")
         subprocess.run(initialize, check=True)
         assert before == {p.relative_to(project): p.read_bytes() for p in project.rglob("*") if p.is_file()}
     print("Package smoke test passed; temporary user and project directories removed.")

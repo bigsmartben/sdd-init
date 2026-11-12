@@ -7,7 +7,7 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import patch
-from test_build import project_entries, project_files
+from test_build import WORKFLOW, project_entries, project_files
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -97,7 +97,7 @@ gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["init"]))
             nonlocal count
             if path.name != "journal.json":
                 count += 1
-                if count == 4:
+                if count == 3:
                     raise OSError("injected write failure")
             return original(folder, path, data, mode)
 
@@ -110,15 +110,15 @@ gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["init"]))
         self.assertEqual(self.run_init().returncode, 0)
 
     def test_preflight_snapshot_rejects_late_external_edits(self):
-        for relative in ("AGENTS.md", ".agents/skills/sdd-doc/SKILL.md"):
+        for relative in ("AGENTS.md", ".codex/config.toml"):
             with self.subTest(path=relative):
                 target = self.root / relative
                 original = self.tx.apply
 
-                def edit_then_apply(root, changes):
+                def edit_then_apply(root, changes, **kwargs):
                     target.parent.mkdir(parents=True, exist_ok=True)
                     target.write_bytes(b"EXTERNAL EDIT")
-                    return original(root, changes)
+                    return original(root, changes, **kwargs)
 
                 with patch.object(self.tx, "apply", side_effect=edit_then_apply):
                     with self.assertRaisesRegex(ValueError, "changed after preflight"):
@@ -129,8 +129,8 @@ gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["init"]))
 
     def test_upgrade_rollback_preserves_customizations_and_history(self):
         self.assertEqual(self.run_init().returncode, 0)
-        customized = self.root / ".agents/skills/sdd-doc/SKILL.md"
-        customized.write_bytes(b"project customization")
+        customized = self.root / ".codex/config.toml"
+        customized.write_bytes(customized.read_bytes().replace(b"../.agents/skills/", b"../old/"))
         history = self.root / "specs/old/status.md"
         history.parent.mkdir(parents=True)
         history.write_bytes(b"historical evidence")
@@ -168,6 +168,25 @@ tx.replace_file = stop
         self.assertFalse((self.root / self.tx.RECOVERY).exists())
         (self.root / "AGENTS.override.md").unlink()
         self.assertEqual(self.run_init().returncode, 0)
+
+    def test_crash_after_link_creation_rolls_back_without_touching_shared_files(self):
+        shared = self.skill / "shared/skills/sdd-doc/SKILL.md"
+        original = shared.read_bytes()
+        self.crash("""
+original = tx.create_workflow_link
+def stop(path, target):
+    original(path, target)
+    os._exit(79)
+tx.create_workflow_link = stop
+""")
+        self.assertTrue((self.root / WORKFLOW / "skills/sdd-doc/SKILL.md").samefile(shared))
+        (self.root / "AGENTS.override.md").write_bytes(b"block next install")
+        result = self.run_init()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("RECOVERED", result.stdout)
+        self.assertFalse((self.root / WORKFLOW).exists())
+        self.assertFalse((self.root / ".codex/config.toml").exists())
+        self.assertEqual(shared.read_bytes(), original)
 
     def test_external_edit_blocks_recovery_without_overwrite(self):
         self.crash('''
@@ -276,7 +295,7 @@ with tx.project_lock(Path(sys.argv[2])):
         history.parent.mkdir(parents=True)
         history.write_bytes(b"original historical evidence")
         before = self.snapshot()
-        for script in (self.skill / "scripts/govern.py", self.root / ".agents/sdd/scripts/govern.py"):
+        for script in (self.skill / "scripts/govern.py", self.root / WORKFLOW / "sdd/scripts/govern.py"):
             for cmd in ("start", "record", "attest", "check", "finish", "commit"):
                 with self.subTest(script=script, cmd=cmd):
                     result = subprocess.run([sys.executable, "-B", "-X", "utf8", str(script),

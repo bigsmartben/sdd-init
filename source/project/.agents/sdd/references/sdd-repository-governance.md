@@ -50,7 +50,7 @@ Main 与用户对齐意图，根据已确认的目标和预期结果选择对应
 | Status | 沿用项目进度记录，首次可用当前任务，独立文档默认 `docs/status.md` |
 | 初始化运行资产 | 项目根目录 `.sdd-init.lock` 和 `.sdd-init-recovery/`，由初始化器管理 |
 | 项目研发规则 | `.agents/governance/`，按需建立 |
-| 共享资源、Skills、角色 | `.agents/sdd/`、`.agents/skills/`、`.codex/agents/` |
+| 共享资源、Skills、角色 | `.agents/skills/sdd-workflow/sdd/`、`.agents/skills/sdd-workflow/skills/`、`.codex/config.toml` 中的角色引用 |
 
 ## 权威实体
 

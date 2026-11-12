@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import os
 from pathlib import Path
 import re
 import sys
@@ -142,6 +143,10 @@ def inline_links(line: str):
 class Checker:
     def __init__(self, root: Path):
         self.root = root.resolve()
+        self.workflow_link = self.root / '.agents/skills/sdd-workflow'
+        checker = self.workflow_link / 'sdd/scripts/doc_check.py'
+        self.shared = (self.workflow_link.resolve()
+                       if checker.resolve() == Path(__file__).resolve() else None)
         self.diagnostics = []
         self.cache = {}
         self.checked = []
@@ -184,8 +189,11 @@ class Checker:
             self.issue(source, line, 'DOC010', 'Placeholder destination not checked', 'warning')
             return
         path = unquote(url.path)
-        target = (source.parent / path).resolve() if path else source
-        if not self.inside(target):
+        local = Path(os.path.abspath(source.parent / path)) if path else source
+        target = local.resolve()
+        shared_reference = (self.shared is not None and local.is_relative_to(self.workflow_link)
+                            and target.is_relative_to(self.shared))
+        if not self.inside(target) and not shared_reference:
             self.issue(source, line, 'DOC007', 'Local link leaves --root; target not read')
         elif not target.exists():
             self.issue(source, line, 'DOC007', f'Local target does not exist: {value}')
@@ -266,6 +274,8 @@ class Checker:
                 continue
             candidates = path.rglob('*.md') if path.is_dir() else [path]
             for item in candidates:
+                if self.shared is not None and item.is_relative_to(self.workflow_link):
+                    continue
                 if item.suffix.lower() != '.md':
                     self.issue(item, 1, 'DOC000', 'Input must be Markdown or a directory')
                     continue

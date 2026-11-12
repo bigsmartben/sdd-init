@@ -45,8 +45,8 @@ flowchart LR
 | ID | 目标与关键体验 | 环境与详细依据 |
 |---|---|---|
 | PUC-01 | 维护一次资源正文，生成可追溯分发包 | PENV-01；Spec FR-002、FR-004、FR-007，AC-002、AC-007 |
-| PUC-02 | 安装或更新用户级初始化入口，保留已有项目 | PENV-02；[安装说明](installation.md#更新与冲突)，Spec AC-002 |
-| PUC-03 | 将工作流引入目标仓库，升级时保护项目正文与配置 | PENV-03；[初始化入口](../source/initializer/SKILL.md)，Spec FR-002、FR-022，AC-002、AC-022 |
+| PUC-02 | 安装或更新用户级入口与共享工作流 | PENV-02；[安装说明](installation.md#更新与冲突)，Spec AC-002 |
+| PUC-03 | 将工作流引入目标仓库，升级时保护项目正文与配置 | PENV-03；[初始化入口](../source/initializer/SKILL.md)，Spec FR-002、FR-027，AC-002、AC-027 |
 | PUC-04 | 依照用户任务选择文档、实施、验收、Review、部署或交付职责 | PENV-03；Spec FR-001、FR-003、FR-005—FR-012、FR-020—FR-022 |
 
 ## 4. 高位验收场景与维度
@@ -56,10 +56,10 @@ flowchart LR
 | ID | 用例 | Given | When | Then：验收维度与依据 |
 |---|---|---|---|---|
 | PAC-01 | PUC-01 | 分发源完整，输出位置未占用 | 构建安装资源 | 内容与来源一致、引用可达；Spec AC-002、AC-007 |
-| PAC-02 | PUC-02 | 首次安装或已有未定制的受管入口 | 安装同版或更新版本 | 可安装、重复执行稳定，已有项目不随之更新；安装说明及 AC-002 |
+| PAC-02 | PUC-02 | 首次安装或已有未定制的受管入口 | 安装同版或更新版本 | 可安装、重复执行稳定，已链接项目使用同一用户级资源；安装说明及 AC-002 |
 | PAC-03 | PUC-02 | 已安装入口被修改或清单不完整 | 请求更新入口 | 保留原文件并报告冲突；[安装保护约定](installation.md#更新与冲突) |
-| PAC-04 | PUC-03 | 空项目或无冲突的目标项目 | 初始化工作流 | 资源与导航可用，不生成项目需求、蓝图或状态正文；AC-002、AC-022 |
-| PAC-05 | PUC-03 | 已有项目资源与项目自有正文 | 明确升级工作流 | 升级受管范围，保留既有正文及用户运行配置；AC-022、初始化入口 |
+| PAC-04 | PUC-03 | 空项目或无冲突的目标项目 | 初始化工作流 | 资源与导航可用，不生成项目需求、蓝图或状态正文；AC-002、AC-027 |
+| PAC-05 | PUC-03 | 已有项目资源与项目自有正文 | 明确升级工作流 | 更新受管链接与引用，保留既有正文及其他配置；AC-022、初始化入口 |
 | PAC-06 | PUC-03 | 载荷缺失必要资源或入口存在冲突 | 初始化或升级 | 写入前拒绝已识别的冲突，报告路径；AC-013、AC-020—AC-022 |
 | PAC-07 | PUC-04 | 已确认目标与已有授权 | 实施并验证任务 | Plan 承载执行，局部自验、需求验收及架构复核各自归属；AC-004、AC-008、AC-012 |
 | PAC-08 | PUC-04 | 测试缺陷或架构检查项偏差已发现 | 修复后复验／复核 | 问题或检查项记录及历史批次可追溯，由对应验证职责判定关闭；AC-020、AC-021 |
@@ -77,28 +77,30 @@ flowchart LR
     Builder[build_release.py]
     InitSource --> Builder
     ProjectSource --> Builder
-    Builder --> Bundle[安装目录与 ZIP、哈希清单]
+    Builder --> Bundle[安装目录与哈希清单]
     Bundle --> Wheel[wheel 内置 resources]
   end
   subgraph UserHost[用户宿主]
     CLI[sdd-init install] --> UserSkill[用户级 sdd-init]
     Wheel --> CLI
+    CLI --> SharedBundle[用户级共享工作流]
     UserSkill --> Govern[govern.py inspect / init]
   end
   subgraph Target[目标仓库]
-    Govern --> Local[六个 Skills、五个角色、共享资源、导航]
+    Govern --> Local[本地链接和项目配置引用]
+    Local --> SharedBundle
     Agent[Agent 按任务调用] --> Local
     Agent --> Artifacts[项目 Spec、Blueprint、Plan、代码与证据]
   end
 ```
 
-资源构建与用户级安装相互独立：构建只写指定产物目录；用户级安装只管理自身入口；项目初始化由用户在选定仓库调用。ZIP 将项目 Skills 保持为载荷，避免其在用户级目录被展开并发现为全局入口。共享资源构建时投影，代价是源文件修改后必须重建才能进入分发。
+构建从维护源码生成入口、共享目录与清单。用户级安装器将两部分发布到独立目录，只有初始化入口在用户级扫描根下。项目初始化器在项目扫描根建立指向共享目录的链接，并通过项目配置注册相对路径角色引用。项目导航和角色引用可随 Git 共享，本机链接由各工作区建立。详见 Spec FR-027／AC-027。
 
-用户级安装采用完整清单校验、排他锁、同目录暂存及目录替换，替换失败尝试恢复旧目录；异常中断恢复入口见[安装说明](installation.md#更新与冲突)。SHA-256 清单用于内容完整性与本地修改检查，不是分发签名或发布者认证。
+用户级安装采用完整清单校验、排他锁、同文件系统暂存及目录替换，替换失败尝试恢复旧目录；异常中断恢复入口见[安装说明](installation.md#更新与冲突)。SHA-256 清单用于内容完整性与本地修改检查，不是分发签名或发布者认证。
 
 ### 项目安装的互斥与恢复边界
 
-项目初始化与升级采用“单项目互斥、失败可恢复”的设计边界（2026-11-04 用户确认，关联 PUC-03）。项目初始化器负责安装操作的互斥、恢复记录及受影响文件的恢复；保护范围包含本次变更的 AGENTS 托管导航和项目载荷，恢复不得覆盖无关修改。
+项目初始化与升级采用“单项目互斥、失败可恢复”的设计边界（2026-11-04 用户确认，关联 PUC-03）。项目初始化器负责安装操作的互斥、恢复记录及受影响文件的恢复；保护范围包含本次变更的 AGENTS 托管导航、项目配置、忽略规则和本地链接，恢复不得覆盖无关修改。
 
 | 场景 | 已确认的设计边界 |
 |---|---|
@@ -120,7 +122,7 @@ flowchart TD
   Build --> Sources[初始化源与项目分发源]
   CLI[cli.py 命令解析] --> Installer[installer.py 用户级安装]
   Installer --> Resources[包内 resources 与 manifest]
-  Govern[初始化 govern.py] --> Payload[repo-payload.zip 与导航片段]
+  Govern[初始化 govern.py] --> Bundle[共享目录与导航片段]
   Main[Main 按用户目标选择职责] --> Skills[六个项目 Skills]
   Skills --> Shared[共享规则、模板和检查工具]
   Skills --> Roles[按任务调用专职角色]
@@ -131,9 +133,9 @@ flowchart TD
 
 | 组件 | 职责、输入输出与边界 | 实现／契约入口 |
 |---|---|---|
-| 资源构建器 | 读取两组分发源，输出安装树、确定性 ZIP 与清单；拒绝已有输出目录，不写用户安装 | [build_release.py](../scripts/build_release.py)、[setup.py](../setup.py) |
+| 资源构建器 | 读取两组分发源，输出确定性安装树与清单；拒绝已有输出目录，不写用户安装 | [build_release.py](../scripts/build_release.py)、[setup.py](../setup.py) |
 | CLI 与用户级安装器 | 解析 install 和目标 Skills 目录，验证资源与旧安装，暂存替换；不初始化项目 | [cli.py](../src/sdd_init/cli.py)、[installer.py](../src/sdd_init/installer.py) |
-| 项目初始化器 | inspect 盘点；init 校验允许路径、必要资源、角色与入口冲突，合并托管导航，写入项目载荷；安装互斥、恢复记录及回滚由内部 project_install 模块承担，遵循[已确认边界](#项目安装的互斥与恢复边界) | [初始化 Skill](../source/initializer/SKILL.md)、[govern.py](../source/initializer/scripts/govern.py)、[project_install.py](../source/initializer/scripts/project_install.py) |
+| 项目初始化器 | inspect 盘点；init 校验允许路径、必要资源、角色与入口冲突，合并托管导航、角色引用与忽略规则，创建本地链接；安装互斥、恢复记录及回滚由内部 project_install 模块承担，遵循[已确认边界](#项目安装的互斥与恢复边界) | [初始化 Skill](../source/initializer/SKILL.md)、[govern.py](../source/initializer/scripts/govern.py)、[project_install.py](../source/initializer/scripts/project_install.py) |
 | sdd-doc | 从确认内容与执行证据归并正式文档，维护关联并执行写后检查；模板不授予设计权 | [Skill](../source/project/.agents/skills/sdd-doc/SKILL.md) |
 | sdd-imp | 交付明确的上游任务，生成并执行同一 Plan／Task 清单，修改代码并完成局部自验 | [Skill](../source/project/.agents/skills/sdd-imp/SKILL.md) |
 | sdd-test-loop | 根据 Spec 验收行为，返回问题与复验事实，判定 Test Gate | [Skill](../source/project/.agents/skills/sdd-test-loop/SKILL.md) |
@@ -146,9 +148,9 @@ flowchart TD
 |---|---|
 | 初始化器分发正文 | `source/initializer/`；维护后由构建器复制 |
 | 项目分发正文与共享资源 | `source/project/`，共享资源唯一维护于其 `.agents/sdd/`；根目录已安装副本不是分发编辑入口 |
-| ZIP、wheel、构建清单 | 从源生成；清单记录文件哈希；生成物不反向成为源正文 |
-| 用户级安装目录 | 安装器依据 manifest 保护；定制或额外文件阻止自动替换 |
-| 目标项目导航与治理 | `docs/index.md` 和项目治理文件仅缺失时初始化；已有内容由项目维护，显式升级也不覆盖这两项 |
+| 构建树、wheel、构建清单 | 从源生成；清单记录文件哈希；生成物不反向成为源正文 |
+| 用户级安装目录 | 安装器依据 manifest 保护，校验和冲突处理见[安装说明](installation.md#更新与冲突) |
+| 目标项目导航与治理 | AGENTS 托管导航引用共享规则；项目自有索引和治理正文由项目维护 |
 | Spec、Blueprint、Plan 与证据 | 由目标项目维护；Spec 管详细需求，Blueprint 管高位设计，Plan 管执行；测试报告、Issue、Review 分别拥有批次事实、问题生命周期、架构检查项及其复核事实；Status 引用其结果 |
 | 历史导入与记录 | [baselines](../baselines/)及历史证据保留用于追溯；旧治理命令按下述退役边界处理，记录保留不意味着接口兼容 |
 
@@ -165,7 +167,7 @@ flowchart TD
 | ID | 约束 | 依据 |
 |---|---|---|
 | ARC-001 | 初始化器源、项目分发源、生成物及历史基线分离；共享资源只维护一份现行源 | [维护边界](../AGENTS.md#维护边界)、[README](../README.md#源码与维护入口) |
-| ARC-002 | 用户级入口更新与项目升级分别执行；初始化只安装工作流资源和导航，不创建项目需求、架构或状态正文，不修改用户运行配置 | [初始化入口](../source/initializer/SKILL.md)、Spec FR-002、FR-022 |
+| ARC-002 | 用户级安装更新共享目录；项目初始化通过链接接入，并在项目配置中声明相对路径角色引用 | [初始化入口](../source/initializer/SKILL.md)、Spec FR-002、FR-027 |
 | ARC-003 | 详细需求、高位架构、执行清单与验证事实各有唯一正文；引用不形成竞争权威 | Spec FR-001、FR-006、FR-007、FR-009、FR-021 |
 | ARC-004 | 实现与局部自验、需求验收、架构 Review 的职责分离；缺陷与存在偏差的检查项由对应复验／复核关闭 | Spec FR-008、FR-020、FR-021 |
 | ARC-005 | 机械检查只能证明其声明范围内的结构与引用性质，不能代替 Agent 语义判断 | Spec FR-013 |

@@ -9,9 +9,9 @@
 首次安装、更新命令、环境要求及冲突处理见[安装说明](docs/installation.md)。安装分为两个入口：
 
 1. 安装用户级 `sdd-init` Skill。
-2. 在目标仓库中调用 `sdd-init`，安装项目 Skills、角色和共享资源。
+2. 在目标仓库中调用 `sdd-init`，接入用户级共享工作流。
 
-用户级入口更新与既有项目升级分别执行。安装和迁移的维护边界见 [AGENTS.md](AGENTS.md)。
+用户级安装负责更新共享资源，项目初始化负责链接和引用。安装和迁移的维护边界见 [AGENTS.md](AGENTS.md)。
 
 ## 项目能力入口
 
@@ -25,7 +25,7 @@
 | [sdd-commit](source/project/.agents/skills/sdd-commit/SKILL.md) | 按授权完成 Git 与远端仓库交付 |
 | [sdd-deploy](source/project/.agents/skills/sdd-deploy/SKILL.md) | 部署、启动或重启服务并检查就绪状态 |
 
-项目分发包含六个项目 Skills 和五个自定义角色。协作规则见[仓库治理](source/project/.agents/sdd/references/sdd-repository-governance.md)，角色分工、默认模型与配置优先级见[执行协作](source/project/.agents/sdd/references/delegation.md)，项目文档入口见[文档索引](source/project/docs/index.md)。
+共享工作流包含六个项目 Skill 和五个自定义角色。协作规则见[仓库治理](source/project/.agents/sdd/references/sdd-repository-governance.md)，角色分工、默认模型与配置优先级见[执行协作](source/project/.agents/sdd/references/delegation.md)，项目文档入口可参考[索引示例](source/project/docs/index.md)。
 
 ## 源码与维护入口
 
@@ -34,15 +34,15 @@
 | [src/sdd_init/](src/sdd_init/) | Python 包、CLI 与用户级安装器 |
 | [pyproject.toml](pyproject.toml)、[setup.py](setup.py) | 包元数据、命令入口与打包配置 |
 | [source/initializer/](source/initializer/) | 初始化 Skill、安装脚本、回归测试及专属资源 |
-| [source/project/](source/project/) | 随项目分发的 Skills、角色及文档导航 |
+| [source/project/](source/project/) | 项目工作流 Skill、角色与共享资源源码 |
 | [source/project/.agents/sdd/](source/project/.agents/sdd/) | 共享模板、治理、检查工具及观测参考资源的唯一维护来源 |
-| [scripts/build_release.py](scripts/build_release.py) | 安装目录与确定性资源 ZIP 的构建器 |
+| [scripts/build_release.py](scripts/build_release.py) | 安装资源与哈希清单的构建器 |
 | [tests/](tests/) | 分发内容、构建可重现性及安装保护行为的测试 |
 | [specs/](specs/) | 已确认需求及验收条件 |
 | [docs/](docs/) | 安装指南、来源盘点及实施证据 |
 | [baselines/](baselines/) | 历史导入包与文件哈希，仅供追溯 |
 
-在 `source/` 中修改分发正文；`.build/`、wheel 和 ZIP 是生成产物，不作为编辑入口。共享资源在构建时投影到安装目录，不维护第二份现行正文。
+在 `source/` 中修改分发正文。构建目录和 wheel 从源码生成。
 
 ## 构建与检查
 
@@ -53,7 +53,7 @@ python -B scripts/build_release.py
 python -B -m unittest discover -s tests -v
 ```
 
-默认输出为 `.build/sdd-init/`，包含初始化资源、`assets/repo-payload.zip` 和构建清单。构建不会修改用户级安装或其他项目；已有输出目录不会被覆盖，重复构建需指定尚不存在的路径：
+默认输出为 `.build/sdd-init/`，包含初始化资源、`shared/` 和构建清单。构建不会修改用户级安装或其他项目；已有输出目录不会被覆盖，重复构建需指定尚不存在的路径：
 
 ```powershell
 python -B scripts/build_release.py --output .build/candidate/sdd-init

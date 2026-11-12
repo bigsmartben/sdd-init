@@ -6,7 +6,6 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
-import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -32,29 +31,24 @@ def build(output: Path) -> Path:
         raise FileExistsError(f"Output already exists; use a new path: {output}")
     initializer = ROOT / "source/initializer"
     project = ROOT / "source/project"
-    project_files = source_files(project)
     initializer_files = source_files(initializer)
-    if not project_files or not initializer_files:
+    if not initializer_files:
         raise ValueError("Missing distribution sources")
     output.mkdir(parents=True)
     for path in initializer_files:
         dest = output / path.relative_to(initializer)
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(path, dest)
-    shared = project / ".agents/sdd"
-    for folder in ("assets", "references"):
-        for path in source_files(shared / folder):
-            dest = output / folder / path.relative_to(shared / folder)
+    for source, destination in ((".agents/skills", "skills"), (".agents/sdd", "sdd"),
+                                (".codex/agents", "agents")):
+        directory = project / source
+        files = source_files(directory)
+        if not files:
+            raise ValueError(f"Missing distribution source: {directory}")
+        for path in files:
+            dest = output / "shared" / destination / path.relative_to(directory)
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(path, dest)
-    archive_path = output / "assets/repo-payload.zip"
-    with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        for path in project_files:
-            info = zipfile.ZipInfo(path.relative_to(project).as_posix(), (2026, 1, 1, 0, 0, 0))
-            info.compress_type = zipfile.ZIP_DEFLATED
-            info.create_system = 3
-            info.external_attr = 0o100644 << 16
-            archive.writestr(info, path.read_bytes())
     manifest = {
         "schema_version": 1,
         "files": {

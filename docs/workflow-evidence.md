@@ -1,5 +1,13 @@
 # 工作流分发实施证据
 
+## 2026-11-12 用户级共享工作流
+
+验证范围对应 [FR-027／AC-027](../specs/platform-independent-sdd/spec.md)。Windows 上使用 Codex CLI 0.154.0 和隔离用户目录。`skills/list` 在未初始化仓库发现 `sdd-init`，在已初始化仓库额外发现六个工作流 Skill。`config/read` 对应返回零条与五条 SDD 角色引用。
+
+- 59 项仓库回归与 22 项构建后初始化器回归通过。两个仓库、新 worktree 和新克隆均接入同一共享目录。Git 排除本机链接，用户级升级后已连接项目读到新版。中断恢复测试确认只回收新建链接和引用。源码包、wheel 构建及 wheel 安装冒烟通过。
+- 首轮使用 CLI `0.154.0` 验收分发默认模型。`sdd-designer` 正常返回，其余四个角色收到 `gpt-6.1-sol` 或 `gpt-6.1-terra` 不可用的报错。隔离目录改用 `gpt-6-astra` 后，五个角色均启动并返回各自名称。
+- 使用桌面版自带的 Codex CLI `0.167.0-alpha.4.1` 在隔离仓库按分发默认模型复验，五个角色均返回各自的 `SDD_ROLE_OK` 标记。逐个核对子会话回复所在轮次的模型，`sdd-designer` 使用 `gpt-6-astra`，`sdd-coder` 使用 `gpt-6.1-sol`，`sdd-documenter`、`sdd-validator` 和 `sdd-delivery` 均使用 `gpt-6.1-terra`。
+
 ## 2026-11-04 用户级 sdd-init 实际升级
 
 按本次用户明确授权，将当前仓库来源构建并安装到 `C:/Users/24598/.agents/skills/sdd-init`，载荷包含 [Spec FR-003／AC-003](../specs/platform-independent-sdd/spec.md) 的双平台交付与推送前同步规则。构建入口为 `python -B scripts/build_release.py --output .build/user-install-sync-20261104/sdd-init`，使用现有用户级 installer.install 执行安装，未修改安装器逻辑。

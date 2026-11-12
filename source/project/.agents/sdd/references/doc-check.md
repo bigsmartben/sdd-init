@@ -1,14 +1,14 @@
 # 文档校验 CLI
 
-统一入口为项目内 `.agents/sdd/scripts/doc_check.py`，Python 3.11+，仅依赖标准库，只读、不访问网络、不更新状态或 Gate。sdd-doc 写后执行机械检查，并独立完成语义判断。
+统一入口为项目内 `.agents/skills/sdd-workflow/sdd/scripts/doc_check.py`，Python 3.11+，仅依赖标准库，只读、不访问网络、不更新状态或 Gate。sdd-doc 写后执行机械检查，并独立完成语义判断。
 
 ## 使用
 
 从项目根目录执行，显式传入本次修改和直接受影响的文件或目录：
 
 ```powershell
-python -B .agents/sdd/scripts/doc_check.py --root . specs/payment/spec.md docs/blueprint.md
-python -B .agents/sdd/scripts/doc_check.py --root . --format json docs/test-reports
+python -B .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root . specs/payment/spec.md docs/blueprint.md
+python -B .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root . --format json docs/test-reports
 ```
 
 路径相对 `--root` 解析，也可传入根目录内的绝对路径。目录递归选择 `.md`，排除 `.git`、`.build`、`node_modules`、`.venv`、`__pycache__`；文件去重。范围为空、文件不存在、非 Markdown 文件或路径越出根目录均报错。不追踪到根目录外的符号链接。链接目标仅用于存在性及锚点检查，不自动扩大为全文结构检查；反向引用由 Agent 依据本次变更定位并显式纳入。

@@ -3,7 +3,7 @@ import argparse
 from pathlib import Path
 import sys
 
-from .installer import install
+from .installer import install, shared_directory
 
 
 def main():
@@ -19,6 +19,6 @@ def main():
         print(f"sdd-init: {error}", file=sys.stderr)
         return 1
     print(f"{result}: {args.skills_dir / 'sdd-init'}")
-    print("Open your target repository in Codex and select sdd-init. "
-          "If it is not visible, restart Codex. Existing projects were not changed.")
+    print(f"Shared workflow: {shared_directory(args.skills_dir.expanduser().absolute())}")
+    print("Open your target repository in Codex and select sdd-init to connect it.")
     return 0

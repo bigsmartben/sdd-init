@@ -7,8 +7,10 @@ import json
 import os
 from pathlib import Path
 import stat
+import subprocess
 
 RECOVERY = ".sdd-init-recovery"
+WORKFLOW_LINK = ".agents/skills/sdd-workflow"
 
 
 def linked(path: Path) -> bool:
@@ -32,6 +34,39 @@ def safe_path(root: Path, relative: str) -> Path:
     if target == root or root.resolve() not in target.resolve().parents:
         raise ValueError(f"Path outside installation: {target}")
     return target
+
+
+def workflow_path(root: Path) -> Path:
+    relative = Path(WORKFLOW_LINK)
+    return safe_path(root, relative.parent.as_posix()) / relative.name
+
+
+def workflow_target(path: Path) -> Path | None:
+    try:
+        info = path.lstat()
+    except FileNotFoundError:
+        return None
+    if not (stat.S_ISLNK(info.st_mode) or getattr(info, "st_reparse_tag", None) == 0xA0000003):
+        raise ValueError(f"Existing path is not an SDD directory link; preserve it: {path}")
+    # readlink works even during a user-level directory replacement or after a move.
+    target = os.readlink(path).removeprefix("\\\\?\\")
+    return (path.parent / target).resolve()
+
+
+def create_workflow_link(path: Path, target: Path):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if os.name != "nt":
+        path.symlink_to(target, target_is_directory=True)
+        return
+    result = subprocess.run(
+        ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command",
+         "New-Item -ItemType Junction -Path $env:SDD_LINK_PATH "
+         "-Target $env:SDD_LINK_TARGET -ErrorAction Stop | Out-Null"],
+        env=dict(os.environ, SDD_LINK_PATH=str(path), SDD_LINK_TARGET=str(target)),
+        capture_output=True, text=True, errors="replace", check=False,
+    )
+    if result.returncode:
+        raise OSError(f"Cannot create junction {path}: {result.stderr.strip()}")
 
 
 @contextmanager
@@ -136,6 +171,11 @@ def load(root: Path, folder: Path) -> dict | None:
         decode(entry["before"])
         if decode(entry["after"]) is None:
             raise ValueError(f"Missing installed bytes: {path}")
+    if journal.get("workflow_target") is not None:
+        target = Path(journal["workflow_target"])
+        if not target.is_absolute() or target.resolve().is_relative_to(root.resolve()):
+            raise ValueError(f"Invalid shared directory in recovery journal: {target}")
+        seen.add(workflow_path(root))
     for directory in journal["directories"]:
         path = safe_path(root, directory)
         if not any(path in file.parents for file in seen):
@@ -158,6 +198,17 @@ def recover(root: Path):
             path = safe_path(root, entry["path"])
             if content(path) not in (decode(entry["before"]), decode(entry["after"])):
                 raise ValueError(f"External modification; preserve file: {path}")
+        if journal.get("workflow_target") is not None:
+            path = workflow_path(root)
+            current_target = workflow_target(path)
+            if current_target is not None:
+                if current_target != Path(journal["workflow_target"]).resolve():
+                    raise ValueError(f"External modification; preserve link: {path}")
+                # Remove the directory entry only. Never walk into the shared directory.
+                if path.is_symlink():
+                    path.unlink()
+                else:
+                    path.rmdir()
         for entry in reversed(journal["files"]):
             path = safe_path(root, entry["path"])
             before, after = decode(entry["before"]), decode(entry["after"])
@@ -183,9 +234,9 @@ def recover(root: Path):
         ) from error
 
 
-def apply(root: Path, changes: list[tuple[Path, bytes, bytes | None]]):
+def apply(root: Path, changes: list[tuple[Path, bytes, bytes | None]], *, shared: Path | None = None):
     """Caller holds project_lock and has recovered any prior operation."""
-    if not changes:
+    if not changes and shared is None:
         return
     folder = safe_path(root, RECOVERY)
     entries, directories = [], set()
@@ -196,6 +247,13 @@ def apply(root: Path, changes: list[tuple[Path, bytes, bytes | None]]):
         entries.append({"path": target.relative_to(root).as_posix(),
                         "before": encode(before), "after": encode(data),
                         "mode": stat.S_IMODE(target.stat().st_mode) if before is not None else 0o644})
+    targets = [target for target, _, _ in changes]
+    if shared is not None:
+        path = workflow_path(root)
+        if workflow_target(path) is not None:
+            raise ValueError(f"Workflow link changed after preflight: {path}")
+        targets.append(path)
+    for target in targets:
         for parent in target.parents:
             if parent == root:
                 break
@@ -204,6 +262,8 @@ def apply(root: Path, changes: list[tuple[Path, bytes, bytes | None]]):
     journal = {"version": 1, "root": str(root.resolve()), "state": "prepared",
                "files": entries,
                "directories": sorted(directories, key=lambda p: (len(Path(p).parts), p))}
+    if shared is not None:
+        journal["workflow_target"] = str(shared)
     folder.mkdir(mode=0o700)
     try:
         save(folder, journal)
@@ -213,6 +273,13 @@ def apply(root: Path, changes: list[tuple[Path, bytes, bytes | None]]):
                 raise ValueError(f"File changed during installation: {target}")
             target.parent.mkdir(parents=True, exist_ok=True)
             replace_file(folder, target, decode(entry["after"]), entry["mode"])
+        if shared is not None:
+            path = workflow_path(root)
+            if workflow_target(path) is not None:
+                raise ValueError(f"Workflow link changed during installation: {path}")
+            create_workflow_link(path, shared)
+            if workflow_target(path) != shared:
+                raise ValueError(f"Unexpected workflow link target: {path}")
         journal["state"] = "committed"
         save(folder, journal)
     except BaseException:

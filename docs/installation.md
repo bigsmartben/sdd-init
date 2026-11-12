@@ -4,17 +4,17 @@
 
 ## 首次安装
 
-默认安装命令（已合并至 main，并通过 GitHub HTTPS 安装验证）：
+从 GitHub 默认分支安装：
 
 ```powershell
 uvx --from git+https://github.com/bigsmartben/sdd-init.git sdd-init install
 ```
 
-默认安装到 `~/.agents/skills/sdd-init/`，Windows 中 `~` 为用户主目录。目录中包含 SKILL.md、脚本、说明、模板和 `assets/repo-payload.zip`；只有 sdd-init 注册为用户级 Skill。安装完成后不依赖 uv 缓存保存资源，运行项目初始化脚本仍需要 Python。
+默认在 `~/.agents/skills/sdd-init/` 安装初始化入口，在相邻的 `~/.agents/skills-sdd-init-shared/` 安装六个工作流 Skill、五个角色和通用资源。Windows 的 `~` 为用户主目录。只有 sdd-init 进入用户级 Skill 扫描范围。
 
 在需要的仓库中打开 Codex，选择 sdd-init（支持该快捷入口的客户端可输入 `/sdd-init`）。CLI／IDE 可输入 `$sdd-init` 或通过 `/skills` 选择；也可明确要求“使用 sdd-init 初始化当前仓库”。未发现新 Skill 时重启 Codex。安装器不修改客户端命令注册或用户配置。[Codex 官方 Skill 文档](https://learn.chatgpt.com/docs/build-skills)
 
-只有此时才将六个项目 Skills、五个角色和共享资源展开到目标仓库。初始化与项目升级继续使用现有 Skill 的冲突保护规则。
+初始化在项目内创建 `.agents/skills/sdd-workflow` 目录链接。Windows 使用 junction，其他平台使用目录符号链接。安装器合并 `AGENTS.md` 导航与 `.codex/config.toml` 中的角色引用，并在 `.gitignore` 排除本机链接和安装元数据。角色的项目配置在 Codex 信任该仓库后加载。换机、克隆或新建 worktree 后重新运行 sdd-init 以接上本机共享目录。
 
 ## 更新与冲突
 
@@ -24,19 +24,19 @@ uvx --refresh --from git+https://github.com/bigsmartben/sdd-init.git sdd-init in
 
 uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固定版本时，将 Git URL 写成 `git+https://github.com/bigsmartben/sdd-init.git@<tag-or-commit>`。[uv 工具说明](https://docs.astral.sh/uv/guides/tools/)
 
-更新只替换用户级 sdd-init 及其内置资源，既有项目保持原状；新项目使用新载荷，旧项目须明确要求升级。相同内容重复执行不产生变更。安装器核对完整文件清单与哈希；发现定制、缺失、额外文件或无清单的旧版时停止，不提供自动强制覆盖。应先备份并审阅旧目录，再人工迁出冲突目录后重装。旧用户级入口的迁移不自动执行。
+更新替换用户级入口和同一位置的共享资源。已链接项目重新加载后使用新版。相同内容重复执行不产生变更。安装器核对文件清单与哈希，校验已安装目录时跳过清单内 Python 源文件对应的未登记 `__pycache__` 字节码。发现定制、缺失、其他额外文件或无清单的旧版时停止，不提供自动强制覆盖。应先备份并审阅旧目录，再人工迁出冲突目录后重装。完整且与旧清单相符的用户级入口可直接更新。
 
-项目明确升级时，安装器保留已有项目的 `.agents/sdd/references/sdd-repository-governance.md` 和 `docs/index.md`，包括使用 `init --update-skills` 的情况。检查这些正文与新载荷的协作规则是否冲突；需要调整时按目标项目授权归并并检查引用，不能仅凭 Skill 升级判定整套规则已生效。
+已复制安装的旧项目先保全项目定制，把旧的 SDD Skill、角色 TOML 和 `.agents/sdd/` 迁出扫描或占位路径，并更新项目自有文档中的旧链接。再运行 `init --update-skills` 合并托管导航与角色引用。初始化器报告占用路径，旧项目定制和文档由项目决定去向。
 
-安装先在同目录暂存并验证，再替换；替换失败会尝试恢复旧目录。并发安装以锁文件拒绝；进程异常中断后，应检查 `.sdd-init-install.lock` 和 `.sdd-init-backup-*`，确认没有安装进程、旧文件已保全，再人工恢复。哈希用于完整性和定制检查，不是签名验证。
+安装先暂存并验证入口及共享目录，再分别发布。替换失败时恢复旧目录。进程异常中断后，检查 Skill 搜索目录中的 `.sdd-init-install.lock` 及其父目录中的 `.sdd-init-backup-*`，确认安装进程已退出、旧文件已保全，再人工恢复。哈希用于完整性和定制检查。
 
 ## 项目安装恢复与旧命令退役
 
 项目 init／init --update-skills 在目标根目录的 `.sdd-init.lock` 上获取操作系统文件锁，同项目并发安装直接拒绝。该一字节文件持久保留，不能用文件存在判断进程活跃，也不要在安装期间删除或替换它；进程退出由操作系统释放锁。inspect 不创建锁。锁与恢复记录是本地运行元数据，不应提交到版本库。
 
-写入前的资源冲突只产生锁元数据，不修改 AGENTS 或项目载荷。安装先持久化 `.sdd-init-recovery/journal.json`，保存受影响文件的原始字节、目标字节、权限及新增目录清单；备份字节以 Base64 编码保存。逐文件替换使用同一恢复目录的暂存文件，成功后标记 committed 并清理恢复目录。此机制保证进程中断后的恢复入口，不承诺跨文件瞬时切换、跨主机共享文件系统锁或断电后的持久性。
+写入前的资源冲突只产生锁元数据。安装先持久化 `.sdd-init-recovery/journal.json`，保存受影响文件的原始字节、目标字节、权限、新增目录及新链接的目标。备份字节以 Base64 编码保存。逐文件替换使用同一恢复目录的暂存文件，成功后标记 committed 并清理恢复目录。进程中断后可按恢复记录续接。
 
-普通写入失败自动恢复本次文件；异常终止后，重新执行相同 init 命令会先处理恢复记录，再做新安装。恢复期间已恢复的文件可以重复检查；恢复成功只清理本次新建且仍为空的目录。安装及恢复都会比对文件内容，发现外部修改时保留文件并阻止覆盖。
+普通写入失败自动恢复本次文件和链接；异常终止后，重新执行相同 init 命令会先处理恢复记录，再做新安装。恢复期间已恢复的文件可以重复检查；恢复成功只清理本次新建且仍为空的目录。安装及恢复都会比对文件内容，发现外部修改时保留文件并阻止覆盖。
 
 若提示 `Recovery blocked`，先保留错误中列出的文件和 `.sdd-init-recovery/`，根据 `journal.json` 的 path／before／after 核对受影响内容，保存外部编辑副本并解除文件占用、权限或内容冲突，再重试同一命令。记录损坏时先从可靠备份核对恢复，不删除记录后强制安装；`--update-skills` 不能绕过恢复阻塞。
 
@@ -44,10 +44,12 @@ uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固�
 
 ## 开发验证
 
+需要在发布前试用当前检出版本时，从本仓库根目录运行 `uvx --from . sdd-init install`。下列验证命令使用临时用户和项目目录。
+
 ```powershell
 uv build --out-dir .build/dist
 python -B -m unittest discover -s tests -v
 python -B scripts/smoke_package.py --from .build/dist/sdd_init-0.5.5-py3-none-any.whl
 ```
 
-`src/sdd_init/cli.py` 定义命令入口，`installer.py` 负责用户级安装；`setup.py` 在构建时调用 `scripts/build_release.py`，从 `source/` 生成内置资源。源码包包含构建所需输入，wheel 不要求访问原仓库。不要编辑 wheel、build 或 `.build` 内的资源。测试通过 `--skills-dir` 隔离安装位置；自定义位置只有位于客户端搜索范围时才可被发现。
+`src/sdd_init/cli.py` 定义命令入口，`installer.py` 负责用户级安装；`setup.py` 在构建时调用 `scripts/build_release.py`，从 `source/` 生成内置资源。源码包包含构建所需输入，wheel 不要求访问原仓库。不要编辑 wheel、build 或 `.build` 内的资源。测试通过 `--skills-dir` 隔离安装位置；自定义 Skill 目录只有位于客户端搜索范围时才可被发现，共享目录与该目录同级。

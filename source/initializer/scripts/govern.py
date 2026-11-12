@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.util
+from importlib.util import source_from_cache
+import json
 from pathlib import Path
 import re
 import subprocess
 import sys
-import zipfile
 import tomllib
 
 SKILL = Path(__file__).resolve().parent.parent
@@ -52,10 +54,6 @@ def git(root: Path, *args: str) -> bytes | None:
         return None
 
 
-# `sdd-init` is the ONLY global skill. It carries a compressed payload that
-# contains repository-local skills; storing nested SKILL.md files unpacked under
-# ~/.agents/skills/sdd-init would risk discovering them as global skills.
-PROJECT_PAYLOAD = ASSETS / "repo-payload.zip"
 PROJECT_SKILLS = {'sdd-doc', 'sdd-imp', 'sdd-test-loop', 'sdd-review-loop', 'sdd-commit', 'sdd-deploy'}
 PROJECT_ROLE_MODELS = {
     'sdd-designer': 'gpt-6-astra',
@@ -83,92 +81,58 @@ def validate_role(data: bytes, name: str) -> None:
         fail(f"角色 {name} 默认模型必须为 {PROJECT_ROLE_MODELS[name]}")
 
 
-def project_payload(root: Path, allow_update: bool) -> list[tuple[Path, bytes, bytes | None]]:
-    if not PROJECT_PAYLOAD.is_file():
-        fail("仅全局 sdd-init 能初始化仓库级 Skills；当前安装器缺少 repo-payload.zip")
-    changes: list[tuple[Path, bytes, bytes | None]] = []
-    with zipfile.ZipFile(PROJECT_PAYLOAD) as archive:
-        members = archive.namelist()
-        if len(members) != len(set(members)):
-            fail("项目 Skill 包内存在重复路径")
-        for member in members:
-            if member.endswith("/"):
-                continue
-            rel = Path(member)
-            parts = rel.parts
-            is_skill = ((len(parts) == 4 and parts[0:2] == (".agents", "skills")
-                        and parts[2] in PROJECT_SKILLS and parts[3] == "SKILL.md")
-                        or (len(parts) == 5 and parts[0:2] == (".agents", "skills")
-                        and parts[2] in PROJECT_SKILLS and parts[3:] == ("agents", "openai.yaml"))
-                        or (parts == (".agents", "skills", "sdd-commit", "references", "git-remote.md")))
-            is_shared = (len(parts) == 4 and parts[0:2] == (".agents", "sdd")
-                         and parts[2] in ("scripts", "assets") and parts[3] in
-                         ("govern.py", "code-review-rules_template.md", "blueprint_template.md", "spec_template.md", "status_template.md", "architecture-rule-catalog.md",
-                          "prototype_reference_template.md", "quickstart_template.md", "plan_template.md",
-                          "test_report_template.md", "issue_template.md", "review_template.md", "sequence_template.md", "contract_template.md"))
-            is_shared = is_shared or parts == (".agents", "sdd", "scripts", "doc_check.py")
-            is_shared = is_shared or (len(parts) == 4 and parts[:3] == (".agents", "sdd", "references")
-                                      and parts[3] in ("delegation.md", "sdd-repository-governance.md", "document-writing.md", "doc-check.md", "architecture-rules.md", "observability-baseline.md",
-                                                       "scenarios.md", "prototype.md", "visual-confirmation.md"))
-            is_shared = is_shared or (len(parts) == 5 and parts[:4] == (".agents", "sdd", "assets", "observability")
-                                      and parts[4] in ("README.md", "event-1.0.0.schema.json"))
-            is_shared = is_shared or (parts[:4] == (".agents", "sdd", "assets", "observability")
-                                      and parts[4:] in (("check.py",), ("java", "pom.xml"),
-                                                        ("java", "src", "main", "java", "local", "sdd", "Example.java"),
-                                                        ("java", "src", "main", "java", "local", "sdd", "IsolationProbe.java"),
-                                                        ("java", "src", "main", "java", "local", "sdd", "BusinessDemo.java"),
-                                                        ("java", "src", "main", "java", "local", "sdd", "BusinessDemoTest.java"),
-                                                        ("language-status.json",), ("language-status.json",), ("language-status.json",), ("node", "package.json"), ("node", "package-lock.json"), ("node", "example.js"),
-                                                        ("python", "example.py"), ("python", "requirements.lock"),
-                                                        ("go", "main.go"), ("go", "go.mod"), ("go", "go.sum"),
-                                                        ("rust", "Cargo.toml"), ("rust", "Cargo.lock"), ("rust", "src", "main.rs"),
-                                                        ("android", "settings.gradle"), ("android", "build.gradle"), ("android", "app", "build.gradle"),
-                                                        ("android", "app", "src", "main", "AndroidManifest.xml"),
-                                                        ("android", "app", "src", "main", "java", "local", "sdd", "androidexample", "MainActivity.java")))
-            is_role = (len(parts) == 3 and parts[:2] == (".codex", "agents")
-                       and parts[2] in {name + ".toml" for name in PROJECT_ROLES})
-            is_project_default = member in ('.agents/sdd/references/sdd-repository-governance.md', 'docs/index.md')
-            if not (is_skill or is_shared or is_role or is_project_default):
-                fail(f"项目 Skill 包包含非法路径: {member}")
-            target = inside(root, root / rel)
-            for parent in target.parents:
-                if parent == root:
-                    break
-                if (parent.exists() or parent.is_symlink()) and not parent.is_dir():
-                    fail(f"项目资源父路径不是目录: {parent}")
-            data = archive.read(member)
-            if is_role:
-                validate_role(data, rel.stem)
-            before = transaction.content(target)
-            if target.exists() or target.is_symlink():
-                if target.is_symlink() or not target.is_file():
-                    fail(f"拒绝覆盖已有符号链接或非普通文件: {target}")
-                # Project-owned navigation and rules are seeded once, even on upgrade.
-                if is_project_default or before == data:
-                    continue
-                if not allow_update:
-                    fail(f"项目 Skill/角色/工具文件已被修改: {target}；请审查后使用 init --update-skills 执行明确升级")
-            changes.append((target, data, before))
-        found = {x for x in members if x.startswith('.agents/skills/') and x.endswith('/SKILL.md')}
-        expected = {f'.agents/skills/{s}/SKILL.md' for s in PROJECT_SKILLS}
-        if found != expected:
-            fail("项目 Skill 包不包含完整的六个仓库级 Skill")
-        required = {f'.agents/skills/{name}/agents/openai.yaml' for name in PROJECT_SKILLS}
-        required.update(f'.codex/agents/{name}.toml' for name in PROJECT_ROLES)
-        required.update({'.agents/sdd/scripts/govern.py', '.agents/sdd/scripts/doc_check.py', '.agents/sdd/references/doc-check.md', '.agents/sdd/references/architecture-rules.md', '.agents/sdd/assets/status_template.md',
-                         '.agents/sdd/references/visual-confirmation.md', '.agents/sdd/references/document-writing.md', '.agents/sdd/references/delegation.md', '.agents/sdd/references/sdd-repository-governance.md',
-                         '.agents/skills/sdd-commit/references/git-remote.md',
-                         '.agents/sdd/references/observability-baseline.md',
-                         '.agents/sdd/references/scenarios.md', '.agents/sdd/references/prototype.md',
-                         '.agents/sdd/assets/spec_template.md', '.agents/sdd/assets/blueprint_template.md',
-                         '.agents/sdd/assets/code-review-rules_template.md',
-                         '.agents/sdd/assets/prototype_reference_template.md',
-                         '.agents/sdd/assets/quickstart_template.md', '.agents/sdd/assets/plan_template.md', '.agents/sdd/assets/test_report_template.md', '.agents/sdd/assets/issue_template.md', '.agents/sdd/assets/review_template.md',
-                         '.agents/sdd/assets/sequence_template.md',
-                         '.agents/sdd/assets/contract_template.md', '.agents/sdd/references/sdd-repository-governance.md', 'docs/index.md'})
-        if not required.issubset(members):
-            fail("项目包缺少角色、调用策略、模板或必要引用")
-    return changes
+def shared_bundle() -> Path:
+    # A build can be exercised directly. A user install publishes shared resources
+    # as a sibling of the skill search root so Codex cannot discover them globally.
+    shared = SKILL / "shared"
+    if not shared.exists():
+        skills_dir = SKILL.parent
+        shared = skills_dir.with_name(f"{skills_dir.name}-sdd-init-shared")
+    if not shared.is_dir() or transaction.linked(shared):
+        fail(f"缺少共享资源，请重新安装用户级 sdd-init: {shared}")
+    manifest = json.loads(read(SKILL / "build-manifest.json"))
+    if not isinstance(manifest, dict) or manifest.get("schema_version") != 1 or not isinstance(manifest.get("files"), dict):
+        fail("用户级安装缺少有效的构建清单")
+    expected = {name.removeprefix("shared/"): digest for name, digest in manifest["files"].items()
+                if name.startswith("shared/")}
+    actual = {}
+    for path in shared.rglob("*"):
+        if transaction.linked(path):
+            fail(f"共享资源包含链接: {path}")
+        if path.is_file():
+            relative = path.relative_to(shared)
+            name = relative.as_posix()
+            if name not in expected and relative.parent.name == "__pycache__" and relative.suffix == ".pyc":
+                try:
+                    if Path(source_from_cache(relative)).as_posix() in expected:
+                        continue
+                except (NotImplementedError, ValueError):
+                    pass
+            actual[name] = hashlib.sha256(path.read_bytes()).hexdigest()
+    if actual != expected:
+        fail(f"共享资源与发布清单不一致，请检查用户级安装: {shared}")
+    skills = {name for name in actual if name.startswith("skills/") and name.endswith("/SKILL.md")}
+    roles = {name for name in actual if name.startswith("agents/") and name.endswith(".toml")}
+    required = {
+        "sdd/scripts/govern.py", "sdd/scripts/doc_check.py", "skills/sdd-commit/references/git-remote.md",
+        *(f"sdd/references/{name}.md" for name in (
+            "doc-check", "architecture-rules", "visual-confirmation", "document-writing", "delegation",
+            "sdd-repository-governance", "observability-baseline", "scenarios", "prototype",
+        )),
+        *(f"sdd/assets/{name}_template.md" for name in (
+            "status", "spec", "blueprint", "code-review-rules", "prototype_reference", "quickstart",
+            "plan", "test_report", "issue", "review", "sequence", "contract",
+        )),
+        *(f"skills/{name}/agents/openai.yaml" for name in PROJECT_SKILLS),
+    }
+    if (skills != {f"skills/{name}/SKILL.md" for name in PROJECT_SKILLS}
+            or roles != {f"agents/{name}.toml" for name in PROJECT_ROLES}
+            or not required <= actual.keys()):
+        fail("共享资源缺少或包含未声明的 Skill、角色、模板或必要引用")
+    for name in sorted(PROJECT_ROLES):
+        data = (shared / "agents" / f"{name}.toml").read_bytes()
+        validate_role(data, name)
+    return shared.resolve()
 
 
 def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
@@ -236,49 +200,116 @@ def cmd_init(root: Path, args: argparse.Namespace) -> int:
         return initialize(root, args)
 
 
+def prepare_config(original: str, allow_update: bool) -> str:
+    begin = "# sdd-init roles:start"
+    end = "# sdd-init roles:end"
+    newline = "\r\n" if "\r\n" in original else "\n"
+    references = {name: {"config_file": f"../{transaction.WORKFLOW_LINK}/agents/{name}.toml"}
+                  for name in sorted(PROJECT_ROLES)}
+    lines = [begin]
+    for name, role in references.items():
+        lines.extend((
+            f"[agents.{name}]",
+            f'config_file = "{role["config_file"]}"',
+        ))
+    lines.append(end)
+    block = newline.join(lines)
+    markers = list(re.finditer(rf"(?m)^(?:{begin}|{end})\r?$", original))
+    if markers:
+        if len(markers) != 2 or markers[0][0].rstrip("\r") != begin:
+            fail(".codex/config.toml 的 SDD 角色引用块不完整、重复或顺序错误")
+        first, last = markers[0].start(), markers[1].start() + len(end)
+        same_block = original[first:last].replace("\r\n", "\n") == block.replace("\r\n", "\n")
+        if not same_block and not allow_update:
+            fail("SDD 角色引用块已变化；确认更新后使用 init --update-skills")
+        remaining = original[:first] + original[last:]
+        candidate = original if same_block else original[:first] + block + original[last:]
+    else:
+        remaining = original
+        separator = (newline if original.endswith(("\r", "\n")) else newline * 2) if original else ""
+        candidate = original + separator + block + newline
+
+    try:
+        previous = tomllib.loads(original)
+        unmanaged = tomllib.loads(remaining)
+        merged = tomllib.loads(candidate)
+    except tomllib.TOMLDecodeError as error:
+        fail(f".codex/config.toml 无法合并 SDD 角色引用: {error}")
+    for name, reference in references.items():
+        if name in unmanaged.get("agents", {}):
+            fail(f".codex/config.toml 已有同名角色 {name}；请保留并处理冲突后重试")
+        if merged.get("agents", {}).get(name) != reference:
+            fail(f".codex/config.toml 的 SDD 角色引用不可用: {name}")
+        previous.get("agents", {}).pop(name, None)
+        merged["agents"].pop(name, None)
+    for config in (previous, merged):
+        if config.get("agents") == {}:
+            config.pop("agents")
+    if previous != merged:
+        fail(".codex/config.toml 的角色引用块含其他配置，请保留并处理后重试")
+    return candidate
+
+
+def prepare_ignore(original: str) -> str:
+    entries = (f"/{transaction.WORKFLOW_LINK}", "/.sdd-init.lock", "/.sdd-init-recovery/")
+    lines = original.splitlines()
+    last_negation = max((index for index, line in enumerate(lines) if line.startswith("!")), default=-1)
+    if all(entry in lines[last_negation + 1:] for entry in entries):
+        return original
+    newline = "\r\n" if "\r\n" in original else "\n"
+    separator = newline if original and not original.endswith(("\r", "\n")) else ""
+    return original + separator + newline.join(entries) + newline
+
+
 def initialize(root: Path, args: argparse.Namespace) -> int:
-    # Retired entrypoints must not silently coexist with the new workflow.
-    retired = [root / ".agents/skills" / name for name in ("sdd-accept",)
-               if (root / ".agents/skills" / name).exists()]
-    retired.extend(root / ".codex/agents" / (name + ".toml")
-                   for name in ("sdd-requirements", "sdd-architect", "sdd-planner", "sdd-implementer", "sdd-acceptor")
-                   if (root / ".codex/agents" / (name + ".toml")).exists())
-    retired_resources = (
-        ".agents/skills/sdd-commit/references/providers.md",
-        *(f".agents/sdd/assets/{name}.md" for name in
-          ("issue", "draft-pr", "test-plan", "acceptance", "module-design")),
-    )
-    retired.extend(root / rel for rel in retired_resources
-                   if (root / rel).exists() or (root / rel).is_symlink())
-    # Navigation is project-owned: report incompatible links, never overwrite it.
-    for rel in ("docs/index.md", ".agents/sdd/references/sdd-repository-governance.md"):
-        entry = inside(root, root / rel)
-        if entry.is_file():
-            links = re.findall(r"\]\(([^)]+)\)", read(entry))
-            obsolete = {"providers.md", "issue.md", "draft-pr.md", "test-plan.md",
-                        "acceptance.md", "module-design.md"}
-            if any("://" not in link and "sdd" in link
-                   and link.split("#")[0].rsplit("/", 1)[-1] in obsolete
-                   for link in links):
-                retired.append(entry)
-    if retired:
-        fail("发现需迁移的 SDD 资源或导航，请保留项目正文并处理以下冲突后再安装：" + ", ".join(str(p) for p in retired))
-    # Preflight local skill conflicts BEFORE touching the repo.
-    skill_changes = project_payload(root, args.update_skills)
     override = inside(root, root / "AGENTS.override.md")
-    if override.exists() or override.is_symlink():
+    if override.exists():
         fail("根目录存在 AGENTS.override.md；请先处理覆盖关系再初始化，避免治理规则未生效")
-    agents = inside(root, root / "AGENTS.md")
-    if agents.is_symlink() or (agents.exists() and not agents.is_file()):
-        fail("拒绝覆盖 AGENTS.md 符号链接或非普通文件")
-    before = transaction.content(agents)
-    original = before.decode("utf-8") if before is not None else ""
-    candidate = prepare_agents(original, args.update_skills)
-    changes = ([(agents, candidate.encode("utf-8"), before)] if candidate != original else []) + skill_changes
-    transaction.apply(root, changes)
+
+    old_skills = sorted(PROJECT_SKILLS | {"sdd-accept"})
+    legacy = [
+        ".agents/sdd",
+        *(f".agents/skills/{name}" for name in old_skills),
+        *(f".codex/agents/{name}.toml" for name in sorted(PROJECT_ROLES | {
+            "sdd-requirements", "sdd-architect", "sdd-planner", "sdd-implementer", "sdd-acceptor",
+        })),
+    ]
+    conflicts = [relative for relative in legacy
+                 if (root / relative).exists() or transaction.linked(root / relative)]
+    if conflicts:
+        fail("发现旧版项目 SDD 资源，请先保留定制并迁出旧副本，再执行 init --update-skills: "
+             + ", ".join(conflicts))
+    index = inside(root, root / "docs/index.md")
+    old_links = rf"\]\([^)]*\.agents/(?:sdd/|skills/(?:{'|'.join(old_skills)})/)"
+    if index.is_file() and re.search(old_links, read(index)):
+        fail(f"项目导航仍引用旧版 SDD 路径，请先更新引用: {index}")
+
+    shared = shared_bundle()
+    if shared.is_relative_to(root):
+        fail(f"共享资源必须位于目标仓库外: {shared}")
+    link = transaction.workflow_path(root)
+    linked_to = transaction.workflow_target(link)
+    if linked_to is not None and linked_to != shared:
+        fail(f"SDD 链接已指向其他目录，请核对后重建: {link} -> {linked_to}")
+    if git(root, "ls-files", "--", transaction.WORKFLOW_LINK):
+        fail(f"链接位置已纳入 Git，请先处理已跟踪路径: {link}")
+
+    changes = []
+    for relative, prepare in (
+        ("AGENTS.md", lambda original: prepare_agents(original, args.update_skills)),
+        (".codex/config.toml", lambda original: prepare_config(original, args.update_skills)),
+        (".gitignore", prepare_ignore),
+    ):
+        target = inside(root, root / relative)
+        before = transaction.content(target)
+        original = before.decode("utf-8") if before is not None else ""
+        candidate = prepare(original)
+        if candidate != original:
+            changes.append((target, candidate.encode("utf-8"), before))
+    transaction.apply(root, changes, shared=shared if linked_to is None else None)
     for target, _, _ in changes:
         out(f"INSTALLED {target}")
-    out("已安装六个项目 Skills、五个独立角色及其默认模型、共享模板与导航；保留既有正文和用户运行配置，不创建需求、架构或状态实体，不设置角色推理强度。")
+    out(f"SDD WORKFLOW {link} -> {shared}")
     return 0
 
 
@@ -287,8 +318,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--root", default=".", help="要治理的仓库目录（默认当前目录）")
     subs = p.add_subparsers(dest="cmd", required=True)
     subs.add_parser("inspect", help="只读盘点，不修改任何文件")
-    a = subs.add_parser("init", help="安装 Skills、模板与 AGENTS 导航；不创建或回填项目实体，不修改用户配置")
-    a.add_argument("--update-skills", action="store_true", help="经用户批准后替换已有仓库级 Skill/共享工具；绝不修改 Spec/Blueprint/Status")
+    a = subs.add_parser("init", help="接入用户级共享资源并合并项目引用")
+    a.add_argument("--update-skills", action="store_true", help="更新已有的 SDD 托管导航与角色引用")
     return p
 
 

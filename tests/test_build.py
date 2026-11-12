@@ -1,14 +1,16 @@
 from __future__ import annotations
 
+import hashlib
 import importlib.util
+import json
 import re
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 import unittest
-import zipfile
 
+WORKFLOW = ".agents/skills/sdd-workflow"
 ROOT = Path(__file__).resolve().parent.parent
 spec = importlib.util.spec_from_file_location("build_release", ROOT / "scripts/build_release.py")
 builder = importlib.util.module_from_spec(spec)
@@ -25,7 +27,15 @@ def project_entries(root):
 
 def project_files(root):
     project_entries(root)
-    return [p for p in builder.source_files(root) if p != root / ".sdd-init.lock"]
+    return [p for p in root.rglob("*") if p.is_file() and p != root / ".sdd-init.lock"
+            and not p.is_relative_to(root / WORKFLOW)]
+
+
+def refresh_manifest(build):
+    manifest = build / "build-manifest.json"
+    files = {path.relative_to(build).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+             for path in builder.source_files(build) if path != manifest}
+    manifest.write_text(json.dumps({"schema_version": 1, "files": files}), encoding="utf-8")
 
 
 class BuildTests(unittest.TestCase):
@@ -37,15 +47,14 @@ class BuildTests(unittest.TestCase):
     def test_payload_and_shared_resources_match_canonical_source(self):
         output = builder.build(self.folder / "skill")
         project = ROOT / "source/project"
-        expected = {p.relative_to(project).as_posix(): p.read_bytes() for p in builder.source_files(project)}
-        with zipfile.ZipFile(output / "assets/repo-payload.zip") as archive:
-            self.assertEqual(set(archive.namelist()), set(expected))
-            for name, data in expected.items():
-                self.assertEqual(archive.read(name), data)
-        for directory in ("assets", "references"):
-            source = project / ".agents/sdd" / directory
-            for path in builder.source_files(source):
-                self.assertEqual(path.read_bytes(), (output / directory / path.relative_to(source)).read_bytes())
+        for source, target in ((".agents/skills", "skills"), (".agents/sdd", "sdd"),
+                               (".codex/agents", "agents")):
+            canonical = project / source
+            shared = output / "shared" / target
+            expected = {p.relative_to(canonical): p.read_bytes() for p in builder.source_files(canonical)}
+            self.assertEqual({p.relative_to(shared): p.read_bytes() for p in builder.source_files(shared)}, expected)
+        self.assertFalse((output / "assets/repo-payload.zip").exists())
+        self.assertFalse((output / "assets/spec_template.md").exists())
 
     def test_build_is_reproducible_and_does_not_overwrite(self):
         first = builder.build(self.folder / "first")
@@ -64,8 +73,7 @@ class BuildTests(unittest.TestCase):
         index = target / "docs/index.md"
         index.parent.mkdir()
         index.write_bytes(b"# Project\nBlueprint: architecture/blueprint.md\n")
-        rules = target / ".agents/sdd/references/sdd-repository-governance.md"
-        rules.parent.mkdir(parents=True)
+        rules = target / "docs/repository-governance.md"
         rules.write_bytes(b"# Existing project rules\n")
         (target / "architecture").mkdir()
         contract = target / "architecture/blueprint.md"
@@ -92,29 +100,29 @@ class BuildTests(unittest.TestCase):
              "--root", str(target), "init"], capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(
-            {p.parent.name for p in (target / ".agents/skills").glob("*/SKILL.md")},
+            {p.parent.name for p in (target / WORKFLOW / "skills").glob("*/SKILL.md")},
             {"sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit", "sdd-deploy"})
-        for name in ("specs", "architecture", ".codex/config.toml", "plan.md", "docs/code-review-rules.md"):
+        for name in ("specs", "architecture", ".codex/agents", ".agents/sdd", "plan.md", "docs/index.md", "docs/code-review-rules.md"):
             self.assertFalse((target / name).exists(), name)
         for name in ("spec_template.md", "blueprint_template.md", "plan_template.md", "quickstart_template.md", "prototype_reference_template.md",
                      "test_report_template.md", "issue_template.md", "review_template.md", "sequence_template.md", "contract_template.md"):
-            self.assertTrue((target / ".agents/sdd/assets" / name).is_file(), name)
-        assets = target / ".agents/sdd/assets"
+            self.assertTrue((target / WORKFLOW / "sdd/assets" / name).is_file(), name)
+        assets = target / WORKFLOW / "sdd/assets"
         self.assertEqual(
             {p.name for p in assets.glob("*.md")},
             {"spec_template.md", "blueprint_template.md", "status_template.md",
              "plan_template.md", "quickstart_template.md", "prototype_reference_template.md",
              "test_report_template.md", "issue_template.md", "review_template.md", "sequence_template.md", "contract_template.md",
              "architecture-rule-catalog.md", "code-review-rules_template.md"})
-        checker = target / ".agents/sdd/scripts/doc_check.py"
+        checker = target / WORKFLOW / "sdd/scripts/doc_check.py"
         checked = subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(checker), "--root", str(target),
-             "--format", "json", ".agents", "docs"],
+             "--format", "json", "AGENTS.md"],
             capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(checked.returncode, 0, checked.stdout + checked.stderr)
-        self.assertFalse((target / ".agents/sdd/assets/issue.md").exists())
+        self.assertFalse((target / WORKFLOW / "sdd/assets/issue.md").exists())
         for retired in ("draft-pr.md", "test-plan.md", "acceptance.md", "module-design.md"):
-            self.assertFalse((target / ".agents/sdd/assets" / retired).exists(), retired)
+            self.assertFalse((target / WORKFLOW / "sdd/assets" / retired).exists(), retired)
 
     def test_project_code_review_rules_survive_install_and_upgrade(self):
         skill = builder.build(self.folder / "skill")
@@ -129,7 +137,7 @@ class BuildTests(unittest.TestCase):
             result = subprocess.run(command + options, capture_output=True, text=True, encoding="utf-8")
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertEqual(rules.read_bytes(), content)
-            self.assertTrue((target / ".agents/sdd/assets/code-review-rules_template.md").is_file())
+            self.assertTrue((target / WORKFLOW / "sdd/assets/code-review-rules_template.md").is_file())
 
     def test_communication_install_upgrade_and_repetition(self):
         skill = builder.build(self.folder / "skill")
@@ -180,7 +188,7 @@ class BuildTests(unittest.TestCase):
                             self.assertTrue(installed.endswith(prefix + suffix + nav))
                         else:
                             self.assertIn(prefix + suffix, installed)
-                    self.assertEqual((target / ".agents/sdd/references/visual-confirmation.md").read_bytes(), source)
+                    self.assertEqual((target / WORKFLOW / "sdd/references/visual-confirmation.md").read_bytes(), source)
                     before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
                     for repeat in ([], ["--update-skills"], []):
                         result = subprocess.run(command + repeat, capture_output=True)
@@ -197,11 +205,11 @@ class BuildTests(unittest.TestCase):
         result = run()
         self.assertEqual(result.returncode, 0, result.stderr)
         agents = target / "AGENTS.md"
-        rule = target / ".agents/sdd/references/visual-confirmation.md"
+        rule = target / WORKFLOW / "sdd/references/visual-confirmation.md"
         source = (ROOT / "source/project/.agents/sdd/references/visual-confirmation.md").read_bytes()
         current = (skill / "assets/communication-fragment.md").read_text(encoding="utf-8").strip()
         self.assertTrue(agents.read_text(encoding="utf-8").startswith(current))
-        confirmation_link = "[意图对齐](.agents/sdd/references/visual-confirmation.md#意图对齐)"
+        confirmation_link = f"[意图对齐]({WORKFLOW}/sdd/references/visual-confirmation.md#意图对齐)"
         self.assertIn("必须呈现对用户意图的理解并请求确认，不以推断代替确认；已有确认沿用，新增或变化内容重新对齐。", current)
         self.assertIn(confirmation_link, current)
         self.assertIn("需求与方案分开讨论、分别确认", rule.read_text(encoding="utf-8"))
@@ -213,7 +221,6 @@ class BuildTests(unittest.TestCase):
 <!-- agent-communication:end -->"""
         body = "# 用户正文\r\n保持这些规则。\n"
         agents.write_bytes((body + agents.read_text(encoding="utf-8").replace(current, old)).encode("utf-8"))
-        rule.write_text("# 可视化沟通与确认规范\n\n每次需要用户判断时，按以下顺序执行：\n", encoding="utf-8")
         before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
         self.assertNotEqual(run().returncode, 0)
         self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
@@ -256,7 +263,7 @@ class BuildTests(unittest.TestCase):
 
     def test_blocked_payload_parent_fails_before_agents_write(self):
         skill = builder.build(self.folder / "skill")
-        for parent in (".agents", ".agents/sdd", ".agents/sdd/references"):
+        for parent in (".agents", ".agents/skills", WORKFLOW):
             target = self.folder / parent.replace("/", "-")
             blocker = target / parent
             blocker.parent.mkdir(parents=True)
@@ -310,7 +317,9 @@ class BuildTests(unittest.TestCase):
                          "--root", str(target), "init", *options],
                         capture_output=True, text=True, encoding="utf-8")
                     self.assertNotEqual(result.returncode, 0)
-                    self.assertIn(old.parent.name if old.name == "SKILL.md" else old.name, result.stderr)
+                    reserved = "/".join(old.relative_to(target).parts[:
+                        2 if entry.startswith(".agents/sdd/") else 3])
+                    self.assertIn(reserved, result.stderr)
                     self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
     def test_obsolete_navigation_blocks_without_mutation(self):
@@ -327,7 +336,7 @@ class BuildTests(unittest.TestCase):
                      "--root", str(target), "init", *(["--update-skills"] if upgrade else [])],
                     capture_output=True, text=True, encoding="utf-8")
                 self.assertNotEqual(result.returncode, 0)
-                self.assertIn(str(entry.resolve()), result.stderr)
+                self.assertIn(str(entry) if rel == "docs/index.md" else ".agents/sdd", result.stderr)
                 self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
     def test_distribution_is_generic_and_reference_paths_resolve(self):
@@ -344,39 +353,44 @@ class BuildTests(unittest.TestCase):
                 for marker in ("hanxue-live", "dc-contract.md", "examples/classroom", "课堂应用",
                                "本仓路径映射", "ARC-006/010/011", "docs/governance/repository.md"):
                     self.assertNotIn(marker, text, (path, marker))
-        for path in (target / ".agents").rglob("*.md"):
+        for path in (target / WORKFLOW).rglob("*.md"):
             for link in re.findall(r"\]\(([^)]+)\)", path.read_text(encoding="utf-8")):
                 if "://" not in link and not link.startswith("#"):
                     self.assertTrue((path.parent / link.split("#")[0]).is_file(), (path, link))
 
-    def test_unknown_payload_path_rejected_before_writing(self):
+    def test_unregistered_shared_file_rejected_before_writing(self):
         skill = builder.build(self.folder / "skill")
-        with zipfile.ZipFile(skill / "assets/repo-payload.zip", "a") as archive:
-            archive.writestr(".agents/sdd/references/unapproved.md", "unexpected")
+        extra = skill / "shared/sdd/references/unapproved.md"
+        extra.write_text("unexpected", encoding="utf-8")
         target = self.folder / "project"
         target.mkdir()
         agents = target / "AGENTS.md"
-        agents.write_bytes(b"existing rules\r\n")
-        result = subprocess.run([sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-                                 "--root", str(target), "init"], capture_output=True, text=True, encoding="utf-8")
+        agents.write_bytes(b"existing rules")
+        result = subprocess.run(
+            [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
+             "--root", str(target), "init"], capture_output=True, text=True, encoding="utf-8")
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("非法路径", result.stderr)
+        self.assertIn("清单不一致", result.stderr)
         self.assertEqual(project_entries(target), [agents])
-        self.assertEqual(agents.read_bytes(), b"existing rules\r\n")
+        self.assertEqual(agents.read_bytes(), b"existing rules")
 
-    def test_deploy_skill_upgrade_and_missing_payload_protection(self):
+    def test_missing_required_shared_resources_fail_before_writing(self):
         skill = builder.build(self.folder / "skill")
-        archive_path = skill / "assets/repo-payload.zip"
-        with zipfile.ZipFile(archive_path) as archive:
-            entries = {name: archive.read(name) for name in archive.namelist()}
-        deploy_files = [".agents/skills/sdd-deploy/SKILL.md",
-                        ".agents/skills/sdd-deploy/agents/openai.yaml"]
-        for index, missing in enumerate(deploy_files):
-            with self.subTest(missing=missing):
-                with zipfile.ZipFile(archive_path, "w") as archive:
-                    for name, data in entries.items():
-                        if name != missing:
-                            archive.writestr(name, data)
+        for index, relative in enumerate((
+            "skills/sdd-deploy/SKILL.md", "skills/sdd-deploy/agents/openai.yaml",
+            "sdd/scripts/govern.py", "sdd/scripts/doc_check.py", "sdd/references/doc-check.md",
+            "sdd/assets/status_template.md", "sdd/assets/code-review-rules_template.md",
+            "sdd/assets/spec_template.md", "sdd/assets/quickstart_template.md",
+            "sdd/assets/plan_template.md", "sdd/assets/sequence_template.md",
+            "sdd/assets/test_report_template.md", "sdd/assets/issue_template.md",
+            "sdd/assets/review_template.md", "sdd/references/document-writing.md",
+            "sdd/references/visual-confirmation.md",
+        )):
+            with self.subTest(missing=relative):
+                path = skill / "shared" / relative
+                original = path.read_bytes()
+                path.unlink()
+                refresh_manifest(skill)
                 target = self.folder / f"missing-{index}"
                 target.mkdir()
                 result = subprocess.run(
@@ -384,43 +398,8 @@ class BuildTests(unittest.TestCase):
                      "--root", str(target), "init"], capture_output=True)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertEqual(project_entries(target), [])
-        with zipfile.ZipFile(archive_path, "w") as archive:
-            for name, data in entries.items():
-                archive.writestr(name, data)
-        target = self.folder / "upgrade"
-        target.mkdir()
-        command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-                   "--root", str(target), "init"]
-        subprocess.run(command, check=True, capture_output=True)
-        for name in deploy_files:
-            (target / name).unlink()
-        agents = target / "AGENTS.md"
-        agents.write_text(agents.read_text(encoding="utf-8").replace(
-            "| 部署、启动或重启服务 | [sdd-deploy](.agents/skills/sdd-deploy/SKILL.md) |\n", ""), encoding="utf-8")
-        subprocess.run(command + ["--update-skills"], check=True, capture_output=True)
-        for name in deploy_files:
-            self.assertEqual((target / name).read_bytes(), entries[name])
-        self.assertIn("sdd-deploy", agents.read_text(encoding="utf-8"))
-
-    def test_missing_new_template_rejected_before_writing(self):
-        skill = builder.build(self.folder / "skill")
-        spec = importlib.util.spec_from_file_location("candidate_govern", skill / "scripts/govern.py")
-        installer = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(installer)
-        original = installer.PROJECT_PAYLOAD
-        for missing in ("scripts/govern.py", "scripts/doc_check.py", "references/doc-check.md", "assets/status_template.md", "assets/code-review-rules_template.md", "assets/spec_template.md", "assets/quickstart_template.md", "assets/plan_template.md", "assets/sequence_template.md", "assets/test_report_template.md", "assets/issue_template.md", "assets/review_template.md", "references/document-writing.md", "references/visual-confirmation.md"):
-            with self.subTest(missing=missing):
-                broken = self.folder / (Path(missing).name + ".zip")
-                with zipfile.ZipFile(original) as source, zipfile.ZipFile(broken, "w") as dest:
-                    for name in source.namelist():
-                        if name != ".agents/sdd/" + missing:
-                            dest.writestr(name, source.read(name))
-                installer.PROJECT_PAYLOAD = broken
-                target = self.folder / Path(missing).name
-                target.mkdir()
-                with self.assertRaises(ValueError):
-                    installer.cmd_init(target, installer.build_parser().parse_args(["init"]))
-                self.assertEqual(project_entries(target), [])
+                path.write_bytes(original)
+                refresh_manifest(skill)
 
 
 if __name__ == "__main__":
