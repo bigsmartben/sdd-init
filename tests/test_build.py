@@ -336,7 +336,7 @@ class BuildTests(unittest.TestCase):
                      "--root", str(target), "init", *(["--update-skills"] if upgrade else [])],
                     capture_output=True, text=True, encoding="utf-8")
                 self.assertNotEqual(result.returncode, 0)
-                self.assertIn(str(entry) if rel == "docs/index.md" else ".agents/sdd", result.stderr)
+                self.assertIn(str(entry.resolve()) if rel == "docs/index.md" else ".agents/sdd", result.stderr)
                 self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
     def test_distribution_is_generic_and_reference_paths_resolve(self):
