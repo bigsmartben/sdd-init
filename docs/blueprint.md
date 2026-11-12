@@ -22,24 +22,24 @@ sdd-init 面向维护 SDD 工作流的维护者，以及在目标仓库中使用
 
 ## 3. 用户用例
 
-以下为 UML 用例图的 PlantUML 源码；参与者表示使用身份，同一人可承担多个身份。
+下图用 Mermaid 表达参与者、系统边界和用例关联。参与者表示使用身份，同一人可承担多个身份。
 
-```plantuml
-@startuml
-left to right direction
-actor "工作流维护者" as Maintainer
-actor "目标项目开发者" as Developer
-rectangle "sdd-init" {
-  usecase "构建可分发资源" as Build
-  usecase "安装或更新用户级入口" as Install
-  usecase "初始化或升级项目工作流" as Init
-  usecase "按职责推进项目任务" as Work
-}
-Maintainer --> Build
-Developer --> Install
-Developer --> Init
-Developer --> Work
-@enduml
+```mermaid
+flowchart LR
+  Maintainer["工作流维护者"]
+  Developer["目标项目开发者"]
+
+  subgraph SddInit["sdd-init"]
+    Build(["构建可分发资源"])
+    Install(["安装或更新用户级入口"])
+    Init(["初始化或升级项目工作流"])
+    Work(["按职责推进项目任务"])
+  end
+
+  Maintainer --> Build
+  Developer --> Install
+  Developer --> Init
+  Developer --> Work
 ```
 
 | ID | 目标与关键体验 | 环境与详细依据 |
