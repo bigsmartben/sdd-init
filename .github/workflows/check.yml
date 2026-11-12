@@ -18,4 +18,4 @@ jobs:
       - run: python -B .build/sdd-init/scripts/test_govern.py
       - uses: astral-sh/setup-uv@v6
       - run: uv build --out-dir .build/dist
-      - run: python -B scripts/smoke_package.py --from .build/dist/sdd_init-0.5.3-py3-none-any.whl
+      - run: python -B scripts/smoke_package.py --from .build/dist/sdd_init-0.5.4-py3-none-any.whl
