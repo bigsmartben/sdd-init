@@ -13,6 +13,7 @@ from urllib.parse import unquote, urlsplit
 
 SKIP_DIRS = {'.git', '.build', '__pycache__', 'node_modules', '.venv'}
 ID = r'(?:FR|AC|ARC|PUC|PAC|PENV)-\d+|T\d{3,}'
+TABLE_DELIMITER = re.compile(r'\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*')
 
 
 def visible_lines(text: str) -> tuple[list[str], int | None]:
@@ -89,9 +90,9 @@ def headings(lines: list[str]):
                 yield i + 1, 1 if underline[1][0] == '=' else 2, line.strip()
 
 
-def anchor_set(lines: list[str]) -> set[str]:
+def heading_anchors(lines: list[str]):
     generated = set()
-    for _, _, title in headings(lines):
+    for number, _, title in headings(lines):
         base = slug(title)
         anchor = base
         suffix = 0
@@ -99,8 +100,43 @@ def anchor_set(lines: list[str]) -> set[str]:
             suffix += 1
             anchor = f'{base}-{suffix}'
         generated.add(anchor)
+        yield number, anchor
+
+
+def anchor_set(lines: list[str]) -> set[str]:
     explicit = set(re.findall(r'<[^>]+\b(?:id|name)=["\']([^"\']+)["\']', '\n'.join(lines)))
-    return generated | explicit
+    return {anchor for _, anchor in heading_anchors(lines)} | explicit
+
+
+def excerpt(text: str, anchor: str, rows: set[str]) -> str:
+    """Return the heading and its direct body, with optional table row selection."""
+    source = text.splitlines()
+    visible, _ = visible_lines(text)
+    positions = list(heading_anchors(visible))
+    for i, (number, name) in enumerate(positions):
+        if name != anchor:
+            continue
+        start = number - 1
+        end = positions[i + 1][0] - 1 if i + 1 < len(positions) else len(source)
+        if not rows:
+            return '\n'.join(source[start:end]).rstrip()
+        selected = []
+        found = set()
+        for j in range(start, end):
+            line = visible[j]
+            if line.lstrip().startswith('|') and not (
+                TABLE_DELIMITER.fullmatch(line)
+                or (j + 1 < end and TABLE_DELIMITER.fullmatch(visible[j + 1]))
+            ):
+                label = cells(line)[0]
+                if label not in rows:
+                    continue
+                found.add(label)
+            selected.append(source[j])
+        if missing := rows - found:
+            raise ValueError(f'Table rows not found in #{anchor}: {", ".join(sorted(missing))}')
+        return '\n'.join(selected).rstrip()
+    raise ValueError(f'Heading anchor not found: #{anchor}')
 
 
 def destination(value: str) -> str | None:
@@ -161,6 +197,28 @@ class Checker:
     def inside(self, path: Path) -> bool:
         return path == self.root or self.root in path.parents
 
+    def can_read(self, local: Path, target: Path) -> bool:
+        return self.inside(target) or (
+            self.shared is not None and local.is_relative_to(self.workflow_link)
+            and target.is_relative_to(self.shared)
+        )
+
+    def excerpts(self, selectors: list[str]) -> str:
+        blocks = []
+        for selector in selectors:
+            filename, _, selection = selector.partition('#')
+            anchor, _, labels = selection.partition(':')
+            local = Path(os.path.abspath(self.root / filename))
+            target = local.resolve()
+            if not filename or not anchor or target.suffix.lower() != '.md' or not self.can_read(local, target):
+                raise ValueError(f'Expected in-scope Markdown FILE#ANCHOR: {selector}')
+            text = target.read_text(encoding='utf-8-sig')
+            if '\x00' in text:
+                raise ValueError(f'NUL byte in Markdown: {filename}')
+            rows = {label.strip() for label in labels.split(',')} if labels else set()
+            blocks.append(excerpt(text, unquote(anchor), rows))
+        return '\n\n'.join(blocks)
+
     def read(self, path: Path):
         if path not in self.cache:
             try:
@@ -191,9 +249,7 @@ class Checker:
         path = unquote(url.path)
         local = Path(os.path.abspath(source.parent / path)) if path else source
         target = local.resolve()
-        shared_reference = (self.shared is not None and local.is_relative_to(self.workflow_link)
-                            and target.is_relative_to(self.shared))
-        if not self.inside(target) and not shared_reference:
+        if not self.can_read(local, target):
             self.issue(source, line, 'DOC007', 'Local link leaves --root; target not read')
         elif not target.exists():
             self.issue(source, line, 'DOC007', f'Local target does not exist: {value}')
@@ -248,7 +304,7 @@ class Checker:
                 if ' '.join(label.split()).casefold() not in refs:
                     self.issue(path, number, 'DOC009', f'Undefined reference label: {label}')
             # Only recognize tables with an actual delimiter row, not arbitrary pipes.
-            if number < 2 or not re.fullmatch(r'\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*', line):
+            if number < 2 or not TABLE_DELIMITER.fullmatch(line):
                 continue
             header = cells(lines[number - 2])
             width = len(cells(line))
@@ -302,9 +358,17 @@ def main(argv=None):
     parser.add_argument('--root', type=Path, default=Path.cwd(), help='Project root; paths resolve relative to it')
     parser.add_argument('--format', choices=('text', 'json'), default='text')
     parser.add_argument('--strict', action='store_true', help='Treat warnings as a nonzero result too')
+    parser.add_argument('--read', action='store_true', help='Print direct sections selected by FILE#ANCHOR[:ROW,ROW]')
     parser.add_argument('paths', nargs='+', help='Explicit Markdown files or directories to check')
     args = parser.parse_args(argv)
-    result = Checker(args.root).run(args.paths)
+    checker = Checker(args.root)
+    if args.read:
+        try:
+            print(checker.excerpts(args.paths))
+        except (OSError, UnicodeError, ValueError) as exc:
+            parser.error(str(exc))
+        return 0
+    result = checker.run(args.paths)
     if args.format == 'json':
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:

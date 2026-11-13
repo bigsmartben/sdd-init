@@ -6,7 +6,7 @@
 
 项目协作约定指定决策人。产品决定用例、运行环境、非功能指标和集成验收。架构决定系统设计、模块边界及不变量。测试决策负责验收范围和涉及验收含义的数据选择。
 
-意图对齐按[意图对齐](visual-confirmation.md#意图对齐)处理。纯讨论只形成候选或待决结论，按需参考[场景提示](scenarios.md)。需求验收与架构审阅分别按 [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md) 与 [sdd-review-loop](../../skills/sdd-review-loop/SKILL.md) 处理。
+意图对齐按[意图对齐](visual-confirmation.md#意图对齐)处理。纯讨论只形成候选或待决结论，按需参考[场景提示](scenarios.md)。需求验收与架构审阅分别按 [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md) 与 [sdd-review-code](../../skills/sdd-review-code/SKILL.md) 处理。
 
 ### 目标仓库的 Code Review Rules
 
@@ -75,7 +75,8 @@ Main 与用户对齐意图，根据已确认的目标和预期结果选择对应
 | [sdd-doc](../../skills/sdd-doc/SKILL.md) | 项目权威正文和写后诊断 |
 | [sdd-imp](../../skills/sdd-imp/SKILL.md) | 实现或测试资产和 Plan／Task |
 | [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md) | 测试报告及相关独立 Issue |
-| [sdd-review-loop](../../skills/sdd-review-loop/SKILL.md) | 架构 Review 记录 |
+| [sdd-review-code](../../skills/sdd-review-code/SKILL.md) | 架构 Review 记录 |
+| [sdd-review-prompt](../../skills/sdd-review-prompt/SKILL.md) | 提示词审查回执 |
 | [sdd-deploy](../../skills/sdd-deploy/SKILL.md) | 目标环境的服务状态和运行回执 |
 | [sdd-commit](../../skills/sdd-commit/SKILL.md) | Git 仓库、平台对象和交付回执 |
 
@@ -101,4 +102,4 @@ coder 修改实现、测试及自动化脚本并完成定向局部自验。valid
 | L1 | 已确认边界内的契约扩展，同步生产者、消费者及异常语义。 |
 | L0 | 外部契约与架构语义均未改变的调整。 |
 
-提示词、目录及正文迁移按同一语义影响判断。判据无法覆盖的变更按[决策权限](#人与-agent-协同及决策权限)处理。实际遵循检查与取证由 [sdd-review-loop](../../skills/sdd-review-loop/SKILL.md)执行。
+提示词、目录及正文迁移按同一语义影响判断。判据无法覆盖的变更按[决策权限](#人与-agent-协同及决策权限)处理。实际遵循检查与取证由 [sdd-review-code](../../skills/sdd-review-code/SKILL.md)执行。

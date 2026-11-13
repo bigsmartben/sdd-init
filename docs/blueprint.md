@@ -123,7 +123,7 @@ flowchart TD
   CLI[cli.py 命令解析] --> Installer[installer.py 用户级安装]
   Installer --> Resources[包内 resources 与 manifest]
   Govern[初始化 govern.py] --> Bundle[共享目录与导航片段]
-  Main[Main 按用户目标选择职责] --> Skills[六个项目 Skills]
+  Main[Main 按用户目标选择职责] --> Skills[项目 Skills]
   Skills --> Shared[共享规则、模板和检查工具]
   Skills --> Roles[按任务调用专职角色]
   Doc[sdd-doc] --> Check[doc_check.py 只读检查]
@@ -139,7 +139,8 @@ flowchart TD
 | sdd-doc | 从确认内容与执行证据归并正式文档，维护关联并执行写后检查；模板不授予设计权 | [Skill](../source/project/.agents/skills/sdd-doc/SKILL.md) |
 | sdd-imp | 交付明确的上游任务，生成并执行同一 Plan／Task 清单，修改代码并完成局部自验 | [Skill](../source/project/.agents/skills/sdd-imp/SKILL.md) |
 | sdd-test-loop | 根据 Spec 验收行为，返回问题与复验事实，判定 Test Gate | [Skill](../source/project/.agents/skills/sdd-test-loop/SKILL.md) |
-| sdd-review-loop | 按检查项检查架构落地与规则执行，明确整改目标，返回检查和复核事实，判定 Review Gate | [Skill](../source/project/.agents/skills/sdd-review-loop/SKILL.md) |
+| sdd-review-code | 按检查项检查架构落地与规则执行，明确整改目标，返回检查和复核事实，判定 Review Gate | [Skill](../source/project/.agents/skills/sdd-review-code/SKILL.md) |
+| sdd-review-prompt | 审查提示词，返回规则表、任务 DAG、发现和行为验证结论 | [Skill](../source/project/.agents/skills/sdd-review-prompt/SKILL.md) |
 | sdd-deploy | 根据部署意图探测环境、准备依赖并验证服务就绪；不随实施自动触发 | [Skill](../source/project/.agents/skills/sdd-deploy/SKILL.md) |
 | sdd-commit | 根据授权终点管理本地 Git 与远端协作；远端摘要不替代本地权威文档 | [Skill](../source/project/.agents/skills/sdd-commit/SKILL.md) |
 | 文档校验器 | 只读检查所选 Markdown 的编码、结构、编号及本地引用，输出诊断与退出码；不判定语义或 Gate | [工具说明](../source/project/.agents/sdd/references/doc-check.md) |
@@ -182,7 +183,7 @@ flowchart TD
 |---|---|
 | 构建与用户级安装 | [安装说明](installation.md)：构建资源 → 随包携带 → install 校验 → 暂存替换 → 返回安装状态 |
 | 项目初始化／升级 | [初始化入口](../source/initializer/SKILL.md)：inspect → init 写前校验 → 合并导航及安装资源 → 核对结果 |
-| 实施与问题闭环 | [imp](../source/project/.agents/skills/sdd-imp/SKILL.md)、[test](../source/project/.agents/skills/sdd-test-loop/SKILL.md)、[Review](../source/project/.agents/skills/sdd-review-loop/SKILL.md)：各自定义执行、交接及完成条件；文档由 doc 归并 |
+| 实施与问题闭环 | [imp](../source/project/.agents/skills/sdd-imp/SKILL.md)、[test](../source/project/.agents/skills/sdd-test-loop/SKILL.md)、[Review](../source/project/.agents/skills/sdd-review-code/SKILL.md)：各自定义执行、交接及完成条件；文档由 doc 归并 |
 | 部署与 Git 交付 | [deploy](../source/project/.agents/skills/sdd-deploy/SKILL.md)、[commit](../source/project/.agents/skills/sdd-commit/SKILL.md)：按明确意图进入，不是前序流程的固定尾步骤 |
 
 现有 Skill 和安装说明承担公开操作契约，本轮不另建重复契约或时序正文。测试代码可帮助定位行为覆盖，例如[构建测试](../tests/test_build.py)、[用户安装测试](../tests/test_user_install.py)、[角色测试](../tests/test_roles.py)及[文档检查测试](../tests/test_doc_check.py)；测试文件存在不代表本轮已执行。

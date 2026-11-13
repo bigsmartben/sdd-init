@@ -21,11 +21,12 @@
 | [sdd-doc](source/project/.agents/skills/sdd-doc/SKILL.md) | 整理和维护需求、设计、计划及验证记录 |
 | [sdd-imp](source/project/.agents/skills/sdd-imp/SKILL.md) | 生成并执行 Plan／Task 清单，推进实施与修复 |
 | [sdd-test-loop](source/project/.agents/skills/sdd-test-loop/SKILL.md) | 执行测试、反馈问题并复验 |
-| [sdd-review-loop](source/project/.agents/skills/sdd-review-loop/SKILL.md) | 检查架构落地一致性并跟进复核 |
+| [sdd-review-code](source/project/.agents/skills/sdd-review-code/SKILL.md) | 检查架构落地一致性并跟进复核 |
+| [sdd-review-prompt](source/project/.agents/skills/sdd-review-prompt/SKILL.md) | 审查提示词，检查精简前后的关键行为 |
 | [sdd-commit](source/project/.agents/skills/sdd-commit/SKILL.md) | 按授权完成 Git 与远端仓库交付 |
 | [sdd-deploy](source/project/.agents/skills/sdd-deploy/SKILL.md) | 部署、启动或重启服务并检查就绪状态 |
 
-共享工作流包含六个项目 Skill 和五个自定义角色。协作规则见[仓库治理](source/project/.agents/sdd/references/sdd-repository-governance.md)，角色分工、默认模型与配置优先级见[执行协作](source/project/.agents/sdd/references/delegation.md)，项目文档入口可参考[索引示例](source/project/docs/index.md)。
+协作规则见[仓库治理](source/project/.agents/sdd/references/sdd-repository-governance.md)，角色分工、默认模型与配置优先级见[执行协作](source/project/.agents/sdd/references/delegation.md)，项目文档入口可参考[索引示例](source/project/docs/index.md)。
 
 ## 源码与维护入口
 

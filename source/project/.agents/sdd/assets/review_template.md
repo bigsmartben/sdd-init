@@ -38,5 +38,5 @@
 
 ## 3. Gate 与未完成项
 
-- Review Gate：<执行者给出的汇总结论、范围与快照；判据按 sdd-review-loop，不由 documenter 推定>
+- Review Gate：<执行者给出的汇总结论、范围与快照；判据按 sdd-review-code，不由 documenter 推定>
 - 未完成项与后续动作：<检查项编号、承接者、具体问题及恢复条件；没有则写无>

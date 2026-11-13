@@ -1,0 +1,4 @@
+interface:
+  display_name: "sdd-review-prompt"
+policy:
+  allow_implicit_invocation: true

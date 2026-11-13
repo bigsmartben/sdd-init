@@ -343,7 +343,7 @@
     "input": "在临时空项目安装 SDD，然后重复安装。",
     "files": {},
     "expected": [
-      "六个 Skill、五个 Agent",
+      "七个 Skill、五个 Agent",
       "第二次文件快照不变"
     ],
     "forbidden": [

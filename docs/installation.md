@@ -10,7 +10,7 @@
 uvx --from git+https://github.com/bigsmartben/sdd-init.git sdd-init install
 ```
 
-默认在 `~/.agents/skills/sdd-init/` 安装初始化入口，在相邻的 `~/.agents/skills-sdd-init-shared/` 安装六个工作流 Skill、五个角色和通用资源。Windows 的 `~` 为用户主目录。只有 sdd-init 进入用户级 Skill 扫描范围。
+默认在 `~/.agents/skills/sdd-init/` 安装初始化入口，在相邻的 `~/.agents/skills-sdd-init-shared/` 安装工作流 Skill、角色和通用资源。Windows 的 `~` 为用户主目录。只有 sdd-init 进入用户级 Skill 扫描范围。
 
 在需要的仓库中打开 Codex，选择 sdd-init（支持该快捷入口的客户端可输入 `/sdd-init`）。CLI／IDE 可输入 `$sdd-init` 或通过 `/skills` 选择；也可明确要求“使用 sdd-init 初始化当前仓库”。未发现新 Skill 时重启 Codex。安装器不修改客户端命令注册或用户配置。[Codex 官方 Skill 文档](https://learn.chatgpt.com/docs/build-skills)
 
@@ -49,7 +49,7 @@ uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固�
 ```powershell
 uv build --out-dir .build/dist
 python -B -m unittest discover -s tests -v
-python -B scripts/smoke_package.py --from .build/dist/sdd_init-0.5.5-py3-none-any.whl
+python -B scripts/smoke_package.py --from .build/dist/sdd_init-0.6.0-py3-none-any.whl
 ```
 
 `src/sdd_init/cli.py` 定义命令入口，`installer.py` 负责用户级安装；`setup.py` 在构建时调用 `scripts/build_release.py`，从 `source/` 生成内置资源。源码包包含构建所需输入，wheel 不要求访问原仓库。不要编辑 wheel、build 或 `.build` 内的资源。测试通过 `--skills-dir` 隔离安装位置；自定义 Skill 目录只有位于客户端搜索范围时才可被发现，共享目录与该目录同级。

@@ -57,11 +57,12 @@ class GovernanceTests(unittest.TestCase):
         self.run_cmd("init")
         self.assertEqual(blueprint.read_bytes(), original)
 
-    def test_global_entry_and_local_six(self):
+    def test_global_entry_and_project_skills(self):
         self.assertFalse((GOV.parent.parent / "assets/repo-payload.zip").exists())
         self.run_cmd("init")
         self.assertEqual({p.parent.name for p in (self.root / WORKFLOW / "skills").glob("*/SKILL.md")},
-                         {"sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit", "sdd-deploy"})
+                         {"sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-code",
+                          "sdd-review-prompt", "sdd-commit", "sdd-deploy"})
         self.assertFalse((self.root / ".agents/skills/sdd-init").exists())
         result = subprocess.run([sys.executable, str(self.root / WORKFLOW / "sdd/scripts/govern.py"),
                                  "--root", str(self.root), "inspect"], capture_output=True, text=True, encoding="utf-8")
@@ -249,7 +250,8 @@ class GovernanceTests(unittest.TestCase):
 
     def test_workflows_allow_natural_language_selection(self):
         self.run_cmd("init")
-        for name in ("sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-loop", "sdd-commit", "sdd-deploy"):
+        for name in ("sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-code",
+                     "sdd-review-prompt", "sdd-commit", "sdd-deploy"):
             metadata = (self.root / WORKFLOW / f"skills/{name}/agents/openai.yaml").read_text(encoding="utf-8")
             self.assertIn("allow_implicit_invocation: true", metadata)
         self.assertIn("allow_implicit_invocation: true", (GOV.parent.parent / "agents/openai.yaml").read_text(encoding="utf-8"))

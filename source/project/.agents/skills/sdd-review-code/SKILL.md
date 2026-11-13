@@ -1,5 +1,5 @@
 ---
-name: sdd-review-loop
+name: sdd-review-code
 description: 检查实现与已确认架构的一致性及适用 Code Review Rules 的执行，输出偏差、证据及整改后的复核结论。
 ---
 

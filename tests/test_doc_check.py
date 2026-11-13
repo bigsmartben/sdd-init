@@ -122,6 +122,30 @@ class DocCheckTests(unittest.TestCase):
         self.assertIn('input.md:1: error DOC007:', result.stdout)
         self.assertIn('mechanical only', result.stdout)
 
+    def test_read_sections_and_rows_without_returning_unselected_rules(self):
+        original = ('# 通用\n保留授权。\n\n## 交接\n'
+                    '```md\n## 示例标题\n```\n'
+                    '| 角色 | 规则 |\n| --- | --- |\n'
+                    '| documenter | 保留 Gate |\n| coder | 不在本轮 |\n\n'
+                    '共同要求。\n\n### 其他流程\n不返回。\n')
+        target = self.put('rules.md', original)
+        command = [sys.executable, '-B', '-X', 'utf8', str(CLI),
+                   '--root', str(self.root), '--read']
+        result = subprocess.run(command + ['rules.md#通用', 'rules.md#交接:documenter'],
+                                capture_output=True, text=True, encoding='utf-8')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout,
+                         '# 通用\n保留授权。\n\n## 交接\n'
+                         '```md\n## 示例标题\n```\n'
+                         '| 角色 | 规则 |\n| --- | --- |\n'
+                         '| documenter | 保留 Gate |\n\n共同要求。\n')
+        self.assertEqual(target.read_bytes(), original.encode('utf-8'))
+        for selector in ('rules.md#缺失', 'rules.md#交接:validator', '../rules.md#交接'):
+            with self.subTest(selector=selector):
+                result = subprocess.run(command + [selector], capture_output=True)
+                self.assertEqual(result.returncode, 2)
+                self.assertEqual(result.stdout, b'')
+
 
 if __name__ == '__main__':
     unittest.main()

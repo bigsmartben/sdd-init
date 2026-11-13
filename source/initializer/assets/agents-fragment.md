@@ -13,7 +13,8 @@
 | 固化确认内容与原型文档 | [sdd-doc](.agents/skills/sdd-workflow/skills/sdd-doc/SKILL.md) |
 | 实施、修复、重构与局部自验 | [sdd-imp](.agents/skills/sdd-workflow/skills/sdd-imp/SKILL.md) |
 | 需求行为验收与整改后复验 | [sdd-test-loop](.agents/skills/sdd-workflow/skills/sdd-test-loop/SKILL.md) |
-| 蓝图与实现一致性检查及整改后复核 | [sdd-review-loop](.agents/skills/sdd-workflow/skills/sdd-review-loop/SKILL.md) |
+| 蓝图与实现一致性检查及整改后复核 | [sdd-review-code](.agents/skills/sdd-workflow/skills/sdd-review-code/SKILL.md) |
+| 提示词冗余、歧义及行为一致性审查 | [sdd-review-prompt](.agents/skills/sdd-workflow/skills/sdd-review-prompt/SKILL.md) |
 | 部署、启动或重启服务 | [sdd-deploy](.agents/skills/sdd-workflow/skills/sdd-deploy/SKILL.md) |
 | Git 与 GitHub／GitLab 分支、Issue、PR／MR 及合并 | [sdd-commit](.agents/skills/sdd-workflow/skills/sdd-commit/SKILL.md) |
 
