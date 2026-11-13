@@ -1,15 +1,15 @@
 # Code Review Rules
 
-按已确认的设计填写。每条规则使用项目内稳定标识，引用条款并写出可核查的项目职责和入口。同义约束沿用已有标识。
+Use the confirmed design. Give each rule a stable project identifier, link the governing clause, and identify the project responsibilities and entry points a reviewer can check. Reuse the existing identifier for an equivalent constraint.
 
-## CRR-001 · <事实或职责>
+## CRR-001 · <Fact or responsibility>
 
-- 设计依据：<Blueprint／契约实际链接及条款编号>
-- 项目约束：<具体模块、权威入口与允许的协作方式>
-- 适用条件：<哪些直接改动或间接影响触发检查>
-- 取证路径：<从哪个调用入口，沿哪些读写、恢复或异常分支，查到何处>
-- 违反条件：<哪种可观察的实现或行为违反上述设计>
+- **Design basis** — <Specific Blueprint or Interface Contract link and clause identifier>
+- **Project constraint** — <Modules, authoritative entry points, and allowed interactions>
+- **Applicability** — <Direct changes or indirect effects that trigger a check>
+- **Evidence path** — <Call entry point and read, write, recovery, or failure paths to inspect>
+- **Violation criteria** — <Observable implementation or behavior that violates the design>
 
-## 待决事项
+## Open Questions
 
-<仅记录缺少设计依据或存在冲突的具体问题，关联条款；确认后再归并为现行规则。>
+<Record specific questions where design evidence is missing or conflicting. Link the relevant clauses and add the rule after confirmation.>

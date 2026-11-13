@@ -1,42 +1,43 @@
-# 架构 Review 记录：<主题 / 批次>
+# Architecture Review Record — <Subject and batch>
 
-> 由 sdd-doc 根据 Review、imp 和复核执行者的结果落盘。用于架构落地一致性及 Code Review Rules 执行检查；修复方案由 sdd-imp 在 Plan 中推理和维护，本记录只引用 Task，不编写或复制方案。
+> sdd-doc records the initial review, sdd-imp handoff, and recheck results from their respective executors. Use this record to assess architecture conformance and application of Code Review Rules. sdd-imp develops and maintains the fix approach in the Plan. Link the Task from this record.
 
-落点按[仓库治理](../references/sdd-repository-governance.md#文档与产物落点)定位，作为架构检查专用报告；已有记录沿用项目索引，同一轮维护同一份。Status／Plan 引用本记录，不另建重复测试报告。
+Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). Follow the project index for an existing record and maintain one record per review round. Link it from Status or Plan. This record serves as the report for architecture checks.
 
-## 1. 范围与上下文
+## 1. Scope and Context
 
-- 目标及范围：<工程骨架、模块、接口、依赖、配置、运行装配与跨模块关系；排除项及理由>
-- 架构依据：<项目 Code Review Rules 路径与规则标识、Blueprint／ARC、接口或时序条款及版本>
-- 规则有效性与维护提醒：<本次受影响设计的有效性及映射核对结果、复用依据；缺失或过时涉及的设计条款、规则标识、受影响待查范围及生成／更新提醒；维护由用户决定，Review 不写入规则>
-- 实现快照：<Git commit、必要未提交修改说明、产物版本>
-- 环境与执行者：<环境、依赖、数据条件、时间及执行者；要求独立审查时注明依据>
-- 修复边界：<保持业务逻辑与已确认架构不变；本轮文件／模块及操作授权范围>
+- **Goal and scope** — <Engineering structure, modules, interfaces, dependencies, configuration, runtime assembly, and cross-module relationships. State exclusions and reasons.>
+- **Architecture basis** — <Project Code Review Rules path and rule IDs, Blueprint or ARC, and relevant Interface Contract or Scenario Sequence clauses and versions>
+- **Rule validity and maintenance notice** — <Validity and mapping for the affected design, with reasons for reusing prior checks. For missing or outdated rules, list the design clauses, rule IDs, scope still to check, and the need to create or update rules. The user decides when to maintain the rules.>
+- **Implementation snapshot** — <Git commit, relevant uncommitted changes, and artifact version>
+- **Environment and reviewer** — <Environment, dependencies, data conditions, time, and reviewer. Cite the basis for any independence requirement.>
+- **Remediation boundaries** — <Business logic and confirmed architecture to preserve, files or modules in scope, and authorized actions>
 
-## 2. 检查项及闭环
+## 2. Review Checks and Follow-up
 
-依据本轮影响范围及规则适用条件确定检查项，考虑调用方、读写、依赖及恢复路径。全部适用项建立稳定检查编号，未检查项及缺失／过时影响范围保留待查。每项只在自身区块维护初审、处理及复核；符合为 PASS，不适用不计通过。
+Select checks based on the impact of the change and each rule's applicability. Consider callers and read, write, dependency, and recovery paths. Assign stable IDs to all applicable checks. Retain unchecked items and scope affected by missing or outdated rules as pending checks. Record each check's initial findings, actions, and rechecks in its own section. Use PASS for conformance and exclude Not applicable from the pass count.
 
-| 规则标识 | 适用性 | 简要理由与依据定位 | 检查项 |
+| Rule ID | Applicability | Rationale and source | Check |
 |---|---|---|---|
-| <CRR-ID／工程骨架规范条款链接> | <适用／不适用／待查> | <理由及依据定位，详细证据引用检查项；待查注明缺口及恢复条件，结论为 UNVERIFIED> | <CHK-ID／不适用／待查> |
+| <CRR ID or engineering structure clause> | <Applicable / Not applicable / Pending check> | <Rationale and source. Link the check for detailed evidence. For pending checks, record the gap and resumption conditions and use UNVERIFIED.> | <CHK ID / Not applicable / Pending check> |
 
-### CHK-001：<检查对象和约束>
+### CHK-001: <Subject and constraint>
 
-- 依据与对象：<关联上表规则标识及设计条款，定位实现与跨模块路径>
-- 检查方法与预期：<可复查入口及判断标准>
-- 初审事实：<未执行，或时间、执行者、快照、实际结果、证据及偏差／影响；已执行结论为 PASS／FAIL／UNVERIFIED／BLOCKED／不适用>
-- 整改交接：<需修复时填写偏差、整改目标、实现位置、预期结果、业务行为保持边界及承接者；无需修复或仅补查注明不适用>
-- imp Task：<Plan／Task 引用，可多项；一个 Task 可关联多个检查项，各项分别复核；不写修复方案>
-- 当前状态与结论：<待检查／符合／未修复／修复中／已修改待复核／已复核关闭／阻塞；待检查的结论为未执行，其余为 PASS／FAIL／UNVERIFIED／BLOCKED／不适用；阻塞注明具体问题、承接者与恢复条件>
+- **Basis and subject** — <Applicable rule IDs and design clauses, implementation locations, and cross-module paths>
+- **Check method and expectations** — <Before dispatch, sdd-review-code defines the developer-facing acceptance plan: constraint, subject and paths to inspect, conditions, reproducible inspection or execution method, evidence to collect, and pass criteria.>
+- **Initial review facts** — <Not run, or time, reviewer, snapshot, actual result, evidence, deviations, and impact. Use PASS / FAIL / UNVERIFIED / BLOCKED / Not applicable for the conclusion of a completed check.>
+- **Remediation handoff** — <Use this check ID as the work order reference. Cite the rule and deviation evidence above. Record the remediation target, scope and implementation locations, expected outcome, behavior to preserve, recheck plan in this check, and assignee. Record dispatch time or status. Use Not applicable if no fix is required or only more investigation is needed.>
+- **User acceptance, when applicable** — <Before dispatch, link the user-facing plan and criteria separately from the architecture recheck and identify the executor. Keep the result pending until evidence is available, then link it here.>
+- **Implementation Tasks** — <Links to one or more Tasks in the Plan. A Task may address several checks. Recheck each check separately and keep the fix approach in the Plan.>
+- **Current status and conclusion** — <Pending check / Conforming / Unfixed / Fix in progress / Fixed, awaiting recheck / Closed after recheck / Blocked. Use Not run while pending. Otherwise use PASS / FAIL / UNVERIFIED / BLOCKED / Not applicable. For a blocker, identify the specific problem, assignee, and resumption conditions.>
 
-| 批次／时间／执行者 | 处理或复核范围与方法 | 快照、实际结果及证据 | 本项结论与状态 |
+| Batch / Time / Reviewer | Action or recheck scope and method | Snapshot, actual results, and evidence | Check conclusion and status |
 |---|---|---|---|
-| <批次> | <补查或复核；原偏差、修复波及的规则及跨模块关系> | <版本、复查证据及业务行为保持证据；不复制方案> | <本项结论；复核失败继续处理> |
+| <Batch> | <Further investigation or recheck. Include the original deviation, affected rules, and cross-module relationships.> | <Version, recheck evidence, and evidence that business behavior is preserved. Link the Task and any integration evidence needed by the check.> | <Check conclusion. Continue remediation if the recheck fails.> |
 
-按项重复本区块。保留初审与历次结果；仅补查时记录补查事实，不伪记代码修改。修复者完成不等于关闭，原审查者复核通过才关闭；失败关联原检查项返回对应 Task。未受影响证据可复用，注明影响分析及对当前快照的适用依据。
+Repeat this block for each check. Preserve the initial review and subsequent results. For investigation-only updates, record the investigation. The original reviewer applies the check plan to the remediation snapshot and closes the check after a passing recheck. If the recheck fails, send it back to the corresponding Task under the original check ID. Reuse unaffected evidence when the impact analysis explains why it applies to the current snapshot.
 
-## 3. Gate 与未完成项
+## 3. Gate and Remaining Work
 
-- Review Gate：<执行者给出的汇总结论、范围与快照；判据按 sdd-review-code，不由 documenter 推定>
-- 未完成项与后续动作：<检查项编号、承接者、具体问题及恢复条件；没有则写无>
+- **Review Gate** — <Summary, scope, and snapshot provided by the reviewer under sdd-review-code criteria>
+- **Remaining work and next actions** — <Check IDs, assignees, specific problems, and resumption conditions, or None>

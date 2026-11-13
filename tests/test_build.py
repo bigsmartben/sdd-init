@@ -121,8 +121,8 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(
             {p.parent.name for p in (target / WORKFLOW / "skills").glob("*/SKILL.md")},
-            {"sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-code",
-             "sdd-review-prompt", "sdd-commit", "sdd-deploy"})
+            {"sdd-doc", "sdd-spec", "sdd-imp", "sdd-bugfix", "sdd-test-loop", "sdd-review-code",
+             "sdd-review-prompt", "sdd-deliver"})
         for name in ("specs", "architecture", ".codex/agents", ".agents/sdd", "plan.md", "docs/index.md", "docs/code-review-rules.md"):
             self.assertFalse((target / name).exists(), name)
         for name in ("spec_template.md", "blueprint_template.md", "plan_template.md", "quickstart_template.md", "prototype_reference_template.md",
@@ -134,7 +134,7 @@ class BuildTests(unittest.TestCase):
             {"spec_template.md", "blueprint_template.md", "status_template.md",
              "plan_template.md", "quickstart_template.md", "prototype_reference_template.md",
              "test_report_template.md", "issue_template.md", "review_template.md", "sequence_template.md", "contract_template.md",
-             "architecture-rule-catalog.md", "code-review-rules_template.md"})
+             "architecture-rule-catalog.md", "code-review-rules_template.md", "research_template.md"})
         checker = target / WORKFLOW / "sdd/scripts/doc_check.py"
         checked = subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(checker), "--root", str(target),
@@ -359,14 +359,18 @@ class BuildTests(unittest.TestCase):
     def test_missing_required_shared_resources_fail_before_writing(self):
         skill = builder.build(self.folder / "skill")
         for index, relative in enumerate((
-            "skills/sdd-deploy/SKILL.md", "skills/sdd-deploy/agents/openai.yaml",
+            "skills/sdd-deliver/SKILL.md", "skills/sdd-deliver/agents/openai.yaml",
+            "skills/sdd-deliver/references/git-delivery.md", "skills/sdd-deliver/references/git-remote.md",
+            "skills/sdd-deliver/references/deployment.md",
             "skills/sdd-review-prompt/SKILL.md", "skills/sdd-review-prompt/agents/openai.yaml",
+            "skills/sdd-bugfix/SKILL.md", "skills/sdd-bugfix/agents/openai.yaml",
+            "skills/sdd-spec/SKILL.md", "skills/sdd-spec/agents/openai.yaml",
             "sdd/scripts/govern.py", "sdd/scripts/doc_check.py", "sdd/references/doc-check.md",
             "sdd/assets/status_template.md", "sdd/assets/code-review-rules_template.md",
             "sdd/assets/spec_template.md", "sdd/assets/quickstart_template.md",
             "sdd/assets/plan_template.md", "sdd/assets/sequence_template.md",
             "sdd/assets/test_report_template.md", "sdd/assets/issue_template.md",
-            "sdd/assets/review_template.md", "sdd/references/document-writing.md",
+            "sdd/assets/review_template.md", "sdd/assets/research_template.md", "sdd/references/document-writing.md",
             "sdd/references/visual-confirmation.md",
         )):
             with self.subTest(missing=relative):

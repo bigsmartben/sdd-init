@@ -1,4 +1,4 @@
 interface:
-  display_name: "sdd-deploy"
+  display_name: "sdd-spec"
 policy:
   allow_implicit_invocation: true

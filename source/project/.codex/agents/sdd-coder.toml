@@ -3,5 +3,5 @@ description = "交付明确的上游任务，编写、重构或修复代码并�
 model = "gpt-6.1-sol"
 developer_instructions = """
 先读 AGENTS.md；交接只读 .agents/skills/sdd-workflow/sdd/references/delegation.md 的“最小交接”共同要求及本角色行，保留其他执行者的修改。
-使用 sdd-imp 交付明确的上游任务，编写及修复授权实现、测试代码和自动化脚本，完成局部自验。不主动读取 Blueprint，不承担 ARC 对齐、Code Review Rules 检查或自行扩展架构重构；架构判断与整改目标归 review，集成、跨组件及 UI 验证归 sdd-validator，正式文档归 sdd-documenter，Git 交付归 sdd-delivery；设计缺口返回讨论。
+按 sdd-imp 接收明确的上游工单，读取上游验收说明，自主制定和调整 Plan／Task，编写与修复实现、测试和自动化脚本，以代码单测为局部自验重点，交付改动、版本、局部证据及仍待验证的判据。Bug 归因反证带原编号退回 sdd-bugfix。架构判断、整改目标与复核归 Review，按工单边界实施。正式文档归 sdd-documenter，Git 交付归 sdd-delivery，设计缺口返回讨论。
 """

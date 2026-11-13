@@ -6,7 +6,7 @@
 
 项目协作约定指定决策人。产品决定用例、运行环境、非功能指标和集成验收。架构决定系统设计、模块边界及不变量。测试决策负责验收范围和涉及验收含义的数据选择。
 
-意图对齐按[意图对齐](visual-confirmation.md#意图对齐)处理。纯讨论只形成候选或待决结论，按需参考[场景提示](scenarios.md)。需求验收与架构审阅分别按 [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md) 与 [sdd-review-code](../../skills/sdd-review-code/SKILL.md) 处理。
+意图对齐按[意图对齐](visual-confirmation.md#意图对齐)处理。纯讨论只形成候选或待决结论，按需参考[场景提示](scenarios.md)。用户功能集成测试与架构审阅分别按 [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md) 与 [sdd-review-code](../../skills/sdd-review-code/SKILL.md) 处理。
 
 ### 目标仓库的 Code Review Rules
 
@@ -17,6 +17,12 @@
 Main 与用户对齐意图，根据已确认的目标和预期结果选择对应 Skill。开工时简述目标、产物与完成条件。Main 汇总结果，核对任务覆盖并接续授权内工作。决定执行者时查[委派与独立性](delegation.md#委派与独立性)，需要交接时读[最小交接](delegation.md#最小交接)。
 
 遇到新决策或授权缺口时，Main 只暂停受影响事项及其依赖，记录待决问题、承接者和恢复条件。待确认事项按[意图对齐](visual-confirmation.md#意图对齐)处理后接续。其余可执行事项继续。正式文档由 [sdd-doc](../../skills/sdd-doc/SKILL.md)按[文档写入规则](document-writing.md)归并。各执行流程提交对应结论和证据。Goal 仅在用户或更高优先级指令明确要求时创建。
+
+上游在派单前定义交付目标、范围、通过判据及可执行的验收方案，可引用原载体。用户功能和用户可感知的非功能指标按 [sdd-spec](../../skills/sdd-spec/SKILL.md) 从用户操作或调用入口定义，Bug 沿用原 Issue。架构变更引用已确认决定，Review 按 [sdd-review-code](../../skills/sdd-review-code/SKILL.md) 从开发者视角在原检查项定义整改验收方案，由原审查者复核。工单同时涉及用户侧和架构判据时，分别引用对应的判据、执行者及证据。sdd-imp 根据局部自验证据判定 Task 完成，本轮仅要求实施和局部自验时可据此结束。约定的用户验收按上游方案实际取证，集成测试按本轮明确范围进入。Main 核对本轮剩余验收项。
+
+疑似缺陷由 sdd-bugfix 评估、验证归因并在授权内派单。sdd-imp 遇到归因反证时带原编号和新证据退回。修复版本上原场景或等价场景及必要回归的证据，加上所需人工确认，构成 Issue 关闭依据。局部证据满足关闭条件时，sdd-doc 据此关闭原 Issue。需真实组件协同的判据按已明确的集成范围交 sdd-test-loop，剩余缺口记入原 Issue。登记 Issue 不授予后续执行权限，只验收、只评估等限制随交接保留。
+
+单独请求复验已有修复且原 Issue 判据可由定向局部检查满足时，Main 交 sdd-validator 执行；简单检查可由 Main 执行，要求独立复验时按[委派与独立性](delegation.md#委派与独立性)处理。沿用原 Issue 的验收方案，在指定修复版本上运行原场景或可证明等价的场景及必要回归，记录版本、操作、实际结果和缺口，交 sdd-doc 归并复验批次及原 Issue。只复验时不改实现或测试，不启动实施工单，也不报告集成 Test Gate。
 
 ## 工程资产边界
 
@@ -32,65 +38,75 @@ Main 与用户对齐意图，根据已确认的目标和预期结果选择对应
 
 生成物记录来源和重建入口，变更落在生成源。通用研发工具沿用项目目录并登记索引，目录随产物建立。
 
+<a id="document-and-artifact-locations"></a>
+
 ## 文档与产物落点
 
 需要定位正文时先查 `docs/index.md` 的实际映射。已有正文原位更新，新建时使用默认落点。入口新增、移动或替代时同步索引和直接引用。
 
 | 产物 | 默认落点 |
 |---|---|
-| Spec、运行与验收指南 | `specs/<能力>/spec.md` 和相邻 `quickstart.md` |
+| Spec / Quickstart | `specs/<能力>/spec.md` 和相邻 `quickstart.md` |
 | 原型代码和静态资源 | `tests/prototypes/<能力>/<用例>/index.html` 和相邻 `assets/`。原型引用与确认记录归对应 Spec 或索引指向的权威正文。 |
-| 测试报告 | `docs/test-reports/<主题>/<批次>.md`，简单任务可在当前任务记录 |
+| Test Report | `docs/test-reports/<主题>/<批次>.md`，简单任务可在当前任务记录 |
 | Issue | `docs/issues/<问题编号>.md` |
-| 架构 Review 记录 | `docs/test-reports/<主题>/<批次>-review.md` |
-| Blueprint、时序、接口契约 | `docs/blueprint.md`、`docs/sequences/<场景>.md`、`docs/contracts/<接口或协议>.md` |
+| Architecture Review Record | `docs/test-reports/<主题>/<批次>-review.md` |
+| Blueprint / Scenario Sequence / Interface Contract | `docs/blueprint.md`、`docs/sequences/<场景>.md`、`docs/contracts/<接口或协议>.md` |
+| Technical Research and Selection Report | `docs/research/<主题>.md`，按需建立 |
 | 运维手册、其他文档 | `docs/runbooks/`，其他文档在 `docs/` 按用途归类 |
-| 项目 Code Review Rules | `docs/code-review-rules.md` |
+| Code Review Rules | `docs/code-review-rules.md` |
 | Plan／Task | 当前任务或既有计划载体，同一份正文 |
 | Status | 沿用项目进度记录，首次可用当前任务，独立文档默认 `docs/status.md` |
 | 初始化运行资产 | 项目根目录 `.sdd-init.lock` 和 `.sdd-init-recovery/`，由初始化器管理 |
 | 项目研发规则 | `.agents/governance/`，按需建立 |
 | 共享资源、Skills、角色 | `.agents/skills/sdd-workflow/sdd/`、`.agents/skills/sdd-workflow/skills/`、`.codex/config.toml` 中的角色引用 |
 
+<a id="authoritative-documents"></a>
+
 ## 权威实体
 
 | 实体 | 权威内容 |
 |---|---|
 | Blueprint | 高位产品用例、终端、关键体验及验收维度，已确认架构职责、边界、不变量和 ARC。采用 ADR 的项目用其记录具体取舍。 |
+| Technical Research and Selection Report | 调研问题、候选方案比较、证据引用、选型建议和确认记录。已确认的架构决定归 Blueprint 或项目已有 ADR，实际验证结果归对应 Test Report。 |
 | Spec | 具体需求、业务规则、条件、异常和 AC。引用适用 Blueprint 条款与原型。 |
-| 时序、契约 | 设计中的协作顺序、接口语义与异常约定。运行事实归对应报告。 |
-| 测试报告、架构 Review 记录 | 分别维护需求行为的批次事实和架构检查项的历次证据。 |
-| Issue | 独立问题事实及处理状态。修复方案引用 Plan／Task。 |
+| Scenario Sequence / Interface Contract | 设计中的协作顺序、接口语义与异常约定。运行事实归对应 Test Report。 |
+| Quickstart | 可复跑的操作、条件与预期。由上游工单提供；集成测试按 sdd-test-loop 复用并补齐本轮运行信息。正式落盘由 sdd-doc 按需归并。 |
+| Test Report / Architecture Review Record | 分别维护实际验证的批次事实和架构检查项的历次证据。 |
+| Issue | 独立问题事实、Bug 工单及处理状态。修复方案引用 Plan／Task。 |
 | Plan／Task、Status | 分别维护实施方案与任务、进度与恢复点。验证结果引用对应报告和版本。 |
 
-代码记录实现事实。模板规定产物结构，候选与讨论在确认后归并到对应实体。引用在使用处维护，区分设计依据与指定版本的执行证据。
+代码记录实现事实。模板规定产物结构，确认后的决定归并到对应实体。引用在使用处维护，区分设计依据与指定版本的执行证据。
 
 ## Skill 场景与对象分工
 
-下表定位七个流程的输入和回执，产物归属由[工程资产边界](#工程资产边界)与[文档与产物落点](#文档与产物落点)统一维护。
+下表定位各流程的输入和回执，产物归属由[工程资产边界](#工程资产边界)与[文档与产物落点](#文档与产物落点)统一维护。
 
 | 输入与回执入口 | 产物载体 |
 |---|---|
 | 已安装的 `sdd-init` Skill | 目标仓库的托管导航、分发资产和安装回执 |
 | [sdd-doc](../../skills/sdd-doc/SKILL.md) | 项目权威正文和写后诊断 |
-| [sdd-imp](../../skills/sdd-imp/SKILL.md) | 实现或测试资产和 Plan／Task |
-| [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md) | 测试报告及相关独立 Issue |
-| [sdd-review-code](../../skills/sdd-review-code/SKILL.md) | 架构 Review 记录 |
+| [sdd-spec](../../skills/sdd-spec/SKILL.md) | 已确认的需求、Spec／AC 引用、需求工单及用户验收文档或引用 |
+| [sdd-imp](../../skills/sdd-imp/SKILL.md) | 接收含验收依据的上游工单，按 Plan／Task 实施，交付版本及代码单测等局部证据 |
+| [sdd-bugfix](../../skills/sdd-bugfix/SKILL.md) | 缺陷评估、归因证据和关联 Issue 的 Bug 工单 |
+| [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md) | 用户功能集成测试的验收文档及 Test Report |
+| [sdd-review-code](../../skills/sdd-review-code/SKILL.md) | Architecture Review Record |
 | [sdd-review-prompt](../../skills/sdd-review-prompt/SKILL.md) | 提示词审查回执 |
-| [sdd-deploy](../../skills/sdd-deploy/SKILL.md) | 目标环境的服务状态和运行回执 |
-| [sdd-commit](../../skills/sdd-commit/SKILL.md) | Git 仓库、平台对象和交付回执 |
+| [sdd-deliver](../../skills/sdd-deliver/SKILL.md) | Git 与平台交付回执、目标环境的服务状态和运行回执 |
+
+<a id="testing-scope-constraints"></a>
 
 ## 测试范围约束
 
-以已确认的验收目标、范围和标准为准。从 Spec／AC、指南和任务约定推导常规数据、边界取值及顺序，记录依据与覆盖，保持已授权范围。仅在范围或标准无法确定、数据涉及新增业务含义、需新增外部授权或有不可逆影响时，按[职责与交接](#职责与交接)暂停受影响项及其依赖。验收环境、证据和用户反馈按 [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md) 处理。
+以已确认的验收目标、范围和标准为准。从 Spec／AC、指南和任务约定推导常规数据、边界取值及顺序，记录依据与覆盖，保持已授权范围。仅在范围或标准无法确定、数据涉及新增业务含义、需新增外部授权或有不可逆影响时，按[职责与交接](#职责与交接)暂停受影响项及其依赖。集成测试的环境、验收文档、证据和用户反馈按 [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md) 处理。
 
 ## 实施和独立审查
 
-coder 修改实现、测试及自动化脚本并完成定向局部自验。validator 负责集成、跨组件、UI 验证和复验，并核对断言与覆盖。架构 Review 判断架构遵循，Test 验收需求行为。授权范围决定是否进入对应流程，实施完成本身不触发 Review 或 Test Gate。独立性按实际执行者判断，需要独立执行者时按[委派与独立性](delegation.md#委派与独立性)安排。
+coder 通过 sdd-imp 修改实现、测试及自动化脚本并完成定向局部自验。validator 按任务负责用户功能集成测试、归因检查与架构 Review，核对断言和覆盖。集成测试按已明确范围执行，Test Gate 仅表达该范围在所声明版本和环境下的结果。架构遵循与整改复核按 sdd-review-code 执行。独立性按实际执行者判断，需要独立执行者时按[委派与独立性](delegation.md#委派与独立性)安排。
 
 ## 交付
 
-本轮任务包含部署、启动或重启时，进入 [sdd-deploy](../../skills/sdd-deploy/SKILL.md)。本轮任务包含 Git 交付时，进入 [sdd-commit](../../skills/sdd-commit/SKILL.md)。讨论、落盘、实施和验证本身不触发这两个流程。进入流程后，按该 Skill 的环境或终点规则执行，操作范围以已有授权为准。
+本轮任务包含 Git 交付、部署、启动或重启时，进入 [sdd-deliver](../../skills/sdd-deliver/SKILL.md)。讨论、落盘、实施和验证本身不触发交付。操作范围以已有授权为准，后续路径按该 Skill 的规则处理。
 
 ## 架构变更与遵循检查
 

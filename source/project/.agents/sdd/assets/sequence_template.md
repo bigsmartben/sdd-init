@@ -1,43 +1,43 @@
-# 跨模块交互时序模板
+# Scenario Sequence
 
-> 模板提示：以模块、公开接口和外部参与者表达关键协作，不展开内部类、私有方法或逐步算法。实际路径由目标项目索引确定，不要求每模块单独时序文档。
+> Show key interactions among modules, public interfaces, and external actors. Keep internal classes, private methods, and algorithm steps outside this view. Use the project index to find the authoritative location. A module can share a Scenario Sequence with other modules.
 
-## 关键场景索引
+## Key Scenarios
 
-| 场景 | 需求依据 | 参与模块与外部参与者 | 契约入口 |
+| Scenario | Requirement basis | Modules and external actors | Interface Contract |
 |---|---|---|---|
-| <场景名称及锚点> | <PUC / PAC / AC> | <已确认参与者> | <公开接口及相关 ARC 链接> |
+| <Scenario name and anchor> | <PUC / PAC / AC> | <Confirmed participants> | <Public interface and relevant ARC links> |
 
-只选择对理解协作、顺序或竞争有价值的场景；不逐条复制 BDD，也不为每个接口机械画图。高位产品目标与验收维度引用蓝图 PUC/PAC，具体预期、条件及质量通过标准引用能力 Spec AC，公开载荷与结果语义引用所属接口契约。
+Select scenarios that clarify interactions, ordering, or races. Link the existing BDD scenarios and draw diagrams for the interactions that need them. Link Blueprint PUCs and PACs for product goals and acceptance dimensions, Spec ACs for detailed expectations, conditions, and quality criteria, and the owning Interface Contract for public payloads and result semantics.
 
-## <场景名称>
+## <Scenario name>
 
-- 场景与步骤标识：<沿用已有编号；供 Review 引用，不在设计正文记录实际结果>
-- 关联需求：<PUC / PAC / AC 链接>
-- 前置条件：<适用环境、状态与资格；引用现有约定>
-- 参与者：<模块或公开接口、必要外部参与者>
+- **Scenario and step IDs** — <Reuse existing identifiers for Review references. Record actual results in the Test Report.>
+- **Related requirements** — <PUC / PAC / AC links>
+- **Preconditions** — <Applicable environment, state, and eligibility. Link existing agreements.>
+- **Participants** — <Modules or public interfaces and relevant external actors>
 
-<插入 UML 时序图或表达相同交互语义的 Mermaid sequenceDiagram；参与者及消息必须来自已确认设计，不用示意图确认新接口。>
+<Insert a UML sequence diagram or a Mermaid sequenceDiagram with equivalent interaction semantics. Use participants and messages from the confirmed design. Confirm new interfaces through the project design process.>
 
-图中按需要表达：
+Show the relevant details:
 
-- 触发者、调用方向、请求、返回与异步通知；发送和收到、受理和完成不混同。
-- 关键先后关系、并行与汇合，以及结果先到、取消先到等竞争。
-- 拒绝、失败、超时、迟到、未知及恢复的实际分支；仅画适用分支。
-- 身份及版本关联、权威状态提交位置、资格失效时点和必要回执。
+- Initiator, call direction, requests, responses, and asynchronous notifications. Distinguish sending from receipt and acceptance from completion.
+- Required ordering, parallelism and joins, and races such as completion before cancellation or cancellation before completion.
+- Applicable rejection, failure, timeout, late response, unknown outcome, and recovery paths.
+- Identity and version correlation, the authoritative state commit point, when eligibility expires, and required acknowledgments.
 
-异步消息与同步调用明确区分，返回箭头不能暗示未知操作已经成功。仅需保证的顺序才画成串行，不将示意顺序变成未确认的同步等待。
+Distinguish asynchronous messages from synchronous calls. Show a successful return only when the outcome is known. Draw interactions in sequence only where ordering is guaranteed and show synchronous waiting only where the design requires it.
 
-### 必要补充
+### Additional Conditions
 
-<只补图无法表达的条件，并引用契约。失败后的任务结果、领域副作用、项目契约中适用的资源使用资格及操作权限分别判断，按所属约定表达，不推定回滚或重放。>
+<Add conditions the diagram cannot show and link the relevant Interface Contract. After failure, evaluate the Task outcome, domain side effects, resource eligibility, and action permissions separately under the applicable agreements. Describe rollback or replay only when the agreement provides for it.>
 
-### 待确认事项
+### Open Questions
 
-<集中引用任务或 Review 结论。责任或接口未定时明确缺口，不能用图中箭头掩盖；无事项可省略。>
+<Link the relevant Task or Review conclusion. Identify unresolved responsibilities or interfaces explicitly. Omit this section if there are no open questions.>
 
-## 表达边界
+## Scope of the Sequence
 
-部署位置归蓝图部署视图，职责与依赖归组件视图，数据及结果语义归契约。活动图仅用于复杂分支、并行汇合或加工过程，区分控制流和对象流；与时序重复则不增加。状态机和 ER 按需放入对应契约章节，内部类图默认不要求。
+Use the Blueprint deployment view for deployment locations, its component view for responsibilities and dependencies, and the Interface Contract for data and result semantics. Use activity diagrams for complex branches, joins, or processing that the sequence does not already convey. Distinguish control flow from object flow. Add state or ER diagrams to the relevant Interface Contract when needed. Internal class diagrams are optional.
 
-适用约束见[可观测性架构规范](../references/observability-baseline.md)，规则映射归[架构 Review 记录](review_template.md)。执行证据归测试报告，Status／Plan 引用报告；模板使用不自动迁移存量时序或提升 Gate。
+See the [Observability Architecture Rules](../references/observability-baseline.md) for applicable constraints and the [Architecture Review Record](review_template.md) for rule mappings. Keep execution evidence in the Test Report and link it from Status or Plan. Applying the template leaves existing sequences in place and Gate decisions follow the applicable verification process.

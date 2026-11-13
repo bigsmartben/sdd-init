@@ -63,4 +63,4 @@ Blueprint 变更后，检查并同步受影响的工程结构。使用生成模�
 | 并行与恢复 | 明确共享资源、并行隔离、超时和重试条件；重试保留首次失败及各次结果，不以重试掩盖不确定性或重复副作用 |
 | 执行与诊断 | 本地与 CI 使用一致的测试入口及配置约定，环境差异显式传入；运行器保留原始输出与诊断，关联场景／用例、算法或候选路径、运行版本、环境、结果及失败；正式报告归属见仓库治理 |
 
-架构表达方法见[蓝图模板](../assets/blueprint_template.md#架构表达与判定)，变更分级及检查流程见[仓库治理](sdd-repository-governance.md#架构变更与遵循检查)。
+架构表达方法见 [Blueprint](../assets/blueprint_template.md#architecture-modeling-and-assessment)，变更分级及检查流程见[仓库治理](sdd-repository-governance.md#架构变更与遵循检查)。

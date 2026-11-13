@@ -1,34 +1,34 @@
-# <能力>运行与验收指南
+# Quickstart — <Capability>
 
-落点按[仓库治理](../references/sdd-repository-governance.md#文档与产物落点)定位。本指南维护当前能力的可执行操作与预期，不记录本次运行结果；按复杂度裁剪，简单能力保留必要步骤即可。
+Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). This structure captures reproducible steps and expected outcomes for the capability or the current acceptance scope. Use a Test Report for actual run results.
 
-## 1. 验证目标与范围
+## 1. Verification Goal and Scope
 
-- Spec：<链接相邻 spec.md 及适用场景 / AC>；按适用性引用已确认 HTML 原型的固定版本、适用场景和确认范围，以及必要接口契约。
-- 目标与范围：<本指南能证明什么、不覆盖什么>。缺失的要求或判断标准交回讨论。
+- **Spec** — <Link the adjacent spec.md and applicable scenarios or ACs. Where applicable, link the fixed version of the confirmed HTML prototype, its scenarios and confirmed scope, and relevant Interface Contracts.>
+- **Goal and scope** — <What the guide can establish and what it excludes. Return missing requirements or criteria for discussion.>
 
-## 2. 准备与启动
+## 2. Setup and Launch
 
-- 可运行版本的取得方式：<版本来源及取得方法>。
-- 环境、权限、依赖和数据：<执行所需准备及来源；常规数据、边界取值和执行顺序注明执行者从 Spec／AC 或任务约定推导的依据与覆盖，不改变范围和标准；不得记录凭证>。
-- 启动命令或实际访问入口：<可执行命令或入口>。
+- **Runnable version** — <Source and instructions for obtaining it>
+- **Environment, permissions, dependencies, and data** — <Name the environment and the setup steps or commands. Provide example inputs and how to obtain or recreate the required starting state. For routine data, boundary values, and execution order, state what the executor derived from the Spec, ACs, or Task and what it covers. Preserve the agreed scope and criteria. Omit credentials.>
+- **Launch command or access point** — <Runnable command or usable entry point>
 
-Agent 按[测试范围约束](../references/sdd-repository-governance.md#测试范围约束)准备环境、操作指引和证据，sdd-doc 据已有依据和执行者准备内容整理指南；测试代码新增或修改交 sdd-imp。用户按需操作、审阅或反馈。需要用户判断时遵循[对齐意图与沟通规范](../references/visual-confirmation.md)。指南本身不触发实施或授予执行权限。
+For a user-facing work order, the upstream workflow provides the guide or an accessible link before implementation. Record the known entry point and setup at handoff. For integration testing, sdd-test-loop reuses the guide and fills in the runnable version and environment under the [Testing Scope Constraints](../references/sdd-repository-governance.md#testing-scope-constraints). For testing requested without a work order, reuse an existing guide or prepare one from the confirmed criteria. sdd-doc consolidates the guide when a formal project record is needed.
 
-## 3. 场景验证
+## 3. Scenario Verification
 
-沿用 Spec 的场景 / AC 编号，按用户目标组织；依据适用范围覆盖正常、边界、失败、取消、恢复及组合行为。复杂场景按需补充数据、指标与异常条件；指标和判断标准只引用已确认依据。
+Reuse the Spec scenario and AC identifiers and organize by user goal. Cover normal behavior, edge cases, failures, cancellation, recovery, and combinations within the applicable scope. Add data, metrics, and exception conditions for complex scenarios as needed. For user-observable quality metrics, specify where to measure from the user or caller entry point and link the confirmed measurement conditions, statistical definition, and threshold.
 
-| 场景 / AC | 前置条件 | 操作或命令 | 预期结果与判断点 | 所需证据 |
+| Scenario / AC | Preconditions | Action or command | Expected outcome and observation | Required evidence |
 | --- | --- | --- | --- | --- |
-| <编号> | <准备> | <可执行步骤> | <引用已确认预期，说明可观察判断点> | <关联场景和版本的证据> |
+| <ID> | <Setup> | <Executable steps> | <Confirmed expectation and observable criteria> | <Evidence linked to scenario and version> |
 
-表格不足以操作和判断时，仅展开相关场景的步骤、数据和判断点；不要求执行者临时解释需求。对于重试、恢复等多步骤行为，写明触发条件、实际操作和能证明关键过程及结果的观察点；最终输出不足以证明过程时，列出所需的过程证据。
+Write the acceptance path from the user's entry point through the observable outcome. Give exact actions or runnable commands, the input to use, and where to observe the expected result. Expand a scenario into ordered steps when the table is insufficient. For retries, recovery, and other multistep behavior, pair the decisive actions with intermediate observations as well as the final outcome. Link the applicable Spec or Interface Contract for requirements and semantics.
 
-## 4. 异常与恢复
+## 4. Failures and Recovery
 
-<按适用性说明失败、取消、重试及测试数据 / 环境恢复的操作，引用已有规则；缺少规则时标明待确认。>
+<Describe failure, cancellation, and retry where applicable. Explain how to restore the required starting state before rerunning scenarios that change data or environment state. Link existing rules and mark missing rules as awaiting confirmation.>
 
-## 5. 结果记录入口
+## 5. Results and Progress References
 
-<链接对应测试报告及 Status／Plan 进度入口>。测试报告按场景编号记录实际运行时的 Git commit 及必要的未提交修改说明、环境、逐场景通过 / 失败 / 未测 / 阻塞、证据、复验及必要人工确认；机器验证与用户确认分别记录。此处只提供入口，不复制运行结果。
+<Link the Test Report and relevant Status or Plan.> The Test Report records the actual Git commit, relevant uncommitted changes, environment, scenario outcomes (Pass, Fail, Not run, or Blocked), evidence, retests, and any required human confirmation. Record automated results and human confirmation separately in the report. Use this section to link the records.

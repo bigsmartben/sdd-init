@@ -1,0 +1,12 @@
+# sdd-init roles:start
+[agents.sdd-coder]
+config_file = "../.agents/skills/sdd-workflow/agents/sdd-coder.toml"
+[agents.sdd-delivery]
+config_file = "../.agents/skills/sdd-workflow/agents/sdd-delivery.toml"
+[agents.sdd-designer]
+config_file = "../.agents/skills/sdd-workflow/agents/sdd-designer.toml"
+[agents.sdd-documenter]
+config_file = "../.agents/skills/sdd-workflow/agents/sdd-documenter.toml"
+[agents.sdd-validator]
+config_file = "../.agents/skills/sdd-workflow/agents/sdd-validator.toml"
+# sdd-init roles:end

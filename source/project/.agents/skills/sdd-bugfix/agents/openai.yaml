@@ -1,4 +1,4 @@
 interface:
-  display_name: "sdd-commit"
+  display_name: "sdd-bugfix"
 policy:
   allow_implicit_invocation: true

@@ -55,8 +55,8 @@ def git(root: Path, *args: str) -> bytes | None:
 
 
 PROJECT_SKILLS = {
-    'sdd-doc', 'sdd-imp', 'sdd-test-loop', 'sdd-review-code',
-    'sdd-review-prompt', 'sdd-commit', 'sdd-deploy',
+    'sdd-doc', 'sdd-spec', 'sdd-imp', 'sdd-bugfix', 'sdd-test-loop', 'sdd-review-code',
+    'sdd-review-prompt', 'sdd-deliver',
 }
 PROJECT_ROLE_MODELS = {
     'sdd-designer': 'gpt-6-astra',
@@ -117,14 +117,15 @@ def shared_bundle() -> Path:
     skills = {name for name in actual if name.startswith("skills/") and name.endswith("/SKILL.md")}
     roles = {name for name in actual if name.startswith("agents/") and name.endswith(".toml")}
     required = {
-        "sdd/scripts/govern.py", "sdd/scripts/doc_check.py", "skills/sdd-commit/references/git-remote.md",
+        "sdd/scripts/govern.py", "sdd/scripts/doc_check.py",
+        *(f"skills/sdd-deliver/references/{name}.md" for name in ("git-delivery", "git-remote", "deployment")),
         *(f"sdd/references/{name}.md" for name in (
             "doc-check", "architecture-rules", "visual-confirmation", "document-writing", "delegation",
             "sdd-repository-governance", "observability-baseline", "scenarios", "prototype",
         )),
         *(f"sdd/assets/{name}_template.md" for name in (
             "status", "spec", "blueprint", "code-review-rules", "prototype_reference", "quickstart",
-            "plan", "test_report", "issue", "review", "sequence", "contract",
+            "plan", "test_report", "issue", "review", "sequence", "contract", "research",
         )),
         *(f"skills/{name}/agents/openai.yaml" for name in PROJECT_SKILLS),
     }

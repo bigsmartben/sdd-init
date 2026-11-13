@@ -61,8 +61,8 @@ class GovernanceTests(unittest.TestCase):
         self.assertFalse((GOV.parent.parent / "assets/repo-payload.zip").exists())
         self.run_cmd("init")
         self.assertEqual({p.parent.name for p in (self.root / WORKFLOW / "skills").glob("*/SKILL.md")},
-                         {"sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-code",
-                          "sdd-review-prompt", "sdd-commit", "sdd-deploy"})
+                         {"sdd-doc", "sdd-spec", "sdd-imp", "sdd-bugfix", "sdd-test-loop", "sdd-review-code",
+                          "sdd-review-prompt", "sdd-deliver"})
         self.assertFalse((self.root / ".agents/skills/sdd-init").exists())
         result = subprocess.run([sys.executable, str(self.root / WORKFLOW / "sdd/scripts/govern.py"),
                                  "--root", str(self.root), "inspect"], capture_output=True, text=True, encoding="utf-8")
@@ -190,10 +190,10 @@ class GovernanceTests(unittest.TestCase):
         self.bootstrap()
         spec = (SHARED / "sdd/assets/spec_template.md").read_text(encoding="utf-8")
         status = (SHARED / "sdd/assets/status_template.md").read_text(encoding="utf-8")
-        self.assertIn("Given：前提", spec)
-        self.assertIn("When：触发", spec)
-        self.assertIn("Then：结果与通过标准", spec)
-        self.assertIn("边界、失败、并发、取消与恢复", spec)
+        self.assertIn("Given (precondition)", spec)
+        self.assertIn("When (trigger)", spec)
+        self.assertIn("Then (outcome and pass criteria)", spec)
+        self.assertIn("edge cases, failures, concurrency, cancellation, and recovery", spec)
         self.assertIn("FR-001", spec)
         self.assertNotIn("| SC-001 |", spec)  # No competing acceptance table.
         self.assertEqual(sum(1 for x in spec.splitlines() if x.startswith("| AC-001 |")), 1)
@@ -205,9 +205,9 @@ class GovernanceTests(unittest.TestCase):
     def test_embedded_spec_template_limits_implementation_choices(self):
         self.bootstrap()
         data = (SHARED / "sdd/assets/spec_template.md").read_text(encoding="utf-8")
-        self.assertIn("不固化具体技术方案", data)
-        self.assertIn("只固化需求契约", data)
-        self.assertIn("设计模式", data)
+        self.assertIn("Keep specific technical solutions", data)
+        self.assertIn("Record the requirements contract.", data)
+        self.assertIn("design patterns", data)
 
 
     def test_user_main_model_and_effort_survive_init(self):
@@ -250,8 +250,8 @@ class GovernanceTests(unittest.TestCase):
 
     def test_workflows_allow_natural_language_selection(self):
         self.run_cmd("init")
-        for name in ("sdd-doc", "sdd-imp", "sdd-test-loop", "sdd-review-code",
-                     "sdd-review-prompt", "sdd-commit", "sdd-deploy"):
+        for name in ("sdd-doc", "sdd-spec", "sdd-imp", "sdd-bugfix", "sdd-test-loop", "sdd-review-code",
+                     "sdd-review-prompt", "sdd-deliver"):
             metadata = (self.root / WORKFLOW / f"skills/{name}/agents/openai.yaml").read_text(encoding="utf-8")
             self.assertIn("allow_implicit_invocation: true", metadata)
         self.assertIn("allow_implicit_invocation: true", (GOV.parent.parent / "agents/openai.yaml").read_text(encoding="utf-8"))

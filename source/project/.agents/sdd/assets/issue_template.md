@@ -1,34 +1,40 @@
-# Issue：<稳定编号／标题>
+# Issue — <Stable ID and title>
 
-由 sdd-doc 根据发现、修复及复验执行者的事实维护一个问题的生命周期。落点按[仓库治理](../references/sdd-repository-governance.md#文档与产物落点)定位；已有项目沿用索引和唯一记录，不复制到测试报告，不自动迁移历史。编号在项目内稳定唯一，交接附记录链接；同一问题跨场景、跨批次复用同一记录。无问题不创建空 Issue。
+Use sdd-doc to maintain the lifecycle of one Issue from discovery, diagnosis, implementation, and verification evidence. Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). In existing projects, follow the index and update the authoritative record in place. Link the Issue from Test Reports and preserve historical records. Assign a stable, project-unique ID, include the record in handoffs, and reuse it across scenarios and batches. Create an Issue only when there is an issue to track.
 
-## 1. 问题事实
+## 1. Issue Facts
 
-- 编号、标题与类型：<实现缺陷／缺失测试／证据缺口／文档矛盾／需求待决>
-- 关联依据与受影响场景：<全部相关场景／AC、已有要求；需求变化不能当成已确认缺陷>
-- 初次发现：<时间、发现者、版本、环境及发现报告／用例链接>
-- 复现：<前置条件、数据、操作、预期与实际差异；可引用报告对应证据>
-- 影响：<受影响行为、范围及严重程度的依据>
+- **ID, title, and type** — <Implementation defect / Missing test / Evidence gap / Documentation conflict / Open requirement question>
+- **Basis and affected scenarios** — <All related scenarios and ACs and the applicable requirements. Route a change to requirements through confirmation.>
+- **Initial discovery** — <Time, discoverer, version, environment, and discovery report or test case link>
+- **Reproduction** — <Preconditions, data, steps, and expected versus actual behavior. Link evidence in the report when available.>
+- **Impact** — <Affected behavior and scope, with the basis for severity>
 
-## 2. 当前处理状态
+For a Bug handoff, reuse this Issue and its ID. Before handoff, record the behavior to restore, verified cause, impact, repair boundary (including behavior to preserve), passing criteria, and a runnable acceptance procedure or an accessible link to one. For a user-visible defect, use the original user action or public call entry point and give the preconditions, steps, observable expected results, and required regression checks. Explain equivalence if using a different scenario, and identify any criteria that require real integration and the conditions to run them.
 
-- 承接者：<实际执行者或待分派>
-- 修复 Task：<imp Plan／Task 链接；非代码处理无 Task 时注明不适用；修复方案只在 Plan 维护>
-- 当前状态：<待处理／处理中／已修改待复验／已复验关闭／已核验关闭／阻塞／待确认>
-- 阻塞与恢复条件：<无或具体条件>
+For user-observable nonfunctional metrics, link the confirmed measurement conditions, statistical definition, and thresholds in the Issue's acceptance procedure or its referenced guide. Flag missing criteria before handoff.
 
-承接与处理按 [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md)交接规则执行；登记不自动授权修复、复验或平台操作。
+Link the pre-fix diagnosis evidence in the Test Report separately from the acceptance procedure for the fixed version. The implementer owns the approach, file choices, Task breakdown, and local verification in the Plan.
 
-## 3. 处理与复验历史
+## 2. Current Status
 
-每次处理返回或复验追加记录，保留初次发现及历次版本；具体测试过程与结果引用对应测试报告，不复制测试明细。
+- **Assignee** — <Current assignee or Unassigned>
+- **Fix Task** — <sdd-imp Plan or Task link. Use Not applicable for non-code work without a Task. The Plan holds the fix approach.>
+- **Status** — <Pending / In progress / Fixed, awaiting retest / Closed after retest / Closed after verification / Blocked / Awaiting confirmation>
+- **Blockers and resumption conditions** — <None or specific conditions>
 
-| 时间／执行者 | 动作与处理结果 | 修复版本／Task／局部自验证据 | 复验报告／用例与版本 | 状态变化及依据 |
+Use [sdd-bugfix](../../skills/sdd-bugfix/SKILL.md) for assessment, diagnosis, and handoff. Use [sdd-imp](../../skills/sdd-imp/SKILL.md) for the fix and its local checks. Route a separately requested local retest using [Responsibilities and Handoffs](../references/sdd-repository-governance.md#职责与交接). Link [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md) evidence when the relevant original failure or regression is in the confirmed integration scope. Authorization for fixes, checks, and platform actions comes from the task.
+
+## 3. Handling and Retest History
+
+Append each handling or retest event and preserve the original discovery and each version. Link the corresponding Test Report for test steps and results.
+
+| Time / Actor | Action and outcome | Fix version / Task / Local verification evidence | Retest report or case and version | Status change and basis |
 |---|---|---|---|---|
-| <实际记录> | <修复、补查或核验事实> | <引用或不适用> | <报告链接；未执行写待复验> | <原状态 → 新状态及依据> |
+| <Actual record> | <Fix, follow-up check, or verification> | <Reference or Not applicable> | <Verification evidence reference, remaining check, or Not applicable> | <Previous status, new status, and basis> |
 
-按 sdd-test-loop 的复验及关闭判据记录状态：修复返回后为已修改待复验，复验通过为已复验关闭，非代码问题核验后为已核验关闭；失败沿用原编号回到待处理／处理中，不能继续为阻塞，所需人工反馈未取得为待确认。已关闭问题再次出现时保留关闭历史，记录重新打开的依据。
+Use Closed after retest when evidence on the fixed version covers the original or an equivalent scenario and required regression checks, with any required human confirmation recorded. Cite the local or integration evidence that satisfies those conditions. Use Fixed, awaiting retest when the fix is delivered and required checks remain. Missing or inconclusive evidence keeps the Issue awaiting retest or Blocked. When a retest fails, keep the original ID and new evidence and return to Pending or In progress at the appropriate stage. Use Closed after verification for a verified non-code Issue, and Awaiting confirmation when required human feedback is pending. If a closed Issue recurs, retain the closure history and record the reason for reopening.
 
-## 4. 关联入口
+## 4. Related References
 
-<发现与各次复验报告、相关需求、Plan／Task；平台 Issue 如有则附链接。平台操作按实际授权，不因创建本记录自动创建或关闭远端议题。>
+<Link discovery and retest reports, relevant requirements, the Plan or Tasks, and any platform Issue. Platform actions require authorization under the task.>

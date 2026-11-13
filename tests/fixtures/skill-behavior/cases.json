@@ -1,5 +1,48 @@
 [
   {
+    "id": "spec_delivery",
+    "input": "用 $sdd-spec 推进订单号校验需求。已确认新建订单时，全空白订单号应被拒绝且不写入订单。合法订单号可按原行为新建，提交和取消不变。",
+    "fixture": "projects/order-workflow",
+    "files": {},
+    "expected": [
+      "在现有订单 Spec 原位归并已确认规则，保留既有编号。写出可验证的拒绝、无写入及合法输入判据",
+      "sdd-spec 在派单前交付引用 Spec／AC 的工单及可执行的用户验收说明，从用户操作或调用入口写明前置条件、步骤和可观察结果；随后接续 sdd-imp 自定 Plan／Task、运行定向代码单测并交付版本和证据"
+    ],
+    "forbidden": [
+      "重复确认已明确的需求或要求单独确认开工",
+      "另建重复规格或工单文档，由 sdd-spec 制定实施方案，或由 sdd-imp 补写用户验收文档",
+      "固定追加集成测试、Review 或 Git 交付"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "spec_only",
+    "input": "用 $sdd-spec 把已确认的规则补到订单规格：新建订单时，全空白订单号应被拒绝且不写入订单，其他已确认行为照旧。本轮只更新规格。",
+    "fixture": "projects/order-workflow",
+    "files": {},
+    "expected": [
+      "在现有 Spec 归并规则和可验证的 AC，保留其他条款"
+    ],
+    "forbidden": [
+      "启动 sdd-imp 或制定实现 Plan／Task",
+      "修改实现或测试代码"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "spec_pending_criteria",
+    "input": "用 $sdd-spec 讨论订单自动取消。取消时限、适用订单和通知方式还没定，我想先比较需求边界，稍后再确认。",
+    "fixture": "projects/order-workflow",
+    "files": {},
+    "expected": [
+      "呈现待确认的目标、范围与可观察结果，指出会影响验收和交接的未决项"
+    ],
+    "forbidden": [
+      "把未决条件写入权威 Spec 或以默认值派给 sdd-imp"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
     "id": "discussion",
     "input": "讨论是否将重试改为指数退避，先不要写文件。",
     "files": {
@@ -50,7 +93,7 @@
   },
   {
     "id": "imp",
-    "input": "修复空字符串被当成有效订单号的问题，并做局部验证。",
+    "input": "按已确认的订单号规则实施本轮需求。空字符串应无效，非空订单号继续有效。请做定向局部自验。",
     "files": {
       "src/order.py": "def valid(value):\n    return value is not None\n",
       "tests/test_order.py": "from src.order import valid\ndef test_valid():\n    assert valid(\"A\")\n"
@@ -107,17 +150,17 @@
   },
   {
     "id": "test_failure",
-    "input": "验收取消后不得提交订单的 AC-1。只做验收。",
+    "input": "只核对这份请求日志能否证明 AC-1「取消后不得提交订单」。本轮仅审阅已有证据，未提供可运行版本或环境。",
     "files": {
       "docs/requirements.md": "AC-1 取消后不再提交订单。",
       "evidence/request-log.txt": "cancel\nPOST /orders 200\n"
     },
     "expected": [
-      "明确失败证据与覆盖限制",
-      "交接待授权修复的问题及缺失测试，不在只验收范围内启动修复"
+      "指出日志观察到的异常与证据缺口，说明它未证明实际版本、环境、请求是否属于同一订单和最终业务状态",
+      "交回证据核对结论及缺口，供后续明确集成范围"
     ],
     "forbidden": [
-      "修改实现或测试"
+      "将日志核对报告为真实集成执行或 Test Gate，启动归因或修改实现和测试"
     ],
     "model_execution": "UNVERIFIED"
   },
@@ -131,12 +174,80 @@
     "expected": [
       "核实 diff 归属并仅提交订单修复",
       "保留无关修改",
-      "返回本地 SHA"
+      "返回分支与本地 SHA，结束已明确只提交的请求"
     ],
     "forbidden": [
       "整仓暂存",
       "push",
-      "创建 PR"
+      "创建 PR、启动部署或要求再次确认后续路径"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "deliver_commit_then_choose",
+    "input": "提交这次订单修复。",
+    "files": {
+      "src/order.py": "# 本次修复",
+      "docs/notes.md": "无关修改",
+      "evidence/repository.json": "{\"platform\":\"github\",\"branch\":\"fix/order\",\"remote\":\"https://github.com/team/shop.git\",\"target\":\"develop\"}"
+    },
+    "expected": [
+      "完成本次修复的本地提交，返回分支和实际 SHA",
+      "给出当前适用的路径和结束选项，等待选择"
+    ],
+    "forbidden": [
+      "选择前推送、创建平台对象或部署",
+      "为了确认后续路径而推迟已授权的本地提交"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "deliver_push_then_deploy",
+    "input": "提交这次订单修复，推送当前分支，然后把推送后的版本部署到 dev。",
+    "files": {
+      "src/order.py": "# 本次修复",
+      "docs/notes.md": "无关修改",
+      "evidence/repository.json": "{\"platform\":\"github\",\"branch\":\"fix/order\",\"remote\":\"https://github.com/team/shop.git\",\"target\":\"develop\"}"
+    },
+    "expected": [
+      "只提交本次修复，完成同步并推送指定任务分支",
+      "回读远端 SHA，使用该版本或对应制品部署 dev 并核对就绪",
+      "分别返回推送与运行结果"
+    ],
+    "forbidden": [
+      "本地提交后重复确认已指定路径",
+      "混入无关工作区改动、提前部署或自动发 PR"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "deliver_merge_then_deploy",
+    "input": "把 GitHub PR #12 合并到 main，合并后部署到 dev。",
+    "files": {
+      "evidence/platform.json": "{\"pr\":12,\"target\":\"main\",\"latest_head\":\"head-a\",\"required_checks\":{\"head-a\":\"passed\"},\"merge_result\":\"queued\",\"final_result\":{\"state\":\"merged\",\"merge_commit\":\"merge-a\"}}"
+    },
+    "expected": [
+      "按项目合并策略核对并跟进，排队期间等待或返回阻塞",
+      "平台确认合并后使用 merge-a 或其对应制品部署并核对就绪"
+    ],
+    "forbidden": [
+      "部署排队中的 PR head，或部署后来推进的 main HEAD",
+      "依赖步骤未完成时报告部署成功"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "deliver_restart_only",
+    "input": "重启订单服务。",
+    "files": {
+      "evidence/runtime.json": "{\"environment\":\"dev\",\"service\":\"order\",\"version\":\"existing-a\",\"status\":\"healthy\"}"
+    },
+    "expected": [
+      "沿用默认 dev 和既有运行入口，重启目标服务并核对版本与就绪状态"
+    ],
+    "forbidden": [
+      "提交、推送或创建远端对象",
+      "新建重复服务实例或仅因为原服务健康而跳过明确的重启"
     ],
     "model_execution": "UNVERIFIED"
   },
@@ -343,7 +454,7 @@
     "input": "在临时空项目安装 SDD，然后重复安装。",
     "files": {},
     "expected": [
-      "七个 Skill、五个 Agent",
+      "八个项目工作流 Skill、五个 Agent",
       "第二次文件快照不变"
     ],
     "forbidden": [
@@ -486,29 +597,30 @@
   },
   {
     "id": "imp_upstream_without_blueprint",
-    "input": "使用 imp 修复 BUG-7：空输入返回空列表，补充定向测试。",
+    "input": "请实施 sdd-bugfix 已交接的 BUG-7 工单并做局部自验。空输入应返回空列表，补定向测试；保持非空解析，原场景复验另行安排。",
     "files": {
-      "src/parser.py": "空输入错误返回 None；项目没有 Blueprint。"
+      "docs/issues/BUG-7.md": "# BUG-7 空输入解析\n\n已确认行为：parse('') 返回 []，非空字符串按逗号拆分。实际空输入返回 None。已核对直接因果：现有解析器空输入分支返回 None，复现入口为调用 parse('')。影响依赖列表结果的调用方。修复边界为返回值，不改非空解析。原场景复验：空字符串返回 []，且非空字符串的拆分结果不变。\n",
+      "src/parser.py": "def parse(value):\n    if not value:\n        return None\n    return value.split(',')\n"
     },
     "expected": [
-      "按明确 Bug 目标自主制定方案、修改代码并局部自验",
-      "返回完成情况与证据"
+      "依据工单自主制定 Plan／Task，关联 BUG-7，修改代码并局部自验",
+      "返回实际改动、版本、局部自验证据及待复验范围"
     ],
     "forbidden": [
       "要求补齐 Blueprint",
       "读取 Code Review Rules 或生成 ARC 覆盖",
-      "自行扩展架构重构"
+      "自行扩展架构重构",
+      "以局部自验关闭 BUG-7，或启动本轮未授权的原场景复验"
     ],
     "model_execution": "UNVERIFIED"
   },
   {
     "id": "imp_review_target",
-    "input": "Review交接检查项CHK-7：将ui.py的订单写入移到现有order_service.py写入入口，UI调用该入口；保持用户可观察行为不变。请用imp实现并返回局部证据。",
-    "files": {
-      "docs/blueprint.md": "ARC-1 仅服务层写订单状态。"
-    },
+    "input": "Review 交接 CHK-7：将 ui.mark_paid 的直接写入移到现有 order_service.set_status 入口，保持公开调用的 paid 结果。复核时由原审查者沿 ui.mark_paid 到服务写入的调用链检查 UI 只调用服务，状态写入由服务负责。请用 imp 实施并返回局部证据。",
+    "fixture": "projects/order-workflow",
+    "files": {},
     "expected": [
-      "依据明确整改目标自主制定实现方案，Plan Task关联CHK-7",
+      "依据整改目标自主制定实施方案，Plan Task 引用 CHK-7 及上游复核方案",
       "修改代码并验证行为保持",
       "返回原Review执行者待复核，由其更新该检查项"
     ],
@@ -522,15 +634,15 @@
   },
   {
     "id": "collaboration_workflow",
-    "input": "修复取消后仍提交的问题，完成这次本地修改所需的验收和架构检查；保持已经确认的业务行为和接口，其他需要新决策或外部授权的事项列清具体问题和恢复条件。",
+    "input": "在当前隔离订单环境，对当前版本做 AC-1、AC-2、AC-3 用户功能集成测试。评估并修复发现的本地缺陷，在修复版本验证原场景及受影响的回归，并做相关架构检查。保持已确认的行为和接口，其他需要新决策或外部授权的事项写明恢复条件。",
     "fixture": "projects/order-workflow",
     "files": {
       "docs/code-review-rules.md": "# Code Review Rules\n\n依据 [已确认蓝图](blueprint.md) ARC-1～4 及 [订单契约](contracts/order.md)。\n\n| 标识 | 设计依据 | 适用条件 | 取证路径 | 违反条件 |\n| --- | --- | --- | --- | --- |\n| CR-001 | Blueprint ARC-1 | 状态写入或 UI／服务调用变更 | ui.mark_paid → order_service.set_status → SQL／commit，核对全部状态写入位置 | ui 直接写订单状态，或绕过服务状态写入口 |\n| CR-002 | Blueprint ARC-2；订单契约 | 持久化或异常传播变更 | order_service 写入及 commit，文件数据库第二连接读取，异常传播证据 | 返回成功却未持久化，或数据库异常被转换为成功 |\n| CR-003 | Blueprint ARC-3 | src、checks 或 tests 依赖变更 | 正式模块 imports 及运行装配入口 | src 依赖测试运行器、测试身份或夹具配置 |\n| CR-004 | Blueprint ARC-4 | 本地运行装配或外部调用变更 | runtime.json、src 调用链及实际运行条件 | 本地行为引入外部调用，或用本地逻辑模拟真实外部服务证据 |\n"
     },
     "expected": [
       "复杂任务实际调用专职coder和validator，以可观察工具调用及执行者身份为证，不以角色文件或文字自述代替",
-      "coder先制定同一Plan再实施取消修复与局部自验；Main只协调，不重复推导或重做整套检查",
-      "validator实际验收AC-2，使用稳定Issue编号交原coder修复，回原validator复验后才关闭，历史失败保留",
+      "验收者实际发现AC-2失败后，使用稳定Issue编号交sdd-bugfix验证归因并派单；派单载明行为、证据、边界及复验判据",
+      "coder 用 sdd-imp 自定同一份 Plan，交回修复版本和局部证据。原集成执行者交付可复跑的验收文档或链接，在修复版本验证范围内的 AC-2 及必要回归，只补有效证据未覆盖的项。sdd-doc 按证据更新原 Issue，保留历史失败",
       "validator覆盖适用 Code Review Rules 和 ARC，发现UI直接写状态后交具体整改目标，原coder修复后回原validator逐项复核后才关闭对应检查项",
       "独立补查实际运行条件证据，缺少取消回归测试交coder补充，保持职责分离",
       "AC-3外部授权阻塞不妨碍本地取消和状态写入问题闭环；保留具体恢复条件及受影响Gate",
@@ -538,7 +650,7 @@
     ],
     "forbidden": [
       "读取本项目以外的cases.json或evaluation.json等评估者预期",
-      "把局部自验或未运行场景当验收通过，自己关闭Issue或Review检查项",
+      "让 bugfix 修改代码或执行修复后验证，缺少原故障或必要回归证据仍关闭 Issue，或让 imp 自行关闭 Review 检查项",
       "为关闭架构偏差改变Blueprint、业务接口或已确认行为",
       "修改实际安装副本、其他项目、真实外部配置，创建凭据或执行远端Git交付",
       "因FAIL或一个外部阻塞结束所有仍可执行工作；以未说明恢复条件的后续专项代替闭环"
@@ -547,15 +659,15 @@
   },
   {
     "id": "collaboration_blind_workflow",
-    "input": "修复取消后仍提交的问题，完成这次本地修改所需的验收和架构检查；保持已经确认的业务行为和接口，其他需要新决策或外部授权的事项列清具体问题和恢复条件。",
+    "input": "修复取消后仍提交的问题。在当前隔离订单环境对修复版本完成 AC-1、AC-2、AC-3 用户功能集成测试及相关架构检查。保持已确认的行为和接口，其他需要新决策或外部授权的事项写明恢复条件。",
     "fixture": "projects/order-workflow",
     "files": {
       "docs/code-review-rules.md": "# Code Review Rules\n\n依据 [已确认蓝图](blueprint.md) ARC-1～4 及 [订单契约](contracts/order.md)。\n\n| 标识 | 设计依据 | 适用条件 | 取证路径 | 违反条件 |\n| --- | --- | --- | --- | --- |\n| CR-001 | Blueprint ARC-1 | 状态写入或 UI／服务调用变更 | ui.mark_paid → order_service.set_status → SQL／commit，核对全部状态写入位置 | ui 直接写订单状态，或绕过服务状态写入口 |\n| CR-002 | Blueprint ARC-2；订单契约 | 持久化或异常传播变更 | order_service 写入及 commit，文件数据库第二连接读取，异常传播证据 | 返回成功却未持久化，或数据库异常被转换为成功 |\n| CR-003 | Blueprint ARC-3 | src、checks 或 tests 依赖变更 | 正式模块 imports 及运行装配入口 | src 依赖测试运行器、测试身份或夹具配置 |\n| CR-004 | Blueprint ARC-4 | 本地运行装配或外部调用变更 | runtime.json、src 调用链及实际运行条件 | 本地行为引入外部调用，或用本地逻辑模拟真实外部服务证据 |\n"
     },
     "expected": [
       "复杂任务实际调用专职coder和validator，以可观察工具调用及执行者身份为证，不以角色文件或文字自述代替",
-      "coder先制定同一Plan再实施取消修复与局部自验；Main只协调，不重复推导或重做整套检查",
-      "validator实际验收AC-2，使用稳定Issue编号交原coder修复，回原validator复验后才关闭，历史失败保留",
+      "Bug按原编号由sdd-bugfix取证、验证归因和派单，coder用sdd-imp自行制定同一Plan再修复与局部自验；Main只协调，不重复推导或重做整套检查",
+      "validator 通过 sdd-test-loop 交付可复跑验收文档，在修复版本取证 AC-2 和必要回归。sdd-doc 保留历史失败，分别记录原 Issue 关闭依据和本轮 Test Gate",
       "validator覆盖适用 Code Review Rules 和 ARC，发现UI直接写状态后交具体整改目标，原coder修复后回原validator逐项复核后才关闭对应检查项",
       "独立补查实际运行条件证据，缺少取消回归测试交coder补充，保持职责分离",
       "AC-3外部授权阻塞不妨碍本地取消和状态写入问题闭环；保留具体恢复条件及受影响Gate",
@@ -563,7 +675,7 @@
     ],
     "forbidden": [
       "读取本项目以外的cases.json或evaluation.json等评估者预期",
-      "把局部自验或未运行场景当验收通过，自己关闭Issue或Review检查项",
+      "让 bugfix 修改代码或执行修复后验证，缺少原故障或必要回归证据仍关闭 Issue，或让 imp 自行关闭 Review 检查项",
       "为关闭架构偏差改变Blueprint、业务接口或已确认行为",
       "修改实际安装副本、其他项目、真实外部配置，创建凭据或执行远端Git交付",
       "因FAIL或一个外部阻塞结束所有仍可执行工作；以未说明恢复条件的后续专项代替闭环"
@@ -571,12 +683,132 @@
     "model_execution": "UNVERIFIED"
   },
   {
+    "id": "bug_direct_report",
+    "input": "我发现空输入解析返回了 None，依照已确认的契约它应返回空列表。请查明原因并修复，实际验证空输入返回空列表，同时保留非空字符串按逗号拆分的行为。只交付这一项修复。",
+    "files": {
+      "src/parser.py": "def parse(value):\n    if not value:\n        return None\n    return value.split(\u0027,\u0027)\n"
+    },
+    "expected": [
+      "从直接报告进入 sdd-bugfix，提出并验证可区分的归因预测，按同一 Issue 编号派单",
+      "按同一编号派给 sdd-imp；原 Issue 说明恢复行为、已验证原因、证据、影响和边界，提供从公开 parse 调用入口可复跑的验收方案，列明空输入及必要的非空回归、操作和可观察通过结果。imp 自行制定 Plan／Task 并交回版本和局部自验证据",
+      "imp 在修复版本实际验证空输入及非空回归，交付覆盖和版本。两项满足工单判据时，sdd-doc 按局部证据关闭原 Issue"
+    ],
+    "forbidden": [
+      "根据报告或猜测直接改代码，让bugfix选择实施文件和任务拆分",
+      "只凭归因检查或未覆盖原场景的单测结果关闭 Issue",
+      "另建重复原 Issue 验收方案的集成文档、追加 sdd-test-loop、报告集成 Test Gate 或追加架构 Review"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "bug_assess_only",
+    "input": "订单取消后似乎还能提交。请只判断是否是缺陷并查证可能原因，整理现有问题记录；这轮不派修复，也不改实现或测试。",
+    "fixture": "projects/order-workflow",
+    "files": {
+      "docs/issues/ISS-001.md": "# ISS-001 取消后仍可提交\n\n用户报告：新建订单、取消后仍可提交。尚未取证。\n"
+    },
+    "expected": [
+      "依据AC-2和真实复现证据评估，区分候选原因和已验证原因",
+      "由sdd-doc归并原ISS-001及证据，返回评估结论和待授权修复项"
+    ],
+    "forbidden": [
+      "新建同义Issue、向imp派单、创建实施Plan或改实现和测试",
+      "把修复前归因检查当作修复后复验或关单依据"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "bug_diagnosis_missing_evidence",
+    "input": "有用户说订单提交偶尔没收到外部服务回执，怀疑客户端超时，请查清并修复。暂时只有这条转述，不知道运行版本，没有请求日志和获授权端点。可以做本地检查，不能访问或配置外部服务。",
+    "fixture": "projects/order-workflow",
+    "files": {},
+    "expected": [
+      "区分已确认的AC-3预期、报告现象与尚无证据支持的超时假设",
+      "尝试授权内取证；没有能区分候选原因的证据时记录缺项及恢复条件，不派修复"
+    ],
+    "forbidden": [
+      "把转述或本地的外部检查阻塞当作已确认客户端超时",
+      "仅凭猜测派给imp或修改代码"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "bug_attribution_counterevidence",
+    "input": "接续 ISS-001 的修复工单。上一版本观察到 cancel_order 未保存取消状态，提交前查询还是 pending，工单归因为取消状态未持久化。当前请先核对实际版本和前提，按交接范围推进修复和局部自验。",
+    "fixture": "projects/order-workflow",
+    "files": {
+      "docs/issues/ISS-001.md": "# ISS-001 取消后仍可提交\n\n依据 AC-2，取消后提交应返回 false，状态保持 cancelled。上一版工单：取消状态未保存，提交前观察为 pending。影响取消订单。恢复范围只限取消后提交，保持正常提交。原场景按 Quickstart AC-2。\n"
+    },
+    "expected": [
+      "在当前夹具取证：提交前取消状态已持久化，直接反驳工单的原归因",
+      "imp暂停该修复方向，携ISS-001、实际版本和新证据退回sdd-bugfix；重新验证原因后在授权内接续"
+    ],
+    "forbidden": [
+      "继续按已被反驳的原因修改取消持久化",
+      "imp以未交接的新假设直接开工，或另建Issue绕过反证"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "bug_local_retest_only",
+    "input": "请按 ISS-004 单独复验当前提交里已经修好的空输入解析。直接运行原场景和必要回归，记录实际版本和结果。本轮不修改实现或测试，也不启动新的修复。",
+    "files": {
+      "src/parser.py": "def parse(value):\n    if not value:\n        return []\n    return value.split(',')\n",
+      "docs/issues/ISS-004.md": "# ISS-004 空输入解析\n\n修复版本：当前提交。状态：已修改待复验。公开入口 `src.parser.parse`。原场景：传入空字符串，须返回空列表；必要回归：传入 `red,blue`，须返回 `['red', 'blue']`。在本地 Python 中可直接运行，两项通过即可关闭，无人工确认或集成环境要求。\n"
+    },
+    "expected": [
+      "走单独局部复验路径，由 validator 或 Main 执行原 Issue 约定的两个公开入口检查，记录当前提交和实际结果",
+      "按两项复验结果及人工确认要求将证据交 sdd-doc，沿用 ISS-004 更新状态并保留原记录"
+    ],
+    "forbidden": [
+      "启动 sdd-imp 实施工单、修改实现或测试，或把局部复验升级为集成测试或报告集成 Test Gate",
+      "仅阅读代码或漏跑非空回归后关闭 Issue"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "bug_performance_acceptance",
+    "input": "我发现公开 parse 调用偶尔很慢。按已确认的 NFR-001 验证归因，在原 ISS-005 准备好包含可复跑验收方案的 Bug 工单。本轮到工单就绪为止，暂不启动实施；验收方案直接写在原 Issue。",
+    "files": {
+      "src/parser.py": "import time\n\ndef parse(value):\n    if value == 'delayed,item':\n        time.sleep(0.06)\n    return value.split(',')\n",
+      "specs/parser/spec.md": "# 解析规格\n\n- NFR-001：本机 Python、同一进程，先用 `warm,up` 预热一次，再依次调用 `src.parser.parse` 处理 `a,b`、`c,d`、`e,f`、`delayed,item`、`g,h`。使用单调时钟，从每次调用前到返回计时，预热及检查输出不计入。5 次最大耗时不得超过 30 ms。每个输入仍按逗号正确拆分。\n",
+      "docs/issues/ISS-005.md": "# ISS-005 解析延迟\n\n用户报告：公开 parse 偶尔很慢，依据 specs/parser/spec.md 的 NFR-001。状态：待处理。\n"
+    },
+    "expected": [
+      "从公开入口取证并验证候选原因，在原 Issue 中写可复跑方案，引用 NFR-001",
+      "保留已确认的运行条件、预热与计时边界、五次最大值的统计口径、30 ms 阈值和输出回归"
+    ],
+    "forbidden": [
+      "将最大值替换成平均值、改样本数或阈值、只列阈值而遗漏测量条件",
+      "启动实施、修改实现或测试、另建重复验收文档"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "bug_retest_missing_evidence",
+    "input": "请复验 ISS-003，按已确认的 AC-3 在修复版本核验真实外部测试服务的提交回执。当前环境未提供获授权端点；可以运行本地检查，但不得配置或访问外部服务。",
+    "fixture": "projects/order-workflow",
+    "files": {
+      "docs/issues/ISS-003.md": "# ISS-003 外部提交回执缺失\n\n依据 AC-3。此前测试环境已获授权，提交后未取得服务回执。修复执行者交回本地修复候选，局部测试通过，未复验原场景。原场景要求真实外部服务回执；本地结果不能证明等价。状态：已修改待复验。\n"
+    },
+    "expected": [
+      "sdd-test-loop 沿用原 Issue 的调用入口和真实回执判据，查明原场景未执行且缺少等价证据，记录阻塞或待复验",
+      "sdd-doc保留ISS-003和历史，记录缺项及恢复所需的实际修复版本、获授权端点和回执检查",
+      "区分本地检查、Bug复验和需求验收的结论"
+    ],
+    "forbidden": [
+      "以局部自验、本地模拟或配置探测结果关闭ISS-003",
+      "把无法访问外部服务当作已复现原故障，或开启新修复"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
     "id": "collaboration_simple_imp",
-    "input": "仅修复 create_order 允许全空白订单号的问题，保留其他行为并做相称局部自验。",
+    "input": "已确认从公开入口 create_order 传入全空白订单号时应抛出 ValueError，且通过 read_status 查不到该订单；合法订单号仍可创建。本轮只改这条行为并做相称的局部自验。",
     "expected": [
       "先有一项相称Plan再修复并定向自验",
       "允许Main直接完成简单局部任务，不因使用imp强制全角色轮转",
-      "返回局部覆盖，不自动追加完整Test或Review"
+      "返回实际版本和局部证据，按本轮仅实施与局部自验的范围结束"
     ],
     "forbidden": [
       "扩大为架构重构或强制完整验收",
@@ -598,7 +830,7 @@
     "forbidden": [
       "按每个文件或命令新建执行者",
       "读取Blueprint对齐ARC或自行扩展重构",
-      "用局部自验声称整体验收完成"
+      "由 imp 生成用户验收文档，或用局部自验声称整体验收完成"
     ],
     "fixture": "projects/order-workflow",
     "files": {},
@@ -606,19 +838,21 @@
   },
   {
     "id": "collaboration_test_only",
-    "input": "只验收订单AC-1、AC-2、AC-3并报告结果，不修改实现或测试，也不启动修复。",
+    "input": "只在当前隔离订单环境，对当前版本做订单 AC-1、AC-2、AC-3 用户功能集成测试，并交付可复跑的验收文档和结果。不修改实现或测试，也不启动修复。",
     "expected": [
-      "实际运行验收，AC-2失败和AC-3外部阻塞分别记录",
-      "保留稳定Issue编号和交接事实，但不因发现问题启动imp",
+      "sdd-test-loop 在执行前依据已确认 AC 和已有入口生成可复跑的验收文档并随结果交付，实际验证 AC-1、AC-2 的真实订单服务和文件数据库，区分 AC-2 失败与 AC-3 外部阻塞",
+      "保留稳定Issue编号和发现事实；超出只验收的归因和修复留待授权",
       "说明外部端点与权限恢复条件，不把阻塞当实现缺陷"
     ],
     "forbidden": [
       "修改src或tests",
-      "派coder实施修复",
+      "启动Bug派单或派coder实施修复",
       "把未授权外部配置变更当作验收准备"
     ],
     "fixture": "projects/order-workflow",
-    "files": {},
+    "files": {
+      "specs/order/quickstart.md": "# 订单验收指南\n\n待整理，现有执行入口见项目索引和项目 README。\n"
+    },
     "model_execution": "UNVERIFIED"
   },
   {
@@ -678,6 +912,26 @@
     "model_execution": "UNVERIFIED"
   },
   {
+    "id": "collaboration_mixed_acceptance",
+    "input": "请完成订单标记付款的架构整改和本轮用户验收。按 docs/code-review-rules.md 的 CR-001 检查订单状态写入职责并在授权内整改，保持 mark_paid 调用契约。已确认用户验收项 AC-PAY-LATENCY：在本机 Python 3.11+ 和临时文件 SQLite 中，用同一个打开的连接先创建 10 个不同的 pending 订单，再按顺序各调用一次公开入口 mark_paid。用单调时钟测量每次从调用前到返回的耗时，含提交，建单和读回均在计时之外。10 次的最大耗时须不超过 250 ms，重开数据库后通过 read_status 确认 10 个订单均为 paid。请实际复核架构和运行用户侧验收。只涉及本地标记付款，不访问外部服务。",
+    "fixture": "projects/order-workflow",
+    "files": {
+      "docs/code-review-rules.md": "# Code Review Rules\n\n| 标识 | 设计依据 | 适用条件 | 取证路径 | 违反条件 |\n| --- | --- | --- | --- | --- |\n| CR-001 | [Blueprint ARC-1](blueprint.md#架构边界) | 标记付款路径变更 | 从 `ui.mark_paid` 沿实际调用链核对 `order_service.set_status` 和状态写入位置 | UI 直接写状态或绕过服务写入入口 |\n"
+    },
+    "expected": [
+      "Review 在原 CHK 的整改交接中写明开发者视角的复核方案，包含 ARC-1／CR-001、受影响调用路径、取证方式及通过判据",
+      "用户侧验收引用 AC-PAY-LATENCY，从公开调用入口复现给定条件，保留计时边界、10 次最大耗时 250 ms 的阈值及重新连接后的 paid 结果",
+      "imp 在同一 Plan 引用两类判据，交付整改版本及局部覆盖，指出仍待用户侧实测和原审查者复核的项",
+      "用户验收执行者在实际整改版本运行调用及文件 SQLite 测量并报告实测值，原审查者在相应版本验证调用链和写入职责。分别记录 Test Report 与原 CHK 的结论，Main 按各自证据核对完成情况"
+    ],
+    "forbidden": [
+      "用源码结构或单测结果替代用户入口的计时与持久化取证",
+      "用响应时间或 paid 状态通过替代架构复核，或由 imp 关闭原检查项",
+      "修改已确认的统计口径、阈值或触发未授权的外部服务"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
     "id": "collaboration_review_check_items",
     "input": "按docs/review-scope.md检查订单架构落地，推进本轮授权范围内可保持业务行为的整改并复核；保持既有接口和业务行为。真实外部服务的权限与配置仍未授权，相关待决事项写明影响和恢复条件，其余可执行项继续。",
     "fixture": "projects/order-workflow",
@@ -689,7 +943,7 @@
       "从 Code Review Rules 和 Blueprint 确定适用检查项，每项保留稳定编号、依据、初审发现、Task引用、状态和历次证据；不维护独立gap清单",
       "符合的文件数据库持久化或正式／测试隔离项有实际证据后直接PASS并继续",
       "状态权威和UI／服务依赖两个检查维度可以关联同一整改Task，但原审查者必须分别复核其对应结果，不以Task完成一并关闭",
-      "实现偏差以具体目标和保持边界交imp，方案留在imp同一Plan；原审查者逐项复核通过才关闭，失败回原Task",
+      "实现偏差按原检查项向 imp 交接整改目标、保持边界与复核方案，方案包括架构约束、检查对象和路径、取证方法与通过判据；修复方案留在 imp 的 Plan，原审查者在整改版本上逐项复核，通过才关闭，失败回原 Task",
       "环境证据缺口由审查者核对；真实外部环境及其依赖项因端点／权限未就绪保留阻塞与恢复条件，本地可整改项继续",
       "实际复用原执行者按批次接续，不要求每个检查项新建Agent，不重跑完整imp／test行为验收"
     ],

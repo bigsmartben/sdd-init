@@ -1,81 +1,81 @@
-# 全产品蓝图：产品与架构
+# Blueprint — Product and Architecture
 
-> 只写已确认目标；实现进度引用 Status / 任务，验证结果及证据引用测试报告。全产品仅维护一份蓝图，定义高位用例、关键体验和验收维度，不涉及具体需求细节；详细 FR/AC 引用对应 Spec，机制引用所属接口契约，不复制需求正文或增建竞争实体。
+> Record confirmed objectives. Refer to Status or Tasks for implementation progress and to Test Reports for verification results and evidence. Maintain one Blueprint for the entire product. It defines high-level use cases, key experiences, and acceptance dimensions. Refer to the relevant Spec for detailed FRs and ACs and to the owning Interface Contract for mechanisms. Keep each detail in its authoritative document.
 
-在相关职责或不变量旁引用驱动该决定的产品需求；关键顺序、并发或失败影响用户体验时链接对应场景时序。
+Link the product requirement that drives a decision beside the corresponding responsibility or invariant. Link the relevant Scenario Sequence when ordering, concurrency, or failure affects the user experience.
 
-## 1. 产品目标与范围
+## 1. Product Goals and Scope
 
-说明目标用户、问题、价值及纳入/可选/排除范围。关键体验统一由下方用例与 BDD 承载，不另列重复原则；仅保留必要内容，关联承接的 PUC/PAC。
+Describe the target users, their problem, the value, and what is included, optional, or excluded. Capture key experiences in the use cases and BDD scenarios below. Keep essential details and link the relevant PUCs and PACs.
 
-## 2. 使用终端与运行条件
+## 2. Clients and Operating Conditions
 
-| 环境 ID | 终端与使用形态 | 必要运行条件 | 能力差异与支持范围 |
+| Environment ID | Client and usage context | Required operating conditions | Capability differences and support scope |
 |---|---|---|---|
-| PENV-01 | <设备及浏览器/App 等形态> | <网络、权限、版本等已确认条件> | <产品承诺及限制> |
+| PENV-01 | <Device and browser or app> | <Confirmed network, permission, and version requirements> | <Product commitments and limitations> |
 
-终端承诺与实现部署位置分别表达；版本覆盖事实归验收证据，未确定项集中到第 8 章。
+Describe client support commitments separately from deployment locations. Record version coverage in acceptance evidence and collect open questions in section 8.
 
-## 3. 用户用例
+## 3. Product Use Cases
 
-按用户目标组织全产品用例，不按模块、页面或需求文件拆分。用 Mermaid `flowchart` 表达参与者、系统边界、用户目标及必要关联。用 `subgraph` 表示系统边界，将用例放在边界内、参与者放在边界外，以连线表示关联。仅在符合对应 UML 语义时标注 `include`、`extend` 或泛化。
+Organize product-wide use cases by user goal. Use a Mermaid `flowchart` to show actors, the system boundary, goals, and relevant relationships. Use a `subgraph` for the system boundary, with use cases inside and actors outside. Connect related elements. Use `include`, `extend`, or generalization only when the relationship matches its UML semantics.
 
-| 用例 ID | 参与者、目标与关键体验 | 适用环境及详细需求 |
+| Use case ID | Actor, goal, and key experience | Applicable environment and detailed requirements |
 |---|---|---|
-| PUC-01 | <已确认用户目标> | <PENV / 对应 Spec 入口> |
+| PUC-01 | <Confirmed user goal> | <PENV or relevant Spec section> |
 
-## 4. 高位验收场景与维度
+## 4. High-Level Acceptance Scenarios and Dimensions
 
-用 Given–When–Then 表达高位代表性场景及验收维度，表格或 Gherkin 均可，不要求引入自动化框架。
+Use Given–When–Then to describe representative scenarios and acceptance dimensions. A table or Gherkin is sufficient. An automation framework is optional.
 
-| ID / 用例 | Given | When | Then：高位预期与验收维度 |
+| ID / Use case | Given | When | Then — High-level expectation and acceptance dimension |
 |---|---|---|---|
-| PAC-01 / PUC-01 | <明确前提> | <具体触发> | <高位预期及验收维度；具体判断标准引用 Spec AC> |
+| PAC-01 / PUC-01 | <Specific precondition> | <Specific trigger> | <High-level expectation and acceptance dimension. Link the Spec AC for the detailed criteria.> |
 
-按风险覆盖关键体验、成功、边界、失败、取消和恢复，不以减少场景数量为目标。前提、触发或生效规则不同的操作分别表达；只有预期逻辑相同时才参数化，不把不同触发、取消和失败条件合并为同一结果。引用入口不冒充真实场景。拆分保留原 PAC 追踪映射，各能力 FR/AC 不重编号。
+Cover key experiences, success, edge cases, failure, cancellation, and recovery according to risk. Describe operations separately when their preconditions, triggers, or rules differ. Parameterize only when the expected behavior follows the same logic. Give distinct triggers, cancellations, and failures their own expected outcomes. Describe an actual scenario for each entry and use links to support it. When splitting a scenario, preserve traceability to the original PAC and retain existing FR and AC identifiers.
 
-产品质量维度由 PAC 表达，具体条件、阈值、计时边界、单位、统计口径及证据类型引用 Spec AC，不在蓝图重复维护。产品经理在约定环境对实际集成版本进行可视化验收；验证范围遵循[测试范围约束](../references/sdd-repository-governance.md#测试范围约束)。
+Use PACs for product quality dimensions. Refer to Spec ACs for specific conditions, thresholds, timing boundaries, units, statistical definitions, and evidence types. The product manager visually validates the actual integrated version in the agreed environment. Follow the [Testing Scope Constraints](../references/sdd-repository-governance.md#testing-scope-constraints).
 
-## 5. 部署与运行边界
+## 5. Deployment and Runtime Boundaries
 
-部署图表达宿主、运行时、存储、服务、网络与信任边界；可用 Mermaid flowchart 表达部署视角，但它不是原生 UML 语法。必要宿主装配、共享核心、服务端及样例边界在此合并说明，不从逻辑模块推定独立进程。源码目录与构建入口引用既有工程文档。
+Use a deployment view to show hosts, runtimes, storage, services, networks, and trust boundaries. A Mermaid flowchart can depict this view. A Mermaid flowchart is a deployment view expressed outside UML syntax. Describe host assembly, shared core, server, and example boundaries here. Identify separate processes only when the deployment design calls for them. Link existing engineering documentation for source directories and build entry points.
 
-记录已确认的设计策略、理由、代价及适用条件，关联 PUC/PAC；产品质量标准引用对应 Spec。
+Record confirmed design strategies, rationale, costs, and applicable conditions. Link the relevant PUCs and PACs, and refer to the Spec for product quality criteria.
 
-## 6. 组件与职责
+## 6. Components and Responsibilities
 
-组件图表达逻辑职责、I/O、协作接口、允许及禁止的依赖，以及核心概念、关系和不能混同的边界。职责、概念产生/消费及数据权威归并于本章，必要术语简短保留；不增加与组件图、总时序重复的关系流程图。
+Use a component diagram to show responsibilities, I/O, interfaces, allowed and prohibited dependencies, key concepts, and their relationships and boundaries. Record who produces and consumes each concept and who owns authoritative data. Define essential terms briefly. Add a separate relationship diagram only if it conveys information absent from the component diagram and overall sequence.
 
-| 组件 | 职责、状态所有权与禁止边界 | 契约入口 |
+| Component | Responsibilities, state ownership, and prohibited interactions | Interface Contract |
 |---|---|---|
-| <已确认组件> | <请求者、决策者、写入者、副作用执行者、权威状态所有者及完成事实> | <所属接口契约章节> |
+| <Confirmed component> | <Requester, decision maker, writer, side-effect executor, authoritative state owner, and evidence of completion> | <Owning Interface Contract section> |
 
-必要时增加精简数据表说明来源、权威、允许读写与生命周期；不得因合表丢失有效边界。详细载荷、授权、取消、结果和失败归所属接口契约正文。
+Add a compact data table when useful to explain sources, authority, permitted reads and writes, and lifecycle. Preserve these distinctions when combining tables. Put detailed payloads, authorization, cancellation, results, and failure semantics in the owning Interface Contract.
 
-## 7. 架构不变量
+## 7. Architecture Invariants
 
-| ID | 约束 | 必要依据 |
+| ID | Constraint | Basis |
 |---|---|---|
-| <稳定 ARC> | <正常、异常、并发、取消及恢复均须保持的规则> | <职责/契约引用> |
+| <Stable ARC identifier> | <Rule that holds during normal operation, failure, concurrency, cancellation, and recovery> | <Responsibility or Interface Contract reference> |
 
-整理用户已确认的项目不变量，保留稳定编号、适用条件及约束强度；重复职责清单可引用第 6 章。未确定的环境、框架和策略列为待决。写入依据为确认内容与本模板，不要求读取架构规范或补齐规范映射。
+Record project invariants the user has confirmed. Preserve stable identifiers, applicability conditions, and the strength of each constraint. Refer to section 6 for existing responsibility lists. List unconfirmed environments, frameworks, and strategies as open questions. Use the confirmed design and this template as the basis. Reading the architecture rules and adding rule mappings are outside this step.
 
-## 8. 关键协作索引与待决事项
+## 8. Key Interactions and Open Questions
 
-| 产品场景 | 契约 / 总时序 |
+| Product scenario | Interface Contract / Scenario Sequence |
 |---|---|
-| <PUC / PAC 及交互目标> | <公开接口与关键协作链接> |
+| <PUC or PAC and interaction goal> | <Links to public interfaces and key interactions> |
 
-不在索引复述模块职责或详细流程；总时序按[时序模板](sequence_template.md)表达公开接口间的正常顺序、并行、竞争、取消、迟到、失败、未知及恢复边界，不展开内部类算法。接口及异常语义归[接口契约](contract_template.md)。活动图用于复杂分支、并行汇合或数据加工，区分控制流与对象流；状态机、ER 按需使用，内部类图不强制。
+Use the index to link responsibilities and detailed flows. Use the [Scenario Sequence template](sequence_template.md) to describe normal ordering, parallelism, races, cancellation, late results, unknown outcomes, and recovery across public interfaces. Keep internal algorithms outside this view. Record interface and failure semantics in the [Interface Contract](contract_template.md). Use activity diagrams for complex branches, joins, or data processing, distinguishing control flow from object flow. Include state or ER diagrams when useful. Internal class diagrams are optional.
 
-| 待决事项 | 来源、影响与待确认内容 |
+| Open question | Source, impact, and decision needed |
 |---|---|
-| <实质缺口> | <相关条款或任务> |
+| <Material gap> | <Related clause or Task> |
 
-集中未决问题，允许引用任务中的唯一详细清单；不确定或不可执行内容不写成有效决定。不为模板填满章节。治理过程与检查证据归任务。
+Collect open questions here and link any authoritative list already maintained in a Task. Keep uncertain or infeasible items open. Fill sections as applicable. Record governance activity and check evidence in the Task.
 
-## 架构表达与判定
+## Architecture Modeling and Assessment
 
-本模板第 1—4 章承载产品目标与验收维度，第 5 章承载运行边界及取舍，第 6—7 章承载概念、职责与不变量，第 8 章索引关键交互及未决问题。各项表达要求可按项目规模合并章节、引用已有正文，不要求增加文件层级；模块数量、平面、目录、技术模式和部署方式由项目确认，缺失设计列为待决。
+Sections 1–4 cover product goals and acceptance dimensions. Section 5 covers runtime boundaries and trade-offs. Sections 6–7 cover concepts, responsibilities, and invariants. Section 8 indexes key interactions and open questions. Combine sections or link existing documents to suit the project. The project confirms module count, architectural planes, directory layout, technical patterns, and deployment. Record missing decisions as open questions.
 
-权威归属遵循[仓库治理](../references/sdd-repository-governance.md#权威实体)，条款归并及迁移核对遵循[文档写入规则](../references/document-writing.md)。
+Follow the [Repository Governance](../references/sdd-repository-governance.md#authoritative-documents) for document ownership and the [Document Writing Rules](../references/document-writing.md) when consolidating clauses or verifying a migration.

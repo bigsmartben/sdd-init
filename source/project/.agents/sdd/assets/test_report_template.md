@@ -1,65 +1,67 @@
-# 测试报告：<主题／批次>
+# Test Report — <Subject and batch>
 
-由 sdd-doc 根据已确认目标、范围与标准、执行者据此准备的安排及真实证据填写。适用于业务需求验收、集成验证、开发局部自验、方案验证及复验，必须注明实际类型；局部自验不代表需求验收。架构一致性使用 [Review 模板](review_template.md)。
+sdd-doc completes this report from the confirmed goals, scope, and criteria, the executor's preparations based on them, and actual evidence. State the verification type: requirements acceptance, integration verification, local verification by the implementer, feasibility verification, Bug diagnosis, or retest. Use the [Architecture Review Record template](review_template.md) for architecture conformance.
 
-落点按[仓库治理](../references/sdd-repository-governance.md#文档与产物落点)定位；已有项目沿用索引，简单任务可在当前任务按同一结构记录。历史记录保留路径与版本，不自动迁移。
+Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). Follow the existing project index. For a simple Task, use this structure in the current Task record. Preserve historical paths and versions.
 
-以下八节为必备内容，不得静默省略。简单任务各节只填写本轮必要事实，已有依据使用精确引用，不重复展开。不适用说明原因，资料缺失注明缺口及其影响。既有计划、指南、用例可引用，但须明确本轮适用范围和实际偏差。模板链接按产物实际目录重定位。
+Include all eight sections. For a simple Task, record only the facts needed for this run and use precise references to existing material. Explain why a section or field does not apply, or identify missing information and its impact. Existing plans, guides, and cases can supply details when their applicability and any deviations are clear. Adjust links for the report's actual location.
 
-## 1. 测试目标与依据
+## 1. Test Goals and Basis
 
-- 报告批次、验证类型、执行者与时间：<实际记录>
-- 测试对象与目标：<能力、模块或候选方案；本轮要证明什么>
-- 依据：<Spec 场景／AC、已确认工程目标、Quickstart 或验证方案及版本；方案比较注明候选路径、假设与指标>
+- **Batch, verification type, executor, and time** — <Actual details>
+- **Subject and goal** — <Capability, module, or candidate approach and what this run aims to establish>
+- **Basis** — <Spec scenarios or ACs, confirmed engineering goals, Quickstart or verification approach, and version. For comparisons, identify candidate paths, hypotheses, and metrics.>
 
-## 2. 测试范围与计划
+## 2. Test Scope and Plan
 
-- 范围与排除项：<本轮纳入的需求、场景及边界；排除原因>
-- 测试安排：<已确认计划／指南入口、方法、计划用例及执行顺序或依赖；常规准备注明执行者推导的依据与覆盖；不可推导的缺项注明影响>
-- 完成标准：<引用已确认判断标准；不在报告中自行新增或降低标准>
+- **Scope and exclusions** — <Requirements, scenarios, and boundaries in scope, with reasons for exclusions>
+- **Test arrangement** — <Confirmed Plan or guide, method, planned cases, order or dependencies. State the executor's basis and coverage for routine preparations, and the impact of missing information that cannot be derived.>
+- **Completion criteria** — <Link the confirmed criteria. Changes to the criteria require confirmation outside the report.>
 
-## 3. 测试环境
+## 3. Test Environment
 
-- 被测版本：<实际运行的 Git commit、必要未提交修改及产物版本>
-- 环境与入口：<部署环境、访问或启动入口、关键配置、依赖及版本>
-- 真实与模拟边界：<真实服务、替代依赖、模拟结果及结论适用限制>
+- **Version under test** — <Actual Git commit, relevant uncommitted changes, and artifact version>
+- **Environment and entry point** — <Deployment environment, access or launch entry point, key configuration, dependencies, and versions>
+- **Real and simulated components** — <Real services, substitute dependencies, simulated results, and limits on the conclusions>
 
-## 4. 测试准备与数据
+## 4. Test Setup and Data
 
-- 前置准备：<账号角色、权限、依赖就绪及实际准备结果；不记录凭证>
-- 数据：<数据集／夹具及版本、来源或构造方式、初始状态、所覆盖边界；常规数据与边界取值关联已有依据，涉及实质决定时引用确认来源>
-- 数据恢复：<按需说明隔离、清理和恢复方式及实际情况；不适用说明原因>
-- 准备缺口：<未满足条件及受影响用例；无则写无>
+- **Setup** — <Account roles, permissions, dependency readiness, and actual setup results. Omit credentials.>
+- **Data** — <Dataset or fixtures and version, source or construction method, initial state, and edge cases covered. Link the basis for routine data and boundary values, and cite the confirmation source for material decisions.>
+- **Data recovery** — <Isolation, cleanup, and recovery method and actual outcome, or why this does not apply>
+- **Setup gaps** — <Unmet conditions and affected cases, or None>
 
-## 5. 执行与覆盖汇总
+## 5. Execution and Coverage Summary
 
-- 计划与实际：<实际执行范围、时间及偏差原因>
-- 用例统计：<范围内总数、通过／失败／未测／阻塞数量；同一用例本批次只计一次，总数等于四类之和，重试过程另留证据>
-- 需求覆盖：<场景／AC 与用例关联；部分验证、组合行为及未验证项分别说明，用例通过率不代替需求覆盖>
+- **Planned and actual execution** — <Actual scope, time, and reasons for deviations>
+- **Case counts** — <Total in scope and counts for Pass, Fail, Not run, and Blocked. Count each case once per batch. The four counts sum to the total. Record retries separately as evidence.>
+- **Requirements coverage** — <Map cases to scenarios and ACs. Describe partial verification, combinations of behaviors, and unverified items separately. Assess coverage from this mapping.>
 
-## 6. 测试明细
+## 6. Test Details
 
-范围内未执行项仍须列出，标明未测或阻塞及原因。用例使用稳定标识并关联场景／AC；工程验证可关联 Task。复验沿用原用例并引用先前批次；版本不同分别记录，复用旧证据须说明对当前版本仍适用的依据。
+List every case in scope, including cases that were Not run or Blocked, with reasons. Use stable case IDs and link scenarios or ACs. Engineering verification may link a Task. Reuse the original case for a retest and link the previous batch. Record versions separately when they differ. Explain why reused evidence applies to the current version.
 
-| 用例／需求依据 | 前置条件／数据 | 方法与实际步骤 | 预期与判断标准 | 实际结果及差异 | 判定 | 证据／实际版本 | Issue 引用 |
+| Case / Requirement basis | Preconditions / Data | Method and actual steps | Expected outcome and criteria | Actual outcome and differences | Verdict | Evidence / Actual version | Issue reference |
 |---|---|---|---|---|---|---|---|
-| <编号与依据> | <条件> | <步骤或可复现入口> | <已确认标准> | <事实；未执行写原因> | <通过／失败／未测／阻塞> | <过程及结果证据> | <独立 Issue 链接或无> |
+| <ID and basis> | <Conditions> | <Steps or reproducible entry point> | <Confirmed criteria> | <Observed facts, or reason the case did not run> | <Pass / Fail / Not run / Blocked> | <Process and outcome evidence> | <Independent Issue link or None> |
 
-重试、取消、恢复及并发等行为保留关键过程证据。机器结果与人工反馈分开记录。
+Keep evidence of key intermediate steps for behaviors such as retry, cancellation, recovery, and concurrency. Record automated results and human feedback separately.
 
-## 7. 关联问题与影响
+For a Bug, link diagnosis checks, local fix checks, and post-fix retests to their actual versions and the original Issue. For diagnosis, record the candidate cause, predicted observation and evidence that would rule it out, actual observation, and conclusion. For a local or integration check used as closure evidence, identify the original case or explain equivalence, record actual execution and required regression results on the fixed version, and identify any unmet Issue criteria. Record Issue verification and the integration Test Gate against their respective scopes. Cite the version, environment, and coverage when reusing evidence.
 
-| Issue 引用 | 本批次关联用例 | 问题摘要及对本轮结论的影响 |
+## 7. Related Issues and Impact
+
+| Issue reference | Related cases in this batch | Issue summary and impact on this batch's conclusion |
 |---|---|---|
-| <独立记录链接或无> | <用例编号> | <本批次观察及影响> |
+| <Independent Issue link or None> | <Case IDs> | <Observed issue and impact in this batch> |
 
-这里只保留问题引用和本轮影响，不维护承接、修复方案、当前状态或历次处理流水。问题生命周期使用 [Issue 模板](issue_template.md)。未测、阻塞与证据不足不自动判为实现缺陷。
+Keep Issue references and their impact here. Use the [Issue template](issue_template.md) for the assignee, fix references, current status, and handling history. A defect finding requires evidence beyond a case being Not run, Blocked, or lacking evidence.
 
-## 8. 测试结论与限制
+## 8. Test Conclusion and Limitations
 
-- 总体结论：<是否满足本轮完成标准、依据及适用范围>
-- 遗留风险与未验证项：<关联用例、Issue 及对验收的影响>
-- 人工确认：<事项、反馈来源与时间；不需要则说明，未取得则待确认，与机器结果分开>
-- Gate：<仅引用执行流程提供的实际判定、范围与版本；未执行对应流程不生成 PASS>
+- **Overall conclusion** — <Whether this batch met its completion criteria, the basis, and where the conclusion applies>
+- **Remaining risks and unverified items** — <Related cases, Issues, and impact on acceptance>
+- **Human confirmation** — <Item, feedback source, and time. State when confirmation is unnecessary or still pending. Record it separately from automated results.>
+- **Gate** — <Link the actual verdict, scope, and version from the relevant workflow. PASS requires that workflow to run.>
 
-报告保留本批次事实；后续修复不能把原批次失败改为通过。复验记录为新批次，可在同一文件明确分批但不覆盖历史。更正记录错误须说明原因和依据。Issue 引用发现及复验报告更新自身状态；Status／Plan 引用报告和 Issue，不复制正文。
+Preserve the facts for this batch, including failures fixed later. Record a retest as a new batch, which may use a separate section in the same file. If correcting a recording error, explain the reason and evidence. Update Issue status in the Issue with links to discovery and applicable local or integration evidence. Link the report and Issues from Status or Plan.

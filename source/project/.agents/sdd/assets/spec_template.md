@@ -1,42 +1,44 @@
-# {CAPABILITY} — 当前有效需求规格
+# Spec — {CAPABILITY} (Current Requirements)
 
-> 本模板用于能力详细需求，不是产品蓝图。全产品的 UML 用户用例、适用终端、关键体验原则和关键 BDD 验收场景从目标项目索引定位其权威正文，不按需求或能力重复建产品蓝图。
+> Use this template for detailed capability requirements. Find authoritative product-wide UML use cases, supported clients, key experience principles, and key BDD acceptance scenarios through the project index. Keep a single product-wide Blueprint.
 
-落点按[仓库治理](../references/sdd-repository-governance.md#文档与产物落点)定位，已有 Spec 沿用项目索引中的唯一正文。
+Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). Update the existing authoritative Spec identified in the project index.
 
-## 1. 关联与范围
+## 1. References and Scope
 
-- 产品用例与关键验收：<引用蓝图 PUC / PAC>
-- 本能力范围及非目标：<仅描述本能力细化范围，不改写全产品范围>
-- 适用环境：<引用产品环境；仅补本需求特有条件>
+- **Product use cases and key acceptance scenarios** — <Link the Blueprint PUCs and PACs>
+- **Capability scope and exclusions** — <Detail the scope of this capability within the product scope>
+- **Applicable environments** — <Link the product environments and add only capability-specific conditions>
 
-## 2. 当前有效需求
+## 2. Current Requirements
 
-- FR-001：<已确认的具体可观察行为与条件；保留既有编号>
+- FR-001: <Confirmed, observable behavior and applicable conditions. Preserve existing IDs.>
 
-只固化需求契约，不固化具体技术方案、设计模式、内部类、方法或算法；承接蓝图 PUC / PAC 的高位用例与验收维度，具体条件、阈值和通过标准由对应 AC 维护，不复制竞争正文。
+Record the requirements contract. Keep specific technical solutions, design patterns, internal classes, methods, and algorithms in their owning design or implementation artifacts. Expand the high-level use cases and acceptance dimensions in the Blueprint PUCs and PACs. Use the applicable AC for detailed conditions, thresholds, and pass criteria.
 
-## 3. 详细验收条件
+## 3. Detailed Acceptance Criteria
 
-| ID | Given：前提 | When：触发 | Then：结果与通过标准 | 对应需求 / 产品场景 | 证据类型 |
+| ID | Given (precondition) | When (trigger) | Then (outcome and pass criteria) | Requirement / Product scenario | Evidence type |
 |---|---|---|---|---|---|
-| AC-001 | <条件> | <动作> | <行为、适用质量标准或其唯一引用> | <FR / PAC> | <所需证据> |
+| AC-001 | <Condition> | <Action> | <Behavior and applicable quality criteria, or a link to their authoritative source> | <FR / PAC> | <Required evidence> |
 
-按实际需要覆盖边界、失败、并发、取消与恢复，不机械配齐。遵循[测试范围约束](../references/sdd-repository-governance.md#测试范围约束)。实际结果、证据与验证缺口归测试报告，Status／Plan 引用报告维护进度，文档确认不提升 AC/ARC/Gate。
+Define user-facing acceptance from the user or caller entry point. For user-observable quality metrics, the applicable AC records or links the confirmed measurement conditions, statistical definition, and threshold.
 
-## 4. 正式需求原型（按需）
+Cover applicable edge cases, failures, concurrency, cancellation, and recovery. Follow the [Testing Scope Constraints](../references/sdd-repository-governance.md#testing-scope-constraints). Record actual results, evidence, and verification gaps in the Test Report and link it from Status or Plan. AC, ARC, and Gate outcomes require their own evidence.
 
-按[原型适用范围](../references/prototype.md#适用范围)选用；不适用时省略本节。
+## 4. Requirements Prototype (Optional)
 
-- 原型入口与固定版本：<HTML 入口、源码及对应版本>
-- 适用场景与 AC：<交互与业务状态的对应关系>
-- 确认情况：<已确认范围与待确认部分>
+Use when the [Prototype Scope](../references/prototype.md#prototype-scope) applies. Otherwise omit this section.
 
-已确认的中保真 HTML 是正式需求组成部分，维护操作、布局和可观察状态；业务规则、权限及质量标准归 Spec。模拟数据与假接口不自动成为业务要求。正文与原型冲突时返回确认，不自行选边。
+- **Prototype and fixed version** — <HTML entry point, source, and corresponding version>
+- **Applicable scenarios and ACs** — <How interactions and business states map to requirements>
+- **Confirmation** — <Confirmed scope and items awaiting confirmation>
 
-## 5. 架构引用与待确认事项
+A confirmed medium-fidelity HTML prototype forms part of the requirements for actions, layout, and observable states. Keep business rules, permissions, and quality criteria in the Spec. Simulated data and mock interfaces require confirmation before becoming business requirements. Return conflicts between the Spec and prototype for confirmation.
 
-- 关联契约、时序、ARC：<引用，不复制正文>
-- 待确认：<只列影响本需求的实质性问题；无则省略>
+## 5. Architecture References and Open Questions
 
-已有需求、AC 及历史证据保留身份与含义；产品视角迁移保留详细需求。
+- **Related Interface Contracts, Scenario Sequences, and ARCs** — <Links to authoritative clauses>
+- **Open questions** — <Only material questions affecting the requirement. Omit if there are none.>
+
+Preserve the identifiers and meaning of existing requirements, ACs, and historical evidence. Retain detailed requirements when reorganizing the product view.

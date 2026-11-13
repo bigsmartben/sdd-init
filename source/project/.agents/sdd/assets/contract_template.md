@@ -1,7 +1,7 @@
-# 接口契约
+# Interface Contract
 
-在接口说明处链接负责该接口的模块或所遵循的蓝图不变量。
+Link each interface to its owning component or the applicable Blueprint invariant.
 
-落点按[仓库治理](../references/sdd-repository-governance.md#文档与产物落点)定位。关联已确认需求、职责边界、不变量及适用时序；本模板只定义契约的表达内容，不授予设计权限。
+Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). Link confirmed requirements, responsibility boundaries, invariants, and applicable Scenario Sequences. This template defines how to document a contract. Design decisions follow the project's confirmation process.
 
-列明调用者与提供者、输入和输出、状态或副作用归属、受理与完成的区别。按需说明已确认的失败、取消、迟到、版本与恢复语义；未确定内容列为待决事项，不用占位内容补定设计。写入及缺口处理遵循[文档写入规则](../references/document-writing.md)。
+Identify the caller and provider, inputs and outputs, ownership of state or side effects, and the distinction between request acceptance and completion. Describe confirmed semantics for failure, cancellation, late responses, versioning, and recovery as applicable. Keep unresolved design questions open. Follow the [Document Writing Rules](../references/document-writing.md) for updates and gaps.

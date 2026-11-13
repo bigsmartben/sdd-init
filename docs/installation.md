@@ -28,6 +28,8 @@ uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固�
 
 目标项目自行处理遗留文件。清理后，在目标仓库调用一次 `sdd-init` 即可接入共享模式。脚本统一使用 `init`，同步 `AGENTS.md` 和 `.codex/config.toml` 中的 SDD 托管块，保留项目正文、主模型、MCP 和其他配置。安装器报告与当前工作流的同名冲突。项目自有文档及其中的链接由项目维护。
 
+从分发 `sdd-commit` 与 `sdd-deploy` 的版本升级时，共享包改为提供 [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md)。在已接入的项目中运行一次 `sdd-init` 刷新托管导航，再重新加载项目。
+
 安装先暂存并验证入口及共享目录，再分别发布。替换失败时恢复旧目录。进程异常中断后，检查 Skill 搜索目录中的 `.sdd-init-install.lock` 及其父目录中的 `.sdd-init-backup-*`，确认安装进程已退出、旧文件已保全，再人工恢复。哈希用于完整性和定制检查。
 
 ## 项目安装恢复与旧命令退役
@@ -40,7 +42,7 @@ uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固�
 
 若提示 `Recovery blocked`，先保留错误中列出的文件和 `.sdd-init-recovery/`，根据 `journal.json` 的 path／before／after 核对受影响内容，保存外部编辑副本并解除文件占用、权限或内容冲突，再重试同一命令。记录损坏时保留恢复记录，并从可靠备份核对恢复。
 
-旧 start、record、attest、check、finish、commit 已移除，无兼容入口或自动迁移。初始化器保留 inspect／init，项目共享 govern.py 仅保留 inspect；文档检查使用 doc_check.py，Git 交付使用 sdd-commit Skill。已接入的项目通过用户级更新取得新版工具，历史 Spec、Status 和证据由项目维护。
+旧 start、record、attest、check、finish、commit 已移除，无兼容入口或自动迁移。初始化器保留 inspect／init，项目共享 govern.py 仅保留 inspect；文档检查使用 doc_check.py，Git 交付使用 sdd-deliver。已接入的项目通过用户级更新取得新版工具，历史 Spec、Status 和证据由项目维护。
 
 ## 开发验证
 

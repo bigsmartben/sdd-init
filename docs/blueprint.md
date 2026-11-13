@@ -6,7 +6,7 @@
 
 sdd-init 面向维护 SDD 工作流的维护者，以及在目标仓库中使用 Agent 的开发者。产品提供可构建、可安装的指令与工具资源，使需求整理、实施、验证、部署和交付具有明确的职责与产物归属。
 
-系统由 Python 分发安装工具与 Agent 执行的工作流资源组成。Skill 是职责指令，实施、验收和 Review 等有对应专职执行者的复杂任务默认由角色执行并持续接续，简单局部任务可由 Main 完成；部署与 Git 按各自入口的默认职责执行。两者不是独立常驻服务。目标项目自行决定业务架构、技术选型和实际运行环境；本仓库不承载目标项目业务服务、业务数据库或部署实例。观测样例是可选参考资源，不代表目标项目采用了对应技术栈。
+系统由 Python 分发安装工具与 Agent 执行的工作流资源组成。Skill 是职责指令，实施、集成测试和 Review 等有对应专职执行者的复杂任务默认由角色执行并持续接续，简单局部任务可由 Main 完成。Git 交付与部署统一从 sdd-deliver 进入，由 Main 默认执行。目标项目自行决定业务架构、技术选型和实际运行环境；本仓库不承载目标项目业务服务、业务数据库或部署实例。观测样例是可选参考资源，不代表目标项目采用了对应技术栈。
 
 ## 2. 使用终端与运行条件
 
@@ -47,7 +47,7 @@ flowchart LR
 | PUC-01 | 维护一次资源正文，生成可追溯分发包 | PENV-01；Spec FR-002、FR-004、FR-007，AC-002、AC-007 |
 | PUC-02 | 安装或更新用户级入口与共享工作流 | PENV-02；[安装说明](installation.md#更新与冲突)，Spec AC-002 |
 | PUC-03 | 将工作流引入目标仓库，升级时保护项目正文与配置 | PENV-03；[初始化入口](../source/initializer/SKILL.md)，Spec FR-002、FR-027，AC-002、AC-027 |
-| PUC-04 | 依照用户任务选择文档、实施、验收、Review、部署或交付职责 | PENV-03；Spec FR-001、FR-003、FR-005—FR-012、FR-020—FR-022 |
+| PUC-04 | 依照用户任务选择需求规格、文档、实施、缺陷评估、集成测试、Review、部署或交付职责 | PENV-03；Spec FR-001、FR-003、FR-005—FR-012、FR-020—FR-022、FR-029 |
 
 ## 4. 高位验收场景与维度
 
@@ -61,9 +61,9 @@ flowchart LR
 | PAC-04 | PUC-03 | 空项目或无冲突的目标项目 | 初始化工作流 | 资源与导航可用，不生成项目需求、蓝图或状态正文；AC-002、AC-027 |
 | PAC-05 | PUC-03 | 已由项目清理遗留文件，保留项目正文与配置 | 运行一次初始化入口 | 接入共享工作流并同步托管块，保留项目正文和其他配置；AC-027 |
 | PAC-06 | PUC-03 | 载荷缺失必要资源或入口存在冲突 | 初始化或升级 | 写入前拒绝已识别的冲突，报告路径；AC-013、AC-020—AC-022 |
-| PAC-07 | PUC-04 | 已确认目标与已有授权 | 实施并验证任务 | Plan 承载执行，局部自验、需求验收及架构复核各自归属；AC-004、AC-008、AC-012 |
-| PAC-08 | PUC-04 | 测试缺陷或架构检查项偏差已发现 | 修复后复验／复核 | 问题或检查项记录及历史批次可追溯，由对应验证职责判定关闭；AC-020、AC-021 |
-| PAC-09 | PUC-04 | 用户指定 Git 交付终点或部署意图 | 执行对应 Skill | 在实际授权与环境中报告交付／运行状态；AC-003、AC-022 |
+| PAC-07 | PUC-04 | 已确认目标与已有授权 | 实施并验证任务 | Plan 承载执行，局部自验、用户功能集成测试及架构复核各自归属；AC-004、AC-008、AC-012、AC-029 |
+| PAC-08 | PUC-04 | 测试缺陷或架构检查项偏差已发现 | 修复后复验／复核 | 问题记录及历史批次可追溯，Issue 按实际证据关闭，Review 整改按原检查项复核；AC-020、AC-021 |
+| PAC-09 | PUC-04 | 用户请求 Git 交付或部署 | 执行 sdd-deliver | 在实际授权与环境中报告交付／运行状态；AC-003、AC-022 |
 
 ## 5. 部署与运行边界
 
@@ -138,11 +138,12 @@ flowchart TD
 | 项目初始化器 | inspect 盘点；init 校验允许路径、必要资源、角色与入口冲突，合并托管导航、角色引用与忽略规则，创建本地链接；安装互斥、恢复记录及回滚由内部 project_install 模块承担，遵循[已确认边界](#项目安装的互斥与恢复边界) | [初始化 Skill](../source/initializer/SKILL.md)、[govern.py](../source/initializer/scripts/govern.py)、[project_install.py](../source/initializer/scripts/project_install.py) |
 | sdd-doc | 从确认内容与执行证据归并正式文档，维护关联并执行写后检查；模板不授予设计权 | [Skill](../source/project/.agents/skills/sdd-doc/SKILL.md) |
 | sdd-imp | 交付明确的上游任务，生成并执行同一 Plan／Task 清单，修改代码并完成局部自验 | [Skill](../source/project/.agents/skills/sdd-imp/SKILL.md) |
-| sdd-test-loop | 根据 Spec 验收行为，返回问题与复验事实，判定 Test Gate | [Skill](../source/project/.agents/skills/sdd-test-loop/SKILL.md) |
+| sdd-spec | 对齐需求与验收判据，按原规格形成含验收说明的工单并接续实施 | [Skill](../source/project/.agents/skills/sdd-spec/SKILL.md) |
+| sdd-bugfix | 评估疑似缺陷、验证归因并向 sdd-imp 派单 | [Skill](../source/project/.agents/skills/sdd-bugfix/SKILL.md) |
+| sdd-test-loop | 复用验收文档，在本轮范围内验证用户功能的真实组件协同 | [Skill](../source/project/.agents/skills/sdd-test-loop/SKILL.md) |
 | sdd-review-code | 按检查项检查架构落地与规则执行，明确整改目标，返回检查和复核事实，判定 Review Gate | [Skill](../source/project/.agents/skills/sdd-review-code/SKILL.md) |
 | sdd-review-prompt | 审查提示词，返回规则表、任务 DAG、发现和行为验证结论 | [Skill](../source/project/.agents/skills/sdd-review-prompt/SKILL.md) |
-| sdd-deploy | 根据部署意图探测环境、准备依赖并验证服务就绪；不随实施自动触发 | [Skill](../source/project/.agents/skills/sdd-deploy/SKILL.md) |
-| sdd-commit | 根据授权终点管理本地 Git 与远端协作；远端摘要不替代本地权威文档 | [Skill](../source/project/.agents/skills/sdd-commit/SKILL.md) |
+| sdd-deliver | 识别 Git 终点与部署目标，调用对应指引；组合请求通过已核验版本衔接两步 | [Skill](../source/project/.agents/skills/sdd-deliver/SKILL.md) |
 | 文档校验器 | 只读检查所选 Markdown 的编码、结构、编号及本地引用，输出诊断与退出码；不判定语义或 Gate | [工具说明](../source/project/.agents/sdd/references/doc-check.md) |
 
 | 数据／资源 | 权威位置与生命周期 |
@@ -157,7 +158,7 @@ flowchart TD
 
 ### 旧治理命令退役边界
 
-旧治理命令退役，不保留兼容入口或自动迁移机制（2026-11-04 用户确认，替代此前保留兼容的建议）。范围为初始化器及项目共享治理脚本中的旧 start、record、attest、check、finish、commit 命令；初始化所需 inspect／init 与独立文档检查器 doc_check.py 不属于退役范围，sdd-commit Skill 也不受影响。
+旧治理命令退役，不保留兼容入口或自动迁移机制（2026-11-04 用户确认，替代此前保留兼容的建议）。范围为初始化器及项目共享治理脚本中的旧 start、record、attest、check、finish、commit 命令。初始化使用 inspect／init，文档检查使用 doc_check.py，Git 交付入口见 [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md)。
 
 后续工作使用现行 Skills 及其权威文档；依赖旧命令的调用方需改用现行入口。历史 Spec、Status、证据及基线保留，不因接口退役删除或改写。两处分发源已移除旧命令及专属实现，项目共享脚本保留只读 inspect；既有项目副本须明确升级后生效。详细要求见 Spec FR-024／AC-024，验证事实见[本轮报告](test-reports/install-recovery/2026-11-04.md)。
 
@@ -170,7 +171,7 @@ flowchart TD
 | ARC-001 | 初始化器源、项目分发源、生成物及历史基线分离；共享资源只维护一份现行源 | [维护边界](../AGENTS.md#维护边界)、[README](../README.md#源码与维护入口) |
 | ARC-002 | 用户级安装更新共享目录；项目初始化通过链接接入，并在项目配置中声明相对路径角色引用 | [初始化入口](../source/initializer/SKILL.md)、Spec FR-002、FR-027 |
 | ARC-003 | 详细需求、高位架构、执行清单与验证事实各有唯一正文；引用不形成竞争权威 | Spec FR-001、FR-006、FR-007、FR-009、FR-021 |
-| ARC-004 | 实现与局部自验、需求验收、架构 Review 的职责分离；缺陷与存在偏差的检查项由对应复验／复核关闭 | Spec FR-008、FR-020、FR-021 |
+| ARC-004 | 缺陷归因、工单实施与局部自验、用户功能集成测试、架构 Review 各有职责。Issue 按适用验证证据关闭，Review 按原检查项复核整改 | Spec FR-008、FR-020、FR-021、FR-029 |
 | ARC-005 | 机械检查只能证明其声明范围内的结构与引用性质，不能代替 Agent 语义判断 | Spec FR-013 |
 | ARC-006 | 工作流只沿用任务实际授权；文档与实现完成不隐含远端交付或部署授权 | Spec FR-003、FR-022 |
 | ARC-007 | 分发规则及样例不代替目标项目的业务需求、组件库或产品架构决定；历史导入实现不覆盖已确认目标 | [维护边界](../AGENTS.md#维护边界)、Spec FR-012、FR-014 |
@@ -183,8 +184,12 @@ flowchart TD
 |---|---|
 | 构建与用户级安装 | [安装说明](installation.md)：构建资源 → 随包携带 → install 校验 → 暂存替换 → 返回安装状态 |
 | 项目初始化／升级 | [初始化入口](../source/initializer/SKILL.md)：inspect → init 写前校验 → 合并导航及安装资源 → 核对结果 |
-| 实施与问题闭环 | [imp](../source/project/.agents/skills/sdd-imp/SKILL.md)、[test](../source/project/.agents/skills/sdd-test-loop/SKILL.md)、[Review](../source/project/.agents/skills/sdd-review-code/SKILL.md)：各自定义执行、交接及完成条件；文档由 doc 归并 |
-| 部署与 Git 交付 | [deploy](../source/project/.agents/skills/sdd-deploy/SKILL.md)、[commit](../source/project/.agents/skills/sdd-commit/SKILL.md)：按明确意图进入，不是前序流程的固定尾步骤 |
+| 实施与问题闭环 | [spec](../source/project/.agents/skills/sdd-spec/SKILL.md)、[imp](../source/project/.agents/skills/sdd-imp/SKILL.md)、[bugfix](../source/project/.agents/skills/sdd-bugfix/SKILL.md)、[test](../source/project/.agents/skills/sdd-test-loop/SKILL.md)、[Review](../source/project/.agents/skills/sdd-review-code/SKILL.md) 各自定义执行、交接及完成条件，文档由 doc 归并 |
+| 部署与 Git 交付 | [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md) 按请求进入 |
+
+`sdd-imp` 的 [Plan 模板](../source/project/.agents/sdd/assets/plan_template.md) 合并了技术实施上下文与可执行 Task 清单，分别对照 Spec Kit 的 [Plan 模板](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/plan-template.md) 和 [Tasks 模板](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/tasks-template.md)。本仓库的 [Quickstart 模板](../source/project/.agents/sdd/assets/quickstart_template.md) 对照上游 [Plan 指令中的 Quickstart 生成规则](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/plan.md#L135)。任务拆分与执行分别对照上游 [Tasks 指令](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/tasks.md) 和 [Implement 指令](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/implement.md)。目标项目运行时按本地 Skill 读取分发模板。
+
+Bug 工作流对照 Spec Kit 的 [Assess](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/extensions/bug/commands/speckit.bug.assess.md)、[Fix](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/extensions/bug/commands/speckit.bug.fix.md) 和 [Test](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/extensions/bug/commands/speckit.bug.test.md)，作为归因、修复与验证的来源参考。当前工单交付、关单和集成测试的边界见 Spec FR-021 与 FR-026。
 
 现有 Skill 和安装说明承担公开操作契约，本轮不另建重复契约或时序正文。测试代码可帮助定位行为覆盖，例如[构建测试](../tests/test_build.py)、[用户安装测试](../tests/test_user_install.py)、[角色测试](../tests/test_roles.py)及[文档检查测试](../tests/test_doc_check.py)；测试文件存在不代表本轮已执行。
 

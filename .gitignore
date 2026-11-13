@@ -5,3 +5,6 @@ __pycache__/
 build/
 dist/
 *.egg-info/
+/.agents/skills/sdd-workflow
+/.sdd-init.lock
+/.sdd-init-recovery/

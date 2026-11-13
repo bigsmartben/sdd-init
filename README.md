@@ -6,7 +6,7 @@
 
 文档按任务需要产出，减少单独的文档审核环节。计划、任务拆分和实施统一由 `sdd-imp` 推进，用同一份可执行清单安排工作并记录完成证据。
 
-功能交付与架构优化是两项独立任务，各自推进、互不耦合。功能交付的首要目标是实现已确认的需求规格，并通过人工验收。架构优化的目标是抑制架构熵增，确保长期迭代中的交付确定性。
+按本轮目标选择需求、缺陷或架构工单的交付入口。需要验证真实组件协同时，按明确范围开展用户功能集成测试。
 
 本仓库维护通用流程、资源和安装工具；目标项目维护自己的业务需求、架构决定、产品实现及真实验收证据。具体需求以 [Spec](specs/platform-independent-sdd/spec.md) 为唯一正文，README 只提供定位与导航。
 
@@ -25,12 +25,13 @@
 | --- | --- |
 | [sdd-init](source/initializer/SKILL.md) | 初始化或升级项目中的 SDD 资源 |
 | [sdd-doc](source/project/.agents/skills/sdd-doc/SKILL.md) | 整理和维护需求、设计、计划及验证记录 |
-| [sdd-imp](source/project/.agents/skills/sdd-imp/SKILL.md) | 生成并执行 Plan／Task 清单，推进实施与修复 |
-| [sdd-test-loop](source/project/.agents/skills/sdd-test-loop/SKILL.md) | 执行测试、反馈问题并复验 |
-| [sdd-review-code](source/project/.agents/skills/sdd-review-code/SKILL.md) | 检查架构落地一致性并跟进复核 |
+| [sdd-spec](source/project/.agents/skills/sdd-spec/SKILL.md) | 对齐需求与验收判据，提供含验收说明的工单并接续实施 |
+| [sdd-imp](source/project/.agents/skills/sdd-imp/SKILL.md) | 接收明确工单，维护 Plan／Task，实施并交付局部证据 |
+| [sdd-bugfix](source/project/.agents/skills/sdd-bugfix/SKILL.md) | 评估疑似缺陷、验证归因并向 imp 派单 |
+| [sdd-test-loop](source/project/.agents/skills/sdd-test-loop/SKILL.md) | 按验收文档验证明确范围内的真实组件协同 |
+| [sdd-review-code](source/project/.agents/skills/sdd-review-code/SKILL.md) | 检查架构落地一致性，按原检查项派单与复核 |
 | [sdd-review-prompt](source/project/.agents/skills/sdd-review-prompt/SKILL.md) | 审查提示词，检查精简前后的关键行为 |
-| [sdd-commit](source/project/.agents/skills/sdd-commit/SKILL.md) | 按授权完成 Git 与远端仓库交付 |
-| [sdd-deploy](source/project/.agents/skills/sdd-deploy/SKILL.md) | 部署、启动或重启服务并检查就绪状态 |
+| [sdd-deliver](source/project/.agents/skills/sdd-deliver/SKILL.md) | Git 与远端仓库交付，部署、启动或重启服务 |
 
 协作规则见[仓库治理](source/project/.agents/sdd/references/sdd-repository-governance.md)，角色分工、默认模型与配置优先级见[执行协作](source/project/.agents/sdd/references/delegation.md)，项目文档入口可参考[索引示例](source/project/docs/index.md)。
 

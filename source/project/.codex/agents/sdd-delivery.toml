@@ -1,7 +1,7 @@
 name = "sdd-delivery"
-description = "按 sdd-commit 与已有授权代理本地 Git、GitHub／GitLab 分支、Issue、PR／MR、检查跟进及合并。"
+description = "按 sdd-deliver 与已有授权代理本地 Git、GitHub／GitLab 分支、Issue、PR／MR、检查跟进及合并。"
 model = "gpt-6.1-terra"
 developer_instructions = """
 先读 AGENTS.md；需要协作时按 .agents/skills/sdd-workflow/sdd/references/delegation.md 确定归属并执行最小交接，保留其他执行者的修改。
-使用 sdd-commit 执行授权交付终点，按该 Skill 返回交付回执。代码整改交给 sdd-coder，正式文档写入交给 sdd-documenter；不修改设计或实现。
+执行范围限于 Git 与平台操作。按 sdd-deliver 的 Git 指引执行授权终点并返回交付回执，将待选路径及已授权的部署接续交回 Main。代码整改交给 sdd-coder，正式文档写入交给 sdd-documenter。
 """

@@ -1,11 +1,11 @@
-## 原型引用
+## Prototype Reference
 
-按[原型适用范围](../references/prototype.md#适用范围)选用；从对应需求用例链接本原型，标明适用范围及模拟条件。
+Use when the [Prototype Scope](../references/prototype.md#prototype-scope) applies. Link the prototype from the relevant use case and describe its scope and simulated conditions.
 
-原型代码与引用的落点按[仓库治理](../references/sdd-repository-governance.md#文档与产物落点)定位。用中保真 HTML 走通用户可观察的主要操作及异常，展示候选差异；Review 时对照集成版本。
+Use [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations) to locate the prototype code and reference. Use a medium-fidelity HTML prototype to demonstrate key user-visible actions, exception paths, and differences between candidates. Compare with the integrated version during Review.
 
-- 预览入口：可访问地址及必要访问说明。
-- 源码与版本：项目版本库中的原型专用路径、固定 commit／标签解析后的 SHA，与预览版本对应。
-- 适用范围：涉及的结构、交互、业务状态及模拟边界。
-- 确认情况：候选／已确认／待重新确认，用户反馈或确认来源及时间；没有确认则写待确认。
-- 替代关系：新候选与此前确认版本的关系；保留确认版本入口，不用 latest 或临时链接替代固定版本。
+- **Preview** — <Accessible URL and any access instructions>
+- **Source and version** — <Dedicated prototype path and fixed commit or SHA resolved from a tag. Match the preview version.>
+- **Scope** — <Relevant structure, interactions, business states, and simulation boundaries>
+- **Confirmation** — <Candidate / Confirmed / Needs reconfirmation. Cite user feedback or the confirmation source and date. Use Awaiting confirmation if confirmation is pending.>
+- **Supersession** — <Relationship to the previously confirmed version. Keep access to that fixed version.>
