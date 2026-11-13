@@ -17,4 +17,4 @@
 
 - **如何提交、推送或部署？** 使用 [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md)。启动或重启服务时，从项目运行指南与环境配置定位实际入口。
 
-- **文档写后如何检查？** 使用[文档校验 CLI](../source/project/.agents/sdd/references/doc-check.md)检查选定范围的机械问题，语义核对由 sdd-doc 完成。
+- **文档写后如何检查？** 使用[文档校验 CLI](../source/project/.agents/sdd/references/doc-check.md)检查选定范围的机械问题，语义核对由 sdd-documenter 完成。

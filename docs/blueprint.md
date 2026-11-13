@@ -14,7 +14,7 @@ sdd-init 面向维护 SDD 工作流的维护者，以及在目标仓库中使用
 |---|---|---|
 | PENV-01 | 维护者在终端构建、检查分发 | Python 3.11+；资源构建器仅依赖标准库；Python 包构建使用 setuptools，入口见[包配置](../pyproject.toml) |
 | PENV-02 | 用户在终端安装用户级入口 | Python 3.11+；默认远端安装路径另需 uv、Git 与仓库读取权限，详见[安装说明](installation.md) |
-| PENV-03 | 用户在目标仓库通过 Agent 调用 Skill | 客户端能够发现项目 Skills 与角色；安装脚本需要 Python；Git、部署及验证所需工具按具体任务确定 |
+| PENV-03 | 用户在目标仓库通过 Agent 使用 Skill 或委派角色 | 客户端能够发现项目 Skills 与角色；安装脚本需要 Python；Git、部署及验证所需工具按具体任务确定 |
 
 环境兼容声明采用以下边界（2026-11-04 用户确认）：运行条件为 Python 3.11+，其他工具按具体入口要求；只记录实际验证过的操作系统与客户端版本，验证范围和结果引用对应证据；未验证环境不承诺兼容，不预建完整兼容矩阵。最低运行条件不等于所有满足条件的环境均已通过验证。
 
@@ -124,9 +124,12 @@ flowchart TD
   Installer --> Resources[包内 resources 与 manifest]
   Govern[初始化 govern.py] --> Bundle[共享目录与导航片段]
   Main[Main 按用户目标选择职责] --> Skills[项目 Skills]
+  Main --> Roles[按任务调用专职角色]
   Skills --> Shared[共享规则、模板和检查工具]
-  Skills --> Roles[按任务调用专职角色]
-  Doc[sdd-doc] --> Check[doc_check.py 只读检查]
+  Skills --> Roles
+  Roles --> Doc[sdd-documenter]
+  Doc --> Shared
+  Doc --> Check[doc_check.py 只读检查]
 ```
 
 图中是逻辑依赖，不预设固定角色轮转或进程划分。具体角色及调用条件沿用[执行协作](../source/project/.agents/sdd/references/delegation.md)。
@@ -136,7 +139,7 @@ flowchart TD
 | 资源构建器 | 读取两组分发源，输出确定性安装树与清单；拒绝已有输出目录，不写用户安装 | [build_release.py](../scripts/build_release.py)、[setup.py](../setup.py) |
 | CLI 与用户级安装器 | 解析 install 和目标 Skills 目录，验证资源与旧安装，暂存替换；不初始化项目 | [cli.py](../src/sdd_init/cli.py)、[installer.py](../src/sdd_init/installer.py) |
 | 项目初始化器 | inspect 盘点；init 校验允许路径、必要资源、角色与入口冲突，合并托管导航、角色引用与忽略规则，创建本地链接；安装互斥、恢复记录及回滚由内部 project_install 模块承担，遵循[已确认边界](#项目安装的互斥与恢复边界) | [初始化 Skill](../source/initializer/SKILL.md)、[govern.py](../source/initializer/scripts/govern.py)、[project_install.py](../source/initializer/scripts/project_install.py) |
-| sdd-doc | 从确认内容与执行证据归并正式文档，维护关联并执行写后检查；模板不授予设计权 | [Skill](../source/project/.agents/skills/sdd-doc/SKILL.md) |
+| sdd-documenter | 从确认内容与执行证据归并正式文档，维护关联并执行写后检查；模板不授予设计权 | [角色](../source/project/.codex/agents/sdd-documenter.toml) |
 | sdd-imp | 交付明确的上游任务，生成并执行同一 Plan／Task 清单，修改代码并完成局部自验 | [Skill](../source/project/.agents/skills/sdd-imp/SKILL.md) |
 | sdd-spec | 对齐需求与验收判据，按原规格形成含验收说明的工单并接续实施 | [Skill](../source/project/.agents/skills/sdd-spec/SKILL.md) |
 | sdd-bugfix | 评估疑似缺陷、验证归因并向 sdd-imp 派单 | [Skill](../source/project/.agents/skills/sdd-bugfix/SKILL.md) |
@@ -160,7 +163,7 @@ flowchart TD
 
 旧治理命令退役，不保留兼容入口或自动迁移机制（2026-11-04 用户确认，替代此前保留兼容的建议）。范围为初始化器及项目共享治理脚本中的旧 start、record、attest、check、finish、commit 命令。初始化使用 inspect／init，文档检查使用 doc_check.py，Git 交付入口见 [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md)。
 
-后续工作使用现行 Skills 及其权威文档；依赖旧命令的调用方需改用现行入口。历史 Spec、Status、证据及基线保留，不因接口退役删除或改写。两处分发源已移除旧命令及专属实现，项目共享脚本保留只读 inspect；既有项目副本须明确升级后生效。详细要求见 Spec FR-024／AC-024，验证事实见[本轮报告](test-reports/install-recovery/2026-11-04.md)。
+后续工作使用现行 Skills、角色及其权威文档；依赖旧命令的调用方需改用现行入口。历史 Spec、Status、证据及基线保留，不因接口退役删除或改写。两处分发源已移除旧命令及专属实现，项目共享脚本保留只读 inspect；既有项目副本须明确升级后生效。详细要求见 Spec FR-024／AC-024，验证事实见[本轮报告](test-reports/install-recovery/2026-11-04.md)。
 
 ## 7. 架构不变量
 
@@ -184,13 +187,13 @@ flowchart TD
 |---|---|
 | 构建与用户级安装 | [安装说明](installation.md)：构建资源 → 随包携带 → install 校验 → 暂存替换 → 返回安装状态 |
 | 项目初始化／升级 | [初始化入口](../source/initializer/SKILL.md)：inspect → init 写前校验 → 合并导航及安装资源 → 核对结果 |
-| 实施与问题闭环 | [spec](../source/project/.agents/skills/sdd-spec/SKILL.md)、[imp](../source/project/.agents/skills/sdd-imp/SKILL.md)、[bugfix](../source/project/.agents/skills/sdd-bugfix/SKILL.md)、[test](../source/project/.agents/skills/sdd-test-loop/SKILL.md)、[Review](../source/project/.agents/skills/sdd-review-code/SKILL.md) 各自定义执行、交接及完成条件，文档由 doc 归并 |
+| 实施与问题闭环 | [spec](../source/project/.agents/skills/sdd-spec/SKILL.md)、[imp](../source/project/.agents/skills/sdd-imp/SKILL.md)、[bugfix](../source/project/.agents/skills/sdd-bugfix/SKILL.md)、[test](../source/project/.agents/skills/sdd-test-loop/SKILL.md)、[Review](../source/project/.agents/skills/sdd-review-code/SKILL.md) 各自定义执行、交接及完成条件，文档由 sdd-documenter 归并 |
 | 部署与 Git 交付 | [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md) 按请求进入 |
 
 `sdd-imp` 的 [Plan 模板](../source/project/.agents/sdd/assets/plan_template.md) 合并了技术实施上下文与可执行 Task 清单，分别对照 Spec Kit 的 [Plan 模板](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/plan-template.md) 和 [Tasks 模板](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/tasks-template.md)。本仓库的 [Quickstart 模板](../source/project/.agents/sdd/assets/quickstart_template.md) 对照上游 [Plan 指令中的 Quickstart 生成规则](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/plan.md#L135)。任务拆分与执行分别对照上游 [Tasks 指令](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/tasks.md) 和 [Implement 指令](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/implement.md)。目标项目运行时按本地 Skill 读取分发模板。
 
 Bug 工作流对照 Spec Kit 的 [Assess](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/extensions/bug/commands/speckit.bug.assess.md)、[Fix](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/extensions/bug/commands/speckit.bug.fix.md) 和 [Test](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/extensions/bug/commands/speckit.bug.test.md)，作为归因、修复与验证的来源参考。当前工单交付、关单和集成测试的边界见 Spec FR-021 与 FR-026。
 
-现有 Skill 和安装说明承担公开操作契约，本轮不另建重复契约或时序正文。测试代码可帮助定位行为覆盖，例如[构建测试](../tests/test_build.py)、[用户安装测试](../tests/test_user_install.py)、[角色测试](../tests/test_roles.py)及[文档检查测试](../tests/test_doc_check.py)；测试文件存在不代表本轮已执行。
+现有 Skill、角色和安装说明承担公开操作契约，本轮不另建重复契约或时序正文。测试代码可帮助定位行为覆盖，例如[构建测试](../tests/test_build.py)、[用户安装测试](../tests/test_user_install.py)、[角色测试](../tests/test_roles.py)及[文档检查测试](../tests/test_doc_check.py)；测试文件存在不代表本轮已执行。
 
 三项边界均已确认，无剩余待决项：项目安装采用[单项目互斥与失败可恢复](#项目安装的互斥与恢复边界)，旧治理命令按[退役边界](#旧治理命令退役边界)处理，环境声明遵循[使用终端与运行条件](#2-使用终端与运行条件)。实施状态见[Plan](plans/install-recovery.md)，验证范围、结果与限制见[本轮报告](test-reports/install-recovery/2026-11-04.md)。

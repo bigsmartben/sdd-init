@@ -1,6 +1,6 @@
 # 文档校验 CLI
 
-统一入口为项目内 `.agents/skills/sdd-workflow/sdd/scripts/doc_check.py`，Python 3.11+，仅依赖标准库，只读、不访问网络、不更新状态或 Gate。sdd-doc 写后执行机械检查，并独立完成语义判断。
+统一入口为项目内 `.agents/skills/sdd-workflow/sdd/scripts/doc_check.py`，Python 3.11+，仅依赖标准库，只读、不访问网络、不更新状态或 Gate。sdd-documenter 写后执行机械检查，并独立完成语义判断。
 
 ## 使用
 
@@ -11,7 +11,7 @@ python -B .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root . specs/pa
 python -B .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root . --format json docs/test-reports
 ```
 
-路径相对 `--root` 解析，也可传入根目录内的绝对路径。目录递归选择 `.md`，排除 `.git`、`.build`、`node_modules`、`.venv`、`__pycache__`；文件去重。范围为空、文件不存在、非 Markdown 文件或路径越出根目录均报错。不追踪到根目录外的符号链接。链接目标仅用于存在性及锚点检查，不自动扩大为全文结构检查；反向引用由 Agent 依据本次变更定位并显式纳入。
+路径相对 `--root` 解析，也可传入根目录内的绝对路径。目录递归选择 `.md`，排除 `.git`、`.build`、`node_modules`、`.venv`、`__pycache__`；文件去重。范围为空、文件不存在、非 Markdown 文件或路径越出根目录均报错。直接检查的文件和目录必须位于根目录内。运行项目已接入的 `.agents/skills/sdd-workflow/sdd/scripts/doc_check.py` 时，允许解析经该共享入口指向同一共享根内的 Markdown。核对托管导航可运行 `python -B .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root . AGENTS.md`。链接检查只核对存在性及锚点；反向引用按本次变更显式纳入。
 
 文本结果逐项输出 `文件:行号: 级别 规则码: 问题`。JSON 包含 `schema_version`、`scope=mechanical_only`、`files`、`diagnostics`、`errors` 和 `warnings`。行号从 1 开始，文件诊断使用项目相对路径；根目录外的输入显示实际路径。
 
@@ -19,7 +19,7 @@ python -B .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root . --format
 
 ## 按章节读取
 
-`--read` 接受一个或多个 `文件#标题锚点`。输出该标题及其正文，到下一个标题为止。需要选取表格行时追加 `:首列值`，多行用逗号分隔。保留该节正文、表头和匹配行。路径与锚点超出支持范围或选定行不存在时返回错误，供调用者核对选择器。读取模式不执行文档检查。
+`--read` 接受一个或多个 `文件#标题锚点`。输出该标题及其正文，到下一个标题为止。标题前的独立 `<a id="...">` 或 `<a name="...">` 空锚点可作为同一章节的别名。需要选取表格行时追加 `:首列值`，多行用逗号分隔。保留该节正文、表头和匹配行。路径与锚点超出支持范围或选定行不存在时返回错误，供调用者核对选择器。读取模式不执行文档检查。
 
 ## 检查范围
 

@@ -14,6 +14,6 @@
 | 重启服务 | 通过既有管理入口重启；无实例则按部署配置启动 |
 | 重复请求 | 回读版本与状态，继续未完成动作，避免重复创建服务 |
 
-需要交接时读取[执行协作](../../../sdd/references/delegation.md)。疑似实现缺陷交 [sdd-bugfix](../../sdd-bugfix/SKILL.md) 评估归因，正式文档归并交 sdd-doc。
+需要交接时读取[执行协作](../../../sdd/references/delegation.md)。疑似实现缺陷交 [sdd-bugfix](../../sdd-bugfix/SKILL.md) 评估归因，正式文档归并交 sdd-documenter。
 
 输出：目标环境与位置、运行版本、服务标识和就绪状态、访问及日志入口、环境修复摘要与剩余阻塞。

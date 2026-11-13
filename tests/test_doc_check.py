@@ -146,6 +146,19 @@ class DocCheckTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 2)
                 self.assertEqual(result.stdout, b'')
 
+    def test_read_english_aliases_used_by_distributed_templates(self):
+        references = CLI.parents[1] / 'references'
+        checker = doc.Checker(references)
+        for path, alias, heading in (
+            ('sdd-repository-governance.md', 'document-and-artifact-locations', '文档与产物落点'),
+            ('sdd-repository-governance.md', 'authoritative-documents', '权威实体'),
+            ('sdd-repository-governance.md', 'testing-scope-constraints', '测试范围约束'),
+            ('prototype.md', 'prototype-scope', '适用范围'),
+        ):
+            with self.subTest(alias=alias):
+                expected = checker.excerpts([f'{path}#{heading}'])
+                self.assertEqual(checker.excerpts([f'{path}#{alias}']), expected)
+
 
 if __name__ == '__main__':
     unittest.main()

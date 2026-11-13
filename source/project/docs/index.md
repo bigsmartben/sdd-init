@@ -9,7 +9,7 @@
 
 - **发现了哪些 Bug，修复后是否已复验关闭？** 沿用 [Issue](../.agents/sdd/assets/issue_template.md) 及编号。评估、归因和派单见 [sdd-bugfix](../.agents/skills/sdd-bugfix/SKILL.md)，修复方案查 [sdd-imp](../.agents/skills/sdd-imp/SKILL.md) 的 Plan／Task，关单依据查原 Issue 引用的局部或集成验证证据。
 
-- **项目的 Code Review Rules 在哪里？** 用户决定维护时机，通过 [sdd-doc](../.agents/skills/sdd-doc/SKILL.md) 按[Code Review Rules](../.agents/sdd/assets/code-review-rules_template.md)生成或更新；首次生成后将此处指向项目规则正文。
+- **项目的 Code Review Rules 在哪里？** 用户决定维护时机，通过 [sdd-documenter](../.agents/sdd/references/delegation.md#文档交接) 按[Code Review Rules](../.agents/sdd/assets/code-review-rules_template.md)生成或更新；首次生成后将此处指向项目规则正文。
 
 - **Code Review Rules 是否落实，检查项偏差是否修复并复核？** 查 Architecture Review Record；初次落盘使用 [Architecture Review Record](../.agents/sdd/assets/review_template.md)，修复方案引用 imp 的 Plan／Task。
 
@@ -17,4 +17,4 @@
 
 - **如何提交、推送或部署？** 使用 [sdd-deliver](../.agents/skills/sdd-deliver/SKILL.md)。启动或重启服务时，从项目运行指南与环境配置定位实际入口。
 
-- **文档写后如何检查？** 使用[文档校验 CLI](../.agents/sdd/references/doc-check.md)检查选定范围的机械问题，语义核对由 sdd-doc 完成。
+- **文档写后如何检查？** 使用[文档校验 CLI](../.agents/sdd/references/doc-check.md)检查选定范围的机械问题，语义核对由 sdd-documenter 完成。

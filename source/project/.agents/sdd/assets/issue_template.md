@@ -1,6 +1,6 @@
 # Issue — <Stable ID and title>
 
-Use sdd-doc to maintain the lifecycle of one Issue from discovery, diagnosis, implementation, and verification evidence. Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). In existing projects, follow the index and update the authoritative record in place. Link the Issue from Test Reports and preserve historical records. Assign a stable, project-unique ID, include the record in handoffs, and reuse it across scenarios and batches. Create an Issue only when there is an issue to track.
+Use sdd-documenter to maintain the lifecycle of one Issue from discovery, diagnosis, implementation, and verification evidence. Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). In existing projects, follow the index and update the authoritative record in place. Link the Issue from Test Reports and preserve historical records. Assign a stable, project-unique ID, include the record in handoffs, and reuse it across scenarios and batches. Create an Issue only when there is an issue to track.
 
 ## 1. Issue Facts
 

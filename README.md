@@ -24,7 +24,7 @@
 | 入口 | 用途 |
 | --- | --- |
 | [sdd-init](source/initializer/SKILL.md) | 初始化或升级项目中的 SDD 资源 |
-| [sdd-doc](source/project/.agents/skills/sdd-doc/SKILL.md) | 整理和维护需求、设计、计划及验证记录 |
+| [sdd-documenter](source/project/.codex/agents/sdd-documenter.toml) | 整理和维护需求、设计、计划及验证记录 |
 | [sdd-spec](source/project/.agents/skills/sdd-spec/SKILL.md) | 对齐需求与验收判据，提供含验收说明的工单并接续实施 |
 | [sdd-imp](source/project/.agents/skills/sdd-imp/SKILL.md) | 接收明确工单，维护 Plan／Task，实施并交付局部证据 |
 | [sdd-bugfix](source/project/.agents/skills/sdd-bugfix/SKILL.md) | 评估疑似缺陷、验证归因并向 imp 派单 |

@@ -4,13 +4,14 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import tomllib
 import unittest
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 from sdd_init.installer import install, shared_directory, snapshot
-from test_build import WORKFLOW, builder, project_files
+from test_build import WORKFLOW, builder, project_files, refresh_manifest
 
 
 class UserInstallTests(unittest.TestCase):
@@ -69,13 +70,61 @@ class UserInstallTests(unittest.TestCase):
         self.assertEqual((worktree / ".codex/config.toml").read_bytes(), refs)
         repos.append(worktree)
         before = [{p.relative_to(repo): p.read_bytes() for p in project_files(repo)} for repo in repos]
-        file = self.resources / "shared/skills/sdd-doc/SKILL.md"
-        file.write_text("new workflow version", encoding="utf-8")
+        role_path = "agents/sdd-documenter.toml"
+        role = self.resources / "shared" / role_path
+        role.write_text(role.read_text(encoding="utf-8") + "\n# new workflow version\n", encoding="utf-8")
         self.change_release()
         self.assertEqual(install(self.resources, self.skills), "Updated")
         for repo, expected in zip(repos, before):
-            self.assertEqual((repo / WORKFLOW / "skills/sdd-doc/SKILL.md").read_text(), "new workflow version")
+            config = repo / ".codex/config.toml"
+            ref = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]["sdd-documenter"]["config_file"]
+            self.assertTrue((config.parent / ref).samefile(shared / role_path))
+            self.assertEqual((config.parent / ref).read_bytes(), role.read_bytes())
             self.assertEqual({p.relative_to(repo): p.read_bytes() for p in project_files(repo)}, expected)
+
+    def test_upgrade_retires_managed_document_skill_and_refreshes_navigation(self):
+        old_release = self.root / "old-release"
+        shutil.copytree(self.resources, old_release)
+        retired = Path("skills/sdd-doc/SKILL.md")
+        old_skill = old_release / "shared" / retired
+        old_skill.parent.mkdir(parents=True)
+        old_skill.write_text("---\nname: sdd-doc\ndescription: Retired document workflow.\n---\n", encoding="utf-8")
+        old_metadata = old_skill.parent / "agents/openai.yaml"
+        old_metadata.parent.mkdir()
+        old_metadata.write_text('interface:\n  display_name: "sdd-doc"\n', encoding="utf-8")
+        old_govern = old_release / "scripts/govern.py"
+        old_govern.write_text(old_govern.read_text(encoding="utf-8").replace(
+            "PROJECT_SKILLS = {", "PROJECT_SKILLS = {\n    'sdd-doc',", 1), encoding="utf-8")
+        old_fragment = old_release / "assets/agents-fragment.md"
+        old_fragment.write_text(
+            f"<!-- sdd-contract-governance:start -->\n[sdd-doc]({WORKFLOW}/{retired.as_posix()})\n"
+            "<!-- sdd-contract-governance:end -->\n", encoding="utf-8",
+        )
+        refresh_manifest(old_release)
+        self.assertEqual(install(old_release, self.skills), "Installed")
+
+        project = self.root / "project"
+        project.mkdir()
+        shared = shared_directory(self.skills)
+        govern = self.skills / "sdd-init/scripts/govern.py"
+        init = [sys.executable, "-B", "-X", "utf8", str(govern), "--root", str(project), "init"]
+        local_text = "# Project guidance\n"
+        agents = project / "AGENTS.md"
+        agents.write_text(local_text, encoding="utf-8")
+        result = subprocess.run(init, capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        workflow = project / WORKFLOW
+        self.assertTrue((workflow / retired).samefile(shared / retired))
+        self.assertIn("[sdd-doc]", agents.read_text(encoding="utf-8"))
+
+        self.assertEqual(install(self.resources, self.skills), "Updated")
+        self.assertFalse((workflow / retired).exists())
+        result = subprocess.run(init, capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        guidance = agents.read_text(encoding="utf-8")
+        self.assertIn(local_text, guidance)
+        self.assertIn("[sdd-documenter]", guidance)
+        self.assertNotIn("[sdd-doc]", guidance)
 
     def test_generated_bytecode_does_not_block_reinstall_or_upgrade(self):
         self.assertEqual(install(self.resources, self.skills), "Installed")

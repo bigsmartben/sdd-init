@@ -10,19 +10,19 @@
 
 ### 目标仓库的 Code Review Rules
 
-用户决定生成或更新时机。收到明确要求后，由 [sdd-doc](../../skills/sdd-doc/SKILL.md#对话结论落盘)归并已确认的设计依据，并登记正文路径。安装、升级或写入 Blueprint 本身不触发规则维护。项目规则供架构 Review 使用，执行证据归该轮审查记录。
+用户决定生成或更新时机。收到明确要求后，由 [sdd-documenter](delegation.md#文档交接)归并已确认的设计依据，并登记正文路径。安装、升级或写入 Blueprint 本身不触发规则维护。项目规则供架构 Review 使用，执行证据归该轮审查记录。
 
 ## 职责与交接
 
 Main 与用户对齐意图，根据已确认的目标和预期结果选择对应 Skill。开工时简述目标、产物与完成条件。Main 汇总结果，核对任务覆盖并接续授权内工作。决定执行者时查[委派与独立性](delegation.md#委派与独立性)，需要交接时读[最小交接](delegation.md#最小交接)。
 
-遇到新决策或授权缺口时，Main 只暂停受影响事项及其依赖，记录待决问题、承接者和恢复条件。待确认事项按[意图对齐](visual-confirmation.md#意图对齐)处理后接续。其余可执行事项继续。正式文档由 [sdd-doc](../../skills/sdd-doc/SKILL.md)按[文档写入规则](document-writing.md)归并。各执行流程提交对应结论和证据。Goal 仅在用户或更高优先级指令明确要求时创建。
+遇到新决策或授权缺口时，Main 只暂停受影响事项及其依赖，记录待决问题、承接者和恢复条件。待确认事项按[意图对齐](visual-confirmation.md#意图对齐)处理后接续。其余可执行事项继续。正式文档由 [sdd-documenter](delegation.md#文档交接)按[文档写入规则](document-writing.md)归并。各执行流程提交对应结论和证据。Goal 仅在用户或更高优先级指令明确要求时创建。
 
 上游在派单前定义交付目标、范围、通过判据及可执行的验收方案，可引用原载体。用户功能和用户可感知的非功能指标按 [sdd-spec](../../skills/sdd-spec/SKILL.md) 从用户操作或调用入口定义，Bug 沿用原 Issue。架构变更引用已确认决定，Review 按 [sdd-review-code](../../skills/sdd-review-code/SKILL.md) 从开发者视角在原检查项定义整改验收方案，由原审查者复核。工单同时涉及用户侧和架构判据时，分别引用对应的判据、执行者及证据。sdd-imp 根据局部自验证据判定 Task 完成，本轮仅要求实施和局部自验时可据此结束。约定的用户验收按上游方案实际取证，集成测试按本轮明确范围进入。Main 核对本轮剩余验收项。
 
-疑似缺陷由 sdd-bugfix 评估、验证归因并在授权内派单。sdd-imp 遇到归因反证时带原编号和新证据退回。修复版本上原场景或等价场景及必要回归的证据，加上所需人工确认，构成 Issue 关闭依据。局部证据满足关闭条件时，sdd-doc 据此关闭原 Issue。需真实组件协同的判据按已明确的集成范围交 sdd-test-loop，剩余缺口记入原 Issue。登记 Issue 不授予后续执行权限，只验收、只评估等限制随交接保留。
+疑似缺陷由 sdd-bugfix 评估、验证归因并在授权内派单。sdd-imp 遇到归因反证时带原编号和新证据退回。修复版本上原场景或等价场景及必要回归的证据，加上所需人工确认，构成 Issue 关闭依据。局部证据满足关闭条件时，sdd-documenter 据此关闭原 Issue。需真实组件协同的判据按已明确的集成范围交 sdd-test-loop，剩余缺口记入原 Issue。登记 Issue 不授予后续执行权限，只验收、只评估等限制随交接保留。
 
-单独请求复验已有修复且原 Issue 判据可由定向局部检查满足时，Main 交 sdd-validator 执行；简单检查可由 Main 执行，要求独立复验时按[委派与独立性](delegation.md#委派与独立性)处理。沿用原 Issue 的验收方案，在指定修复版本上运行原场景或可证明等价的场景及必要回归，记录版本、操作、实际结果和缺口，交 sdd-doc 归并复验批次及原 Issue。只复验时不改实现或测试，不启动实施工单，也不报告集成 Test Gate。
+单独请求复验已有修复且原 Issue 判据可由定向局部检查满足时，Main 交 sdd-validator 执行；简单检查可由 Main 执行，要求独立复验时按[委派与独立性](delegation.md#委派与独立性)处理。沿用原 Issue 的验收方案，在指定修复版本上运行原场景或可证明等价的场景及必要回归，记录版本、操作、实际结果和缺口，交 sdd-documenter 归并复验批次及原 Issue。只复验时不改实现或测试，不启动实施工单，也不报告集成 Test Gate。
 
 ## 工程资产边界
 
@@ -71,7 +71,7 @@ Main 与用户对齐意图，根据已确认的目标和预期结果选择对应
 | Technical Research and Selection Report | 调研问题、候选方案比较、证据引用、选型建议和确认记录。已确认的架构决定归 Blueprint 或项目已有 ADR，实际验证结果归对应 Test Report。 |
 | Spec | 具体需求、业务规则、条件、异常和 AC。引用适用 Blueprint 条款与原型。 |
 | Scenario Sequence / Interface Contract | 设计中的协作顺序、接口语义与异常约定。运行事实归对应 Test Report。 |
-| Quickstart | 可复跑的操作、条件与预期。由上游工单提供；集成测试按 sdd-test-loop 复用并补齐本轮运行信息。正式落盘由 sdd-doc 按需归并。 |
+| Quickstart | 可复跑的操作、条件与预期。由上游工单提供；集成测试按 sdd-test-loop 复用并补齐本轮运行信息。正式落盘由 sdd-documenter 按需归并。 |
 | Test Report / Architecture Review Record | 分别维护实际验证的批次事实和架构检查项的历次证据。 |
 | Issue | 独立问题事实、Bug 工单及处理状态。修复方案引用 Plan／Task。 |
 | Plan／Task、Status | 分别维护实施方案与任务、进度与恢复点。验证结果引用对应报告和版本。 |
@@ -85,7 +85,7 @@ Main 与用户对齐意图，根据已确认的目标和预期结果选择对应
 | 输入与回执入口 | 产物载体 |
 |---|---|
 | 已安装的 `sdd-init` Skill | 目标仓库的托管导航、分发资产和安装回执 |
-| [sdd-doc](../../skills/sdd-doc/SKILL.md) | 项目权威正文和写后诊断 |
+| [sdd-documenter](delegation.md#文档交接) | 项目权威正文和写后诊断 |
 | [sdd-spec](../../skills/sdd-spec/SKILL.md) | 已确认的需求、Spec／AC 引用、需求工单及用户验收文档或引用 |
 | [sdd-imp](../../skills/sdd-imp/SKILL.md) | 接收含验收依据的上游工单，按 Plan／Task 实施，交付版本及代码单测等局部证据 |
 | [sdd-bugfix](../../skills/sdd-bugfix/SKILL.md) | 缺陷评估、归因证据和关联 Issue 的 Bug 工单 |

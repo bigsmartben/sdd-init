@@ -61,7 +61,7 @@ class GovernanceTests(unittest.TestCase):
         self.assertFalse((GOV.parent.parent / "assets/repo-payload.zip").exists())
         self.run_cmd("init")
         self.assertEqual({p.parent.name for p in (self.root / WORKFLOW / "skills").glob("*/SKILL.md")},
-                         {"sdd-doc", "sdd-spec", "sdd-imp", "sdd-bugfix", "sdd-test-loop", "sdd-review-code",
+                         {"sdd-spec", "sdd-imp", "sdd-bugfix", "sdd-test-loop", "sdd-review-code",
                           "sdd-review-prompt", "sdd-deliver"})
         self.assertFalse((self.root / ".agents/skills/sdd-init").exists())
         result = subprocess.run([sys.executable, str(self.root / WORKFLOW / "sdd/scripts/govern.py"),
@@ -133,12 +133,12 @@ class GovernanceTests(unittest.TestCase):
         self.assertNotIn("enabled", result["agents"])
 
     def test_init_protects_same_name_project_skill(self):
-        path = self.root / ".agents/skills/sdd-doc/SKILL.md"
+        path = self.root / ".agents/skills/sdd-spec/SKILL.md"
         path.parent.mkdir(parents=True)
         path.write_text("local customization", encoding="utf-8")
         denied = self.run_cmd("init", ok=False)
         self.assertNotEqual(denied.returncode, 0)
-        self.assertIn("sdd-doc", denied.stderr)
+        self.assertIn("sdd-spec", denied.stderr)
         self.assertEqual(path.read_text(encoding="utf-8"), "local customization")
         self.assertFalse((self.root / WORKFLOW).exists())
 
@@ -250,7 +250,7 @@ class GovernanceTests(unittest.TestCase):
 
     def test_workflows_allow_natural_language_selection(self):
         self.run_cmd("init")
-        for name in ("sdd-doc", "sdd-spec", "sdd-imp", "sdd-bugfix", "sdd-test-loop", "sdd-review-code",
+        for name in ("sdd-spec", "sdd-imp", "sdd-bugfix", "sdd-test-loop", "sdd-review-code",
                      "sdd-review-prompt", "sdd-deliver"):
             metadata = (self.root / WORKFLOW / f"skills/{name}/agents/openai.yaml").read_text(encoding="utf-8")
             self.assertIn("allow_implicit_invocation: true", metadata)

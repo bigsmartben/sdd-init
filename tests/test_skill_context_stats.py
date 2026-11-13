@@ -28,6 +28,6 @@ class ContextStatsTests(unittest.TestCase):
 
     def test_projected_initializer_references_resolve(self):
         result = stats.report(ROOT)
-        self.assertEqual(len(result["skills"]), 9)
+        self.assertEqual(len(result["skills"]), 8)
         for skill in result["skills"]:
             self.assertTrue(all(not ref["missing"] for ref in skill["direct_references"].values()), skill)

@@ -4,13 +4,11 @@
 必须呈现对用户意图的理解并请求确认，不以推断代替确认；已有确认沿用，新增或变化内容重新对齐。具体按[意图对齐](.agents/skills/sdd-workflow/sdd/references/visual-confirmation.md#意图对齐)处理。
 <!-- agent-communication:end -->
 
-## 首要沟通原则：对齐意图
-
-必须呈现对用户意图的理解并请求确认，不以推断代替确认；已有确认沿用，新增或变化内容重新对齐。具体按[意图对齐](source/project/.agents/sdd/references/visual-confirmation.md#意图对齐)处理。
-
 # sdd-init 维护约定
 
 先读 [README](README.md) 的仓库定位与导航；已确认需求统一维护为 Spec，按任务契约确定写入范围和完成条件。
+
+共享链接缺失时，意图对齐的细则见[仓库源码](source/project/.agents/sdd/references/visual-confirmation.md#意图对齐)。
 
 ## 维护边界
 
@@ -37,7 +35,7 @@
 
 | 工作 | 入口 |
 | --- | --- |
-| 固化确认内容与原型文档 | [sdd-doc](.agents/skills/sdd-workflow/skills/sdd-doc/SKILL.md) |
+| 固化确认内容与原型文档 | [sdd-documenter](.agents/skills/sdd-workflow/sdd/references/delegation.md#文档交接) |
 | 需求规格、验收判据与实施交接 | [sdd-spec](.agents/skills/sdd-workflow/skills/sdd-spec/SKILL.md) |
 | 实施需求、缺陷或架构工单并局部自验 | [sdd-imp](.agents/skills/sdd-workflow/skills/sdd-imp/SKILL.md) |
 | Bug 评估、归因与派单 | [sdd-bugfix](.agents/skills/sdd-workflow/skills/sdd-bugfix/SKILL.md) |
@@ -46,5 +44,5 @@
 | 提示词冗余、歧义及行为一致性审查 | [sdd-review-prompt](.agents/skills/sdd-workflow/skills/sdd-review-prompt/SKILL.md) |
 | Git、GitHub／GitLab 交付，部署、启动或重启服务 | [sdd-deliver](.agents/skills/sdd-workflow/skills/sdd-deliver/SKILL.md) |
 
-从本轮任务对应的 Skill 进入，按其触发条件读取相关章节。[场景提示](.agents/skills/sdd-workflow/sdd/references/scenarios.md)用于讨论和定位正文，[执行协作](.agents/skills/sdd-workflow/sdd/references/delegation.md)用于委派或交接。实体模板按产物选用。
+按本轮任务选择入口并读取适用章节。[场景提示](.agents/skills/sdd-workflow/sdd/references/scenarios.md)用于讨论和定位正文，[执行协作](.agents/skills/sdd-workflow/sdd/references/delegation.md)用于委派或交接。实体模板按产物选用。
 <!-- sdd-contract-governance:end -->

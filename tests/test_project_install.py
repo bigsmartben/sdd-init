@@ -170,7 +170,7 @@ tx.replace_file = stop
         self.assertEqual(self.run_init().returncode, 0)
 
     def test_crash_after_link_creation_rolls_back_without_touching_shared_files(self):
-        shared = self.skill / "shared/skills/sdd-doc/SKILL.md"
+        shared = self.skill / "shared/agents/sdd-documenter.toml"
         original = shared.read_bytes()
         self.crash("""
 original = tx.create_workflow_link
@@ -179,7 +179,7 @@ def stop(path, target):
     os._exit(79)
 tx.create_workflow_link = stop
 """)
-        self.assertTrue((self.root / WORKFLOW / "skills/sdd-doc/SKILL.md").samefile(shared))
+        self.assertTrue((self.root / WORKFLOW / "agents/sdd-documenter.toml").samefile(shared))
         (self.root / "AGENTS.override.md").write_bytes(b"block next install")
         result = self.run_init()
         self.assertNotEqual(result.returncode, 0)

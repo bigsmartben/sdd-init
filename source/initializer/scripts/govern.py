@@ -55,7 +55,7 @@ def git(root: Path, *args: str) -> bytes | None:
 
 
 PROJECT_SKILLS = {
-    'sdd-doc', 'sdd-spec', 'sdd-imp', 'sdd-bugfix', 'sdd-test-loop', 'sdd-review-code',
+    'sdd-spec', 'sdd-imp', 'sdd-bugfix', 'sdd-test-loop', 'sdd-review-code',
     'sdd-review-prompt', 'sdd-deliver',
 }
 PROJECT_ROLE_MODELS = {

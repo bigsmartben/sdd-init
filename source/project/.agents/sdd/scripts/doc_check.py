@@ -14,6 +14,7 @@ from urllib.parse import unquote, urlsplit
 SKIP_DIRS = {'.git', '.build', '__pycache__', 'node_modules', '.venv'}
 ID = r'(?:FR|AC|ARC|PUC|PAC|PENV)-\d+|T\d{3,}'
 TABLE_DELIMITER = re.compile(r'\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*')
+SECTION_ALIAS = re.compile(r''' {0,3}<a\s+(?:id|name)=(?:"([^"]+)"|'([^']+)')\s*></a>\s*''')
 
 
 def visible_lines(text: str) -> tuple[list[str], int | None]:
@@ -108,15 +109,27 @@ def anchor_set(lines: list[str]) -> set[str]:
     return {anchor for _, anchor in heading_anchors(lines)} | explicit
 
 
+def section_aliases(source: list[str], visible: list[str], start: int):
+    """Yield standalone anchors immediately preceding the heading."""
+    for index in range(start - 1, -1, -1):
+        if not source[index].strip():
+            continue
+        match = SECTION_ALIAS.fullmatch(visible[index])
+        if not match:
+            break
+        yield match[1] or match[2]
+
+
 def excerpt(text: str, anchor: str, rows: set[str]) -> str:
     """Return the heading and its direct body, with optional table row selection."""
     source = text.splitlines()
     visible, _ = visible_lines(text)
     positions = list(heading_anchors(visible))
+    generated = {name for _, name in positions}
     for i, (number, name) in enumerate(positions):
-        if name != anchor:
-            continue
         start = number - 1
+        if name != anchor and (anchor in generated or anchor not in section_aliases(source, visible, start)):
+            continue
         end = positions[i + 1][0] - 1 if i + 1 < len(positions) else len(source)
         if not rows:
             return '\n'.join(source[start:end]).rstrip()

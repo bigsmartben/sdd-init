@@ -1,6 +1,6 @@
 # Architecture Review Record — <Subject and batch>
 
-> sdd-doc records the initial review, sdd-imp handoff, and recheck results from their respective executors. Use this record to assess architecture conformance and application of Code Review Rules. sdd-imp develops and maintains the fix approach in the Plan. Link the Task from this record.
+> sdd-documenter records the initial review, sdd-imp handoff, and recheck results from their respective executors. Use this record to assess architecture conformance and application of Code Review Rules. sdd-imp develops and maintains the fix approach in the Plan. Link the Task from this record.
 
 Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). Follow the project index for an existing record and maintain one record per review round. Link it from Status or Plan. This record serves as the report for architecture checks.
 

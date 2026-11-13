@@ -29,7 +29,7 @@ python -B -X utf8 .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root .a
 
 按终点授权整段必要操作，不为分支命名、提交信息、push 或平台按钮逐项确认。需要新增外部操作授权时，先准备可审阅的仓库、范围、源／目标及拟执行结果，按[意图对齐](../../../sdd/references/visual-confirmation.md#意图对齐)聚焦该缺口。等待或工具的自动确认参数不是授权。amend/rebase、强推、删除、绕过保护、创建远端仓库或修改权限不包含在普通交付授权中。当前分支不适合承载改动时先解决分支归属；合并冲突需改代码时交 sdd-imp。
 
-远端 Issue 与 PR／MR 只承载协作摘要、关联及交付事实，需求正文仍归 Spec、验证事实归报告、问题处理事实归独立 Issue；只按用户要求或项目既有约定建 Issue，不为每次提交额外创建。独立问题记录中的缺陷 Issue 不自动等同平台 Issue；需要同步时关联独立记录、原编号与报告，关闭依据原 Issue 的验证结论及任务授权。需要角色交接时读取[执行协作](../../../sdd/references/delegation.md)。代码整改交给 sdd-imp，正式文档或 Status 更新交给 sdd-doc。
+远端 Issue 与 PR／MR 只承载协作摘要、关联及交付事实，需求正文仍归 Spec、验证事实归报告、问题处理事实归独立 Issue；只按用户要求或项目既有约定建 Issue，不为每次提交额外创建。独立问题记录中的缺陷 Issue 不自动等同平台 Issue；需要同步时关联独立记录、原编号与报告，关闭依据原 Issue 的验证结论及任务授权。需要角色交接时读取[执行协作](../../../sdd/references/delegation.md)。代码整改交给 sdd-imp，正式文档或 Status 更新交给 sdd-documenter。
 
 输出：实际达到的终点、平台对象链接、SHA／分支、检查或审批状态及阻塞；区分已推送、请求已创建、等待检查／审批、排队／自动合并及已合并。
 

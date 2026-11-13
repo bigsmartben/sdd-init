@@ -1,6 +1,6 @@
 # Test Report — <Subject and batch>
 
-sdd-doc completes this report from the confirmed goals, scope, and criteria, the executor's preparations based on them, and actual evidence. State the verification type: requirements acceptance, integration verification, local verification by the implementer, feasibility verification, Bug diagnosis, or retest. Use the [Architecture Review Record template](review_template.md) for architecture conformance.
+sdd-documenter completes this report from the confirmed goals, scope, and criteria, the executor's preparations based on them, and actual evidence. State the verification type: requirements acceptance, integration verification, local verification by the implementer, feasibility verification, Bug diagnosis, or retest. Use the [Architecture Review Record template](review_template.md) for architecture conformance.
 
 Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). Follow the existing project index. For a simple Task, use this structure in the current Task record. Preserve historical paths and versions.
 
