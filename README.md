@@ -22,7 +22,7 @@
 | 入口 | 用途 |
 | --- | --- |
 | [sdd-init](source/initializer/SKILL.md) | 初始化或升级项目中的 SDD 资源 |
-| [sdd-documenter](source/project/.codex/agents/sdd-documenter.toml) | 整理和维护需求、设计、计划及验证记录 |
+| [文档写入规则](source/project/.agents/sdd/references/document-writing.md#按对象读取与语义核对) | 查找各类产物归并使用的模板和核对要点 |
 | [sdd-develop](source/project/.agents/skills/sdd-develop/SKILL.md) | 单个需求的规格、实施及点对点验收 |
 | [sdd-coder](source/project/.agents/sdd/references/delegation.md#实施交接) | 接收明确工单，维护 Plan／Task，实施并交付局部证据 |
 | [sdd-bugfix](source/project/.agents/skills/sdd-bugfix/SKILL.md) | 按请求恢复指定行为，验证归因、修复并定向复验 |
