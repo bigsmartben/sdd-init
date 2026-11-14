@@ -38,7 +38,7 @@ Use PACs for product quality dimensions. Refer to Spec ACs for specific conditio
 
 ## 5. Deployment and Runtime Boundaries
 
-Use a deployment view to show hosts, runtimes, storage, services, networks, and trust boundaries. A Mermaid flowchart can depict this view. A Mermaid flowchart is a deployment view expressed outside UML syntax. Describe host assembly, shared core, server, and example boundaries here. Identify separate processes only when the deployment design calls for them. Link existing engineering documentation for source directories and build entry points.
+Use a deployment view to describe the project's confirmed deployment units and runtime boundaries. A Mermaid flowchart can depict this view. A Mermaid flowchart is a deployment view expressed outside UML syntax. Identify separate processes only when the confirmed deployment design calls for them. Link existing engineering documentation for source directories and build entry points.
 
 Record confirmed design strategies, rationale, costs, and applicable conditions. Link the relevant PUCs and PACs, and refer to the Spec for product quality criteria.
 
