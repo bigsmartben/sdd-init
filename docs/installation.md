@@ -46,7 +46,7 @@ uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固�
 
 ## 开发验证
 
-需要在发布前试用当前检出版本时，从本仓库根目录运行 `uvx --from . sdd-init install`。下列验证命令使用临时用户和项目目录。
+在本仓库根目录构建并运行回归检查。安装冒烟测试将当前构建的 wheel 安装到临时 Skill 目录，并在独立的临时项目中验证接入。
 
 ```powershell
 uv build --out-dir .build/dist
