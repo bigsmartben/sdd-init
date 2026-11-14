@@ -1,0 +1,28 @@
+{
+  "phase": "T001 coder local verification",
+  "base_head": "89df9f629407a6b572c6f65c87fc9768e0f52f5d",
+  "python": "3.12.3",
+  "sqlite": "3.45.1",
+  "source_sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "4a03e8d39ef106a5037404562a931aad9009a1bb579304daa15f820983de6909",
+    "tests/test_order.py": "2fc39d9f577b4c49ee7cab6fcb02f042ecc3bcaa3db07c150ea8fc8f2449e485"
+  },
+  "frozen_integration_sha256": "496fa99f09e2c5d0796678ac580ffa49553e155f266a68673b68e58e93e1bc99",
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-v"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "test_cancelled_submit_does_not_write_or_commit (test_order.OrderTests.test_cancelled_submit_does_not_write_or_commit) ... ok\ntest_closed_connection_errors_propagate (test_order.OrderTests.test_closed_connection_errors_propagate) ... ok\ntest_database_errors_propagate (test_order.OrderTests.test_database_errors_propagate) ... ok\ntest_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_missing_operations_raise_without_write_or_commit (test_order.OrderTests.test_missing_operations_raise_without_write_or_commit) ... ok\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\ntest_orders_are_isolated (test_order.OrderTests.test_orders_are_isolated) ... ok\ntest_other_existing_statuses_still_submit (test_order.OrderTests.test_other_existing_statuses_still_submit) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.114s\n\nOK\n",
+  "limits": "Local unit verification only; independent Bugfix retest, integration and architecture recheck pending."
+}

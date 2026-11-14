@@ -1,0 +1,141 @@
+{
+  "utc": "2026-11-14T16:25:21.032794+00:00",
+  "head": "a8f4cf7154b9e81d9b4ab62b8cd0cecddb36eec5",
+  "source_sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "c4a9e5b0789129c89bb71387e2aaed619944d115aff5a53c7fb5320fcbff88ae"
+  },
+  "matches_bugfix_snapshot": true,
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "sqlite": "3.45.1",
+  "imports": {
+    "src/__init__.py": [],
+    "src/order_service.py": [],
+    "src/storage.py": [
+      "import sqlite3"
+    ],
+    "src/ui.py": [
+      "from . import order_service"
+    ]
+  },
+  "write_locations": {
+    "src/__init__.py": [],
+    "src/order_service.py": [
+      {
+        "line": 7,
+        "sql": "INSERT INTO orders VALUES (?, ?)"
+      },
+      {
+        "line": 20,
+        "sql": "UPDATE orders SET status = ? WHERE order_id = ?"
+      }
+    ],
+    "src/storage.py": [
+      {
+        "line": 7,
+        "sql": "CREATE TABLE IF NOT EXISTS orders (order_id TEXT PRIMARY KEY, status TEXT NOT NULL)"
+      }
+    ],
+    "src/ui.py": []
+  },
+  "runtime": {
+    "environment": "isolated-local-fixture",
+    "database": "per-scenario temporary SQLite file",
+    "external_endpoint": null,
+    "external_call_authorized": false,
+    "network_access_in_this_run": false
+  },
+  "observations": [
+    {
+      "case": "cancelled-submit",
+      "return": false,
+      "sql": [
+        "SELECT status FROM orders WHERE order_id = 'a'"
+      ],
+      "reopened_status": "cancelled"
+    },
+    {
+      "case": "paid",
+      "from": "pending",
+      "second_connection_status": "paid"
+    },
+    {
+      "case": "paid",
+      "from": "cancelled",
+      "second_connection_status": "paid"
+    },
+    {
+      "case": "paid",
+      "from": "submitted",
+      "second_connection_status": "paid"
+    },
+    {
+      "case": "paid",
+      "from": "paid",
+      "second_connection_status": "paid"
+    },
+    {
+      "case": "missing_paid",
+      "exception": "ValueError"
+    },
+    {
+      "case": "create_actual_sqlite_commit_denial",
+      "exception": "DatabaseError",
+      "message": "not authorized",
+      "denied": [
+        "COMMIT"
+      ],
+      "second_connection_status": "pending",
+      "row_count": 1,
+      "pending_transaction": true
+    },
+    {
+      "case": "cancel_actual_sqlite_commit_denial",
+      "exception": "DatabaseError",
+      "message": "not authorized",
+      "denied": [
+        "COMMIT"
+      ],
+      "second_connection_status": "pending",
+      "row_count": 1,
+      "pending_transaction": true
+    },
+    {
+      "case": "submit_actual_sqlite_commit_denial",
+      "exception": "DatabaseError",
+      "message": "not authorized",
+      "denied": [
+        "COMMIT"
+      ],
+      "second_connection_status": "pending",
+      "row_count": 1,
+      "pending_transaction": true
+    },
+    {
+      "case": "set_status_actual_sqlite_commit_denial",
+      "exception": "DatabaseError",
+      "message": "not authorized",
+      "denied": [
+        "COMMIT"
+      ],
+      "second_connection_status": "pending",
+      "row_count": 1,
+      "pending_transaction": true
+    },
+    {
+      "case": "mark_paid_actual_sqlite_commit_denial",
+      "exception": "DatabaseError",
+      "message": "not authorized",
+      "denied": [
+        "COMMIT"
+      ],
+      "second_connection_status": "pending",
+      "row_count": 1,
+      "pending_transaction": true
+    }
+  ],
+  "temp_path": "/tmp/sdd-review-execution-pmn5ndse/collaboration_workflow-xsqho94x/scratch/tmpdbzhq6dg",
+  "cleanup_complete": true
+}

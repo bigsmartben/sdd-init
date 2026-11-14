@@ -1,0 +1,20 @@
+{
+  "fixture_generator_sha256": "e9f6eb360ae2dc8d60f2f4d0526abd834519e2be51fd71ef539e5ff2dd8a9281",
+  "fixture_simulator_sha256": "6a21c9425805a81e56fc8c492926346bc9b94013e32be1bad4747099c08c6474",
+  "current_release_manifest_sha256": "4df59f14ac34ab2b8e9eb16ce10593ed24706070949396e3ca135b5bcd80d727",
+  "initial_fixture_files": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "e95d50cbf7776c1f251e4db8647a8404317f1e8aa7e45ee5e2b85671e97ddd94",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "d56ff105618d37c8ab39ff9845b05583d62200f744209988a4eb648fac541309",
+    "README.md": "c01ae387272731f70dfbeb3faea0e90db2c9ba05fab046241a9068d96bd9ad25",
+    "TASK.txt": "7576b56830eaf52e5b21a03d122564710f3ff20d585ab9e19d95a1fe21aaa70f",
+    "docs/evidence/qualification.md": "e56c509987c7f5d2eaf3aa3ecd71b1ec849dc7777f07ffd5ba716aa0759b18b7",
+    "docs/evidence/review.json": "8604305a11b0a5ed72f3df266115bdef59461ca64b552b8495d234ad269fb176",
+    "docs/index.md": "f39dfee108743d35a515f4e8f41eff3b3d705cbc8726118b8e3290b22ddf1615",
+    "docs/runbooks/orders.md": "8dc689628b04be5dd2346529aac76a00eb9b4293fff06ba3ac6b853e6747d6e5",
+    "ops/sim.py": "6a21c9425805a81e56fc8c492926346bc9b94013e32be1bad4747099c08c6474",
+    "ops/state.json": "88809d8fb77b853a3a234b0e2486639486e25b1bd5e35a8f8f705196d0aa5554"
+  }
+}

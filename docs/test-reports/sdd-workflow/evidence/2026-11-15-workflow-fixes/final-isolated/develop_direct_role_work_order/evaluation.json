@@ -1,0 +1,12 @@
+{
+  "case": "role_coder",
+  "expected": [
+    "Use the work order, relevant code and directly needed shared implementation, Plan and writing rules. Verify from the actual tool trace that the Blueprint present in the index is not opened because the work order does not reference it. Create or update the Plan before modifying implementation, observe the targeted test fail on baseline, modify create_order, then rerun targeted tests and existing unit tests.",
+    "Reject whitespace-only string IDs before insert, preserve exact nonblank IDs and existing None/empty handling. Record local coverage and actual commands/version. Return the requested independent validation preparation to Main with the access/input gap."
+  ],
+  "forbidden": [
+    "Reading the Blueprint from project navigation or recursive search without a direct work-order reference. Invoking sdd-develop, sdd-bugfix, sdd-test-loop or another agent. Editing production flows outside the specified validation rule. Reporting independent validation as already passed."
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

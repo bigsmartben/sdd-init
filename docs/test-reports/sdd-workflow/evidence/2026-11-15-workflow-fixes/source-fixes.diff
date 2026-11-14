@@ -1,0 +1,523 @@
+--- before/source/initializer/assets/agents-fragment.md
++++ final-v2/source/initializer/assets/agents-fragment.md
+@@ -3,7 +3,7 @@
+ 
+ 本项目使用共享 SDD 工作流。缺少本地链接时，运行 sdd-init 接入。项目资料从已有文档索引定位，通常为 docs/index.md。
+ 
+-Main 面向用户负责入口选择、阶段调度和交付。按[仓库治理规范](.agents/skills/sdd-workflow/sdd/references/sdd-repository-governance.md)判断适用 Skill、可直接执行的局部操作及阶段授权。选定阶段后，按[启动与接续](.agents/skills/sdd-workflow/sdd/references/delegation.md#技能-agent-的启动与接续)交给独立技能 Agent；技能 Agent 组织阶段内工作、调度专业角色，将跨阶段事项和用户决定交回 Main。
++Main 面向用户负责入口选择、阶段调度和交付。按[仓库治理规范](.agents/skills/sdd-workflow/sdd/references/sdd-repository-governance.md)判断适用 Skill、局部操作、直接委派和阶段授权。选定阶段后，按[启动与接续](.agents/skills/sdd-workflow/sdd/references/delegation.md#技能-agent-的启动与接续)交给独立技能 Agent；技能 Agent 组织阶段内工作、调度专业角色。派单时写明实际调用者。同层协作由共同上层传递，跨阶段事项和用户决定交 Main。
+ 
+ ## Skill 入口
+ 
+--- before/source/initializer/assets/managed-agents-history.json
++++ final-v2/source/initializer/assets/managed-agents-history.json
+@@ -17,7 +17,8 @@
+     "2039d38d12a8610aa3acff3aa553e2d5d66bb495caf19f9a87f53503cc2d32b4": "4155037",
+     "0a64bc680859f1ce4a6349833f1bec545a70f5a16aab39502be0f9be0c25c8c4": "3fe1e2c",
+     "eb3287edacad0227cfc310a9c0cbc97bf5aea3ae9d52d0ee405b6bfeeeb82ada": "6af5012",
+-    "ddf6e67b6f95b81e4340e1ee483e0f431febf0146fe8e0eb34247386b496f9ee": "2026-11-14-before-prompt-review-retirement"
++    "ddf6e67b6f95b81e4340e1ee483e0f431febf0146fe8e0eb34247386b496f9ee": "2026-11-14-before-prompt-review-retirement",
++    "934a7a6ae8cc6bacb7c8c63528d4ce1ff91dc00421a58d5dc511bb9257d2d12c": "2026-11-14-current-review-baseline"
+   },
+   "communication-fragment.md": {
+     "3c2843e0f97e1bac3aef3b2194c2e16e9e1097472d7a8cf66eef463ff22d2fe6": "4449c08",
+--- before/source/project/.agents/sdd/assets/prototype_reference_template.md
++++ final-v2/source/project/.agents/sdd/assets/prototype_reference_template.md
+@@ -2,7 +2,7 @@
+ 
+ Use when the [Prototype Scope](../references/prototype.md#prototype-scope) applies. Link the prototype from the relevant use case and describe its scope and simulated conditions.
+ 
+-Use [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations) to locate the prototype code and reference. Use a medium-fidelity HTML prototype to demonstrate key user-visible actions, exception paths, and differences between candidates. Compare with the integrated version during Review.
++Use [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations) to locate the prototype code and reference. Use a medium-fidelity HTML prototype to demonstrate key user-visible actions, exception paths, and differences between candidates. Use the confirmed prototype as a reference for applicable [requirements acceptance or integration scenarios](../references/prototype.md#正式实现中的复用).
+ 
+ - **Preview** — <Accessible URL and any access instructions>
+ - **Source and version** — <Dedicated prototype path and fixed commit or SHA resolved from a tag. Match the preview version.>
+--- before/source/project/.agents/sdd/assets/review_template.md
++++ final-v2/source/project/.agents/sdd/assets/review_template.md
+@@ -43,4 +43,4 @@
+ 
+ - **Review Gate** — <Architecture recheck result, scope, and snapshot supported by the applicable checks>
+ - **Remaining work and next actions** — <Check IDs, specific problems, resumption conditions, and current assignees if known, or None>
+-- **Integration readiness after refactoring** — <Deliverable version, affected paths, behavior-preservation acceptance result and evidence, setup, entry points and any unmet prerequisites. The Test Report records the integration Test Gate for the final release candidate.>
++- **Integration readiness after refactoring** — <Candidate version, affected paths, setup, entry points, and whether the authorized scenarios can run. List actual test prerequisites, blocked scenarios, and resumption conditions. Record open review and behavior items with their actual effect on testing. Link the integration Test Gate and formal release evidence separately when available.>
+--- before/source/project/.agents/sdd/assets/spec_template.md
++++ final-v2/source/project/.agents/sdd/assets/spec_template.md
+@@ -1,12 +1,12 @@
+ # Spec — {CAPABILITY} (Current Requirements)
+ 
+-> Use this template for detailed capability requirements. Find authoritative product-wide UML use cases, supported clients, key experience principles, and key BDD acceptance scenarios through the project index. Keep a single product-wide Blueprint.
++> Use this template for detailed capability requirements. Use the applicable product-wide use cases, supported clients, experience principles, and acceptance scenarios from the project index when available. A scoped work order may use its own confirmed criteria and other accessible authoritative sources.
+ 
+ Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). Update the existing authoritative Spec identified in the project index.
+ 
+ ## 1. References and Scope
+ 
+-- **Product use cases and key acceptance scenarios** — <Link the Blueprint PUCs and PACs>
++- **Product use cases and key acceptance scenarios** — <Link applicable Blueprint PUCs and PACs, or cite the confirmed work order, Spec, or contract that defines this scope and criteria.>
+ - **Capability scope and exclusions** — <Detail the scope of this capability within the product scope>
+ - **Applicable environments** — <Link the product environments and add only capability-specific conditions>
+ 
+@@ -14,13 +14,13 @@
+ 
+ - FR-001: <Confirmed, observable behavior and applicable conditions. Preserve existing IDs.>
+ 
+-Record the requirements contract. Keep specific technical solutions, design patterns, internal classes, methods, and algorithms in their owning design or implementation artifacts. Expand the high-level use cases and acceptance dimensions in the Blueprint PUCs and PACs. Use the applicable AC for detailed conditions, thresholds, and pass criteria.
++Record the requirements contract. Keep specific technical solutions, design patterns, internal classes, methods, and algorithms in their owning design or implementation artifacts. Detail the applicable use cases and acceptance dimensions from the sources above. Use the applicable AC for detailed conditions, thresholds, and pass criteria.
+ 
+ ## 3. Detailed Acceptance Criteria
+ 
+ | ID | Given (precondition) | When (trigger) | Then (outcome and pass criteria) | Requirement / Product scenario | Evidence type |
+ |---|---|---|---|---|---|
+-| AC-001 | <Condition> | <Action> | <Behavior and applicable quality criteria, or a link to their authoritative source> | <FR / PAC> | <Required evidence> |
++| AC-001 | <Condition> | <Action> | <Behavior and applicable quality criteria, or a link to their authoritative source> | <FR / applicable scenario or work order reference> | <Required evidence> |
+ 
+ Define user-facing acceptance from the user or caller entry point. For user-observable quality metrics, the applicable AC records or links the confirmed measurement conditions, statistical definition, and threshold.
+ 
+--- before/source/project/.agents/sdd/assets/status_template.md
++++ final-v2/source/project/.agents/sdd/assets/status_template.md
+@@ -8,21 +8,21 @@
+ 
+ ## Requirements Acceptance
+ 
+-Link the corresponding Test Report and the applicable scenarios or ACs. For integration regression, reference the Quickstart used for that run. Record current progress and relevant conclusions. The report holds the actual versions, environment, data, scenario results, evidence, retests, and human feedback. Preserve original records and their version associations. Record automated verification and human confirmation separately. In the table below, Evidence links to the relevant report entry. Keep historical records and retain the Snapshot column's historical meaning. This table preserves the historical format. Quickstart execution and acceptance use their own criteria. The retired governance commands are unavailable. Leave fingerprints out of new records.
++Link the current candidate and relevant scenario or AC results in the actual Test Report or task evidence. Reference the Quickstart for integration regression. Record automated verification and human confirmation separately. Preserve historical records and their original version associations.
+ 
+-| ID | Result | Evidence | Snapshot |
+-| --- | --- | --- | --- |
++| ID | Result | Evidence |
++| --- | --- | --- |
+ {ROWS}
+ 
+ ## Architecture Constraint Verification
+ 
+-| ID | Result | Evidence | Snapshot |
+-| --- | --- | --- | --- |
++| ID | Result | Evidence |
++| --- | --- | --- |
+ {ARC_ROWS}
+ 
+ ## Review and Test Gates
+ 
+-Update Review Gate from the Architecture Review Record and Test Gate from the integration Test Report for the candidate version. In Execution Records, link the implementer's local verification from the Plan and the refactoring behavior-preservation acceptance from the Architecture Review Record. After a refactor, record required integration testing as pending until the final release candidate has been tested.
++Update Review Gate from the Architecture Review Record and Test Gate from the integration Test Report for the candidate version. In Execution Records, link the implementer's local verification from the Plan and the refactoring behavior-preservation acceptance from the Architecture Review Record. After a refactor, link the readiness of the runnable candidate separately from review, integration results and formal release requirements.
+ 
+ - Review Gate: UNVERIFIED
+ - Review Evidence: -
+@@ -43,4 +43,4 @@
+ 
+ ## Resumption
+ 
+-- <Minimum information needed to resume. Leave blank if work has not started.>
++- <Use the existing progress record. Follow the [resumption rules](../references/sdd-repository-governance.md#运行状态与接续) and link evidence in its original location. Leave blank if work has not started.>
+--- before/source/project/.agents/sdd/assets/test_report_template.md
++++ final-v2/source/project/.agents/sdd/assets/test_report_template.md
+@@ -2,9 +2,9 @@
+ 
+ Complete this report from the confirmed goals, scope and criteria, the preparation for the run, and the actual evidence. Identify whether the run was requirements acceptance, integration verification, local verification by the implementer, feasibility verification, Bug diagnosis, or a retest. Use the [Architecture Review Record template](review_template.md) for architecture conformance.
+ 
+-Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). Follow the existing project index. For a simple Task, use this structure in the current Task record. Preserve historical paths and versions.
++Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). Follow the existing project index. For a simple or local task, record the applicable facts in the current task record. Preserve historical paths and versions.
+ 
+-Include all eight sections. For a simple Task, record only the facts needed for this run and use precise references to existing material. Explain why a section or field does not apply, or identify missing information and its impact. Existing plans, guides, and cases can supply details when their applicability and any deviations are clear. Adjust links for the report's actual location.
++Use the full structure for integration regression. A simple or local task may use a concise entry with the purpose and criteria, actual version and environment, cases and results, evidence links, and any gaps, impact and resumption conditions. Add human feedback and relevant Issue or prior-run references when applicable. In either form, reuse precise references for applicable plans, guides and cases, identify deviations and retain failed attempts. Adjust links for the record's actual location.
+ 
+ ## 1. Test Goals and Basis
+ 
+--- before/source/project/.agents/sdd/references/delegation.md
++++ final-v2/source/project/.agents/sdd/references/delegation.md
+@@ -1,6 +1,6 @@
+ # 执行与协作
+ 
+-主任务启动技能 Agent，技能 Agent 调度阶段内的专业角色。本文的“调度方”指发出该工单的技能 Agent，或处理技能未覆盖事项的 Main。目标项目通过 `.codex/config.toml` 注册以下角色。专业职责和默认模型查注册所指向的角色定义。
++主任务启动技能 Agent，技能 Agent 调度阶段内的专业角色。本文的“调度方”指实际发出当前工单的 Agent，包括直接承接工单的 Main。目标项目通过 `.codex/config.toml` 注册以下角色。专业职责和默认模型查注册所指向的角色定义。
+ 
+ | 角色 | 能力入口 |
+ |---|---|
+@@ -12,9 +12,10 @@
+ 
+ ## 技能 Agent 的启动与接续
+ 
+-- 新阶段默认由 Main 启动独立技能 Agent。使用 `collaboration.spawn_agent` 时显式传 `fork_turns="none"`，用 `message` 交接所选入口、阶段目标、授权、版本、资料引用和本轮变化。由接单 Agent 读取该 Skill 和适用资料。记下可接续的 Agent 标识及权威产物引用。
+-- 阶段内的补查、确认后的续做、失败修正及复验沿用原技能 Agent。集成测试发现实现缺陷时把受影响项和接续条件交 Main，保留原测试 Agent。Bugfix 阶段按实际授权单独启动，修复后优先将新版本、受影响项和证据引用交回原测试 Agent。原 Agent 无法接续时，用同一阶段的现有工单、状态和有效证据交接给新的技能 Agent。
+-- 技能 Agent 按整个阶段接单，专业角色按完整的专业任务或可交付批次接单。阶段内局部操作由技能 Agent 组织完成。按[最小交接](#最小交接)引用权威正文和已有确认，接续只补增量。阶段授权和用户决定由 Main [按治理协调](sdd-repository-governance.md#阶段授权与推进)。
++- 新阶段由 Main 启动独立技能 Agent。使用 `collaboration.spawn_agent` 时显式传 `fork_turns="none"`，用 `message` 交接所选入口和[最小交接](#最小交接)所需信息。接单 Agent 读取该 Skill 和适用资料。Main 记录可接续的 Agent 标识及权威产物引用。
++- **每次委派写明实际调用者标识及回执接收方。** Agent 只向实际调用者回报，只向自己直接调度的下位执行者派单或补输入。技能 Agent 的调用者是 Main；专业角色的调用者是派单的技能 Agent 或 Main。遇到兄弟 Agent 的问题、结果或协作请求，交实际调用者转接。禁止向同层 Agent 直接发消息、委派、追加输入或以共享文件传指令。共享产物可以按工单读取；新输入由调度方传递，接单方独立核验。
++- 阶段内的补查、确认后的续做、失败修正及复验沿用原技能 Agent。集成测试发现实现缺陷时将受影响项和接续条件交 Main。Main 保存原测试 Agent，按实际授权单独启动 Bugfix。Bugfix 将修复版本、受影响项和证据引用回交 Main，由 Main 续派原测试 Agent；相关架构检查需要这些输入时也由 Main 分发。原 Agent 无法接续时，Main 用同一阶段的现有工单、状态和有效证据交接给新的技能 Agent。
++- 技能 Agent 按整个阶段接单，专业角色按完整的专业任务或可交付批次接单。阶段内局部操作由技能 Agent 组织完成。按[最小交接](#最小交接)引用权威正文和已有确认，接续只补增量。阶段授权和用户决定由 Main [按治理协调](sdd-repository-governance.md#阶段授权与推进)，接续时按[运行状态与接续](sdd-repository-governance.md#运行状态与接续)核对状态。
+ - 多层委派受客户端配置约束。Main 无法启动独立技能 Agent 时，按[阶段授权与推进](sdd-repository-governance.md#阶段授权与推进)报告受影响阶段和恢复条件。仅专业角色不可用时，按[委派与独立性](#委派与独立性)处理。
+ 
+ ## 委派与独立性
+@@ -33,7 +34,7 @@
+ 
+ 调度方按[最小交接](#最小交接)安排已授权的调查或准备，在工单就绪、实施获授权且阶段确认已满足时安排实施。已有需求、缺陷和 Review 工单直接引用可执行的[验收计划与方案](sdd-repository-governance.md#验收计划与方案)。已确认的架构变更或获授权的探索可按各自目标、范围、完成条件和必要依据交办。只规格、只评估、只审查和只验收按用户限定终点交付。
+ 
+-执行者发现必要依据、判据或授权缺失时，按[任务回执](task-receipt.md)先交任务调用者，写明缺项、影响和恢复条件。阶段内由技能 Agent 在职责与授权范围内补齐并接续原工单。涉及跨阶段、需用户决定或超出授权时，由技能 Agent 交 Main 协调。技能未覆盖的工单由直接受理的 Main 处理。受影响项及其依赖按[阶段授权与推进](sdd-repository-governance.md#阶段授权与推进)暂停，其余已就绪且获授权的工作继续。
++执行者发现必要依据、判据或授权缺失时，按[任务回执](task-receipt.md)先交任务调用者，写明缺项、影响和恢复条件。阶段内由技能 Agent 在职责与授权范围内补齐并接续原工单。涉及跨阶段、需用户决定或超出授权时，由技能 Agent 交 Main 协调。直接委派的工单由受理回执的 Main 处理。受影响项及其依赖按[阶段授权与推进](sdd-repository-governance.md#阶段授权与推进)暂停，其余已就绪且获授权的工作继续。
+ 
+ ## 文档交接
+ 
+@@ -47,7 +48,7 @@
+ 
+ | 交接方向 | 交付内容与责任 |
+ | --- | --- |
+-| Main → 技能 Agent | 给出用户目标、仓库及环境、版本或确定方式、授权终点、写入与恢复边界、已确认或已告知事项、依据与完成条件。收到需用户处理的事项后负责呈现和取回结论，将反馈交回原技能 Agent。 |
++| Main → 技能 Agent | 给出用户目标、仓库及环境、版本或确定方式、授权终点、操作与恢复边界、已确认或已告知事项、依据与完成条件。收到需用户处理的事项后负责呈现和取回结论，将反馈交回原技能 Agent；直接委派角色时交回原角色。 |
+ | 技能 Agent → 角色 | 按[交付与运行规则](delivery.md)核对本轮输入和依赖，交办完整的专业任务或组合批次，给出对象、版本、步骤范围、前置状态、证据引用、适用确认、写入边界和每项完成条件。接续只补反馈及受影响步骤。 |
+ | 专业角色 → 任务调用者 | 提供评估、待决问题及依据。执行后按[任务回执](task-receipt.md)提供实测对象、版本、覆盖、操作回执、证据、未完成项及恢复条件。按同一工单复查、修正和复验。 |
+ | 技能 Agent → Main | 提交待告知的部署评估和待用户确认的事项，说明判断依据、影响及可执行的接续条件。核对本轮终点和覆盖后汇总实际状态、版本、证据、恢复结果与跨阶段事项，供 Main 核对整体交付和协调接续。 |
+@@ -58,11 +59,11 @@
+ | 运行检查或发布结果核验 | 技能 Agent 或合格执行者依据目标状态、版本关联、健康与约定冒烟检查 | 实测结果、版本、覆盖、证据及异常 |
+ | 运行指南、发布依据或证据引用疑似矛盾 | 按需安排 `sdd-doc-consistency` 或合格执行者，提供指定范围、疑点和权威依据供只读核对 | 位置、权威依据、影响及缺口 |
+ 
+-按[委派与独立性](#委派与独立性)选择角色或直接承接。用户决定、生产确认及部署告知按[执行前确认与部署评估](delivery.md#执行前确认与部署评估)经 Main 往返。执行者核对回传信息满足当前步骤的前置条件后接续。待选路径、权限缺口及发布证据缺口随事实和恢复条件回报，跨阶段事项由 Main 协调。
++按[委派与独立性](#委派与独立性)选择角色或直接承接。部署评估和待确认事项沿原调用链上报，由 Main 告知用户并取得必要决定。告知或确认结果沿原调用链回传，执行者按[执行前确认与部署评估](delivery.md#执行前确认与部署评估)核对适用范围后接续。待选路径、权限缺口及发布证据缺口随事实和恢复条件回报，跨阶段事项由 Main 协调。
+ 
+ ## 最小交接
+ 
+-技能 Agent 与专业角色的委派至少给出任务目标、授权、写入边界、必要输入和完成条件。给出目标版本及必要的环境信息，写入边界和完成条件可用有效引用明确。未落盘的确认结论及授权附必要原意。接续时引用已有记录，只传本轮变化、被替代的要求和需处理的缺项，完整背景和权威正文留在原位置。
++技能 Agent 与专业角色的委派至少给出任务目标、范围与排除项、授权终点、写入边界、必要输入和完成条件，以及会影响执行的已知待决事项。给出目标版本及必要的环境信息，写入边界和完成条件可用有效引用明确。未落盘的确认结论及授权附必要原意。接续时引用已有记录，只传本轮变化、被替代的要求和需处理的缺项，完整背景和权威正文留在原位置。
+ 
+ | 执行范围 | 按需补充的输入 | 返回重点 |
+ |---|---|---|
+@@ -73,7 +74,7 @@
+ | 交付与运维 | 授权终点、目标、入口、版本、已有平台和环境状态、适用发布证据和恢复授权 | 实际终点、对象、版本和运行证据、待选路径、恢复结果或接续条件 |
+ | 文档一致性 | 文档范围、主题或疑点、已有索引及权威依据 | 证据位置、问题、影响、建议和待核实项 |
+ 
+-集成测试、点对点验收、缺陷归因及复验和架构 Review 由调度方在对应阶段安排。提供适用的需求、原 Issue 或原检查项、版本环境和可复用证据，接收逐项结果及缺口。缺陷归因反证或修复后失败沿原编号在已授权的 Bugfix 范围内接续。复验和复核沿用原判据。集成测试需补充或修正测试代码、数据、环境时，调度方按阶段授权明确测试资产或环境的写入边界，安排相应能力并回收自验和就绪证据；测试执行者用原判据重跑。集成测试发现的产品代码缺陷、需另行决定的设计与正文冲突，随证据交 Main 协调。
++集成测试、点对点验收、缺陷归因及复验和架构 Review 由调度方在对应阶段安排。提供适用的需求、原 Issue 或原检查项、版本环境和可复用证据，接收逐项结果及缺口。缺陷归因反证或修复后失败沿原编号在已授权的 Bugfix 范围内接续。复验和复核沿用原判据。集成测试的测试资产和环境准备按 [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md#本轮闭环) 执行。集成测试发现的产品代码缺陷、需另行决定的设计与正文冲突，随证据交 Main 协调。
+ 
+ 续派按[证据与复用](sdd-repository-governance.md#证据与复用)沿用仍适用的证据。调度方回收并核对[任务回执](task-receipt.md)，按[阶段回执](sdd-repository-governance.md#阶段回执)汇总本轮结果。
+ 
+--- before/source/project/.agents/sdd/references/delivery.md
++++ final-v2/source/project/.agents/sdd/references/delivery.md
+@@ -18,15 +18,15 @@
+ 
+ 确认与告知的传递见[交付与运维交接](delegation.md#交付与运维交接)。
+ 
+-- **生产操作。** 先从项目配置、运行指南和已有记录判明实际环境与触发链。直接对生产环境执行的操作和间接触发生产操作的步骤，均须在执行或触发前核对覆盖本次操作的明确人工确认。适用于生产查询、排障和恢复，也适用于会触发生产操作的推送、合并、打标签、流水线等入口。已有人工确认覆盖本轮对象、版本、操作范围和影响时沿用。实质变化时先重新确认受影响部分。生产影响尚无法判明时暂停可能触发生产操作的步骤。
++- **生产操作。** 先用已获准读取的本地配置、运行指南和已保存证据判明环境、目标及触发链。读取这些既有材料可用于部署评估或发布缺证判断。访问生产实时状态源、生产 API、控制台或运维入口前，须核对覆盖实际对象、版本、所用操作及影响的明确人工确认。边界按数据源和效果判断，覆盖只读状态、监控、日志、在线制品查询和排障，也覆盖通过文件、数据库或其他入口直接读取同一实时数据源。采用本地替身验证生产门禁时，执行器及其正在使用的状态、在线制品和观测数据也按该约定受限。以独立存档和运行指南完成可核对的评估；无法判定是存档或实时来源时，先确认来源属性或等待适用授权。间接触发生产操作的推送、合并、打标签和流水线也须先确认。已有确认覆盖时沿用；只确认查询时，限于相应查询。实质变化时先重新确认受影响部分。入口的生产影响无法判明时暂停该入口，继续获授权的独立取证。
+ - **部署评估。** 首次部署、版本更新、部署回滚等部署类动作，在执行或触发前列出目标环境、服务或实例、目标版本或版本确定方式、适用的配置、路由和数据变更。说明对服务可用性、用户流量、依赖和数据的影响，以及适用的中断风险、回滚条件。间接部署的评估也须在首次触发前给出。
+-- **告知与接续。** 向任务调用者返回部署评估及待确认事项。沿用已告知的有效评估，目标或影响实质变化时更新受影响部分并写入回执。已授权的非生产部署在有依据确认评估已告知且其余前置条件满足后继续。生产部署还须有覆盖本次评估及操作范围的人工确认。
++- **告知与接续。** 按上述交接向实际调用者返回部署评估及待确认事项，经 Main 告知用户并回收适用的确认。沿用已告知的有效评估，目标或影响实质变化时更新受影响部分并写入回执。已授权的非生产部署在有依据确认评估已告知且其余前置条件满足后继续。生产部署还须有覆盖本次评估及操作范围的人工确认。
+ 
+ ## 执行与复验
+ 
+ 1. **明确边界。** 从工单、已有确认及项目约定确定适用的仓库、环境、版本、操作范围、终点和恢复授权。沿用既有发布策略、灰度范围、回滚及数据处置决定。目标无法消歧、涉及用户、数据或服务的必要选择、目标或影响实质变化、认证或权限缺口，随依据和影响列入回执。执行工具、命令、顺序、诊断和授权内重试由执行者决定。
+-2. **探测实际状态。** 先利用本地配置和已有资料识别环境及自动入口的连带效果，再按权限核对工具与认证、连接上下文、目标实例、依赖、数据、已有操作和并发变化。生产实时查询须先取得适用的人工确认。复用本任务已有的分支、平台对象和服务实例，保护无关工作区、暂存改动、其他项目资源和持久化数据。
+-3. **核对前置条件。** 确定可执行步骤与缺口，落实适用的[执行前确认及部署评估](#执行前确认与部署评估)。正式发布按[正式发布依据](release-evidence.md)核对项目要求、候选版本和适用证据，同时核验制品来源及环境、依赖和数据兼容性。独立操作适用自身的前置条件。
++2. **探测实际状态。** 先利用本地配置和已有资料识别环境及自动入口的连带效果，再按[生产操作的确认边界](#执行前确认与部署评估)核对工具与认证、连接上下文、目标实例、依赖、数据、已有操作和并发变化。复用本任务已有的分支、平台对象和服务实例，保护无关工作区、暂存改动、其他项目资源和持久化数据。
++3. **核对前置条件。** 确定可执行步骤与缺口，落实适用的[执行前确认及部署评估](#执行前确认与部署评估)。正式发布按[正式发布依据](release-evidence.md)核对项目要求、候选版本和适用证据，同时核验制品来源及环境、依赖和数据兼容性。独立操作适用自身的前置条件。若发布依据从获准读取的本地证据已能判定不足，先记录缺口，继续其他已就绪且获授权的独立操作。
+ 4. **执行并回读。** 按实际依赖执行独立或已授权的组合操作，保留步骤回执。每次写入前核对目标、实际版本或对象状态及差异，并发变化时重评估受影响步骤，优先用平台版本约束。按[场景终点](#场景输入与终点)从实际状态取得版本、制品、健康、日志、路由和约定冒烟证据。
+ 5. **处理失败。** 失败、超时或结果不明先回读实际状态，再诊断。核对重试、修复或恢复所需的授权及适用的[执行前确认与部署评估](#执行前确认与部署评估)，再修正流水线、部署、环境配置或运维脚本并复验，或按已授权策略恢复。应用缺陷可先按上述条件恢复服务，在回执中记录缺陷、实测证据和恢复结果。待审批或无法继续时记录已完成步骤、影响及恢复条件，暂停受影响项及其依赖，继续其他已就绪且获授权的工作。
+ 
+--- before/source/project/.agents/sdd/references/deployment.md
++++ final-v2/source/project/.agents/sdd/references/deployment.md
+@@ -1,6 +1,6 @@
+ # 发布、环境与服务运行
+ 
+-按[交付与运行规则](delivery.md)确定的终点执行。部署、启动或重启沿用已确认的目标环境，适用共享默认约定时使用 dev。核对实际环境和版本，无法消歧时在回执中记录目标缺口。部署类动作及其自动入口在变更或触发前按[执行前确认与部署评估](delivery.md#执行前确认与部署评估)向用户给出评估并落实适用的确认。
++按[交付与运行规则](delivery.md)确定的终点执行。部署、启动或重启沿用已确认的目标环境，适用共享默认约定时使用 dev。核对实际环境和版本，无法消歧时在回执中记录目标缺口。部署类动作及其自动入口在变更或触发前按[执行前确认与部署评估](delivery.md#执行前确认与部署评估)向实际调用者回报评估，沿[交付与运维交接](delegation.md#交付与运维交接)核对回传的告知及适用确认。
+ 
+ ## 制品与版本发布
+ 
+--- before/source/project/.agents/sdd/references/document-writing.md
++++ final-v2/source/project/.agents/sdd/references/document-writing.md
+@@ -16,19 +16,19 @@
+ 
+ | 对象 | 读取依据与结构参考 | 写后判断点 |
+ |---|---|---|
+-| Spec | 项目索引、权威实体、[Spec](../assets/spec_template.md) | 承接适用高位用例与验收维度；详细行为、条件、异常及 AC 完整；不复制蓝图同层级正文，不把实现缺陷写成需求变化 |
++| Spec | 项目索引、权威实体、[Spec](../assets/spec_template.md) | 承接适用高位用例与验收维度，或引用足以明确本次行为与判据的已确认工单或其他权威依据；详细行为、条件、异常及 AC 完整；不复制蓝图同层级正文，不把实现缺陷写成需求变化 |
+ | Blueprint | [Blueprint](../assets/blueprint_template.md#architecture-modeling-and-assessment) | 按蓝图模板保持产品与架构的高位抽象，准确承接已确认设计，核对内部一致性及实际使用的引用；不将设计分析清单转为新增章节、字段或交付要求；不加载架构规范，不补入其条款或映射，架构符合性归 Review |
+ | Technical Research and Selection Report | [Technical Research and Selection Report](../assets/research_template.md)、适用的需求与设计约束、实际调研材料及证据 | 按需归并调研问题、比较标准、候选方案、依据和取舍，核对证据适用条件及确认来源；建议待确认时标明待决问题，已确认的架构决定归 Blueprint 或项目已有 ADR，实测结果引用对应报告 |
+ | Interface Contract | Architecture Modeling and Assessment、适用 Blueprint／ARC、[Interface Contract](../assets/contract_template.md) | I/O、调用双方、状态与副作用归属、受理／完成及异常语义承接确认内容 |
+ | Scenario Sequence | Architecture Modeling and Assessment、需求与契约、[Scenario Sequence](../assets/sequence_template.md) | 参与者、请求／回执、先后／并发、取消／迟到、未知／恢复承接契约；箭头不暗示未确认成功或同步等待；结果和进度引用报告及 Status／任务 |
+ | Prototype Reference | [原型规则](prototype.md)、[Prototype Reference](../assets/prototype_reference_template.md) | 核对入口、固定版本、模拟边界及确认来源，按适用规则保留历史版本 |
+-| Test Report | [Test Report](../assets/test_report_template.md)、实际执行证据。需核对验收边界时读[测试范围约束](sdd-repository-governance.md#测试范围约束) | 核对必备内容、统计、未执行项和批次归属。Bug 归因、修复自验、定向复验、需求验收及集成回归分别引用对应版本的事实，集成 Test Gate 关联实际目标版本、环境、完整覆盖及未通过原因，人工待验与执行结果分别记录，反馈取自用户 |
++| Test Report | [Test Report](../assets/test_report_template.md)、实际执行证据。需核对验收边界时读[测试范围约束](sdd-repository-governance.md#测试范围约束) | 核对适用字段、未执行项和批次归属；集成测试另核对完整报告结构和统计，简单工单可在原记录保留足够证据。Bug 归因、修复自验、定向复验、需求验收及集成回归分别引用对应版本的事实，集成 Test Gate 关联实际目标版本、环境、完整覆盖及未通过原因，人工待验与执行结果分别记录，反馈取自用户 |
+ | Issue | [Issue](../assets/issue_template.md)、原工单和实际执行证据 | 核对稳定编号、处理历史、验收计划与方案、修复及报告／Task 引用。按[Issue 关单](sdd-repository-governance.md#issue-关单)核对状态、授权及其依据。平台议题按授权单独处理 |
+ | Architecture Review Record | [Architecture Review Record](../assets/review_template.md)、原检查项和实际执行证据 | 在原检查项下维护工单与 Task 引用、验收计划与方案及历次结果。分别关联架构复核与业务行为保持验收的判据、整改版本和证据。Review Gate 依据适用架构检查，实施方案与局部自验归原 Task |
+ | Delivery Record | 已授权的交付或运维终点、项目运行指南、实测回执及适用证据，首次建档用 [Delivery Record](../assets/delivery_record_template.md) | 核对实际版本、环境、目标对象、步骤回执、运行验证与恢复效果。未完成项保留影响及恢复条件，适用的架构或集成结论引用原证据 |
+ | Plan | [Plan](../assets/plan_template.md)、实施执行者的方案、任务与证据 | 保留同一计划及编号，核对上游验收计划与方案的引用、依赖、Task 完成条件、局部证据覆盖与仍待验的判据。Bug Task 引用原 Issue 和归因检查证据，方案、拆分与任务完成判断取自实施执行者 |
+ | Quickstart | [测试范围约束](sdd-repository-governance.md#测试范围约束)、[Quickstart](../assets/quickstart_template.md) | 核对验收产品范围内已确认功能点与场景／AC 的覆盖关系，以及版本、环境、入口、数据、步骤、观察点、通过判据和必要复位。实际结果归 Test Report，报告引用本轮指南 |
+-| Status / Current Task | Test Report、执行者状态；新建时用[Status](../assets/status_template.md) | 报告引用、版本、覆盖及状态对应；只引用逐项结果、Gate 和人工反馈 |
++| Status / Current Task | Test Report、执行者状态；新建时用[Status](../assets/status_template.md) | 按[运行状态与接续](sdd-repository-governance.md#运行状态与接续)更新进度；版本、覆盖及状态与证据对应，逐项结果、Gate 和人工反馈使用引用 |
+ | README / Project Index | 项目权威正文、工程资产规则 | 只定位导航，已有正文不继续指向模板；同步直接受影响入口 |
+ 
+ ## Code Review Rules
+--- before/source/project/.agents/sdd/references/prototype.md
++++ final-v2/source/project/.agents/sdd/references/prototype.md
+@@ -20,4 +20,4 @@
+ 
+ ## 正式实现中的复用
+ 
+-实现对应需求时按[正式实现与测试实现隔离](architecture-rules.md#正式实现与测试实现隔离)复用已确认版本中的选定代码，保留必要验证脚本和版本追溯，按实际实现范围重新验证。
++实现对应需求时按[正式实现与测试实现隔离](architecture-rules.md#正式实现与测试实现隔离)复用已确认版本中的选定代码，保留必要验证脚本和版本追溯。在对应需求的点对点验收或获授权的集成测试中，经正式运行入口核对已确认的结构、交互和业务状态。分别记录 HTML 模拟版本与正式候选的场景和结果。
+--- before/source/project/.agents/sdd/references/sdd-repository-governance.md
++++ final-v2/source/project/.agents/sdd/references/sdd-repository-governance.md
+@@ -4,7 +4,7 @@
+ 
+ ## 人与 Agent 协同及决策权限
+ 
+-项目协作约定指定人的决策权限。业务需求、用例、产品运行条件、非功能指标及集成验收目标由产品决策人确定；系统设计、模块边界及不变量由架构决策人确定；验收范围和改变验收含义的数据选择由项目约定的测试决策人确定。Agent 可在已确认目标、项目约束和授权内决定常规实施、验证与取证细节。
++项目协作约定指定人的决策权限。业务需求、用例、产品运行条件、非功能指标及集成验收目标由产品决策人确定；系统设计、模块边界及不变量由架构决策人确定；验收范围和改变验收含义的数据选择由项目约定的测试决策人确定。Agent 可在已确认目标、项目约束和授权内决定常规实施、验证与取证细节。依据已确认行为可推导的异常、边界和验收覆盖由 Agent 补齐。新增或改变用户可观察的异常结果、业务状态、权限、数据结果或质量承诺时，由相应决策人确认；该边界同样适用于主流程保持的场景。
+ 
+ 技能 Agent 按本阶段规则确定确认对象和时点，向 Main 提供待决内容、依据及影响。Main 面向用户按[意图对齐](visual-confirmation.md#意图对齐)呈现，保留确认并把结论交回原技能 Agent。仍适用的已有确认直接沿用。
+ 
+@@ -24,9 +24,9 @@
+ 
+ ### 选择工作流
+ 
+-用户请求符合现有 Skill 的触发场景和交付目标时，使用对应 Skill，即使预计改动少或耗时短。多个入口可能适用时按交付结果区分，例如恢复已确认行为、保持行为的技术重构、全产品集成验收。部分覆盖时明确边界，余下独立事项由 Main 处理。局部操作按下节判定。
+-
+-项目资料、工单、版本和证据可来自任何合格来源，按实际内容、版本、环境和授权判断是否就绪。技能 Agent 独立完成本阶段，禁止调用其他 Skill、要求其他 Skill 先执行或自行跨阶段交接。属于其他阶段的事项随证据、影响、建议和接续条件交 Main。
++按授权终点选择入口。需要完整阶段交付时，使用对应 Skill，即使预计改动少或耗时短。多个入口可能适用时按交付结果区分，例如恢复已确认行为、保持行为的技术重构、全产品集成验收。只交付明确的局部操作或一份专业产物时，分别按下文判定。部分覆盖时明确边界，余下独立事项由 Main 处理。
++
++项目资料、工单、版本和证据可来自任何合格来源，按实际内容、版本、环境和授权判断是否就绪。技能 Agent 独立完成本阶段，禁止调用其他 Skill、要求其他 Skill 先执行或自行跨阶段交接。属于其他阶段的事项随证据、影响、建议和接续条件交 Main。协调与输入传递按[技能 Agent 的启动与接续](delegation.md#技能-agent-的启动与接续)进行。
+ 
+ ### 直接执行局部操作
+ 
+@@ -42,17 +42,27 @@
+ 
+ 直接执行中发现需要归因、方案取舍或扩大范围时，Main 按实际目标选择并启动适用的技能 Agent，交接已知事实及已执行操作。新范围按授权边界处理。
+ 
++### 直接委派专业角色
++
++授权终点是一项专业产物，且工单的目标、依据、范围、版本、授权与完成条件就绪时，Main 可直接委派合格角色，即使已有适用 Skill。Main 负责派单、接收回执、核对适用的确认与验证、记录仍待验的判据。角色在同样的专业边界内执行。需完整阶段交付时按[选择工作流](#选择工作流)安排；已授权的复验、独立验收或后续阶段仍按本轮约定接续。
++
+ ### 阶段授权与推进
+ 
+-通常一个主任务交付一个技能阶段。集成测试与 Bugfix 往返、重构相关的多技能交付以及其他明确授权的组合由 Main 协调。依照[技能 Agent 的启动与接续](delegation.md#技能-agent-的启动与接续)保存接续依据。
++通常一个主任务交付一个技能阶段。集成测试与 Bugfix 往返、重构相关的多技能交付以及其他明确授权的组合由 Main 协调。开工前在当前工单集中核对目标、范围及排除项、适用约束、验收判据、授权终点和已知待决事项；已有明确依据可直接引用。授权内可通过技术调查与实验消除未知。执行中新事实触及已确认的用户结果、关键约束或授权时，回报证据及受影响的决定。
+ 
+ - **明确授权多个阶段时按指定顺序推进，未授权阶段必须由人显式发起。** 例如“先重构，再集成测试”已经授权两个阶段。Main 按序核对每个阶段的前置和完成条件，保留该阶段适用的确认节点；前置满足即可启动已授权的后续阶段，无须再请求阶段启动许可。
+ - 仅当前阶段完成、下一阶段就绪或发现跨阶段事项，不授予下一阶段权限。Main 返回可选目标及就绪条件，等待用户发起未授权阶段。“继续”按当前唯一明确的待办解释；多个可能阶段导致歧义时，先确认要推进的目标。
+ - 缺少必要输入、能力、证据或授权，或有待决事项时，只暂停受影响项及其依赖。记录具体缺口、影响、承接者和恢复条件，继续其他已授权且就绪的事项。补齐后从受影响处接续，复用仍适用的证据。
+ 
++### 运行状态与接续
++
++长程或需跨轮接续的任务沿用当前工单、Plan／Task 或 Status 中的既有进度载体。Main 在阶段开始、决定或版本实质变化、新增关键阻塞、暂停及交接时更新目标、有效决定与授权、实际版本、进展、证据引用、剩余项及恢复条件。技能 Agent 和角色通过原调用链提供影响状态的变化。接续先核对版本、决定及证据的适用性，继续原工单和仍可复用的证据。
++
++常规进展留在该记录。Main 及时集中呈现需用户决定的事项，含影响、选项和接续条件，并告知关键阻塞、预期变化和最终结果。用户询问进度时据最近记录与仍在运行的状态说明已完成、当前工作、阻塞及下一步。
++
+ ### 技能未覆盖的工作
+ 
+-没有适用 Skill 时，Main 可直接完成能够承接的事项。需要专业能力时，Main 可显式委派现有自定义角色，并负责该事项的工作组织和回执核对。[委派与独立性](delegation.md#委派与独立性)
++没有适用 Skill 时，Main 可直接完成能够承接的事项，也可按[直接委派专业角色](#直接委派专业角色)交付合格工单。
+ 
+ | 场景 | Main 的处理 |
+ |---|---|
+@@ -86,6 +96,8 @@
+ 需求依据 Spec／AC 定义，缺陷归入原 Issue，整改归入原检查项。混合工单分别关联用户侧与架构判据、执行者及证据。直接复用已确认和可执行的内容，从已有依据推导常规步骤、数据与取证方式。根据已确认的主流程、主要体验及交付范围推导需求的具体通过判据。计划和方案应足以确定实施范围和局部自验，并能在条件具备后照方案取证。实际版本、运行入口和结果按取得的事实补记。缺项及涉及用户决定的变化按[实施交接](delegation.md#实施交接)处理。
+ 
+ 点对点验收按工单范围取证，可按判据运行真实组件。集成测试从 Blueprint、Spec／AC 和适用契约推导全功能点覆盖清单，交付可复跑的用户验收文档。可复用工单中的操作或检查步骤。
++
++需要用户实际操作或判断才能成立的判据，执行者在验收记录中列出判据、实际版本与入口、复现步骤、需反馈的观察和缺证影响，沿调用链交 Main。Main 获取反馈并交回原执行者，记录来源及适用版本。执行者按原判据归并实际反馈。必要反馈未到时保留关联项待验、恢复条件及受影响的验收结论，继续其他就绪项。
+ 
+ ## 工程资产边界
+ 
+@@ -177,7 +189,7 @@
+ 
+ 产品缺陷按原 Issue 的判据关单。证据须证明原场景或有依据的等价场景在实际修复版本上恢复、必要回归通过、本次修复引入的问题已解决，并包含判据所需的人工反馈。证据齐备即按本轮状态写入授权关闭原 Issue，引用对应批次。Bugfix 和集成复验适用同一判据。集成测试可提供关单证据，获本轮状态写入授权时可更新原 Issue，整轮 Test Gate 独立判定。
+ 
+-证据缺失时保留待复验或阻塞，写明受影响判据及恢复条件。只能由用户提供的观察结果，在回执中列明取证步骤和所需反馈，由 Main 向用户取证。待确认状态用于需用户决定的事项。
++证据缺失时保留待复验或阻塞，写明受影响判据及恢复条件。需要用户实际操作或判断的结果，按[验收计划与方案](#验收计划与方案)取证。待确认状态用于需用户决定的事项。
+ 
+ ## 交付
+ 
+--- before/source/project/.agents/sdd/references/task-receipt.md
++++ final-v2/source/project/.agents/sdd/references/task-receipt.md
+@@ -1,3 +1,3 @@
+ # 任务回执
+ 
+-向任务调用者说明实际产物和改动、版本、覆盖、可访问的证据、未完成项及接续条件。待确认事项附依据及影响。已经指定的承接者按工单记录。完整日志和报告留在原位置。证据暂无可访问载体时附必要内容。
++向当前工单的实际调用者交回执，按[调用关系](delegation.md#技能-agent-的启动与接续)传递后续事项。说明实际产物和改动、版本、覆盖、可访问的证据、未完成项及接续条件。待确认事项附依据及影响。已经指定的承接者按工单记录。完整日志和报告留在原位置。证据暂无可访问载体时附必要内容。
+--- before/source/project/.agents/skills/sdd-bugfix/SKILL.md
++++ final-v2/source/project/.agents/skills/sdd-bugfix/SKILL.md
+@@ -27,7 +27,7 @@
+ 
+ | 时点与所需能力 | 给定依据 | 回收结果 |
+ | --- | --- | --- |
+-| 核对预期行为，通常由 `sdd-product-manager` 承接 | 原场景、已确认需求和契约、适用历史行为 | 权威依据、恢复目标、场景判据和歧义；待决行为交回 Main |
++| 核对预期行为，通常由 `sdd-product-manager` 承接 | 原场景、已确认需求和契约、适用历史行为 | 权威依据、恢复目标、场景判据和歧义。角色回执交本 Skill；本 Skill 将需用户决定的行为交 Main |
+ | 复现、归因及获授权的实施，通常由 `sdd-coder` 承接 | 原 Issue、版本和入口、适用代码范围、证据与判据 | 复现与归因证据；同一 Plan／Task、改动、版本、局部结果和待验项 |
+ | 运行取证或准备复现环境，通常由 `sdd-devops` 承接 | 目标环境、版本、日志和配置入口、授权操作 | 实际版本、配置和依赖事实、运行证据、复现条件及阻塞 |
+ | 文档依据冲突时，按需选 `sdd-doc-consistency` | 具体疑点、权威依据和指定只读范围 | 差异位置、权威依据、影响及待核实项 |
+@@ -35,4 +35,4 @@
+ 
+ ## 交付边界
+ 
+-修复可跨模块，范围限于指定的行为恢复。可准备已授权的复现环境。独立缺陷登记后带证据交回 Main。新增行为、需求变更、整体架构演化、发布、线上恢复和全产品集成回归由 Main 按[阶段授权与推进](../../sdd/references/sdd-repository-governance.md#阶段授权与推进)协调。
++修复可跨模块，范围限于指定的行为恢复。可准备已授权的复现环境。本 Skill 将独立缺陷随证据回报 Main，是否另行处理按实际授权。新增行为、需求变更、整体架构演化、发布、线上恢复和全产品集成回归由 Main 按[阶段授权与推进](../../sdd/references/sdd-repository-governance.md#阶段授权与推进)协调。
+--- before/source/project/.agents/skills/sdd-develop/SKILL.md
++++ final-v2/source/project/.agents/skills/sdd-develop/SKILL.md
+@@ -9,14 +9,14 @@
+ 
+ ## 从需求到验收
+ 
+-本阶段固定两个[人工确认](../../sdd/references/visual-confirmation.md#意图对齐)节点。技能 Agent 将交付范围、主流程和主要体验交 Main 呈现给用户，按反馈续做并记录确认来源及适用范围。已有有效确认直接沿用。主流程、主要体验或交付范围变化时，以用户能观察的行为与结果在相应节点重新对齐。异常流程、边缘场景、验收覆盖与方法由 Agent 决定。技术方案、接口实现、代码结构及 Task 拆分由实施执行者决定。
++本阶段固定两个[人工确认](../../sdd/references/visual-confirmation.md#意图对齐)节点。技能 Agent 将交付范围、主流程和主要体验交 Main 呈现给用户，按反馈续做并记录确认来源及适用范围。已有有效确认直接沿用。按[决策权限](../../sdd/references/sdd-repository-governance.md#人与-agent-协同及决策权限)推导常规异常、边界和验收覆盖；需要新增或改变用户可观察的业务结果时，将差异、影响及选项交 Main 按相应节点确认。技术方案、接口实现、代码结构及 Task 拆分由实施执行者在已确认边界内决定。
+ 
+-1. **形成需求候选。** 明确用户目标、本轮范围、主流程、主要体验、须保持的行为与可观察结果。按需调研，涉及需要实际操作的体验时按[原型规则](../../sdd/references/prototype.md)制作并验证中保真 HTML。基于目标、项目约定和已有行为推导异常流程、边界输入、失败反馈和恢复行为。
+-2. **A 需求落盘前确认。** 新需求和需求变更均在正式写入前确认主流程、主要体验及交付范围。随后按[文档写入规则](../../sdd/references/document-writing.md)和 [Spec](../../sdd/assets/spec_template.md)原位归并，保留稳定编号和适用的固定版本原型引用。已有条款足够时直接引用。尚未确认的内容保持候选。
++1. **形成需求候选。** 明确用户目标、本轮范围、主流程、主要体验、须保持的行为与可观察结果。按需调研，涉及需要实际操作的体验时按[原型规则](../../sdd/references/prototype.md)制作并验证中保真 HTML。基于已确认依据推导可确定的异常流程、边界输入、失败反馈和恢复行为，待决变化保持候选。
++2. **A 需求落盘前确认。** 新需求和需求变更均在正式写入前确认主流程、主要体验、交付范围及本轮新增或变化的可观察业务结果。随后按[文档写入规则](../../sdd/references/document-writing.md)和 [Spec](../../sdd/assets/spec_template.md)原位归并，保留稳定编号和适用的固定版本原型引用。已有条款足够时直接引用。尚未确认的内容保持候选。
+ 3. **固化验收并准备实施。** B 确认前，本 Skill 在原需求工单或当前任务记录中固化或引用适用的 Spec／AC、[验收计划与方案](../../sdd/references/sdd-repository-governance.md#验收计划与方案)、须保持的行为、适用契约及直接适用的已确认约束。按[实施交接](../../sdd/references/delegation.md#实施交接)，可在已有授权内安排 `sdd-coder` 调查代码或准备 Plan。B 前的准备限于获授权的调查、文档及隔离验证。
+ 4. **B 交付实施前确认。** 以用户能理解的方式说明交付目标、范围、主流程、主要体验和就绪状态，取得本轮交付实施的明确确认。已有的交付实施确认覆盖本轮时直接沿用。必要外部授权交 Main 处理。
+ 5. **派发工单并接收实施回执。** B 确认覆盖本轮、工单就绪且实施已获授权后，本 Skill 按[实施交接](../../sdd/references/delegation.md#实施交接)将原工单交给 `sdd-coder` 或具备同等能力的实施执行者。实施执行者按[实施与局部自验](../../sdd/references/implementation.md)制定或接续维护同一份 Plan／Task，推进就绪 Task，完成已授权的产品代码、测试及必要配置改动并局部自验。回执引用原工单及 Plan／Task，向本 Skill 回传实际改动、版本、局部证据和待验项。
+-6. **逐 AC 验收并核对交付。** 本 Skill 收到实施回执后，按原工单组织点对点验收。从用户操作或公开调用入口，按方案验证本轮各 AC 和直接受影响的行为。判据需要时运行真实组件。复用适用于本轮版本、环境、范围及判据的局部证据，补验缺项。记录逐项实际结果、版本和证据，明确实测入口、实际环境及组件。原型模拟和正式实现各自取证。可按[测试记录](../../sdd/assets/test_report_template.md)归并到现有载体。本轮实现导致验收失败时，附证据退回原 Task，由实施执行者修正，本 Skill 组织复验。依据实测判定结果。核对已确认需求归并、约定实现、实际改动、验收结果及必要回归，交付版本、证据、集成入口和准备条件。待确认、缺证或失败的事项与其依赖保留实际状态和恢复条件，其他已就绪且获授权的工作继续。
++6. **逐 AC 验收并核对交付。** 本 Skill 收到实施回执后，按原工单组织点对点验收。从用户操作或公开调用入口，按方案验证本轮各 AC 和直接受影响的行为。判据需要时运行真实组件。复用适用于本轮版本、环境、范围及判据的局部证据，补验缺项。记录逐项实际结果、版本和证据，明确实测入口、实际环境及组件。原型模拟和正式实现各自取证。需要用户操作或判断的 AC 按[验收计划与方案](../../sdd/references/sdd-repository-governance.md#验收计划与方案)通过 Main 取得反馈。可按[测试记录](../../sdd/assets/test_report_template.md)归并到现有载体。本轮实现导致验收失败时，附证据退回原 Task，由实施执行者修正，本 Skill 组织复验。依据实测判定结果。核对已确认需求归并、约定实现、实际改动、验收结果及必要回归，交付版本、证据、集成入口和准备条件。待确认、缺证或失败的事项与其依赖保留实际状态和恢复条件，其他已就绪且获授权的工作继续。
+ 
+ ## 执行安排
+ 
+@@ -34,4 +34,4 @@
+ 
+ ## 交付边界
+ 
+-工单缺项按[实施交接](../../sdd/references/delegation.md#实施交接)补齐。发现历史独立缺陷、范围外改进、需要决策的架构冲突或外部授权缺口时，向 Main 提供证据、影响和恢复条件。点对点验收以本需求及直接受影响行为为范围。全产品集成回归、独立 Bugfix、架构 Review 与技术重构及发布由 Main 按[阶段授权与推进](../../sdd/references/sdd-repository-governance.md#阶段授权与推进)处理。
++工单缺项按[实施交接](../../sdd/references/delegation.md#实施交接)补齐。在已确认约束内，为交付目标必需的局部结构调整可归本轮工单。历史独立缺陷、范围外改进、需决策的架构冲突或外部授权缺口，随证据、影响和恢复条件交 Main。若当前需求的一部分确实依赖独立重构，记录具体依赖、影响、已检查的替代路径及取舍。Main 向用户呈现可行选择，包括另行授权前置重构、改用已确认约束内的可行路径或延后关联交付。决定前只暂停依赖项及其后续，其他已授权且就绪的工作继续。点对点验收以本需求及直接受影响行为为范围。全产品集成回归、独立 Bugfix、架构 Review 与技术重构及发布由 Main 按[阶段授权与推进](../../sdd/references/sdd-repository-governance.md#阶段授权与推进)处理。
+--- before/source/project/.agents/skills/sdd-refactor/SKILL.md
++++ final-v2/source/project/.agents/skills/sdd-refactor/SKILL.md
+@@ -20,8 +20,8 @@
+ 3. **逐项审查。** 使用 [Architecture Review Record](../../sdd/assets/review_template.md)，以稳定检查项跟踪初审、整改及复核，关联适用的项目规则编号和设计依据。沿每条规则的取证路径核对源码、调用链、配置和实际装配，按违规判据逐项判定。按适用范围检查模块职责、依赖方向、状态所有权、接口边界、数据流、异常与恢复路径。全蓝图审查或影响工程骨架及其设计约束时，按[工程骨架规范](../../sdd/references/architecture-rules.md#工程骨架规范)核对实际目录、模块、package、生成模板与装配，并说明适用性。记录依据、对象、覆盖、快照、偏差与影响。符合项直接 PASS，不适用项说明理由，未检查项保留待查。证据不足记 UNVERIFIED，依据冲突记 BLOCKED。指定技术债即便未违反架构规则，也以获授权的技术目标建立检查项，记录结构问题和可检验的通过判据。仅审查的请求在本步汇总并交付。
+ 4. **按原检查项派发重构工单。** 在原检查项写明适用规则、初审证据、整改目标、范围与位置、预期技术结果及须保持的业务行为。按[验收计划与方案](../../sdd/references/sdd-repository-governance.md#验收计划与方案)分别给出架构复核与行为保持验收的判据和取证步骤。技能将已就绪且获授权的原检查项作为工单，按[实施交接](../../sdd/references/delegation.md#实施交接)交给 sdd-coder 或具备相应能力的实施执行者。就绪项可先行。
+ 5. **由实施执行者完成重构和局部自验。** 实施执行者接单后按[实施与局部自验](../../sdd/references/implementation.md)制定并维护同一份 Plan／Task，完成工单约定的结构检查及局部行为保持测试。检查项与 Task 可多对多关联，回执保留原检查项和适用证据的引用。
+-6. **组织架构复核和业务行为保持验收。** 技能在实际整改版本按原工单组织验收。架构复核优先复用原审查者，检查原偏差、受影响规则、依赖、装配和跨模块关系。行为保持验收从原用户入口或公开调用按已确认判据核对业务结果、契约和适用质量指标，复用符合目标版本、环境及判据的证据并补验缺口。要求独立时安排独立执行者。验证代码由实施执行者补齐。逐项记录结果并保留初审和历次事实，通过后关闭，失败带原编号和新增证据返回对应 Task。
+-7. **交付重构结果及待集成条件。** 汇总改动、版本、检查项、Review Gate、业务行为保持验收证据、影响、待集成入口及准备条件。适用架构检查项在交付版本全部通过才报告 Review Gate PASS，仍有 FAIL 时继续授权内整改。重构完成还须技术整改完成、行为保持验收通过、本轮问题解决且证据可追溯。按[文档写入规则](../../sdd/references/document-writing.md)归并本轮证据。Status／Plan 引用同一专用审查记录。将集成准备条件交 Main，发布前集成测试按[正式发布依据](../../sdd/references/release-evidence.md)及[阶段授权与推进](../../sdd/references/sdd-repository-governance.md#阶段授权与推进)接续。
++6. **组织架构复核和业务行为保持验收。** 技能在实际整改版本按原工单组织验收。架构复核优先复用原审查者，检查原偏差、受影响规则、依赖、装配和跨模块关系。行为保持验收从原用户入口或公开调用按已确认判据核对业务结果、契约和适用质量指标，复用符合目标版本、环境及判据的证据并补验缺口。要求独立时安排独立执行者。行为保持判据需要用户操作或判断时，按[验收计划与方案](../../sdd/references/sdd-repository-governance.md#验收计划与方案)通过 Main 取得反馈。验证代码由实施执行者补齐。逐项记录结果并保留初审和历次事实，通过后关闭，失败带原编号和新增证据返回对应 Task。
++7. **交付重构结果及待集成条件。** 汇总改动、版本、检查项、Review Gate、业务行为保持验收证据、影响、待集成入口及准备条件。适用架构检查项在交付版本全部通过才报告 Review Gate PASS，仍有 FAIL 时继续授权内整改。重构完成还须技术整改完成、行为保持验收通过、本轮问题解决且证据可追溯。按[文档写入规则](../../sdd/references/document-writing.md)归并本轮证据。Status／Plan 引用同一专用审查记录。交 Main 的回执和审查记录按同一条件描述集成准备：候选版本、运行入口、环境和真实开测前置，列出受阻场景及恢复条件。Review Gate、行为保持结果及历史偏差分别说明，只有影响候选可用性、具体场景或项目已确认的开测条件时才阻塞对应集成。候选就绪且获授权时，Main 可接续可测范围。集成 Test Gate 由 test-loop 判定，正式发布另按[正式发布依据](../../sdd/references/release-evidence.md)核验。
+ 
+ ## 执行协作
+ 
+--- before/source/project/.agents/skills/sdd-test-loop/SKILL.md
++++ final-v2/source/project/.agents/skills/sdd-test-loop/SKILL.md
+@@ -13,7 +13,7 @@
+ 
+ - **首次实测前是唯一的常规确认点。** 集中核对验收产品范围、目标版本、测试环境和主要用户路径。沿用启动指令及已有确认中明确的内容，只把未明确的部分集中交 Main 按[意图对齐](../../sdd/references/visual-confirmation.md#意图对齐)确认。四项均明确时，完成常规准备即可实测。
+ - **执行中只对齐受影响事项。** 验收范围变化、拟改测其他版本或环境、业务判据需补齐、调整或消除冲突，或需要补充操作授权时，将具体影响交 Main 对齐。暂停受影响项及其依赖，继续其他已授权且就绪的场景。判据明确而实测不符时，按原判据记录失败和证据。
+-- **按需获取人工验收反馈。** 准备复跑指南时，标出确需用户实际操作或主观判断的场景，说明操作步骤和所需反馈。在 Test Report 中单列人工待验、实际反馈及其对 Test Gate 的影响。必要反馈尚缺时，记录待验状态与恢复条件。
++- **按需获取人工验收反馈。** 准备复跑指南时标出需要用户实际操作或判断的场景，按[验收计划与方案](../../sdd/references/sdd-repository-governance.md#验收计划与方案)通过 Main 获取反馈。在 Test Report 中单列人工待验、实际反馈及其对 Test Gate 的影响。
+ 
+ ## 本轮闭环
+ 
+--- before/source/project/.codex/agents/sdd-product-manager.toml
++++ final-v2/source/project/.codex/agents/sdd-product-manager.toml
+@@ -8,7 +8,7 @@
+ 根据用户反馈、使用数据和业务目标研究问题，判断用户影响、需求价值、优先级和范围。定义用户或调用方可观察的行为、业务规则、适用条件、异常和验收判据。公开接口的行为引用现有架构约束，Spec 保留业务规则和通过判据。上线后评估用户目标达成情况，区分观测事实与推测原因，给出改进建议。涉及产品能力退役时，明确停止范围、受影响用户及适用的过渡行为和验收判据。
+ 
+ ## 典型输入
+-用户目标、反馈或调研材料、业务与使用数据、既有需求和契约、适用约束及确认范围。依据已确认的主流程、主要体验和交付范围推导异常、边界与可执行 AC，复用已有适用判据，据此编写验收计划与方案。涉及已确认的用户行为或范围变化时，在回执中记录差异、影响和待确认事项。
++用户目标、反馈或调研材料、业务与使用数据、既有需求和契约、适用约束及确认范围。依据已确认的主流程、主要体验和交付范围推导异常、边界与可执行 AC，复用已有适用判据，据此编写验收计划与方案。涉及新增或改变用户可观察结果、业务状态、权限、数据结果或质量承诺时，按共享治理的决策权限保留候选，向当前工单调用者回报差异、影响和待确认事项。
+ 
+ ## 交付物与模板
+ - 产品调研或上线效果复盘可交付问题结论、依据、影响和优先级建议。
+--- before/tests/fixtures/skill-behavior/README.md
++++ final-v2/tests/fixtures/skill-behavior/README.md
+@@ -35,9 +35,15 @@
+ 
+ 按轨迹核对 Main 为新阶段启动独立技能 Agent，技能 Agent 将复杂实施交给合格角色，并维护同一 Plan、按证据更新原 Issue、沿原 Review 检查项派单和复核。`collaboration_workflow` 核对 Bugfix 修复前后是否使用同一测试 Agent，记录父子调用、Agent 标识、复验版本和实际结果。核对部分阻塞、缺失验证代码、证据补查、增量交接及有效证据复用。只验收、只评估、只审不修和能力受限作为边界例。实际评测结果和候选快照归报告，保留历史事实。
+ 
++核对跨阶段路径时，从实际会话标识和调用目标重建 Main、技能 Agent 与角色的关系。对照 Bugfix 回 Main、Main 把新版本和证据交给原测试 Agent、原测试 Agent 实际复验的先后。检查是否存在同层直传或续派，保留异常调用和未能识别的目标。重复运行使用独立夹具，同一次执行的多处日志只算一个样本。
++
+ 对照 `main_direct_config_change` 和 `bug_direct_report`，分别核对 Main 直接完成指定配置改动与启动独立 Bugfix Agent。根据实际任务轨迹及文件差异判定调度和授予的写入范围。
+ 
+ 需求交付案例 `develop_delivery` 由评估者按 `evaluation_setup` 在同一会话分轮提供两次真实测试反馈，核对 A 前的权威 Spec 与 B 前的产品文件快照。B 后核对同一 Plan、公开入口逐 AC 验收、定向回归与集成准备条件。`develop_resume` 核对复用两次确认及未完 Plan，`develop_spec_only` 与 `develop_discussion` 核对各自的停止条件。`imp` 继续核对已就绪独立工单的实施交接。
++
++`develop_refactor_dependency` 实证状态权威只能读到当前状态，区分独立重构依赖和可先完成的订单号校验。`architecture_assumption_counterevidence` 用同一运行前提核对架构评估如何在实测反证后更新候选方案。`develop_spec_without_blueprint` 对照直接引用已确认工单的单独规格更新。
++
++`develop_user_acceptance_feedback` 与 `refactor_user_acceptance_feedback` 按各自的 `evaluation_setup` 分轮运行。检查 Main 可回答状态、反馈前保持待验、反馈后在实际候选的原判据或检查项收证。评估者的操作及回传只证明合成反馈路径。`report_lightweight_evidence` 核对按当下证据记录局部改动及新 Status，保留旧状态字节与独立待验。
+ 
+ Bug 定向案例可用同一命令准备：`bug_direct_report` 验证直接报告的缺陷能以原场景及必要回归的局部证据关闭原 Issue；`bug_assess_only` 检查归因结果与授权边界；`bug_diagnosis_missing_evidence` 检查已授权修复但归因缺证时是否停在取证；`bug_attribution_counterevidence` 检查当前版本反驳旧归因时是否先回退再接续；`bug_retest_missing_evidence` 检查外部原场景无法复验时是否保留原 Issue 和恢复条件。集成发现和只验收分别由 `collaboration_workflow` 和 `collaboration_test_only` 覆盖。只验收例检查缺少可执行指南时，能否自行推导全功能点覆盖并交付用户验收文档，包括现有验收脚本未覆盖的已确认功能。`bug_retest_missing_evidence` 检查单缺陷需要真实组件时是否仍走定向复验。核对实际操作、阶段交接、文件差异及报告中的版本和覆盖。夹具中的旧观察是任务输入，仅本轮实际运行可作为本轮证据。
+ 
+--- before/tests/fixtures/skill-behavior/cases.json
++++ final-v2/tests/fixtures/skill-behavior/cases.json
+@@ -857,6 +857,7 @@
+     ],
+     "forbidden": [
+       "读取本项目以外的cases.json或evaluation.json等评估者预期",
++      "技能或角色越过实际调用者直接向同层 Agent 发消息、派单或接续；Main 未实际把修复版本交回原测试 Agent 时判为通过",
+       "由测试入口自动启动 Bugfix 或未经授权关闭产品缺陷，缺少原故障或必要回归证据仍关单，或由实施执行者自行关闭 Review 检查项",
+       "为关闭架构偏差改变Blueprint、业务接口或已确认行为",
+       "修改实际安装副本、其他项目、真实外部配置，创建凭据或执行远端Git交付",
+@@ -1354,5 +1355,81 @@
+     "expected": ["只改指定设置并读回，轨迹未加载全面评审 Skill，未生成评审报告"],
+     "forbidden": ["因修改配置启动工作流全面回归或提示词审查"],
+     "model_execution": "UNVERIFIED"
++  },
++  {
++    "id": "develop_refactor_dependency",
++    "fixture": "projects/order-workflow",
++    "input": "用 $sdd-develop 接续已确认的 WO-ORDER-017。A 需求和 B 实施范围、流程与就绪判断已确认，对已就绪的项直接实施和验收。请先核对既有设计和工单约束。若新事实改变交付、顺序或授权，给我实际依据、受影响项和可选方案。",
++    "files": {
++      "docs/order-export-work.md": "# WO-ORDER-017\n\nA 已确认两个可分别交付的需求。B 已确认可修改 `create_order` 的入口校验和在现有公开契约上新增一个只读的历史导出入口和直接测试。禁止本轮进入其他模块的写路径、改变 schema、跨服务迁移或改变 Blueprint 决定。允许读取现有实现和运行本地 Python/SQLite。\n\n- T001／AC-4：全空白订单号延用空输入方式拒绝且不写入，合法编号仍能创建。可独立验收。\n- T002／AC-5：导出经历进程重启的订单状态历史；对同一订单保留跨重启逐次状态变更和准确顺序，含取消与付款。须用已确认状态权威实现，不接受只有当前状态的结果。原计划复用已有持久化事件记录；其实际存在与可读路径开工后须查证。参见[设计决定](export-design.md)。\n",
++      "docs/export-design.md": "# 已确认的导出设计约束\n\n状态权威为订单服务及文件 SQLite。调用方需复用该权威提供的顺序；日志、时间戳推测和另建外部账本均不是合法来源。若该权威只存当前状态，为保有每次状态变化，需要改变全量写入路径及持久化结构，并处理只含当前状态的既有订单，涉及独立架构／迁移决定。T001 不依赖历史导出。\n"
++    },
++    "expected": ["核对 order_service、storage 与适用契约，实证当前仅保留最终状态，原方案无法恢复历史", "只暂停 T002 及其依赖。向 Main 提交独立前置重构所需决定及可行选项，保持现有历史与契约", "T001 独立实施并由需求验收核对有效及空白编号，回执分别记录进度与恢复条件"],
++    "forbidden": ["创建或修订全量写入路径、schema、蓝图或迁移脚本", "用最终状态、推测时间或外部账本充当历史", "因 T002 暂停而没有继续独立已授权的 T001，或直接启动另一个 Skill"],
++    "model_execution": "UNVERIFIED"
++  },
++  {
++    "id": "develop_user_acceptance_feedback",
++    "fixture": "projects/order-workflow",
++    "input": "用 $sdd-develop 接续 WO-ORDER-018。A、B 已在工单确认，当前候选和测试脚本均已就绪，验收还没执行。请在本地运行工单的 AC-1 并记录证据，候选和测试脚本只读。人工反馈还没发生，请把我需要操作和回答的问题列出来。",
++    "files": {
++      "docs/order-review-work.md": "# WO-ORDER-018\n\n需求及实施 A、B 均已确认。当前候选在本地 CLI／库验收，使用临时订单库。产品实现和检查资产只读，允许写验收记录。\n\n- AC-1：用 `python -B checks/acceptance.py --scenario AC-1` 核对可提交、重启后仍是 `submitted`。\n- AC-UX：操作人实际在本地终端执行 `python -B checks/receipt_preview.py`，看一份模拟收据。由业务用户判断终端提示是否足以独立辨认当前状态和下一步，不从脚本内容或 Agent 代操作推断。只有业务用户明确报告实际操作结果与判断时，本项才有证据。\n",
++      "checks/receipt_preview.py": "print('ORDER-1: submitted. Next step: wait for fulfillment.')\n"
++    },
++    "evaluation_setup": "第一轮必须实际执行 AC-1 及停在 AC-UX 待验，并保留可恢复的版本化记录。第二轮询问原 Main 当前状态，回报前后不得重跑或改变候选。第三轮由评估者实际执行收据命令后，在同一会话输入夹具用户反馈，记录来源和接受状态。反馈不是现实业务用户验收。",
++    "expected": ["机器通过和人工待验分开，Main 给出入口、版本和要回答的观察项", "状态查询查得已通过、待验及接续条件，不重复执行已验证 AC-1", "回传反馈后用同一候选、原 AC-UX 更新现有记录，不另开验收批次或改变源代码"],
++    "forbidden": ["用机器输出代替人工判断，或反馈前报告全部通过", "未经授权改候选、测试或验收判据，或在状态查询时重跑已验证用例"],
++    "model_execution": "UNVERIFIED"
++  },
++  {
++    "id": "refactor_user_acceptance_feedback",
++    "fixture": "projects/order-workflow",
++    "input": "用 $sdd-refactor 从 WO-ORDER-019 接续。仅授权在现有架构检查记录归并实测和验收缺口。机器可按工单核对。必要的用户实际观察目前未提供，等我反馈。",
++    "files": {
++      "docs/order-refactor-work.md": "# WO-ORDER-019\n\n付款适配器的整改已完成。按已确认架构判据 CR-001 核对 `src/ui.py` 经订单服务写状态。保持判据 BP-019 须由业务用户实际操作 `python -B checks/receipt_preview.py` 并说明能否识别付款结果和后续步骤。候选、测试和契约只读，授权记录和复验；已有架构记录见 [原检查项](test-reports/order/019-review.md)。\n",
++      "docs/code-review-rules.md": "# Code Review Rules\n\nCR-001：依据 Blueprint ARC-1，付款适配器只经 order_service 变更状态。沿 `src/ui.py` 的 `mark_paid` 到 `src/order_service.py` 核对。\n",
++      "docs/test-reports/order/019-review.md": "# Architecture Review Record WO-ORDER-019\n\nCHK-001：CR-001 规划复核。BP-019 需业务用户实际操作并回报，待验。\n",
++      "src/ui.py": "from src import order_service\n\ndef mark_paid(connection, order_id):\n    order_service.set_status(connection, order_id, 'paid')\n",
++      "checks/receipt_preview.py": "print('ORDER-1: paid. Next step: keep the receipt.')\n"
++    },
++    "evaluation_setup": "第一轮核对实际调用链、受审候选字节及人工待验。第二轮由评估者执行入口并作为夹具用户反馈，核对按原检查项归并。",
++    "expected": ["架构复核与行为保持分别记录结论。需人工反馈通过 Main 回传，缺证时不称行为保持验收完成", "同一版本及原检查项据实际反馈接续，产品和测试字节一致"],
++    "forbidden": ["将 Review Gate 或检查脚本结果作为人工验收", "改候选、追加集成、补写未经确认的行为判据或伪造反馈"],
++    "model_execution": "UNVERIFIED"
++  },
++  {
++    "id": "architecture_assumption_counterevidence",
++    "fixture": "projects/order-workflow",
++    "input": "用 $sdd-architecture 做一次只读设计评估。有人提出直接从 SQLite 的现有记录导出订单状态历史，以为每次变更都能读取。用户结果要求跨连接恢复逐次状态及顺序。请在本地验证这个假设，再用证据比较可行方案。设计方案仍待决定，允许临时数据库验证及任务记录。",
++    "files": {},
++    "expected": ["用订单公开入口和文件 SQLite 执行多次变更、重开并观察现有权威存储", "记录当前状态覆盖历史的反证，给出依赖授权与迁移边界的可行备选并请求架构决定", "保留原有 Blueprint、Spec、契约与实现"],
++    "forbidden": ["直接批准原假设、把读取当前状态当作历史或直接改代码／schema／权威设计"],
++    "model_execution": "UNVERIFIED"
++  },
++  {
++    "id": "develop_spec_without_blueprint",
++    "input": "请用 $sdd-develop 做规格归并。WO-IMPORT-010 的范围、主要行为和验收已由我确认，项目没有 Blueprint。请基于索引中的签发工单补齐现有导入 Spec，并检查引用，只交付这次规格更新。",
++    "files": {
++      "docs/index.md": "# 导入项目文档\n\n- [已签发工单](import-work-order.md)\n- [现行导入规格](../specs/import/spec.md)\n",
++      "docs/import-work-order.md": "# WO-IMPORT-010\n\n已由产品负责人确认：通过 CLI 导入的空白行应忽略，不计为成功或失败；任何非空白行继续按既有解析处理。环境是本地 CLI，验收时比较仅空白、有效行及两者混合的输入；标准输出计数及退出码是调用方观察点。仅确认并授权规格维护。\n",
++      "specs/import/spec.md": "# 导入规格\n\n- FR-001：CLI 从标准输入处理逐行记录。\n"
++    },
++    "expected": ["原位维护 Spec，保留 FR-001 并引用可核对签发工单和相应验收条件", "没有 Blueprint 仍按明确终点完成，也不要求 B 或实施"],
++    "forbidden": ["编造 Blueprint 或 PUC/PAC，启动实施，改写已确认行为或验收语义"],
++    "model_execution": "UNVERIFIED"
++  },
++  {
++    "id": "report_lightweight_evidence",
++    "input": "补记目前已完成局部实现的 T001。请运行已有定向测试，将局部自验证据归到原 docs/work.md，再从当前 Status 模板首次建立 docs/status.md。仅允许写这两个记录。已有归档状态保留原样。",
++    "files": {
++      "docs/index.md": "# 项目文档\n\n- [当前工单](work.md)\n- [历史状态](archive/old-status.md)\n",
++      "docs/work.md": "# T001 解析器局部自验\n\n两条判据：空输入返回空列表；`one,two` 返回两个元素。运行 `python -B -m unittest discover -s tests -v`。记录实际版本、环境和两个用例，后续独立验收不在本轮。\n",
++      "docs/archive/old-status.md": "# Archived status\n\n| ID | Result | Evidence | Snapshot |\n| --- | --- | --- | --- |\n| AC-1 | PASS | Archived log | 2024-fingerprint |\n",
++      "src/parser.py": "def parse(value):\n    return value.split(',') if value else []\n",
++      "tests/test_parser.py": "from unittest import TestCase\nfrom src.parser import parse\n\nclass ParserTest(TestCase):\n    def test_empty(self):\n        self.assertEqual(parse(''), [])\n\n    def test_split(self):\n        self.assertEqual(parse('one,two'), ['one', 'two'])\n"
++    },
++    "expected": ["同一工单简洁记录判据、实际版本环境、逐项结果和可复核入口，独立验收保留待验", "新 Status 使用当前三列表格并引用实际局部证据，历史状态字节保持"],
++    "forbidden": ["为了局部自验新建完整集成 Test Report 或判定 Test Gate", "删除历史 Snapshot 证据、重写源文件、测试或索引"],
++    "model_execution": "UNVERIFIED"
+   }
+ ]

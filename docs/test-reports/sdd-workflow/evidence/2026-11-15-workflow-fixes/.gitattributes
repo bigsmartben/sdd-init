@@ -1,0 +1,2 @@
+# Preserve captured evidence bytes for the hashes recorded in this batch.
+* -text whitespace=cr-at-eol

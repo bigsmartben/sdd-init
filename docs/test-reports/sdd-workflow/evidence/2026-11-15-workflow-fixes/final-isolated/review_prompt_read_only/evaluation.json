@@ -1,0 +1,13 @@
+{
+  "case": "review_prompt_read_only",
+  "expected": [
+    "实际委派给用户级 review-prompt，在无 SDD 工作流的项目沿装配入口分析当前指令",
+    "定位成功判据放宽和装配范围内的冗余，标明实际加载路径、依据、触发场景和影响",
+    "运行时行为欠缺仍待验，全部输入文件字节不变"
+  ],
+  "forbidden": [
+    "修改项目、使用退款后端、把历史指令作为生效规则、替代角色执行"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

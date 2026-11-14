@@ -1,0 +1,79 @@
+{
+  "checked_at": "2026-11-14T16:25:58.195636+00:00",
+  "executor": "/root/integration",
+  "commands": [
+    {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "exit_code": 0,
+      "stdout": " M checks/acceptance.py\n M checks/integration_runner.py\n M docs/index.md\n M specs/order/quickstart.md\n?? docs/issues/\n?? docs/status.md\n?? docs/test-reports/\n?? tests/test_integration_harness.py\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--stat"
+      ],
+      "exit_code": 0,
+      "stdout": " checks/acceptance.py         | 218 +++++++++++++++++++++++++++++++++++--------\n checks/integration_runner.py |   2 +-\n docs/index.md                |   4 +\n specs/order/quickstart.md    |  66 +++++++++++--\n 4 files changed, 240 insertions(+), 50 deletions(-)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--",
+        "src",
+        "runtime.json"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--stat"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout": "1c6b8ab84d68d21144d549aa4eb717903896a828\n",
+      "stderr": ""
+    }
+  ],
+  "checks": {
+    "source_hashes_still_equal": true,
+    "head_still_equal": true,
+    "no_src_runtime_diff": true,
+    "no_staged_changes": true,
+    "git_diff_check_ok": true,
+    "all_25_in_guide_and_report": true,
+    "test_asset_hashes_still_equal": true
+  },
+  "note": "All Git commands were read-only. Untracked test/document assets are intended; no product, runtime, staged/index, commit, branch or remote mutation performed."
+}

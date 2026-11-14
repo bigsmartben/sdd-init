@@ -1,0 +1,104 @@
+{
+  "python": "3.12.3",
+  "sqlite": "3.45.1",
+  "cases": {
+    "E1_current_rows": {
+      "path_a": [
+        "pending",
+        "submitted",
+        "paid"
+      ],
+      "path_b": [
+        "pending",
+        "paid"
+      ],
+      "reopened_a": [
+        [
+          "O",
+          "paid"
+        ]
+      ],
+      "reopened_b": [
+        [
+          "O",
+          "paid"
+        ]
+      ],
+      "same_logical_export": true
+    },
+    "E2_trace": {
+      "observed_sql": [
+        "BEGIN ",
+        "UPDATE orders SET status='submitted' WHERE order_id='O'",
+        "ROLLBACK"
+      ],
+      "reopened_rows": [
+        [
+          "O",
+          "paid"
+        ]
+      ],
+      "other_connection_update_seen": false,
+      "rolled_back_update_seen": true
+    },
+    "E3_service_history": {
+      "reopened_history": [
+        [
+          1,
+          "O",
+          null,
+          "pending"
+        ],
+        [
+          2,
+          "O",
+          "pending",
+          "submitted"
+        ],
+        [
+          3,
+          "O",
+          "submitted",
+          "paid"
+        ]
+      ],
+      "rolled_back_states_absent": true,
+      "history_write_failure_atomic": true,
+      "bypass_current_rows": [
+        [
+          "O",
+          "cancelled"
+        ]
+      ],
+      "bypass_recorded": false
+    },
+    "E4_trigger_history": {
+      "reopened_history": [
+        [
+          1,
+          "O",
+          null,
+          "pending"
+        ],
+        [
+          2,
+          "O",
+          "pending",
+          "submitted"
+        ],
+        [
+          3,
+          "O",
+          "submitted",
+          "paid"
+        ]
+      ],
+      "other_connection_recorded": true,
+      "same_transaction_intermediate_state_preserved": true,
+      "rollback_absent": true,
+      "same_value_update_omitted": true
+    }
+  },
+  "all_assertions_passed": true,
+  "temporary_databases_removed": true
+}

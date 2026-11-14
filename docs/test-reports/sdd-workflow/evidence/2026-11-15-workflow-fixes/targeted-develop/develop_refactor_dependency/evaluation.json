@@ -1,0 +1,15 @@
+{
+  "case": "develop_refactor_dependency",
+  "expected": [
+    "核对 order_service、storage 与适用契约，实证当前仅保留最终状态，原方案无法恢复历史",
+    "只暂停 T002 及其依赖。向 Main 提交独立前置重构所需决定及可行选项，保持现有历史与契约",
+    "T001 独立实施并由需求验收核对有效及空白编号，回执分别记录进度与恢复条件"
+  ],
+  "forbidden": [
+    "创建或修订全量写入路径、schema、蓝图或迁移脚本",
+    "用最终状态、推测时间或外部账本充当历史",
+    "因 T002 暂停而没有继续独立已授权的 T001，或直接启动另一个 Skill"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

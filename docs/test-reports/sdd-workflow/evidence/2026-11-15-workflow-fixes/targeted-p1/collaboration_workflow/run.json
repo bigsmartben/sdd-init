@@ -1,0 +1,465 @@
+{
+  "start": "2026-11-15T00:11:30+08:00",
+  "end": "2026-11-15T00:21:20+08:00",
+  "seconds": 540.074,
+  "exit": 124,
+  "case": "collaboration_workflow",
+  "permission_profile": "fixture-write",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "before": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "9941a2d018ab453ffda513c7f9e959f1a682f9d26f62a74f0ddf63fd87efd6b3",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "635bc4acdbd7fef743cd5bcfd8903ee1d91f3db675fb1216b8fc37c2d85303da",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "8dcaca56daedf77b0a97411b1cacc154c8ac454f6e8a16ae019652c5455076ef",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+    "docs/code-review-rules.md": "4aa0493f16fa3c1ccfdfac11ed5dcd9d322d27adf8c2e46b5e7e1b85fcbe2511",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/index.md": "a07c6ddac82ca52876aeb32c5bb089ddafb08aff80a2dc7a513079995777ee05",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "specs/order/quickstart.md": "d4e6342af3d53e5478025bf5949c49c9d47ec9ae8b44c48263a524a1020643b7",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311"
+  },
+  "after": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "9941a2d018ab453ffda513c7f9e959f1a682f9d26f62a74f0ddf63fd87efd6b3",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "635bc4acdbd7fef743cd5bcfd8903ee1d91f3db675fb1216b8fc37c2d85303da",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "8dcaca56daedf77b0a97411b1cacc154c8ac454f6e8a16ae019652c5455076ef",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+    "docs/code-review-rules.md": "4aa0493f16fa3c1ccfdfac11ed5dcd9d322d27adf8c2e46b5e7e1b85fcbe2511",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/index.md": "dd1ba1cfcd79d02ebbb6975afccd143947eac3aacca996b42721f49d1b268030",
+    "docs/issues/ORDER-001.md": "34fc086945793efd97f0afe723ec410db52d06314f1e32aea6594ca7e8eebc06",
+    "docs/issues/ORDER-002.md": "b786ef579b27b064eba902f1e67fc8751287f0dab28750520657026fa228835c",
+    "docs/plans/order-bugfix.md": "d7821f4608a3894e5604ff13bb0e1e5c6845c059bb85865ffab8d426af579dd4",
+    "docs/test-reports/order/bugfix.md": "0d2f6655bb6917f0ac16e7f22533d6aea77813443ea09e5578bfe5cef9246b45",
+    "docs/test-reports/order/current-review.md": "419425dfacfe105d307542ad3ea75bb3c644b6d7692daa0f5ee0ac51aedffc0b",
+    "docs/test-reports/order/evidence/bugfix-doc-check.json": "5c22f4a093c65651b64a0f7a3ec1b2bd2674e116839f254ae4b8a039f149bb75",
+    "docs/test-reports/order/evidence/bugfix-local-ac1.json": "4e2bd03cd9bf9b55f6984760bc3977b75e61237d937f4c942b5dfb948374cf1f",
+    "docs/test-reports/order/evidence/bugfix-local-ac2.json": "3b2af53ac158dcc87bf8504decf5364efd4acb5a095e01dee153f134eb574fe7",
+    "docs/test-reports/order/evidence/bugfix-local-doc-check.json": "8d8a6d4d0c954cfb9862a859238cc817fa281574611ff80cd15f72ffc9851045",
+    "docs/test-reports/order/evidence/bugfix-local-regression.json": "9ed74bb00d95554d1de751fee126c596a1e9f722ade4a3b5205899496da60490",
+    "docs/test-reports/order/evidence/bugfix-local-unittest.json": "0bea47cb376a898cd1b8bcb0ec52d982ca1be5224166193257d54e58cd8372f4",
+    "docs/test-reports/order/evidence/bugfix-local-version.json": "ef723a614e8cd376addf9ddfea7246e74458d28b4bccc4cfc67ce6ff19f14449",
+    "docs/test-reports/order/evidence/bugfix-retest.json": "a13a3a605dcb43c3db668606216da08123fe943da9ffa5556b3b9ebc8dcba615",
+    "docs/test-reports/order/evidence/initial-acceptance.json": "f337b2126e821a7df7a5b2f95a00fc6dfae1e247a296500fca5c6710faab9e85",
+    "docs/test-reports/order/evidence/initial-doc-check.json": "0fbb4730699922179e14302f20b57378a86cf6008bb4cd36fff59ec23c73e60a",
+    "docs/test-reports/order/evidence/initial-regression.json": "b7ee08cc64bedf99ed97535b581fa6276dcda0462d2f2b3b53c3bf3b32aeb032",
+    "docs/test-reports/order/evidence/initial-runtime-after.json": "389a9665eb1f17a1181e2da68323b46ab5dd0cc3d949665990c39ba10a6ffcc4",
+    "docs/test-reports/order/evidence/initial-runtime.json": "449fed607670f6b13fa5f0e7a0b8e46da0ffee124afc077030bfca22f996e95c",
+    "docs/test-reports/order/evidence/initial-unittest.json": "1ec6e0c95b544dbb1ef8c6cd339acf9784b5b33ea00c898210afc83269bbb2db",
+    "docs/test-reports/order/evidence/initial-version.json": "65b0a99866394dd8659d1383ae5be5da14cabd16b13f6d9e837e840d587a5211",
+    "docs/test-reports/order/evidence/retest-acceptance.json": "69df88c6b5bf9e3641e02ef19bb88482f95074433fb8f4179a55f9780bbf7580",
+    "docs/test-reports/order/evidence/retest-doc-check.json": "2d928b13222d09d5584f84d4b233c9f4074b782d30523fca6907948ca3d52d0d",
+    "docs/test-reports/order/evidence/retest-regression.json": "e875adcf8a34b5816d187eb2b5ff55c94682f92610d0f9d02614177178352806",
+    "docs/test-reports/order/evidence/retest-runtime.json": "86fd933f38bb2b421a771a14c0d290b76462749ebc7a4c77678c345ef5cdd692",
+    "docs/test-reports/order/evidence/retest-unittest.json": "0e67b0b63958c6720d3e487bba2b2554cd2ed2b1a100149762f161597c3312f3",
+    "docs/test-reports/order/evidence/retest-version-after.json": "cad3101747d05323f9e0c3d924b4a228b760594475cb6dd0d871462c265aa449",
+    "docs/test-reports/order/evidence/retest-version.json": "0d830611c9ff6eb509344a1fc6c7674b3512b6cafb86188fef5fb44b957d18e4",
+    "docs/test-reports/order/initial.md": "083b72c22ba4fc2b014ad3f3566b6db9a5a950e578d36e728852db06c21b92e8",
+    "docs/test-reports/order/retest.md": "b662b792d8661065bf5aece7689c6041e149f3437e88fc5744c021c3c063cef0",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "specs/order/quickstart.md": "360f1ae7505438ff1a74d895183aa349e73c46b25ad6ae45af7c76b5a08a3eb1",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "4a03e8d39ef106a5037404562a931aad9009a1bb579304daa15f820983de6909",
+    "tests/order_regression.py": "d21f4caeffe9a341e3e60611e743a3ec5d97773028923bb1599b342ecdbb00ad",
+    "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311"
+  },
+  "changed": [
+    "docs/index.md",
+    "docs/issues/ORDER-001.md",
+    "docs/issues/ORDER-002.md",
+    "docs/plans/order-bugfix.md",
+    "docs/test-reports/order/bugfix.md",
+    "docs/test-reports/order/current-review.md",
+    "docs/test-reports/order/evidence/bugfix-doc-check.json",
+    "docs/test-reports/order/evidence/bugfix-local-ac1.json",
+    "docs/test-reports/order/evidence/bugfix-local-ac2.json",
+    "docs/test-reports/order/evidence/bugfix-local-doc-check.json",
+    "docs/test-reports/order/evidence/bugfix-local-regression.json",
+    "docs/test-reports/order/evidence/bugfix-local-unittest.json",
+    "docs/test-reports/order/evidence/bugfix-local-version.json",
+    "docs/test-reports/order/evidence/bugfix-retest.json",
+    "docs/test-reports/order/evidence/initial-acceptance.json",
+    "docs/test-reports/order/evidence/initial-doc-check.json",
+    "docs/test-reports/order/evidence/initial-regression.json",
+    "docs/test-reports/order/evidence/initial-runtime-after.json",
+    "docs/test-reports/order/evidence/initial-runtime.json",
+    "docs/test-reports/order/evidence/initial-unittest.json",
+    "docs/test-reports/order/evidence/initial-version.json",
+    "docs/test-reports/order/evidence/retest-acceptance.json",
+    "docs/test-reports/order/evidence/retest-doc-check.json",
+    "docs/test-reports/order/evidence/retest-regression.json",
+    "docs/test-reports/order/evidence/retest-runtime.json",
+    "docs/test-reports/order/evidence/retest-unittest.json",
+    "docs/test-reports/order/evidence/retest-version-after.json",
+    "docs/test-reports/order/evidence/retest-version.json",
+    "docs/test-reports/order/initial.md",
+    "docs/test-reports/order/retest.md",
+    "specs/order/quickstart.md",
+    "src/order_service.py",
+    "src/ui.py",
+    "tests/order_regression.py"
+  ],
+  "base_commit": "fc366da8aff900abc000129676514d994ca5c671",
+  "head_after": "fc366da8aff900abc000129676514d994ca5c671",
+  "commit_paths": [],
+  "git_before": "",
+  "git_after": "M docs/index.md\n M specs/order/quickstart.md\n M src/order_service.py\n M src/ui.py\n?? docs/issues/\n?? docs/plans/\n?? docs/test-reports/\n?? tests/order_regression.py",
+  "sessions": [
+    {
+      "identity": {
+        "id": "01a1dad4-05e3-7e41-bed8-3a9a6e142107",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dad4-05e3-7e41-bed8-3a9a6e142107",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 3506169,
+        "cached_input_tokens": 3392896,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 6953,
+        "reasoning_output_tokens": 713,
+        "total_tokens": 3513122
+      },
+      "records": 156,
+      "trace": "sessions/rollout-2026-11-15T00-11-31-01a1dad4-05e3-7e41-bed8-3a9a6e142107.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dad4-9904-7121-8423-c77c1116d7c9",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dad4-05e3-7e41-bed8-3a9a6e142107",
+              "depth": 1,
+              "agent_path": "/root/order_test",
+              "agent_nickname": "Russell",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Russell",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dad4-9904-7121-8423-c77c1116d7c9",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dad4-05e3-7e41-bed8-3a9a6e142107",
+                "depth": 1,
+                "agent_path": "/root/order_test",
+                "agent_nickname": "Russell",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Russell",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 1562714,
+        "cached_input_tokens": 1515520,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 12781,
+        "reasoning_output_tokens": 705,
+        "total_tokens": 1575495
+      },
+      "records": 69,
+      "trace": "sessions/rollout-2026-11-15T00-12-08-01a1dad4-9904-7121-8423-c77c1116d7c9.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dad4-dac2-7541-8937-62d3829013bd",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dad4-05e3-7e41-bed8-3a9a6e142107",
+              "depth": 1,
+              "agent_path": "/root/order_review",
+              "agent_nickname": "Linnaeus",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Linnaeus",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dad4-dac2-7541-8937-62d3829013bd",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dad4-05e3-7e41-bed8-3a9a6e142107",
+                "depth": 1,
+                "agent_path": "/root/order_review",
+                "agent_nickname": "Linnaeus",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Linnaeus",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 1445791,
+        "cached_input_tokens": 1405440,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 8332,
+        "reasoning_output_tokens": 398,
+        "total_tokens": 1454123
+      },
+      "records": 78,
+      "trace": "sessions/rollout-2026-11-15T00-12-25-01a1dad4-dac2-7541-8937-62d3829013bd.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dad5-27e8-7750-b06d-e61d7b39577e",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dad4-dac2-7541-8937-62d3829013bd",
+              "depth": 2,
+              "agent_path": "/root/order_review/architecture_initial",
+              "agent_nickname": "Boyle",
+              "agent_role": "sdd-architect"
+            }
+          }
+        },
+        "agent_role": "sdd-architect",
+        "agent_nickname": "Boyle",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dad5-27e8-7750-b06d-e61d7b39577e",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dad4-dac2-7541-8937-62d3829013bd",
+                "depth": 2,
+                "agent_path": "/root/order_review/architecture_initial",
+                "agent_nickname": "Boyle",
+                "agent_role": "sdd-architect"
+              }
+            }
+          },
+          "agent_role": "sdd-architect",
+          "agent_nickname": "Boyle",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": "7d516d4c6ce2683efd674a3a62c93c70448b92523b45a60941efd8fc8fe97c96",
+      "model": "gpt-6-astra",
+      "usage": {
+        "input_tokens": 391895,
+        "cached_input_tokens": 331008,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5586,
+        "reasoning_output_tokens": 202,
+        "total_tokens": 397481
+      },
+      "records": 26,
+      "trace": "sessions/rollout-2026-11-15T00-12-44-01a1dad5-27e8-7750-b06d-e61d7b39577e.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dad5-7207-79c1-aae5-790e20326326",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dad4-9904-7121-8423-c77c1116d7c9",
+              "depth": 2,
+              "agent_path": "/root/order_test/test_assets",
+              "agent_nickname": "Hubble",
+              "agent_role": "sdd-coder"
+            }
+          }
+        },
+        "agent_role": "sdd-coder",
+        "agent_nickname": "Hubble",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dad5-7207-79c1-aae5-790e20326326",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dad4-9904-7121-8423-c77c1116d7c9",
+                "depth": 2,
+                "agent_path": "/root/order_test/test_assets",
+                "agent_nickname": "Hubble",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "agent_role": "sdd-coder",
+          "agent_nickname": "Hubble",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 364481,
+        "cached_input_tokens": 340736,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 4559,
+        "reasoning_output_tokens": 401,
+        "total_tokens": 369040
+      },
+      "records": 25,
+      "trace": "sessions/rollout-2026-11-15T00-13-03-01a1dad5-7207-79c1-aae5-790e20326326.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dad7-17b7-7f12-b541-f721deb8322d",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dad4-05e3-7e41-bed8-3a9a6e142107",
+              "depth": 1,
+              "agent_path": "/root/order_bugfix",
+              "agent_nickname": "Lorentz",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Lorentz",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dad7-17b7-7f12-b541-f721deb8322d",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dad4-05e3-7e41-bed8-3a9a6e142107",
+                "depth": 1,
+                "agent_path": "/root/order_bugfix",
+                "agent_nickname": "Lorentz",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Lorentz",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 1544224,
+        "cached_input_tokens": 1485312,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 7966,
+        "reasoning_output_tokens": 658,
+        "total_tokens": 1552190
+      },
+      "records": 66,
+      "trace": "sessions/rollout-2026-11-15T00-14-51-01a1dad7-17b7-7f12-b541-f721deb8322d.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dad8-44c7-7a71-aa4d-e8defcf72b6d",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dad7-17b7-7f12-b541-f721deb8322d",
+              "depth": 2,
+              "agent_path": "/root/order_bugfix/implement",
+              "agent_nickname": "Nietzsche",
+              "agent_role": "sdd-coder"
+            }
+          }
+        },
+        "agent_role": "sdd-coder",
+        "agent_nickname": "Nietzsche",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dad8-44c7-7a71-aa4d-e8defcf72b6d",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dad7-17b7-7f12-b541-f721deb8322d",
+                "depth": 2,
+                "agent_path": "/root/order_bugfix/implement",
+                "agent_nickname": "Nietzsche",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "agent_role": "sdd-coder",
+          "agent_nickname": "Nietzsche",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 286839,
+        "cached_input_tokens": 257152,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3664,
+        "reasoning_output_tokens": 25,
+        "total_tokens": 290503
+      },
+      "records": 19,
+      "trace": "sessions/rollout-2026-11-15T00-16-08-01a1dad8-44c7-7a71-aa4d-e8defcf72b6d.jsonl"
+    }
+  ],
+  "candidate": "priority-one",
+  "candidate_manifest_sha256": "acf8bc4d7449d99c4706cbf8d50bf33177646dd4690b6b37713fbbc879f2c3ec"
+}

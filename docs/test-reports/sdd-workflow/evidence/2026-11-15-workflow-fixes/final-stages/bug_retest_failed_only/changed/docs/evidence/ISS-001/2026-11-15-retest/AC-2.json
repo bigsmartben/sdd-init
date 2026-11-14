@@ -1,0 +1,10 @@
+[
+  {
+    "scenario": "AC-2",
+    "result": "FAIL",
+    "accepted": true,
+    "persisted_status": "submitted",
+    "expected_accepted": false,
+    "expected_status": "cancelled"
+  }
+]

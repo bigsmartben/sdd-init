@@ -1,0 +1,167 @@
+{
+  "batch": "initial",
+  "head": "89df9f629407a6b572c6f65c87fc9768e0f52f5d",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "sqlite": "3.45.1",
+  "runtime": {
+    "environment": "isolated-local-fixture",
+    "database": "per-scenario temporary SQLite file",
+    "external_endpoint": null,
+    "external_call_authorized": false,
+    "network_access_in_this_run": false
+  },
+  "sources": {
+    "src/__init__.py": {
+      "sha256": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+      "source": "\"\"\"Runtime modules of the isolated evaluation fixture.\"\"\"\n"
+    },
+    "src/order_service.py": {
+      "sha256": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+      "source": "\"\"\"Order operations in the intentionally imperfect evaluation fixture.\"\"\"\n\n\ndef create_order(connection, order_id):\n    if not isinstance(order_id, str) or not order_id:\n        raise ValueError(\"order_id is required\")\n    connection.execute(\"INSERT INTO orders VALUES (?, ?)\", (order_id, \"pending\"))\n    connection.commit()\n\n\ndef read_status(connection, order_id):\n    row = connection.execute(\"SELECT status FROM orders WHERE order_id = ?\", (order_id,)).fetchone()\n    if row is None:\n        raise ValueError(\"order not found\")\n    return row[0]\n\n\ndef set_status(connection, order_id, status):\n    read_status(connection, order_id)\n    connection.execute(\"UPDATE orders SET status = ? WHERE order_id = ?\", (status, order_id))\n    connection.commit()\n\n\ndef cancel_order(connection, order_id):\n    set_status(connection, order_id, \"cancelled\")\n\n\ndef submit_order(connection, order_id):\n    read_status(connection, order_id)\n    set_status(connection, order_id, \"submitted\")\n    return True\n"
+    },
+    "src/storage.py": {
+      "sha256": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+      "source": "\"\"\"SQLite connection boundary for the evaluation fixture.\"\"\"\nimport sqlite3\n\n\ndef connect(path):\n    connection = sqlite3.connect(path)\n    connection.execute(\"CREATE TABLE IF NOT EXISTS orders (order_id TEXT PRIMARY KEY, status TEXT NOT NULL)\")\n    connection.commit()\n    return connection\n"
+    },
+    "src/ui.py": {
+      "sha256": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+      "source": "\"\"\"UI adapter surface in the evaluation fixture (there is no graphical UI).\"\"\"\n\n\ndef mark_paid(connection, order_id):\n    connection.execute(\"UPDATE orders SET status = ? WHERE order_id = ?\", (\"paid\", order_id))\n    connection.commit()\n"
+    }
+  },
+  "checks": [
+    {
+      "case": "create",
+      "returned": null,
+      "persisted": "pending",
+      "expected": "pending",
+      "result": "PASS"
+    },
+    {
+      "case": "submit",
+      "returned": true,
+      "persisted": "submitted",
+      "expected": "submitted",
+      "result": "PASS"
+    },
+    {
+      "case": "cancel",
+      "returned": null,
+      "persisted": "cancelled",
+      "expected": "cancelled",
+      "result": "PASS"
+    },
+    {
+      "case": "submit_cancelled",
+      "returned": true,
+      "persisted": "submitted",
+      "expected": "cancelled",
+      "result": "FAIL"
+    },
+    {
+      "case": "mark_paid",
+      "returned": null,
+      "persisted": "paid",
+      "expected": "paid",
+      "result": "PASS"
+    },
+    {
+      "case": "set_status",
+      "returned": null,
+      "persisted": "pending",
+      "expected": "pending",
+      "result": "PASS"
+    },
+    {
+      "case": "missing_read",
+      "actual": "ValueError",
+      "expected": "ValueError",
+      "result": "PASS"
+    },
+    {
+      "case": "missing_set_status",
+      "actual": "ValueError",
+      "expected": "ValueError",
+      "result": "PASS"
+    },
+    {
+      "case": "missing_cancel",
+      "actual": "ValueError",
+      "expected": "ValueError",
+      "result": "PASS"
+    },
+    {
+      "case": "missing_submit",
+      "actual": "ValueError",
+      "expected": "ValueError",
+      "result": "PASS"
+    },
+    {
+      "case": "missing_mark_paid",
+      "actual": "no exception",
+      "expected": "ValueError",
+      "result": "FAIL"
+    },
+    {
+      "case": "execute_failure_create",
+      "actual": "OperationalError",
+      "expected": "OperationalError",
+      "result": "PASS"
+    },
+    {
+      "case": "execute_failure_set_status",
+      "actual": "OperationalError",
+      "expected": "OperationalError",
+      "result": "PASS"
+    },
+    {
+      "case": "execute_failure_cancel",
+      "actual": "OperationalError",
+      "expected": "OperationalError",
+      "result": "PASS"
+    },
+    {
+      "case": "execute_failure_submit",
+      "actual": "OperationalError",
+      "expected": "OperationalError",
+      "result": "PASS"
+    },
+    {
+      "case": "execute_failure_mark_paid",
+      "actual": "OperationalError",
+      "expected": "OperationalError",
+      "result": "PASS"
+    },
+    {
+      "case": "commit_failure_create",
+      "actual": "OperationalError",
+      "expected": "OperationalError",
+      "result": "PASS"
+    },
+    {
+      "case": "commit_failure_set_status",
+      "actual": "OperationalError",
+      "expected": "OperationalError",
+      "result": "PASS"
+    },
+    {
+      "case": "commit_failure_cancel",
+      "actual": "OperationalError",
+      "expected": "OperationalError",
+      "result": "PASS"
+    },
+    {
+      "case": "commit_failure_submit",
+      "actual": "OperationalError",
+      "expected": "OperationalError",
+      "result": "PASS"
+    },
+    {
+      "case": "commit_failure_mark_paid",
+      "actual": "OperationalError",
+      "expected": "OperationalError",
+      "result": "PASS"
+    }
+  ],
+  "cleanup": true,
+  "method": "Independent direct public calls; separate SQLite reader; injected execute/commit failures with real underlying SQLite; no network"
+}

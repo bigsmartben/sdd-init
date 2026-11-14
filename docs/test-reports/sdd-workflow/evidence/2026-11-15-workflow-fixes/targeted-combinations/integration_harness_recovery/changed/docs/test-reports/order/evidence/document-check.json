@@ -1,0 +1,21 @@
+{
+  "command": [
+    "python",
+    "-B",
+    ".agents/skills/sdd-workflow/sdd/scripts/doc_check.py",
+    "--root",
+    ".",
+    "--format",
+    "json",
+    "specs/order/quickstart.md",
+    "docs/index.md",
+    "docs/status.md",
+    "docs/issues/ORD-001.md",
+    "docs/issues/ORD-002.md",
+    "docs/test-reports/order/integration-2026-11-15.md"
+  ],
+  "exit_code": 0,
+  "stdout": "{\n  \"schema_version\": 1,\n  \"scope\": \"mechanical_only\",\n  \"files\": [\n    \"docs/index.md\",\n    \"docs/issues/ORD-001.md\",\n    \"docs/issues/ORD-002.md\",\n    \"docs/status.md\",\n    \"docs/test-reports/order/integration-2026-11-15.md\",\n    \"specs/order/quickstart.md\"\n  ],\n  \"diagnostics\": [],\n  \"errors\": 0,\n  \"warnings\": 0\n}\n",
+  "stderr": "",
+  "semantic_review": "Reviewed against Spec, contract, launch task, baseline and final evidence: original criteria retained; 25 distinct dispositions; external receipt not claimed; product frozen; links and index updated. Mechanical checking does not determine Gate."
+}

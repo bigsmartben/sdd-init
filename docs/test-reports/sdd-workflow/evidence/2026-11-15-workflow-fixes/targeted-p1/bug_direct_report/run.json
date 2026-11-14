@@ -1,0 +1,177 @@
+{
+  "start": "2026-11-15T00:11:30+08:00",
+  "end": "2026-11-15T00:15:47+08:00",
+  "seconds": 233.183,
+  "exit": 0,
+  "case": "bug_direct_report",
+  "permission_profile": "fixture-write",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "before": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "9941a2d018ab453ffda513c7f9e959f1a682f9d26f62a74f0ddf63fd87efd6b3",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "635bc4acdbd7fef743cd5bcfd8903ee1d91f3db675fb1216b8fc37c2d85303da",
+    "TASK.txt": "987ce337348444b2752cc05097a29194533ca685118e87160064d93e14d747ef",
+    "docs/index.md": "8e1ac58afa9811576be6b2af0bf4eb73fd8dee55dbbc3116873474fd13d7e083",
+    "src/parser.py": "84dc30f0c9193f11edaedf870393d7a1fbed8dc5a1902499c174007edb17cfe6"
+  },
+  "after": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "9941a2d018ab453ffda513c7f9e959f1a682f9d26f62a74f0ddf63fd87efd6b3",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "635bc4acdbd7fef743cd5bcfd8903ee1d91f3db675fb1216b8fc37c2d85303da",
+    "TASK.txt": "987ce337348444b2752cc05097a29194533ca685118e87160064d93e14d747ef",
+    "docs/index.md": "21ce8777abdc3956efefff6667628eb7e4a0d0094253647ec77d9e4fe476f218",
+    "docs/issues/BUG-001-plan.md": "3ea650782d833c3d69519687a26069d7e6fe142082a4e40ba88e6003d0a838c2",
+    "docs/issues/BUG-001.md": "311d5bacab17d49ad1f7dc7d0f93bb148cfd0909d1a27fde2cb96114ba60ea03",
+    "src/parser.py": "3e0d14ca1979f8a546363180e6b36e5c2264897a6cac66e72ab75fbf0c9f49f9"
+  },
+  "changed": [
+    "docs/index.md",
+    "docs/issues/BUG-001-plan.md",
+    "docs/issues/BUG-001.md",
+    "src/parser.py"
+  ],
+  "base_commit": "eb59588acc9c3e152904c2ecb96c29983c726f3a",
+  "head_after": "eb59588acc9c3e152904c2ecb96c29983c726f3a",
+  "commit_paths": [],
+  "git_before": "",
+  "git_after": "M docs/index.md\n M src/parser.py\n?? docs/issues/",
+  "sessions": [
+    {
+      "identity": {
+        "id": "01a1dad4-0674-71f1-a477-a3fd30c26e3a",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dad4-0674-71f1-a477-a3fd30c26e3a",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 626407,
+        "cached_input_tokens": 576128,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1471,
+        "reasoning_output_tokens": 160,
+        "total_tokens": 627878
+      },
+      "records": 49,
+      "trace": "sessions/rollout-2026-11-15T00-11-32-01a1dad4-0674-71f1-a477-a3fd30c26e3a.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dad4-89f9-7aa1-a206-723341dcb7a3",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dad4-0674-71f1-a477-a3fd30c26e3a",
+              "depth": 1,
+              "agent_path": "/root/bugfix",
+              "agent_nickname": "Chandrasekhar",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Chandrasekhar",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dad4-89f9-7aa1-a206-723341dcb7a3",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dad4-0674-71f1-a477-a3fd30c26e3a",
+                "depth": 1,
+                "agent_path": "/root/bugfix",
+                "agent_nickname": "Chandrasekhar",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Chandrasekhar",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 895813,
+        "cached_input_tokens": 859136,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5234,
+        "reasoning_output_tokens": 385,
+        "total_tokens": 901047
+      },
+      "records": 49,
+      "trace": "sessions/rollout-2026-11-15T00-12-04-01a1dad4-89f9-7aa1-a206-723341dcb7a3.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dad5-74d6-7b12-8d67-f674643ea420",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dad4-89f9-7aa1-a206-723341dcb7a3",
+              "depth": 2,
+              "agent_path": "/root/bugfix/parser_fix",
+              "agent_nickname": "Beauvoir",
+              "agent_role": "sdd-coder"
+            }
+          }
+        },
+        "agent_role": "sdd-coder",
+        "agent_nickname": "Beauvoir",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dad5-74d6-7b12-8d67-f674643ea420",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dad4-89f9-7aa1-a206-723341dcb7a3",
+                "depth": 2,
+                "agent_path": "/root/bugfix/parser_fix",
+                "agent_nickname": "Beauvoir",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "agent_role": "sdd-coder",
+          "agent_nickname": "Beauvoir",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 401395,
+        "cached_input_tokens": 376576,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3749,
+        "reasoning_output_tokens": 54,
+        "total_tokens": 405144
+      },
+      "records": 28,
+      "trace": "sessions/rollout-2026-11-15T00-13-04-01a1dad5-74d6-7b12-8d67-f674643ea420.jsonl"
+    }
+  ],
+  "candidate": "priority-one",
+  "candidate_manifest_sha256": "acf8bc4d7449d99c4706cbf8d50bf33177646dd4690b6b37713fbbc879f2c3ec"
+}

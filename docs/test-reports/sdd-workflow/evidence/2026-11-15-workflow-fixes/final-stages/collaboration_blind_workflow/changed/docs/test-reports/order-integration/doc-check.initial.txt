@@ -1,0 +1,1 @@
+Initial mechanical check: exit 1; report.md:78 DOC007 missing doc-check.stdout.txt and doc-check.json (2 errors, 0 warnings). Evidence files were not yet created; corrected by preparing capture targets before rerun.

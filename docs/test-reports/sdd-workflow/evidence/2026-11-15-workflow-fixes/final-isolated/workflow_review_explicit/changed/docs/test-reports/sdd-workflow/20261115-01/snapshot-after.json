@@ -1,0 +1,156 @@
+{
+  "recorded_at": "2026-11-14T16:43:00.563026+00:00",
+  "commit": "07a29d1dbb465f73b786bd99a97f8d5dbb64f402",
+  "checks": [
+    {
+      "path": ".agents/skills/sdd-workflow-review/SKILL.md",
+      "bytes_before": 4253,
+      "bytes_after": 4253,
+      "sha256_before": "d7e2c20f2ac93415db526e33fccdf8f62d9bd9c7a8349c2d2e85ba396dc1458c",
+      "sha256_after": "d7e2c20f2ac93415db526e33fccdf8f62d9bd9c7a8349c2d2e85ba396dc1458c",
+      "unchanged": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/agents/openai.yaml",
+      "bytes_before": 43,
+      "bytes_after": 43,
+      "sha256_before": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+      "sha256_after": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+      "unchanged": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/assets/review-report-template.md",
+      "bytes_before": 5490,
+      "bytes_after": 5490,
+      "sha256_before": "233736f843a45207c89715d44248423fb471a16844cefc7cd3c1a930bbaaff7d",
+      "sha256_after": "233736f843a45207c89715d44248423fb471a16844cefc7cd3c1a930bbaaff7d",
+      "unchanged": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/assets/whitepaper-template.md",
+      "bytes_before": 1254,
+      "bytes_after": 1254,
+      "sha256_before": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+      "sha256_after": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+      "unchanged": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/references/evidence-and-cost.md",
+      "bytes_before": 3055,
+      "bytes_after": 3055,
+      "sha256_before": "fc7d2c15e6f665c6db8b3b2f459ae73ca5f4c2ac6614cc09bd3ef2270d7dd617",
+      "sha256_after": "fc7d2c15e6f665c6db8b3b2f459ae73ca5f4c2ac6614cc09bd3ef2270d7dd617",
+      "unchanged": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/references/review-criteria.md",
+      "bytes_before": 14933,
+      "bytes_after": 14933,
+      "sha256_before": "7a6d787a47ccca7f479a7198fd27a93e601efab2bc00d4e43719ad435480a15a",
+      "sha256_after": "7a6d787a47ccca7f479a7198fd27a93e601efab2bc00d4e43719ad435480a15a",
+      "unchanged": true
+    },
+    {
+      "path": ".codex/agents/review-prompt.toml",
+      "bytes_before": 2073,
+      "bytes_after": 2073,
+      "sha256_before": "87112509fc93378290b3797beb14b7b122ea0852e596ea8346278ca412e08777",
+      "sha256_after": "87112509fc93378290b3797beb14b7b122ea0852e596ea8346278ca412e08777",
+      "unchanged": true
+    },
+    {
+      "path": ".codex/config.toml",
+      "bytes_before": 65,
+      "bytes_after": 65,
+      "sha256_before": "c7c7581c1f27c5b74cb9178ff61e58ef87f020d16823005127404f19a1ecab6e",
+      "sha256_after": "c7c7581c1f27c5b74cb9178ff61e58ef87f020d16823005127404f19a1ecab6e",
+      "unchanged": true
+    },
+    {
+      "path": "TASK.txt",
+      "bytes_before": 374,
+      "bytes_after": 374,
+      "sha256_before": "3e952ea0573644c23029c972e39cd352fa68261f195e537b478efd420cce3c41",
+      "sha256_after": "3e952ea0573644c23029c972e39cd352fa68261f195e537b478efd420cce3c41",
+      "unchanged": true
+    },
+    {
+      "path": "checks/load_guidance.py",
+      "bytes_before": 236,
+      "bytes_after": 236,
+      "sha256_before": "c2f88b5260f95cfa8d5c127f8043ec62d0ed9138b84573ecdfe958d47a089471",
+      "sha256_after": "c2f88b5260f95cfa8d5c127f8043ec62d0ed9138b84573ecdfe958d47a089471",
+      "unchanged": true
+    },
+    {
+      "path": "config/service.toml",
+      "bytes_before": 21,
+      "bytes_after": 21,
+      "sha256_before": "634a7586e96c11fefd44a5eb65ca4eb682ad8817baea7fa56893f0817edd3f76",
+      "sha256_after": "634a7586e96c11fefd44a5eb65ca4eb682ad8817baea7fa56893f0817edd3f76",
+      "unchanged": true
+    },
+    {
+      "path": "docs/review-criteria.md",
+      "bytes_before": 1333,
+      "bytes_after": 1333,
+      "sha256_before": "57fe8a82754897ae792713423a63eb07a8016c3edb0488ce67be22d742f88d83",
+      "sha256_after": "57fe8a82754897ae792713423a63eb07a8016c3edb0488ce67be22d742f88d83",
+      "unchanged": true
+    },
+    {
+      "path": "docs/sdd-workflow-whitepaper.md",
+      "bytes_before": 428,
+      "bytes_after": 428,
+      "sha256_before": "1bc4dfefc5879bda0468b0089d1d598ae5562be19c81164e334327de024cb808",
+      "sha256_after": "1bc4dfefc5879bda0468b0089d1d598ae5562be19c81164e334327de024cb808",
+      "unchanged": true
+    },
+    {
+      "path": "docs/test-reports/sdd-workflow/README.md",
+      "bytes_before": 59,
+      "bytes_after": 59,
+      "sha256_before": "1e7616fb45c417f047c6d63da1698734811334de4cdc2cb9fb7bc4bbc7d682df",
+      "sha256_after": "1e7616fb45c417f047c6d63da1698734811334de4cdc2cb9fb7bc4bbc7d682df",
+      "unchanged": true
+    },
+    {
+      "path": "guidance/main.md",
+      "bytes_before": 107,
+      "bytes_after": 107,
+      "sha256_before": "926eec4f95c7692645b2f1f0bff7ec2bef96a69aa365fa63210c508b98e51da6",
+      "sha256_after": "926eec4f95c7692645b2f1f0bff7ec2bef96a69aa365fa63210c508b98e51da6",
+      "unchanged": true
+    },
+    {
+      "path": "guidance/prompt.md",
+      "bytes_before": 95,
+      "bytes_after": 95,
+      "sha256_before": "09a185885c0307cf4b3fcf14ff149ae64c846a3c6a21734832eb57647498f2cd",
+      "sha256_after": "09a185885c0307cf4b3fcf14ff149ae64c846a3c6a21734832eb57647498f2cd",
+      "unchanged": true
+    },
+    {
+      "path": "specs/platform-independent-sdd/spec.md",
+      "bytes_before": 280,
+      "bytes_after": 280,
+      "sha256_before": "292280e5641fa892cbd5b4d1a71130bffd86541e4c83ff36612f54559f71fa44",
+      "sha256_after": "292280e5641fa892cbd5b4d1a71130bffd86541e4c83ff36612f54559f71fa44",
+      "unchanged": true
+    }
+  ],
+  "all_original_files_unchanged": true,
+  "new_files_before_final_snapshot": [
+    "docs/test-reports/sdd-workflow/20261115-01/local-check.json",
+    "docs/test-reports/sdd-workflow/20261115-01/report.md",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-invocation.json",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-load-check.json",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-readonly-check.json",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-receipt.md",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-ticket.md",
+    "docs/test-reports/sdd-workflow/20261115-01/snapshot-before.json",
+    "docs/test-reports/sdd-workflow/20261115-01/static-evidence.txt"
+  ],
+  "all_new_files_within_batch_directory": true,
+  "git_status": "?? docs/test-reports/sdd-workflow/20261115-01/local-check.json\n?? docs/test-reports/sdd-workflow/20261115-01/report.md\n?? docs/test-reports/sdd-workflow/20261115-01/review-prompt-invocation.json\n?? docs/test-reports/sdd-workflow/20261115-01/review-prompt-load-check.json\n?? docs/test-reports/sdd-workflow/20261115-01/review-prompt-readonly-check.json\n?? docs/test-reports/sdd-workflow/20261115-01/review-prompt-receipt.md\n?? docs/test-reports/sdd-workflow/20261115-01/review-prompt-ticket.md\n?? docs/test-reports/sdd-workflow/20261115-01/snapshot-before.json\n?? docs/test-reports/sdd-workflow/20261115-01/static-evidence.txt\n"
+}

@@ -1,0 +1,33 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daee-be85-7f22-a0da-c3fac354ed7a",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/bug7_implementation": {
+      "id": "01a1daef-6742-7870-b51d-bb7dcbb00d29",
+      "parent_id": "01a1daee-be85-7f22-a0da-c3fac354ed7a",
+      "role": "sdd-coder",
+      "parent": "/root"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:43:10.136Z",
+      "actor": "/root",
+      "target": "/root/bug7_implementation",
+      "original_target": "bug7_implementation",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_75fcf3f2c1a64c1380c1c2a53dd89004",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-42-01a1daee-be85-7f22-a0da-c3fac354ed7a.jsonl",
+      "line": 21
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

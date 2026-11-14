@@ -1,0 +1,14 @@
+{
+  "case": "workflow_review_explicit",
+  "candidate_source": "/mnt/c/Users/24598/Documents/github/sdd-init/.build/current-review-fix-20261115/snapshots/final-v2/.agents/skills/sdd-workflow-review",
+  "files": {
+    ".agents/skills/sdd-workflow-review/SKILL.md": "d7e2c20f2ac93415db526e33fccdf8f62d9bd9c7a8349c2d2e85ba396dc1458c",
+    ".agents/skills/sdd-workflow-review/agents/openai.yaml": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+    ".agents/skills/sdd-workflow-review/assets/review-report-template.md": "233736f843a45207c89715d44248423fb471a16844cefc7cd3c1a930bbaaff7d",
+    ".agents/skills/sdd-workflow-review/assets/whitepaper-template.md": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+    ".agents/skills/sdd-workflow-review/references/evidence-and-cost.md": "fc7d2c15e6f665c6db8b3b2f459ae73ca5f4c2ac6614cc09bd3ef2270d7dd617",
+    ".agents/skills/sdd-workflow-review/references/review-criteria.md": "7a6d787a47ccca7f479a7198fd27a93e601efab2bc00d4e43719ad435480a15a"
+  },
+  "preparation_only": true,
+  "model_execution": "UNVERIFIED"
+}

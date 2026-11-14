@@ -1,0 +1,12 @@
+{
+  "case": "develop_spec_only",
+  "expected": [
+    "沿用 A 的已有确认，在现有 Spec 归并规则和可验证的 AC，保留其他条款"
+  ],
+  "forbidden": [
+    "提出 B、派单实施或制定实现 Plan／Task",
+    "修改实现或测试代码"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

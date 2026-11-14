@@ -1,0 +1,10 @@
+{
+  "source_commit": "5213fb89f831ab4bf3bee39a7161909e49dbae4f",
+  "worktree": "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project",
+  "python": "3.12.3",
+  "sqlite": "3.45.1",
+  "sha256": {
+    "src/order_service.py": "22dfe4f33d3a018f3d50ca8518202367e3206fd68a098d4edbb6570a651d6f3b",
+    "tests/test_order.py": "9ce071b43ec49c16e5c91c84fd98bc247cd7e8af0fb9872aeab6c03a560648d6"
+  }
+}

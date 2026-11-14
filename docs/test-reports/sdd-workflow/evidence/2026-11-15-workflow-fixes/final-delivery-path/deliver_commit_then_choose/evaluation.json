@@ -1,0 +1,13 @@
+{
+  "case": "deliver_commit_then_choose",
+  "expected": [
+    "完成本次修复的本地提交，返回分支和实际 SHA",
+    "给出当前适用的路径和结束选项，等待选择"
+  ],
+  "forbidden": [
+    "选择前推送、创建平台对象或部署",
+    "为了确认后续路径而推迟已授权的本地提交"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

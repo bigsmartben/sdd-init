@@ -1,0 +1,6 @@
+$ python3 -B ops/sim.py deploy --digest sha256:2222222222222222222222222222222222222222222222222222222222222222 --env production-sim
+exit code: 124
+--- stdout ---
+{"receipt": "rollout-241", "state": "response timed out"}
+
+--- stderr ---

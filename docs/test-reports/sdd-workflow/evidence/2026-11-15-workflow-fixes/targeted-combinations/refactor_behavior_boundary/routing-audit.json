@@ -1,0 +1,273 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1dadb-c82f-7651-9425-5d8317852772",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/payment_refactor": {
+      "id": "01a1dadc-42fe-7e20-bcce-4df0a4b473b0",
+      "parent_id": "01a1dadb-c82f-7651-9425-5d8317852772",
+      "role": null,
+      "parent": "/root"
+    },
+    "/root/payment_refactor/architecture_review": {
+      "id": "01a1dadc-964a-7340-910c-a76d831885fb",
+      "parent_id": "01a1dadc-42fe-7e20-bcce-4df0a4b473b0",
+      "role": "sdd-architect",
+      "parent": "/root/payment_refactor"
+    },
+    "/root/payment_refactor/payment_implementation": {
+      "id": "01a1dade-5584-7f83-897b-4122cead3efc",
+      "parent_id": "01a1dadc-42fe-7e20-bcce-4df0a4b473b0",
+      "role": "sdd-coder",
+      "parent": "/root/payment_refactor"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:20:54.356Z",
+      "actor": "/root",
+      "target": "/root/payment_refactor",
+      "original_target": "payment_refactor",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_2ed521a9d57e4228a3b01ed806f7f1f9",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-00-01a1dadb-c82f-7651-9425-5d8317852772.jsonl",
+      "line": 13
+    },
+    {
+      "time": "2026-11-14T16:21:05.169Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_1258fe9a7b2e4a34927dcc284397e0fc",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 13
+    },
+    {
+      "time": "2026-11-14T16:21:18.472Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root/payment_refactor/architecture_review",
+      "original_target": "architecture_review",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_af2812322f3149deb8092fbfce57a0f5",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 17
+    },
+    {
+      "time": "2026-11-14T16:21:23.108Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_c66acb3f787840169a2cfcf74edf4cf8",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 19
+    },
+    {
+      "time": "2026-11-14T16:21:53.586Z",
+      "actor": "/root",
+      "target": "/root/payment_refactor",
+      "original_target": "payment_refactor",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_3134335f281b4af8ac76bc8054957f10",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-00-01a1dadb-c82f-7651-9425-5d8317852772.jsonl",
+      "line": 26
+    },
+    {
+      "time": "2026-11-14T16:21:55.502Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root/payment_refactor/architecture_review",
+      "original_target": "architecture_review",
+      "tool": "followup_task",
+      "relation": "to_direct_report",
+      "call_id": "call_21cdd0159cee467abe5f9b4395283c96",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 27
+    },
+    {
+      "time": "2026-11-14T16:22:56.219Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_1254af6f4e954a02bb84d14004db0f04",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 33
+    },
+    {
+      "time": "2026-11-14T16:23:05.245Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_48a286407a8742329cc61027d5ac5dfa",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 35
+    },
+    {
+      "time": "2026-11-14T16:23:09.747Z",
+      "actor": "/root",
+      "target": "/root/payment_refactor",
+      "original_target": "payment_refactor",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_c2d0622008fa48d3a014515cd68f35da",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-00-01a1dadb-c82f-7651-9425-5d8317852772.jsonl",
+      "line": 42
+    },
+    {
+      "time": "2026-11-14T16:23:16.409Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root/payment_refactor/payment_implementation",
+      "original_target": "payment_implementation",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_678e9ee3edd74c74aa9fdde398142ed1",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 39
+    },
+    {
+      "time": "2026-11-14T16:23:20.948Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root/payment_refactor/architecture_review",
+      "original_target": "architecture_review",
+      "tool": "followup_task",
+      "relation": "to_direct_report",
+      "call_id": "call_94675a42069545e19557ecf99ae1b83f",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 41
+    },
+    {
+      "time": "2026-11-14T16:23:33.674Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_51a94c053c94460a97abfbde5920dc37",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 45
+    },
+    {
+      "time": "2026-11-14T16:24:06.067Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root/payment_refactor/payment_implementation",
+      "original_target": "payment_implementation",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_3a0eb069ab14444d823e34e801c11ce2",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 53
+    },
+    {
+      "time": "2026-11-14T16:24:29.771Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root/payment_refactor/architecture_review",
+      "original_target": "architecture_review",
+      "tool": "followup_task",
+      "relation": "to_direct_report",
+      "call_id": "call_68a9dad1757b4740b2587099114c674a",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 57
+    },
+    {
+      "time": "2026-11-14T16:24:36.612Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_1495c6681e2d4d4081004145f6e11d09",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 59
+    },
+    {
+      "time": "2026-11-14T16:25:14.363Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root/payment_refactor/payment_implementation",
+      "original_target": "payment_implementation",
+      "tool": "followup_task",
+      "relation": "to_direct_report",
+      "call_id": "call_504d4f5a3c2b4e42a9f118f13bfc7655",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 69
+    },
+    {
+      "time": "2026-11-14T16:25:22.432Z",
+      "actor": "/root/payment_refactor/payment_implementation",
+      "target": "/root/payment_refactor",
+      "original_target": "/root/payment_refactor",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_079475de20fe4dab8dd4cd6dc70f4a04",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-22-46-01a1dade-5584-7f83-897b-4122cead3efc.jsonl",
+      "line": 26
+    },
+    {
+      "time": "2026-11-14T16:25:35.777Z",
+      "actor": "/root",
+      "target": "/root/payment_refactor",
+      "original_target": "payment_refactor",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_f69560b005dc482095ef27bf60a8a45d",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-00-01a1dadb-c82f-7651-9425-5d8317852772.jsonl",
+      "line": 72
+    },
+    {
+      "time": "2026-11-14T16:25:40.358Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root/payment_refactor/payment_implementation",
+      "original_target": "payment_implementation",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_6926dfac7a17499c80bef85c06b4c2d0",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 73
+    },
+    {
+      "time": "2026-11-14T16:25:54.167Z",
+      "actor": "/root/payment_refactor",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_cc32bbc5c7bb4bfea7fdca56de6ab53a",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-42fe-7e20-bcce-4df0a4b473b0.jsonl",
+      "line": 77
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

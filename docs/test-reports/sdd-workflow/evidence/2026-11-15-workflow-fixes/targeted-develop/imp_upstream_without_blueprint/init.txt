@@ -1,0 +1,10 @@
+ADDED AGENTS.md
+ADDED .codex/config.toml
+ADDED .gitignore
+ADDED .sdd-init-state.json
+ADDED .agents/skills/sdd-workflow
+SDD WORKFLOW /tmp/sdd-review-execution-nn54txwg/imp_upstream_without_blueprint-38o2gb48/prepared/project/.agents/skills/sdd-workflow -> /tmp/sdd-review-execution-nn54txwg/imp_upstream_without_blueprint-38o2gb48/workflow-bundle/shared
+Shared version: sha256:ef55d6280bf2e988781b0b9ee66865bbf5faf1409eb78ab36fb83550a82f6288
+Project skills: sdd-architecture, sdd-bugfix, sdd-deliver, sdd-develop, sdd-refactor, sdd-test-loop
+Registered roles: sdd-architect, sdd-coder, sdd-devops, sdd-doc-consistency, sdd-product-manager
+VERIFIED project link, managed navigation, configuration and local metadata

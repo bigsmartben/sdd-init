@@ -1,0 +1,243 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daed-c2cf-7341-95f9-2a6cddcb5309",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/deliver": {
+      "id": "01a1daee-2673-7bf0-b316-289d635d63a7",
+      "parent_id": "01a1daed-c2cf-7341-95f9-2a6cddcb5309",
+      "role": null,
+      "parent": "/root"
+    },
+    "/root/deliver/release_ops": {
+      "id": "01a1daee-6d5c-7c71-aeb5-3f278613389e",
+      "parent_id": "01a1daee-2673-7bf0-b316-289d635d63a7",
+      "role": "sdd-devops",
+      "parent": "/root/deliver"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:40:13.464Z",
+      "actor": "/root",
+      "target": "/root/deliver",
+      "original_target": "deliver",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_9beb20ff8fd64eaa8481fab4d964e85c",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-39-38-01a1daed-c2cf-7341-95f9-2a6cddcb5309.jsonl",
+      "line": 12
+    },
+    {
+      "time": "2026-11-14T16:40:28.590Z",
+      "actor": "/root/deliver",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_fa55db29c4d94392a4edb3ab73be0d7a",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-02-01a1daee-2673-7bf0-b316-289d635d63a7.jsonl",
+      "line": 9
+    },
+    {
+      "time": "2026-11-14T16:40:36.188Z",
+      "actor": "/root/deliver",
+      "target": "/root/deliver/release_ops",
+      "original_target": "release_ops",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_71b4d41fa3d144ed947b6b8be97b908e",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-02-01a1daee-2673-7bf0-b316-289d635d63a7.jsonl",
+      "line": 13
+    },
+    {
+      "time": "2026-11-14T16:40:41.562Z",
+      "actor": "/root/deliver/release_ops",
+      "target": "/root/deliver",
+      "original_target": "/root/deliver",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_346b5ca08be14513a9bd429cb331dd5f",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-21-01a1daee-6d5c-7c71-aeb5-3f278613389e.jsonl",
+      "line": 10
+    },
+    {
+      "time": "2026-11-14T16:40:48.069Z",
+      "actor": "/root/deliver",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_16854847a5aa46d6960a3d65ce96fb1b",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-02-01a1daee-2673-7bf0-b316-289d635d63a7.jsonl",
+      "line": 19
+    },
+    {
+      "time": "2026-11-14T16:40:57.066Z",
+      "actor": "/root/deliver/release_ops",
+      "target": "/root/deliver",
+      "original_target": "/root/deliver",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_baf7e73f9a2242439688e33205a80090",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-21-01a1daee-6d5c-7c71-aeb5-3f278613389e.jsonl",
+      "line": 20
+    },
+    {
+      "time": "2026-11-14T16:41:04.864Z",
+      "actor": "/root/deliver",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_fa89187cf7d6426b80d2e7ffffd10ba9",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-02-01a1daee-2673-7bf0-b316-289d635d63a7.jsonl",
+      "line": 23
+    },
+    {
+      "time": "2026-11-14T16:41:09.839Z",
+      "actor": "/root/deliver",
+      "target": "/root/deliver/release_ops",
+      "original_target": "release_ops",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_4adc52f661b04551b5c940f9a723390f",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-02-01a1daee-2673-7bf0-b316-289d635d63a7.jsonl",
+      "line": 25
+    },
+    {
+      "time": "2026-11-14T16:41:23.279Z",
+      "actor": "/root/deliver/release_ops",
+      "target": "/root/deliver",
+      "original_target": "/root/deliver",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_7b3286d7edfc4cd2aa332593225a9f02",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-21-01a1daee-6d5c-7c71-aeb5-3f278613389e.jsonl",
+      "line": 28
+    },
+    {
+      "time": "2026-11-14T16:41:31.949Z",
+      "actor": "/root/deliver",
+      "target": "/root/deliver/release_ops",
+      "original_target": "release_ops",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_05ea015ec16a456e9ee805103a27bae1",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-02-01a1daee-2673-7bf0-b316-289d635d63a7.jsonl",
+      "line": 31
+    },
+    {
+      "time": "2026-11-14T16:41:39.788Z",
+      "actor": "/root/deliver",
+      "target": "/root/deliver/release_ops",
+      "original_target": "release_ops",
+      "tool": "followup_task",
+      "relation": "to_direct_report",
+      "call_id": "call_bbec143e45ee472e8d26a19fc58e5a85",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-02-01a1daee-2673-7bf0-b316-289d635d63a7.jsonl",
+      "line": 33
+    },
+    {
+      "time": "2026-11-14T16:41:44.358Z",
+      "actor": "/root/deliver",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_b636ee7e922348bfaff3183c5f615e8e",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-02-01a1daee-2673-7bf0-b316-289d635d63a7.jsonl",
+      "line": 35
+    },
+    {
+      "time": "2026-11-14T16:41:53.005Z",
+      "actor": "/root",
+      "target": "/root/deliver",
+      "original_target": "deliver",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_6355b47a322049b2b6ea91633b66454d",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-39-38-01a1daed-c2cf-7341-95f9-2a6cddcb5309.jsonl",
+      "line": 31
+    },
+    {
+      "time": "2026-11-14T16:42:01.963Z",
+      "actor": "/root/deliver/release_ops",
+      "target": "/root/deliver",
+      "original_target": "/root/deliver",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_3e5c18dc3c5646fc834b25480aa1458e",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-21-01a1daee-6d5c-7c71-aeb5-3f278613389e.jsonl",
+      "line": 37
+    },
+    {
+      "time": "2026-11-14T16:42:08.451Z",
+      "actor": "/root/deliver",
+      "target": "/root/deliver/release_ops",
+      "original_target": "release_ops",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_65d0c05ca6cc4ee4af8378575df41b1e",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-02-01a1daee-2673-7bf0-b316-289d635d63a7.jsonl",
+      "line": 43
+    },
+    {
+      "time": "2026-11-14T16:42:15.756Z",
+      "actor": "/root/deliver",
+      "target": "/root/deliver/release_ops",
+      "original_target": "release_ops",
+      "tool": "followup_task",
+      "relation": "to_direct_report",
+      "call_id": "call_cb7611c3073c49d2bd558f1283b62755",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-02-01a1daee-2673-7bf0-b316-289d635d63a7.jsonl",
+      "line": 45
+    },
+    {
+      "time": "2026-11-14T16:42:19.660Z",
+      "actor": "/root/deliver",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_c5074e8b743f4134801ea143b82a88a3",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-02-01a1daee-2673-7bf0-b316-289d635d63a7.jsonl",
+      "line": 47
+    },
+    {
+      "time": "2026-11-14T16:42:25.204Z",
+      "actor": "/root/deliver/release_ops",
+      "target": "/root/deliver",
+      "original_target": "/root/deliver",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_562b13d7bae44e40ba0674d7b5305653",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-21-01a1daee-6d5c-7c71-aeb5-3f278613389e.jsonl",
+      "line": 44
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

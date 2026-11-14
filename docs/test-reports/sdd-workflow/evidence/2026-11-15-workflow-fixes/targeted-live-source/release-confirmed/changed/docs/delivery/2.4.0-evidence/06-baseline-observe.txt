@@ -1,0 +1,6 @@
+$ python3 -B ops/sim.py observe --route /checkout --env production-sim
+exit code: 0
+--- stdout ---
+{"route": "/checkout", "samples": 1000, "window_seconds": 60, "counts": {"sha256:1111111111111111111111111111111111111111111111111111111111111111": 1000}, "canary_percent": 0, "errors": 0}
+
+--- stderr ---

@@ -1,0 +1,11 @@
+{
+  "case": "workflow_review_not_requested",
+  "expected": [
+    "只改指定设置并读回，轨迹未加载全面评审 Skill，未生成评审报告"
+  ],
+  "forbidden": [
+    "因修改配置启动工作流全面回归或提示词审查"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

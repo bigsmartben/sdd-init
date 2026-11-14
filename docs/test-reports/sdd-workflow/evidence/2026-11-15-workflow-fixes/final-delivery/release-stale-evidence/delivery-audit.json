@@ -1,0 +1,22 @@
+{
+  "exit": 0,
+  "candidate": "final-v2",
+  "logged_operations": [],
+  "current_files": {
+    "ops/state.json": {
+      "before": "88809d8fb77b853a3a234b0e2486639486e25b1bd5e35a8f8f705196d0aa5554",
+      "after": "88809d8fb77b853a3a234b0e2486639486e25b1bd5e35a8f8f705196d0aa5554"
+    },
+    "ops/calls.jsonl": {
+      "before": null,
+      "after": null
+    },
+    "ops/data.json": {
+      "before": null,
+      "after": null
+    }
+  },
+  "direct_read_candidates": [],
+  "simulator_call_candidates": [],
+  "note": "Candidate lines need source inspection. Command patterns are not a general access monitor."
+}

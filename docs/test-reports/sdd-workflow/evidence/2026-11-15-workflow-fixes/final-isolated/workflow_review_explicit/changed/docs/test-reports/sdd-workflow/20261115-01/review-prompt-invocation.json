@@ -1,0 +1,22 @@
+{
+  "evidence_id": "E-RP-CALL",
+  "caller": "/root",
+  "tool": "collaboration.spawn_agent",
+  "agent_type": "review-prompt",
+  "task_name": "prompt_review",
+  "returned_task_name": "/root/prompt_review",
+  "ticket": "review-prompt-ticket.md",
+  "registration": [
+    ".codex/config.toml",
+    ".codex/agents/review-prompt.toml"
+  ],
+  "scope": [
+    "guidance/main.md",
+    "guidance/prompt.md"
+  ],
+  "mode": "read-only specialist review; no workflow model regression",
+  "receipt_expected": "review-prompt-receipt.md",
+  "recorded_at": "2026-11-14T16:40:35.893342+00:00",
+  "usage": "未测；运行时工具未返回 usage",
+  "note": "调用请求与工具返回的批次内转录；非模型完整轨迹，非助手行为证据。"
+}

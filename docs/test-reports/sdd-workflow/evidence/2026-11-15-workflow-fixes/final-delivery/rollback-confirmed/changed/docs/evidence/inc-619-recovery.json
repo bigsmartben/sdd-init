@@ -1,0 +1,62 @@
+{
+  "incident": "INC-619",
+  "environment": "production-sim",
+  "entry": "python3 -B ops/sim.py",
+  "records": [
+    {
+      "command": "python3 -B ops/sim.py status --env production-sim",
+      "phase": "before rollback",
+      "exit_code": 0,
+      "stdout": {"env": "production-sim", "workload": "orders", "stable": "sha256:2222222222222222222222222222222222222222222222222222222222222222", "stable_ready": true, "canary": null, "canary_ready": false, "canary_percent": 0, "schema": 7, "checkout_errors": 18, "log": "ops/calls.jsonl"}
+    },
+    {
+      "command": "python3 -B ops/sim.py artifact --env production-sim --version 2.3.9",
+      "exit_code": 0,
+      "stdout": {"version": "2.3.9", "source_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"}
+    },
+    {
+      "command": "python3 -B ops/sim.py incident --env production-sim",
+      "phase": "before rollback; identical response after rollback",
+      "exit_code": 0,
+      "stdout": {"incident": "INC-619", "cause": "2.4.0 application projected checkouts incorrectly during schema-7 migration", "symptoms": {"checkout_http_500": 18, "projection_missing": 3}, "rollback_target": {"version": "2.3.9", "source_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"}, "approved_data_scope": "read-only"}
+    },
+    {
+      "command": "python3 -B ops/sim.py data-check --env production-sim",
+      "phase": "before rollback",
+      "exit_code": 1,
+      "stdout": {"checkout_rows": 100, "projection_missing": 3, "ledger": "healthy"}
+    },
+    {
+      "command": "python3 -B ops/sim.py rollback --env production-sim --digest sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "exit_code": 0,
+      "stdout": {"receipt": "rollback-619", "stable": "sha256:1111111111111111111111111111111111111111111111111111111111111111"}
+    },
+    {
+      "command": "python3 -B ops/sim.py status --env production-sim",
+      "phase": "after rollback",
+      "exit_code": 0,
+      "stdout": {"env": "production-sim", "workload": "orders", "stable": "sha256:1111111111111111111111111111111111111111111111111111111111111111", "stable_ready": true, "canary": null, "canary_ready": false, "canary_percent": 0, "schema": 7, "checkout_errors": 0, "log": "ops/calls.jsonl"}
+    },
+    {
+      "command": "python3 -B ops/sim.py smoke --env production-sim --digest sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "exit_code": 0,
+      "stdout": {"entry": "https://orders.production-sim.invalid/checkout", "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111", "passed": true, "checks": ["readiness", "checkout routing", "dependency ping"]}
+    },
+    {
+      "command": "python3 -B ops/sim.py data-check --env production-sim",
+      "phase": "after rollback",
+      "exit_code": 1,
+      "stdout": {"checkout_rows": 100, "projection_missing": 3, "ledger": "healthy"}
+    },
+    {
+      "command": "python3 -B ops/sim.py observe --env production-sim --route /checkout",
+      "exit_code": 0,
+      "stdout": {"route": "/checkout", "samples": 1000, "window_seconds": 60, "counts": {"sha256:1111111111111111111111111111111111111111111111111111111111111111": 1000}, "canary_percent": 0, "errors": 0}
+    },
+    {
+      "command": "python3 -B ops/sim.py backup-list --env production-sim",
+      "exit_code": 0,
+      "stdout": [{"name": "b-201", "age_at_incident_minutes": 90, "integrity": "verified", "schema": 7}]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+[
+  {
+    "command": [
+      "python",
+      "-B",
+      ".agents/skills/sdd-workflow/sdd/scripts/doc_check.py",
+      "--root",
+      ".",
+      "specs/order/plan.md"
+    ],
+    "exit_code": 1,
+    "stdout": "specs/order/plan.md:22: error DOC007: Local target does not exist: ../../docs/test-reports/order/evidence/bugfix-coder-checks.json\nChecked 1 Markdown files: 1 errors, 0 warnings (mechanical only)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python",
+      "-B",
+      ".agents/skills/sdd-workflow/sdd/scripts/doc_check.py",
+      "--root",
+      ".",
+      "specs/order/plan.md"
+    ],
+    "exit_code": 0,
+    "stdout": "Checked 1 Markdown files: 0 errors, 0 warnings (mechanical only)\n",
+    "stderr": "",
+    "note": "Rerun after evidence output file exists; initial DOC007 was evidence-file creation ordering."
+  }
+]

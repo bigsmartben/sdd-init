@@ -1,0 +1,11 @@
+{
+  "case": "develop_discussion",
+  "expected": [
+    "呈现待确认的范围、主流程、主要体验与可观察结果，指出会影响验收和交接的未决项"
+  ],
+  "forbidden": [
+    "把未决条件写入权威 Spec 或以默认值派单实施"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

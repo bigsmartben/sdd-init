@@ -1,0 +1,75 @@
+{
+  "checked_at": "2026-11-14T16:41:17.297518+00:00",
+  "comparison": "snapshot-before.json SHA-256",
+  "files": [
+    {
+      "path": ".agents/skills/sdd-workflow-review/SKILL.md",
+      "unchanged": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/agents/openai.yaml",
+      "unchanged": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/assets/review-report-template.md",
+      "unchanged": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/assets/whitepaper-template.md",
+      "unchanged": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/references/evidence-and-cost.md",
+      "unchanged": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/references/review-criteria.md",
+      "unchanged": true
+    },
+    {
+      "path": ".codex/agents/review-prompt.toml",
+      "unchanged": true
+    },
+    {
+      "path": ".codex/config.toml",
+      "unchanged": true
+    },
+    {
+      "path": "TASK.txt",
+      "unchanged": true
+    },
+    {
+      "path": "checks/load_guidance.py",
+      "unchanged": true
+    },
+    {
+      "path": "config/service.toml",
+      "unchanged": true
+    },
+    {
+      "path": "docs/review-criteria.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/sdd-workflow-whitepaper.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/test-reports/sdd-workflow/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "guidance/main.md",
+      "unchanged": true
+    },
+    {
+      "path": "guidance/prompt.md",
+      "unchanged": true
+    },
+    {
+      "path": "specs/platform-independent-sdd/spec.md",
+      "unchanged": true
+    }
+  ],
+  "all_unchanged": true
+}

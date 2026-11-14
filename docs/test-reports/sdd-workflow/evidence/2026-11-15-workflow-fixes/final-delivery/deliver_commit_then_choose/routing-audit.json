@@ -1,0 +1,45 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daeb-fa98-70e2-923c-e2a6c7528544",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/commit_order": {
+      "id": "01a1daed-1503-72a1-a972-c6d54f375b45",
+      "parent_id": "01a1daeb-fa98-70e2-923c-e2a6c7528544",
+      "role": "sdd-devops",
+      "parent": "/root"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:39:00.502Z",
+      "actor": "/root",
+      "target": "/root/commit_order",
+      "original_target": "commit_order",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_1bec23afcfd54ba38daafb5b94dfc0a6",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-37-42-01a1daeb-fa98-70e2-923c-e2a6c7528544.jsonl",
+      "line": 15
+    },
+    {
+      "time": "2026-11-14T16:39:18.559Z",
+      "actor": "/root/commit_order",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_e5b4b0cfab2e4f43a42bea121a27e36a",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-38-52-01a1daed-1503-72a1-a972-c6d54f375b45.jsonl",
+      "line": 12
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

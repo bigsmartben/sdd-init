@@ -1,0 +1,403 @@
+{
+  "start": "2026-11-15T00:19:55+08:00",
+  "end": "2026-11-15T00:26:57+08:00",
+  "seconds": 386.747,
+  "exit": 0,
+  "case": "collaboration_blind_workflow",
+  "permission_profile": "fixture-write",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "before": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "f8360e5f6d0f96c9a2192cfa29e4c39fc2cf93d244e427556cad4ca99262667f",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "635bc4acdbd7fef743cd5bcfd8903ee1d91f3db675fb1216b8fc37c2d85303da",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "887a03318df9cbe0bb117d5b17777ef010787d5280ba302e57b85f2729a71efb",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+    "docs/code-review-rules.md": "4aa0493f16fa3c1ccfdfac11ed5dcd9d322d27adf8c2e46b5e7e1b85fcbe2511",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/index.md": "a07c6ddac82ca52876aeb32c5bb089ddafb08aff80a2dc7a513079995777ee05",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "specs/order/quickstart.md": "d4e6342af3d53e5478025bf5949c49c9d47ec9ae8b44c48263a524a1020643b7",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311"
+  },
+  "after": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "f8360e5f6d0f96c9a2192cfa29e4c39fc2cf93d244e427556cad4ca99262667f",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "635bc4acdbd7fef743cd5bcfd8903ee1d91f3db675fb1216b8fc37c2d85303da",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "887a03318df9cbe0bb117d5b17777ef010787d5280ba302e57b85f2729a71efb",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+    "docs/code-review-rules.md": "4aa0493f16fa3c1ccfdfac11ed5dcd9d322d27adf8c2e46b5e7e1b85fcbe2511",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/index.md": "702cc44f78d90551b60e6790bc675c73f48e6556a02489e751876a790fb50cc3",
+    "docs/issues/BUG-001-plan.md": "ea5d59e2133c6372f458d2fbe59b0eb1de281feef491f8505e84988a80a506e2",
+    "docs/issues/BUG-001.md": "c362a469dd5c31147c3c708acf961f9e944f62820429ded5e429b22cc24886a5",
+    "docs/issues/BUG-002.md": "5f81afaa14a3384ceb22d86a2d1a00e2f0fb33c2e200c47f475268cc4093a886",
+    "docs/status.md": "5ea6b5f14ac046eb71b8207ccbf0a8c19202212f9cecfbb93e68c238950ae6ea",
+    "docs/test-reports/order/architecture-candidate-check.json": "f8184d398010062e55e28decb1cdabb9cab8c3e94ab8463aa5d646f8e9300943",
+    "docs/test-reports/order/architecture-doc-check.json": "1a53f54f11385b99b2634c00448df9550c89b3f637f0476183346e9752e78648",
+    "docs/test-reports/order/architecture-probe.json": "729765cf09aa11d4f6c86683395738ddc511163311e5abffee602b25c8bc9b30",
+    "docs/test-reports/order/architecture-review.md": "b5649c555cbc346d3a475f6f3f89aa3fac89140246ec0510d54e2079c4d8e619",
+    "docs/test-reports/order/bugfix-001.md": "d5c73de29f402897dca1389acb9b814ca5d2d47b358970a9f4ee77d0bbd9c0bb",
+    "docs/test-reports/order/bugfix-candidate.json": "4a0a74750042a7a7d48c8d80e7e5f8c5e22027fc042ae0189848243615d7e0cc",
+    "docs/test-reports/order/bugfix-diagnosis.json": "880c04665fa081b064346b74fce198f4d2adbaaba8259c7d8fbf94b1f3c68b50",
+    "docs/test-reports/order/bugfix-fixed-runtime.json": "7962316194226bf414b4e910e50aa3e81fbba71b32c4032b01909d92fa582a4c",
+    "docs/test-reports/order/bugfix-initial-runtime.json": "389a9665eb1f17a1181e2da68323b46ab5dd0cc3d949665990c39ba10a6ffcc4",
+    "docs/test-reports/order/bugfix-retest-ac1.json": "e366f3ce6e9863a678c4faddd21a529fd8fb1953e9ecec0088382614b901128f",
+    "docs/test-reports/order/bugfix-retest-ac2.json": "5667c62a2f2d515239a7eed435cd1eb5cecc0d677c5bbbce7251b490cc72290e",
+    "docs/test-reports/order/bugfix-retest-unittest.txt": "9e47443e361395ece7e44fa117fc8da7ed10b1cc9ebf48f3d9ec84adf0ce2407",
+    "docs/test-reports/order/integration-acceptance.json": "d8fa594be3ec4f079559a1285f344de4e66bea36fd4845884e42db5df0f51eda",
+    "docs/test-reports/order/integration-bug002.json": "ff1519a375308f91f9437a7c24d1ed8eacf3fda4597931c5ba601be8525bc8d6",
+    "docs/test-reports/order/integration-identity.json": "59f659f4f1f2856f6339d2d8c47585c721e01ed0b9cf63ee8e72aa61c35e5c2c",
+    "docs/test-reports/order/integration-integration.json": "375ec8f16b18a59b4f6dfcf67ca195a7ebe10c15dbc6061720cc616cb7ace2fe",
+    "docs/test-reports/order/integration-regression.json": "902d82787d84f7033215a205e1b15182daf07ee730fd10ca827eb9f0e239f97e",
+    "docs/test-reports/order/integration-runtime.json": "448ff6e6c52565e14ad9b8d41d18b2cd19f7e22772c940e22a9fe521b98d0622",
+    "docs/test-reports/order/integration.md": "4f45966ad4446080f0b6d2edd76140d54a4bc571bad6c498037908dddbfcc786",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "specs/order/quickstart.md": "77dc100b303de53ff03fc3b9b7647f4ff69e03b2fcd317b1c350eaaa6d1acbe5",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "tests/architecture_probe.py": "d3167d61d357abbca3d533d0600860cf568877439e123de54e4c7e1c1111a6a8",
+    "tests/test_order.py": "a438c19810b3a10ad713090330d14496ea11bd7fd43a0c79d953fb695c4d631e",
+    "tests/test_order_integration.py": "90b380239e3f3fa7834db7a63901af454800f077267c6563842729fb80e922a2"
+  },
+  "changed": [
+    "docs/index.md",
+    "docs/issues/BUG-001-plan.md",
+    "docs/issues/BUG-001.md",
+    "docs/issues/BUG-002.md",
+    "docs/status.md",
+    "docs/test-reports/order/architecture-candidate-check.json",
+    "docs/test-reports/order/architecture-doc-check.json",
+    "docs/test-reports/order/architecture-probe.json",
+    "docs/test-reports/order/architecture-review.md",
+    "docs/test-reports/order/bugfix-001.md",
+    "docs/test-reports/order/bugfix-candidate.json",
+    "docs/test-reports/order/bugfix-diagnosis.json",
+    "docs/test-reports/order/bugfix-fixed-runtime.json",
+    "docs/test-reports/order/bugfix-initial-runtime.json",
+    "docs/test-reports/order/bugfix-retest-ac1.json",
+    "docs/test-reports/order/bugfix-retest-ac2.json",
+    "docs/test-reports/order/bugfix-retest-unittest.txt",
+    "docs/test-reports/order/integration-acceptance.json",
+    "docs/test-reports/order/integration-bug002.json",
+    "docs/test-reports/order/integration-identity.json",
+    "docs/test-reports/order/integration-integration.json",
+    "docs/test-reports/order/integration-regression.json",
+    "docs/test-reports/order/integration-runtime.json",
+    "docs/test-reports/order/integration.md",
+    "specs/order/quickstart.md",
+    "src/order_service.py",
+    "tests/architecture_probe.py",
+    "tests/test_order.py",
+    "tests/test_order_integration.py"
+  ],
+  "base_commit": "c22410f25bf4201d525ef7d0aa41154ff0e23c67",
+  "head_after": "c22410f25bf4201d525ef7d0aa41154ff0e23c67",
+  "commit_paths": [],
+  "git_before": "",
+  "git_after": "M docs/index.md\n M specs/order/quickstart.md\n M src/order_service.py\n M tests/test_order.py\n?? docs/issues/\n?? docs/status.md\n?? docs/test-reports/\n?? tests/architecture_probe.py\n?? tests/test_order_integration.py",
+  "sessions": [
+    {
+      "identity": {
+        "id": "01a1dadb-bc87-7562-9185-a4d875999ac6",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dadb-bc87-7562-9185-a4d875999ac6",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 2391366,
+        "cached_input_tokens": 2341504,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 7423,
+        "reasoning_output_tokens": 629,
+        "total_tokens": 2398789
+      },
+      "records": 107,
+      "trace": "sessions/rollout-2026-11-15T00-19-57-01a1dadb-bc87-7562-9185-a4d875999ac6.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dadc-4d94-7e50-a664-e637c0d4e701",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dadb-bc87-7562-9185-a4d875999ac6",
+              "depth": 1,
+              "agent_path": "/root/bugfix",
+              "agent_nickname": "Hooke",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Hooke",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dadc-4d94-7e50-a664-e637c0d4e701",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dadb-bc87-7562-9185-a4d875999ac6",
+                "depth": 1,
+                "agent_path": "/root/bugfix",
+                "agent_nickname": "Hooke",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Hooke",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 1198754,
+        "cached_input_tokens": 1149696,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 7224,
+        "reasoning_output_tokens": 347,
+        "total_tokens": 1205978
+      },
+      "records": 61,
+      "trace": "sessions/rollout-2026-11-15T00-20-33-01a1dadc-4d94-7e50-a664-e637c0d4e701.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dadc-a6f6-7473-a707-ec0a9aec294c",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dadb-bc87-7562-9185-a4d875999ac6",
+              "depth": 1,
+              "agent_path": "/root/integration",
+              "agent_nickname": "Leibniz",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Leibniz",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dadc-a6f6-7473-a707-ec0a9aec294c",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dadb-bc87-7562-9185-a4d875999ac6",
+                "depth": 1,
+                "agent_path": "/root/integration",
+                "agent_nickname": "Leibniz",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Leibniz",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 1070029,
+        "cached_input_tokens": 1043072,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10015,
+        "reasoning_output_tokens": 525,
+        "total_tokens": 1080044
+      },
+      "records": 59,
+      "trace": "sessions/rollout-2026-11-15T00-20-56-01a1dadc-a6f6-7473-a707-ec0a9aec294c.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dadc-ee0e-7963-8c8e-2e86d6cff69a",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dadb-bc87-7562-9185-a4d875999ac6",
+              "depth": 1,
+              "agent_path": "/root/review",
+              "agent_nickname": "Harvey",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Harvey",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dadc-ee0e-7963-8c8e-2e86d6cff69a",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dadb-bc87-7562-9185-a4d875999ac6",
+                "depth": 1,
+                "agent_path": "/root/review",
+                "agent_nickname": "Harvey",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Harvey",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 1411479,
+        "cached_input_tokens": 1371392,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 12268,
+        "reasoning_output_tokens": 1359,
+        "total_tokens": 1423747
+      },
+      "records": 67,
+      "trace": "sessions/rollout-2026-11-15T00-21-14-01a1dadc-ee0e-7963-8c8e-2e86d6cff69a.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dadd-2df6-7242-9abc-3d255f52f17d",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dadc-ee0e-7963-8c8e-2e86d6cff69a",
+              "depth": 2,
+              "agent_path": "/root/review/architecture_evidence",
+              "agent_nickname": "Hume",
+              "agent_role": "sdd-architect"
+            }
+          }
+        },
+        "agent_role": "sdd-architect",
+        "agent_nickname": "Hume",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dadd-2df6-7242-9abc-3d255f52f17d",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dadc-ee0e-7963-8c8e-2e86d6cff69a",
+                "depth": 2,
+                "agent_path": "/root/review/architecture_evidence",
+                "agent_nickname": "Hume",
+                "agent_role": "sdd-architect"
+              }
+            }
+          },
+          "agent_role": "sdd-architect",
+          "agent_nickname": "Hume",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": "7d516d4c6ce2683efd674a3a62c93c70448b92523b45a60941efd8fc8fe97c96",
+      "model": "gpt-6-astra",
+      "usage": {
+        "input_tokens": 256059,
+        "cached_input_tokens": 220928,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3143,
+        "reasoning_output_tokens": 51,
+        "total_tokens": 259202
+      },
+      "records": 21,
+      "trace": "sessions/rollout-2026-11-15T00-21-30-01a1dadd-2df6-7242-9abc-3d255f52f17d.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dadd-51e5-73f2-ba5e-c9df0fc27963",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dadc-4d94-7e50-a664-e637c0d4e701",
+              "depth": 2,
+              "agent_path": "/root/bugfix/coder",
+              "agent_nickname": "Galileo",
+              "agent_role": "sdd-coder"
+            }
+          }
+        },
+        "agent_role": "sdd-coder",
+        "agent_nickname": "Galileo",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dadd-51e5-73f2-ba5e-c9df0fc27963",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dadc-4d94-7e50-a664-e637c0d4e701",
+                "depth": 2,
+                "agent_path": "/root/bugfix/coder",
+                "agent_nickname": "Galileo",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "agent_role": "sdd-coder",
+          "agent_nickname": "Galileo",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 270782,
+        "cached_input_tokens": 227456,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3672,
+        "reasoning_output_tokens": 343,
+        "total_tokens": 274454
+      },
+      "records": 19,
+      "trace": "sessions/rollout-2026-11-15T00-21-39-01a1dadd-51e5-73f2-ba5e-c9df0fc27963.jsonl"
+    }
+  ],
+  "candidate": "repairs-v1",
+  "candidate_manifest_sha256": "73ee31b0f296ea211fe2f300021eff1ddedae1e978517b5217d067a90c4b1ca7"
+}

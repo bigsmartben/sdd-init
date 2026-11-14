@@ -1,0 +1,15 @@
+{
+  "case": "bug_direct_report",
+  "expected": [
+    "Main 根据直接报告启动独立 sdd-bugfix Agent。Bugfix Agent 提出并验证可区分的归因预测，确认后登记稳定编号的 Issue，沿同一记录实施和复验",
+    "原 Issue 固化已验证原因、恢复目标、影响、边界和公开 parse 入口的定向复验计划与方案。由独立 Bugfix Agent 完成局部实施或委派专业执行者，沿用同一 Plan／Task 并向 Main 回报版本和证据",
+    "Bugfix 在修复版本验证空输入和非空回归，允许复用覆盖同一判据的局部实测；在本阶段关闭原 Issue 并返回版本、证据和集成准备信息"
+  ],
+  "forbidden": [
+    "根据报告或猜测直接改代码，或等待用户再次确认已经明确的启动目标、技术方案、复验或关单",
+    "只凭归因检查或未覆盖原场景的单测结果关闭 Issue",
+    "另建重复原 Issue 验收方案的集成文档、追加 sdd-test-loop、报告集成 Test Gate 或追加架构 Review"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

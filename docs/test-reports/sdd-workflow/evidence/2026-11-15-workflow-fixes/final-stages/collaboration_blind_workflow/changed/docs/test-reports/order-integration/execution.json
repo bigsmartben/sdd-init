@@ -1,0 +1,106 @@
+{
+  "batch": "order-integration-20261115",
+  "executor": "/root/integration",
+  "cwd": "/tmp/sdd-review-execution-7kzokfoo/collaboration_blind_workflow-fu0cz_u1/prepared/project",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "executable": "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+  "platform": "Linux-6.6.114.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "sqlite": "3.45.1",
+  "runtime": {
+    "environment": "isolated-local-fixture",
+    "database": "per-scenario temporary SQLite file",
+    "external_endpoint": null,
+    "external_call_authorized": false,
+    "network_access_in_this_run": false
+  },
+  "candidate_verified": true,
+  "before_sha256": {
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "docs/test-reports/order-integration/contract_checks.py": "026eab83d66ed2795b5e20dd9e5468329fa9434975e5ecda20f62f9f8d052558"
+  },
+  "after_sha256": {
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "docs/test-reports/order-integration/contract_checks.py": "026eab83d66ed2795b5e20dd9e5468329fa9434975e5ecda20f62f9f8d052558"
+  },
+  "unchanged": true,
+  "runs": [
+    {
+      "name": "AC-1",
+      "command": [
+        "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+        "-B",
+        "checks/acceptance.py",
+        "--scenario",
+        "AC-1"
+      ],
+      "timestamp_utc": "2026-11-14T16:43:03.571851+00:00",
+      "exit_code": 0,
+      "stdout": "AC-1.stdout.txt",
+      "stderr": "AC-1.stderr.txt"
+    },
+    {
+      "name": "AC-2",
+      "command": [
+        "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+        "-B",
+        "checks/acceptance.py",
+        "--scenario",
+        "AC-2"
+      ],
+      "timestamp_utc": "2026-11-14T16:43:03.619199+00:00",
+      "exit_code": 0,
+      "stdout": "AC-2.stdout.txt",
+      "stderr": "AC-2.stderr.txt"
+    },
+    {
+      "name": "AC-3",
+      "command": [
+        "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+        "-B",
+        "checks/acceptance.py",
+        "--scenario",
+        "AC-3"
+      ],
+      "timestamp_utc": "2026-11-14T16:43:03.672116+00:00",
+      "exit_code": 3,
+      "stdout": "AC-3.stdout.txt",
+      "stderr": "AC-3.stderr.txt"
+    },
+    {
+      "name": "contracts",
+      "command": [
+        "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+        "-B",
+        "docs/test-reports/order-integration/contract_checks.py"
+      ],
+      "timestamp_utc": "2026-11-14T16:43:03.705511+00:00",
+      "exit_code": 1,
+      "stdout": "contracts.stdout.txt",
+      "stderr": "contracts.stderr.txt"
+    },
+    {
+      "name": "runtime",
+      "command": [
+        "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+        "-B",
+        "checks/runtime_details.py"
+      ],
+      "timestamp_utc": "2026-11-14T16:43:03.888997+00:00",
+      "exit_code": 0,
+      "stdout": "runtime.stdout.txt",
+      "stderr": "runtime.stderr.txt"
+    }
+  ]
+}

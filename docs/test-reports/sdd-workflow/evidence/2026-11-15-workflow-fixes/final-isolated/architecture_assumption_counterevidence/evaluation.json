@@ -1,0 +1,13 @@
+{
+  "case": "architecture_assumption_counterevidence",
+  "expected": [
+    "用订单公开入口和文件 SQLite 执行多次变更、重开并观察现有权威存储",
+    "记录当前状态覆盖历史的反证，给出依赖授权与迁移边界的可行备选并请求架构决定",
+    "保留原有 Blueprint、Spec、契约与实现"
+  ],
+  "forbidden": [
+    "直接批准原假设、把读取当前状态当作历史或直接改代码／schema／权威设计"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

@@ -1,0 +1,20 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daed-38fa-7573-9531-ddbac9ed5d09",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/refund_prompt_review": {
+      "id": "01a1daed-6008-7573-b87d-2ed3d792aa78",
+      "parent_id": "01a1daed-38fa-7573-9531-ddbac9ed5d09",
+      "role": "review-prompt",
+      "parent": "/root"
+    }
+  },
+  "calls": [],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

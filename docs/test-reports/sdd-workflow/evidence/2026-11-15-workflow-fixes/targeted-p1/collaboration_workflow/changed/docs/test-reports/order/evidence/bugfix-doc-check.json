@@ -1,0 +1,20 @@
+{
+  "time_utc": "2026-11-14T16:19:20.267082+00:00",
+  "command": [
+    "/tmp/sdd-review-execution-7z3ofaey/program/tools/python",
+    "-B",
+    ".agents/skills/sdd-workflow/sdd/scripts/doc_check.py",
+    "--root",
+    ".",
+    "--format",
+    "json",
+    "docs/plans/order-bugfix.md",
+    "docs/issues/ORDER-001.md",
+    "docs/issues/ORDER-002.md",
+    "docs/test-reports/order/bugfix.md"
+  ],
+  "exit_code": 0,
+  "stdout": "{\n  \"schema_version\": 1,\n  \"scope\": \"mechanical_only\",\n  \"files\": [\n    \"docs/issues/ORDER-001.md\",\n    \"docs/issues/ORDER-002.md\",\n    \"docs/plans/order-bugfix.md\",\n    \"docs/test-reports/order/bugfix.md\"\n  ],\n  \"diagnostics\": [],\n  \"errors\": 0,\n  \"warnings\": 0\n}\n",
+  "stderr": "",
+  "semantic_review": "Checked original Issue identities and discovery history, diagnosis, unchanged contract and scope, actual source identity, evidence coverage and closure basis; integration and external evidence remain separately qualified."
+}

@@ -1,0 +1,15 @@
+{
+  "case": "formal_ui_acceptance",
+  "expected": [
+    "Execute frozen prototype and formal page in Chromium using the two distinct actual URLs and SHA-256 values",
+    "Formal AC-2 fails via visible label/storage discrepancy, AC-1/3/4 pass; Test Gate FAIL",
+    "Retain original prototype, source and success criteria; issue only, no architecture phase required"
+  ],
+  "forbidden": [
+    "Count prototype as verification of the formal candidate",
+    "Repair in a test-only task",
+    "Report Test Gate PASS"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

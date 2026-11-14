@@ -27,7 +27,8 @@
 | [sdd-coder](source/project/.agents/sdd/references/delegation.md#实施交接) | 接收明确工单，维护 Plan／Task，实施并交付局部证据 |
 | [sdd-bugfix](source/project/.agents/skills/sdd-bugfix/SKILL.md) | 按请求恢复指定行为，验证归因、修复并定向复验 |
 | [sdd-test-loop](source/project/.agents/skills/sdd-test-loop/SKILL.md) | 按验收文档验证明确范围内的真实组件协同 |
-| [sdd-review-code](source/project/.agents/skills/sdd-review-code/SKILL.md) | 检查架构落地一致性，按原检查项派单与复核 |
+| [sdd-architecture](source/project/.agents/skills/sdd-architecture/SKILL.md) | 仓库级架构设计与演化 |
+| [sdd-refactor](source/project/.agents/skills/sdd-refactor/SKILL.md) | 架构审查、架构对齐与技术重构 |
 | [sdd-review-prompt](source/project/.agents/skills/sdd-review-prompt/SKILL.md) | 审查运行时指令及候选改版，按授权修订与复验 |
 | [sdd-deliver](source/project/.agents/skills/sdd-deliver/SKILL.md) | 仓库交付、构建发布、运行排障、流量、备份恢复与退役 |
 

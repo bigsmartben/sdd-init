@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-v"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.049s\n\nOK\n"
+}

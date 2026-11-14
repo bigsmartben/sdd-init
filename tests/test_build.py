@@ -121,7 +121,7 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(
             {p.parent.name for p in (target / WORKFLOW / "skills").glob("*/SKILL.md")},
-            {"sdd-develop", "sdd-bugfix", "sdd-test-loop", "sdd-review-code",
+            {"sdd-develop", "sdd-bugfix", "sdd-test-loop", "sdd-architecture", "sdd-refactor",
              "sdd-review-prompt", "sdd-deliver"})
         for name in ("specs", "architecture", ".codex/agents", ".agents/sdd", "plan.md", "docs/index.md", "docs/code-review-rules.md"):
             self.assertFalse((target / name).exists(), name)

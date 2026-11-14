@@ -1,6 +1,6 @@
 # Architecture Review Record — <Subject and batch>
 
-> Record architecture conformance, remediation handoffs and rechecks. Link implementation Tasks and their Plan for the approach and local verification evidence.
+> Record architecture conformance, remediation handoffs, architecture rechecks and behavior-preservation acceptance. Link the implementation Tasks and their Plan for the approach and local verification.
 
 Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). Follow the project index for an existing record and maintain one record per review round. Link it from Status or Plan. This record serves as the report for architecture checks.
 
@@ -25,22 +25,22 @@ Select checks based on the impact of the change and each rule's applicability. C
 ### CHK-001: <Subject and constraint>
 
 - **Basis and subject** — <Applicable rule IDs and design clauses, implementation locations, and cross-module paths>
-- **Acceptance plan** — <Checks, verification responsibilities, timing or preconditions, and any applicable independence requirement. Record the actual verifier if already designated.>
-- **Acceptance procedure** — <Record the applicable constraint, subject and paths, preconditions, reproducible inspection or execution steps, observations and evidence to collect, and pass criteria.>
+- **Acceptance plan** — <For each architecture recheck and applicable behavior-preservation check, record who is responsible, timing or preconditions, and any independence requirement.>
+- **Architecture recheck procedure** — <Applicable constraint, subject and paths, preconditions, inspection or execution steps, observations, evidence and pass criteria.>
 - **Initial review facts** — <Not run, or time, reviewer, snapshot, actual result, evidence, deviations, and impact. Use PASS / FAIL / UNVERIFIED / BLOCKED / Not applicable for the conclusion of a completed check.>
 - **Remediation handoff** — <Use this check ID as the work order reference. Cite the rule and deviation evidence above, the remediation target and scope, affected locations, expected outcome, behavior to preserve, and this check's acceptance plan and procedure. Include actual assignment or status if known. Use Not applicable if no fix is required or only more investigation is needed.>
-- **Behavior preservation** — <Link affected baseline criteria and targeted checks separately from the architecture recheck. Include the designated verifier if known. Cite any applicable user-facing verification procedure and link actual results once available.>
+- **Behavior-preservation acceptance, when applicable** — <Link confirmed baseline criteria. Specify or reference the user entry point or public call, environment, data, steps, observations, evidence and pass criteria. Link the actual result on the remediation version, including covered criteria and any gaps.>
 - **Implementation Tasks** — <Links to one or more Tasks in the Plan. A Task may address several checks. Recheck each check separately and keep the fix approach in the Plan.>
 - **Current status and conclusion** — <Pending check / Conforming / Unfixed / Fix in progress / Fixed, awaiting recheck / Closed after recheck / Blocked. Use Not run while pending. Otherwise use PASS / FAIL / UNVERIFIED / BLOCKED / Not applicable. For a blocker, identify the specific problem, resumption conditions, and current assignee if known.>
 
 | Batch / Time / Reviewer | Action or recheck scope and method | Snapshot, actual results, and evidence | Check conclusion and status |
 |---|---|---|---|
-| <Batch> | <Further investigation or recheck. Include the original deviation, affected rules, and cross-module relationships.> | <Version, recheck evidence, and applicable behavior-preservation results. Link the Task and supporting evidence.> | <Check conclusion and any remaining deviation.> |
+| <Batch> | <Architecture recheck, behavior-preservation acceptance, or further investigation. Record scope and method.> | <Version, executor, actual result, and evidence. Link supporting Task evidence and state which criteria it covers.> | <Check conclusion and any remaining deviation.> |
 
-Repeat this block for each check. Preserve the initial review and subsequent results. For investigation-only updates, record the findings and recommendations. Recheck on the remediation snapshot using the original acceptance plan and procedure. Close only after a passing recheck. Report a failed recheck under the original check ID and link any corresponding Task. Reuse unaffected evidence when the impact analysis explains why it applies to the current snapshot.
+Repeat this block for each check. Preserve the initial review and subsequent results. For investigation-only updates, record findings and recommendations. Use the original plan and procedures on the remediation snapshot. Close the item after its architecture recheck and applicable behavior-preservation acceptance pass. Return failures to the corresponding Task under the original check ID. Reuse evidence that still proves the criteria on the remediation snapshot and fill any gaps.
 
 ## 3. Gate and Remaining Work
 
-- **Review Gate** — <Summary, scope, and snapshot supported by the review criteria and evidence>
+- **Review Gate** — <Architecture recheck result, scope, and snapshot supported by the applicable checks>
 - **Remaining work and next actions** — <Check IDs, specific problems, resumption conditions, and current assignees if known, or None>
-- **Integration readiness after refactoring** — <Deliverable version, affected paths, local behavior-preservation evidence, setup, entry points and any unmet prerequisites. The integration Test Report records its own Test Gate.>
+- **Integration readiness after refactoring** — <Candidate version, affected paths, setup, entry points, and whether the authorized scenarios can run. List actual test prerequisites, blocked scenarios, and resumption conditions. Record open review and behavior items with their actual effect on testing. Link the integration Test Gate and formal release evidence separately when available.>

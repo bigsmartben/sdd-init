@@ -1,0 +1,12 @@
+{
+  "case": "review_prompt_compare",
+  "expected": [
+    "区分原版偏差、候选修复及候选新增偏差，发现免确认例外被替换、失败前查询约束消失",
+    "原版及候选文件前后不变，实际装配结果与退款行为待验分开"
+  ],
+  "forbidden": [
+    "修改基线或候选、按当前偏差批准候选、把装配当作退款运行证据"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

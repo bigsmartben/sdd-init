@@ -1,0 +1,167 @@
+{
+  "start": "2026-11-15T00:39:18+08:00",
+  "end": "2026-11-15T00:43:06+08:00",
+  "seconds": 210.46,
+  "exit": 0,
+  "case": "workflow_review_explicit",
+  "permission_profile": "fixture-write",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "before": {
+    ".agents/skills/sdd-workflow-review/SKILL.md": "d7e2c20f2ac93415db526e33fccdf8f62d9bd9c7a8349c2d2e85ba396dc1458c",
+    ".agents/skills/sdd-workflow-review/agents/openai.yaml": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+    ".agents/skills/sdd-workflow-review/assets/review-report-template.md": "233736f843a45207c89715d44248423fb471a16844cefc7cd3c1a930bbaaff7d",
+    ".agents/skills/sdd-workflow-review/assets/whitepaper-template.md": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+    ".agents/skills/sdd-workflow-review/references/evidence-and-cost.md": "fc7d2c15e6f665c6db8b3b2f459ae73ca5f4c2ac6614cc09bd3ef2270d7dd617",
+    ".agents/skills/sdd-workflow-review/references/review-criteria.md": "7a6d787a47ccca7f479a7198fd27a93e601efab2bc00d4e43719ad435480a15a",
+    ".codex/agents/review-prompt.toml": "87112509fc93378290b3797beb14b7b122ea0852e596ea8346278ca412e08777",
+    ".codex/config.toml": "c7c7581c1f27c5b74cb9178ff61e58ef87f020d16823005127404f19a1ecab6e",
+    "TASK.txt": "3e952ea0573644c23029c972e39cd352fa68261f195e537b478efd420cce3c41",
+    "checks/load_guidance.py": "c2f88b5260f95cfa8d5c127f8043ec62d0ed9138b84573ecdfe958d47a089471",
+    "config/service.toml": "634a7586e96c11fefd44a5eb65ca4eb682ad8817baea7fa56893f0817edd3f76",
+    "docs/review-criteria.md": "57fe8a82754897ae792713423a63eb07a8016c3edb0488ce67be22d742f88d83",
+    "docs/sdd-workflow-whitepaper.md": "1bc4dfefc5879bda0468b0089d1d598ae5562be19c81164e334327de024cb808",
+    "docs/test-reports/sdd-workflow/README.md": "1e7616fb45c417f047c6d63da1698734811334de4cdc2cb9fb7bc4bbc7d682df",
+    "guidance/main.md": "926eec4f95c7692645b2f1f0bff7ec2bef96a69aa365fa63210c508b98e51da6",
+    "guidance/prompt.md": "09a185885c0307cf4b3fcf14ff149ae64c846a3c6a21734832eb57647498f2cd",
+    "specs/platform-independent-sdd/spec.md": "292280e5641fa892cbd5b4d1a71130bffd86541e4c83ff36612f54559f71fa44"
+  },
+  "after": {
+    ".agents/skills/sdd-workflow-review/SKILL.md": "d7e2c20f2ac93415db526e33fccdf8f62d9bd9c7a8349c2d2e85ba396dc1458c",
+    ".agents/skills/sdd-workflow-review/agents/openai.yaml": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+    ".agents/skills/sdd-workflow-review/assets/review-report-template.md": "233736f843a45207c89715d44248423fb471a16844cefc7cd3c1a930bbaaff7d",
+    ".agents/skills/sdd-workflow-review/assets/whitepaper-template.md": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+    ".agents/skills/sdd-workflow-review/references/evidence-and-cost.md": "fc7d2c15e6f665c6db8b3b2f459ae73ca5f4c2ac6614cc09bd3ef2270d7dd617",
+    ".agents/skills/sdd-workflow-review/references/review-criteria.md": "7a6d787a47ccca7f479a7198fd27a93e601efab2bc00d4e43719ad435480a15a",
+    ".codex/agents/review-prompt.toml": "87112509fc93378290b3797beb14b7b122ea0852e596ea8346278ca412e08777",
+    ".codex/config.toml": "c7c7581c1f27c5b74cb9178ff61e58ef87f020d16823005127404f19a1ecab6e",
+    "TASK.txt": "3e952ea0573644c23029c972e39cd352fa68261f195e537b478efd420cce3c41",
+    "checks/load_guidance.py": "c2f88b5260f95cfa8d5c127f8043ec62d0ed9138b84573ecdfe958d47a089471",
+    "config/service.toml": "634a7586e96c11fefd44a5eb65ca4eb682ad8817baea7fa56893f0817edd3f76",
+    "docs/review-criteria.md": "57fe8a82754897ae792713423a63eb07a8016c3edb0488ce67be22d742f88d83",
+    "docs/sdd-workflow-whitepaper.md": "1bc4dfefc5879bda0468b0089d1d598ae5562be19c81164e334327de024cb808",
+    "docs/test-reports/sdd-workflow/20261115-01/delivery-check.json": "cb128129d98489d993acf8f4a5227381cd1aa6fdc7b6c6ffbeaef9a64951286c",
+    "docs/test-reports/sdd-workflow/20261115-01/local-check.json": "144ffee5cc416a624714ff54ce543e6a7f3ea8f2cb948fb45fa144f160e477ad",
+    "docs/test-reports/sdd-workflow/20261115-01/report.md": "883c62a6f1d04a3608342c6291543d6d14639841299e2b79a5a8db28bef96338",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-invocation.json": "b9413af7eae48589aaa08d89ef2b3f637b3e15d9d780267457fe9207414504b6",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-load-check.json": "73d94776c1b8479b4ee5c09bdc7846afa996bb24daaadda7d26e3de5ebb19462",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-readonly-check.json": "b50836fe8a3e33d41bbcf25f0e1a073b59195a26cd8f0cc617bf65ea245066e5",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-receipt.md": "3d4e516297ec1bdd32b9f9db51cd52e3d2c0cb62fece37e1261385771d20afd6",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-ticket.md": "be9619b532af1c9374faf4dac30011d8bf938cfd0be141079bcbf0f75cf9d5d7",
+    "docs/test-reports/sdd-workflow/20261115-01/snapshot-after.json": "6e671525da684ff229bc5ad299747ea1a4d627fb203fc6020f5a36a8385c345d",
+    "docs/test-reports/sdd-workflow/20261115-01/snapshot-before.json": "805f0afa4542e8e8856025188b6c24285324ab7371a620ba6d68da2bacf63a03",
+    "docs/test-reports/sdd-workflow/20261115-01/static-evidence.txt": "47014ac0b27a19487ca7aafb552c08f0a4a4448cde568e2171f571209b843cce",
+    "docs/test-reports/sdd-workflow/README.md": "1e7616fb45c417f047c6d63da1698734811334de4cdc2cb9fb7bc4bbc7d682df",
+    "guidance/main.md": "926eec4f95c7692645b2f1f0bff7ec2bef96a69aa365fa63210c508b98e51da6",
+    "guidance/prompt.md": "09a185885c0307cf4b3fcf14ff149ae64c846a3c6a21734832eb57647498f2cd",
+    "specs/platform-independent-sdd/spec.md": "292280e5641fa892cbd5b4d1a71130bffd86541e4c83ff36612f54559f71fa44"
+  },
+  "changed": [
+    "docs/test-reports/sdd-workflow/20261115-01/delivery-check.json",
+    "docs/test-reports/sdd-workflow/20261115-01/local-check.json",
+    "docs/test-reports/sdd-workflow/20261115-01/report.md",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-invocation.json",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-load-check.json",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-readonly-check.json",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-receipt.md",
+    "docs/test-reports/sdd-workflow/20261115-01/review-prompt-ticket.md",
+    "docs/test-reports/sdd-workflow/20261115-01/snapshot-after.json",
+    "docs/test-reports/sdd-workflow/20261115-01/snapshot-before.json",
+    "docs/test-reports/sdd-workflow/20261115-01/static-evidence.txt"
+  ],
+  "base_commit": "07a29d1dbb465f73b786bd99a97f8d5dbb64f402",
+  "head_after": "07a29d1dbb465f73b786bd99a97f8d5dbb64f402",
+  "commit_paths": [],
+  "git_before": "",
+  "git_after": "?? docs/test-reports/sdd-workflow/20261115-01/",
+  "sessions": [
+    {
+      "identity": {
+        "id": "01a1daed-782f-7571-8718-838e502ec430",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daed-782f-7571-8718-838e502ec430",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 332164,
+        "cached_input_tokens": 310400,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 9548,
+        "reasoning_output_tokens": 338,
+        "total_tokens": 341712
+      },
+      "records": 26,
+      "trace": "sessions/rollout-2026-11-15T00-39-19-01a1daed-782f-7571-8718-838e502ec430.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1daee-3fca-7120-80cc-4998e3dfc480",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1daed-782f-7571-8718-838e502ec430",
+              "depth": 1,
+              "agent_path": "/root/prompt_review",
+              "agent_nickname": "Hegel",
+              "agent_role": "review-prompt"
+            }
+          }
+        },
+        "agent_role": "review-prompt",
+        "agent_nickname": "Hegel",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daee-3fca-7120-80cc-4998e3dfc480",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daed-782f-7571-8718-838e502ec430",
+                "depth": 1,
+                "agent_path": "/root/prompt_review",
+                "agent_nickname": "Hegel",
+                "agent_role": "review-prompt"
+              }
+            }
+          },
+          "agent_role": "review-prompt",
+          "agent_nickname": "Hegel",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        },
+        {
+          "id": "01a1daed-782f-7571-8718-838e502ec430",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": "87112509fc93378290b3797beb14b7b122ea0852e596ea8346278ca412e08777",
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 143547,
+        "cached_input_tokens": 136960,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2984,
+        "reasoning_output_tokens": 113,
+        "total_tokens": 146531
+      },
+      "records": 21,
+      "trace": "sessions/rollout-2026-11-15T00-40-09-01a1daee-3fca-7120-80cc-4998e3dfc480.jsonl"
+    }
+  ],
+  "candidate": "final-v2",
+  "candidate_manifest_sha256": "207b6815958537fca02ecae96449d90c301dc9cb650ab6da881fee36598c7aec"
+}

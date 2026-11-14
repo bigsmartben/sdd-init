@@ -1,0 +1,15 @@
+{
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-v"
+  ],
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "test_cancelled_submit_does_not_write_or_commit (test_order.OrderTests.test_cancelled_submit_does_not_write_or_commit) ... FAIL\ntest_closed_connection_errors_propagate (test_order.OrderTests.test_closed_connection_errors_propagate) ... ok\ntest_database_errors_propagate (test_order.OrderTests.test_database_errors_propagate) ... ok\ntest_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_missing_operations_raise_without_write_or_commit (test_order.OrderTests.test_missing_operations_raise_without_write_or_commit) ... \n  test_missing_operations_raise_without_write_or_commit (test_order.OrderTests.test_missing_operations_raise_without_write_or_commit) (operation='mark_paid') ... FAIL\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\ntest_orders_are_isolated (test_order.OrderTests.test_orders_are_isolated) ... FAIL\ntest_other_existing_statuses_still_submit (test_order.OrderTests.test_other_existing_statuses_still_submit) ... ok\n\n======================================================================\nFAIL: test_cancelled_submit_does_not_write_or_commit (test_order.OrderTests.test_cancelled_submit_does_not_write_or_commit)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/sdd-review-execution-7kzokfoo/collaboration_workflow-st_pjrpu/prepared/project/tests/test_order.py\", line 56, in test_cancelled_submit_does_not_write_or_commit\n    self.assertIs(order_service.submit_order(observed, \"ORDER-1\"), False)\nAssertionError: True is not False\n\n======================================================================\nFAIL: test_missing_operations_raise_without_write_or_commit (test_order.OrderTests.test_missing_operations_raise_without_write_or_commit) (operation='mark_paid')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/sdd-review-execution-7kzokfoo/collaboration_workflow-st_pjrpu/prepared/project/tests/test_order.py\", line 82, in test_missing_operations_raise_without_write_or_commit\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n\n======================================================================\nFAIL: test_orders_are_isolated (test_order.OrderTests.test_orders_are_isolated)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/sdd-review-execution-7kzokfoo/collaboration_workflow-st_pjrpu/prepared/project/tests/test_order.py\", line 112, in test_orders_are_isolated\n    self.assertFalse(order_service.submit_order(self.connection, \"ORDER-1\"))\nAssertionError: True is not false\n\n----------------------------------------------------------------------\nRan 8 tests in 0.147s\n\nFAILED (failures=3)\n"
+}

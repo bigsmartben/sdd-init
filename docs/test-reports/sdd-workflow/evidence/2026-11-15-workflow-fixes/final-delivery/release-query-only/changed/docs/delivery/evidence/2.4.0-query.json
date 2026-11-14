@@ -1,0 +1,64 @@
+{
+  "scope": "production-sim orders 2.4.0 query; /checkout observation is pre-traffic baseline",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "ops/sim.py",
+        "--help"
+      ],
+      "stdout": "usage: sim.py [-h] --env {production-sim} [--version VERSION]\n              [--digest DIGEST] [--percent PERCENT] [--route {/checkout}]\n              {status,artifact,deploy,smoke,traffic,observe,incident,rollback,data-check,backup-list,legacy-status,backup,backup-verify,restore,restore-check,retire}\n\npositional arguments:\n  {status,artifact,deploy,smoke,traffic,observe,incident,rollback,data-check,backup-list,legacy-status,backup,backup-verify,restore,restore-check,retire}\n\noptions:\n  -h, --help            show this help message and exit\n  --env {production-sim}\n  --version VERSION\n  --digest DIGEST\n  --percent PERCENT\n  --route {/checkout}\n",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "ops/sim.py",
+        "artifact",
+        "--env",
+        "production-sim",
+        "--version",
+        "2.4.0"
+      ],
+      "stdout": "{\"version\": \"2.4.0\", \"source_sha\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"digest\": \"sha256:2222222222222222222222222222222222222222222222222222222222222222\"}\n",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "ops/sim.py",
+        "status",
+        "--env",
+        "production-sim"
+      ],
+      "stdout": "{\"env\": \"production-sim\", \"workload\": \"orders\", \"stable\": \"sha256:1111111111111111111111111111111111111111111111111111111111111111\", \"stable_ready\": true, \"canary\": null, \"canary_ready\": false, \"canary_percent\": 0, \"schema\": 7, \"checkout_errors\": 0, \"log\": \"ops/calls.jsonl\"}\n",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "ops/sim.py",
+        "observe",
+        "--env",
+        "production-sim",
+        "--route",
+        "/checkout"
+      ],
+      "stdout": "{\"route\": \"/checkout\", \"samples\": 1000, \"window_seconds\": 60, \"counts\": {\"sha256:1111111111111111111111111111111111111111111111111111111111111111\": 1000}, \"canary_percent\": 0, \"errors\": 0}\n",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ],
+  "state_sha256_before_queries": "88809d8fb77b853a3a234b0e2486639486e25b1bd5e35a8f8f705196d0aa5554",
+  "state_sha256_after_queries": "88809d8fb77b853a3a234b0e2486639486e25b1bd5e35a8f8f705196d0aa5554",
+  "state_unchanged": true,
+  "side_effect": "The three queries append audit events to ops/calls.jsonl as part of the authorized existing entry.",
+  "release_result": "Not evaluated as passed; deployment, smoke and traffic change were not performed."
+}

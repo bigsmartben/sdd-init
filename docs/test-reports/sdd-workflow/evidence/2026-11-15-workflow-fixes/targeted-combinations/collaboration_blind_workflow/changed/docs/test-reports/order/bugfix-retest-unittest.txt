@@ -1,0 +1,9 @@
+test_cancelled_order_cannot_be_submitted (test_order.OrderTests.test_cancelled_order_cannot_be_submitted) ... ok
+test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok
+test_normal_submit (test_order.OrderTests.test_normal_submit) ... ok
+test_submit_missing_order_raises (test_order.OrderTests.test_submit_missing_order_raises) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.077s
+
+OK

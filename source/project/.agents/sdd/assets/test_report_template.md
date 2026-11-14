@@ -2,9 +2,9 @@
 
 Complete this report from the confirmed goals, scope and criteria, the preparation for the run, and the actual evidence. Identify whether the run was requirements acceptance, integration verification, local verification by the implementer, feasibility verification, Bug diagnosis, or a retest. Use the [Architecture Review Record template](review_template.md) for architecture conformance.
 
-Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). Follow the existing project index. For a simple Task, use this structure in the current Task record. Preserve historical paths and versions.
+Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). Follow the existing project index. For a simple or local task, record the applicable facts in the current task record. Preserve historical paths and versions.
 
-Include all eight sections. For a simple Task, record only the facts needed for this run and use precise references to existing material. Explain why a section or field does not apply, or identify missing information and its impact. Existing plans, guides, and cases can supply details when their applicability and any deviations are clear. Adjust links for the report's actual location.
+Use the full structure for integration regression. A simple or local task may use a concise entry with the purpose and criteria, actual version and environment, cases and results, evidence links, and any gaps, impact and resumption conditions. Add human feedback and relevant Issue or prior-run references when applicable. In either form, reuse precise references for applicable plans, guides and cases, identify deviations and retain failed attempts. Adjust links for the record's actual location.
 
 ## 1. Test Goals and Basis
 

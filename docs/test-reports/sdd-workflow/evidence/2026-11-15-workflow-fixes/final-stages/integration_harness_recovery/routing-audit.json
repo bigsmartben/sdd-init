@@ -1,0 +1,183 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daf1-500c-75e0-b2ea-199a9addfc5e",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/integration_test": {
+      "id": "01a1daf1-9fff-7fd1-944b-d04f2a3ee6c9",
+      "parent_id": "01a1daf1-500c-75e0-b2ea-199a9addfc5e",
+      "role": null,
+      "parent": "/root"
+    },
+    "/root/integration_test/test_tools": {
+      "id": "01a1daf2-3609-74b2-8cbb-e35bc90f1abc",
+      "parent_id": "01a1daf1-9fff-7fd1-944b-d04f2a3ee6c9",
+      "role": "sdd-coder",
+      "parent": "/root/integration_test"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:44:05.613Z",
+      "actor": "/root",
+      "target": "/root/integration_test",
+      "original_target": "integration_test",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_af148e23c69445b780f5699da0e2a47c",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-31-01a1daf1-500c-75e0-b2ea-199a9addfc5e.jsonl",
+      "line": 12
+    },
+    {
+      "time": "2026-11-14T16:44:46.476Z",
+      "actor": "/root/integration_test",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_a93bf492072948e1a9061e0406f880a4",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-50-01a1daf1-9fff-7fd1-944b-d04f2a3ee6c9.jsonl",
+      "line": 17
+    },
+    {
+      "time": "2026-11-14T16:44:52.109Z",
+      "actor": "/root",
+      "target": "/root/integration_test",
+      "original_target": "integration_test",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_4f0ee13c59764b6ab050bb077c4e5499",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-31-01a1daf1-500c-75e0-b2ea-199a9addfc5e.jsonl",
+      "line": 21
+    },
+    {
+      "time": "2026-11-14T16:44:57.140Z",
+      "actor": "/root/integration_test",
+      "target": "/root/integration_test/test_tools",
+      "original_target": "test_tools",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_b480cafdd5e44b5f9099d7ea62ba8aa9",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-50-01a1daf1-9fff-7fd1-944b-d04f2a3ee6c9.jsonl",
+      "line": 21
+    },
+    {
+      "time": "2026-11-14T16:45:13.162Z",
+      "actor": "/root/integration_test",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_df329f0c65b24ec4b3427eee341d4d6c",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-50-01a1daf1-9fff-7fd1-944b-d04f2a3ee6c9.jsonl",
+      "line": 27
+    },
+    {
+      "time": "2026-11-14T16:45:30.751Z",
+      "actor": "/root/integration_test",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_0e5997c30b594ac78f6e247c0cb9cada",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-50-01a1daf1-9fff-7fd1-944b-d04f2a3ee6c9.jsonl",
+      "line": 33
+    },
+    {
+      "time": "2026-11-14T16:45:52.588Z",
+      "actor": "/root/integration_test/test_tools",
+      "target": "/root/integration_test",
+      "original_target": "/root/integration_test",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_6d49e36b4d1b412eb1bfffde889e1712",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-44-29-01a1daf2-3609-74b2-8cbb-e35bc90f1abc.jsonl",
+      "line": 15
+    },
+    {
+      "time": "2026-11-14T16:46:07.167Z",
+      "actor": "/root/integration_test",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_c05316e23a9f47e28dbf07aa3e51680b",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-50-01a1daf1-9fff-7fd1-944b-d04f2a3ee6c9.jsonl",
+      "line": 43
+    },
+    {
+      "time": "2026-11-14T16:46:12.899Z",
+      "actor": "/root/integration_test",
+      "target": "/root/integration_test/test_tools",
+      "original_target": "test_tools",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_2df19c6d979f4cefbfa8eb9f8f62fd06",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-50-01a1daf1-9fff-7fd1-944b-d04f2a3ee6c9.jsonl",
+      "line": 45
+    },
+    {
+      "time": "2026-11-14T16:47:45.037Z",
+      "actor": "/root",
+      "target": "/root/integration_test",
+      "original_target": "integration_test",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_058fdef3da08459b8df48c7849bb8965",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-31-01a1daf1-500c-75e0-b2ea-199a9addfc5e.jsonl",
+      "line": 35
+    },
+    {
+      "time": "2026-11-14T16:48:18.506Z",
+      "actor": "/root",
+      "target": "/root/integration_test",
+      "original_target": "integration_test",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_28b82aa68c184e29b6d92f682d804acb",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-31-01a1daf1-500c-75e0-b2ea-199a9addfc5e.jsonl",
+      "line": 43
+    },
+    {
+      "time": "2026-11-14T16:48:31.225Z",
+      "actor": "/root/integration_test",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_18865140ea964877887a3e04156b2b67",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-50-01a1daf1-9fff-7fd1-944b-d04f2a3ee6c9.jsonl",
+      "line": 53
+    },
+    {
+      "time": "2026-11-14T16:48:47.695Z",
+      "actor": "/root",
+      "target": "/root/integration_test",
+      "original_target": "integration_test",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_158ad0c74636469e94d1379a7e11be11",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-31-01a1daf1-500c-75e0-b2ea-199a9addfc5e.jsonl",
+      "line": 52
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

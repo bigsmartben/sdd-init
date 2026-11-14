@@ -1,0 +1,19 @@
+{
+  "time_utc": "2026-11-14T16:19:33.595003+00:00",
+  "head": "fc366da8aff900abc000129676514d994ca5c671",
+  "working_tree": "HEAD plus uncommitted product fixes; see product_diff",
+  "product_diff": "diff --git a/src/order_service.py b/src/order_service.py\nindex c755580..89b08b2 100644\n--- a/src/order_service.py\n+++ b/src/order_service.py\n@@ -26,6 +26,7 @@ def cancel_order(connection, order_id):\n \n \n def submit_order(connection, order_id):\n-    read_status(connection, order_id)\n+    if read_status(connection, order_id) == \"cancelled\":\n+        return False\n     set_status(connection, order_id, \"submitted\")\n     return True\ndiff --git a/src/ui.py b/src/ui.py\nindex 6506458..70b6e08 100644\n--- a/src/ui.py\n+++ b/src/ui.py\n@@ -1,6 +1,7 @@\n \"\"\"UI adapter surface in the evaluation fixture (there is no graphical UI).\"\"\"\n \n+from . import order_service\n+\n \n def mark_paid(connection, order_id):\n-    connection.execute(\"UPDATE orders SET status = ? WHERE order_id = ?\", (\"paid\", order_id))\n-    connection.commit()\n+    order_service.set_status(connection, order_id, \"paid\")\n",
+  "git_status": " M docs/index.md\n M specs/order/quickstart.md\n M src/order_service.py\n M src/ui.py\n?? docs/issues/\n?? docs/plans/\n?? docs/test-reports/\n?? tests/order_regression.py\n",
+  "source_sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "4a03e8d39ef106a5037404562a931aad9009a1bb579304daa15f820983de6909"
+  },
+  "verification_asset_sha256": {
+    "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311",
+    "tests/order_regression.py": "d21f4caeffe9a341e3e60611e743a3ec5d97773028923bb1599b342ecdbb00ad",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9"
+  },
+  "matches_bugfix_handoff": true
+}

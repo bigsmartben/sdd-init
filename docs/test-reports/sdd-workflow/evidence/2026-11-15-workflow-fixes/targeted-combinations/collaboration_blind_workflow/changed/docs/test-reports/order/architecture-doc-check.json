@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "scope": "mechanical_only",
+  "files": [
+    "docs/test-reports/order/architecture-review.md"
+  ],
+  "diagnostics": [],
+  "errors": 0,
+  "warnings": 0
+}

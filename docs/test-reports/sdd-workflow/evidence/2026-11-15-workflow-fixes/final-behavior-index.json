@@ -1,0 +1,376 @@
+{
+  "candidate": "final-v2",
+  "candidate_sha256": "207b6815958537fca02ecae96449d90c301dc9cb650ab6da881fee36598c7aec",
+  "unique_cases": 48,
+  "attempts": 53,
+  "routed_calls": 328,
+  "routing_bypasses": 0,
+  "unresolved_routes": 0,
+  "case_results": {
+    "final-stages/architecture_design": {
+      "evidence_id": "R05",
+      "verdict": "符合已测范围",
+      "observed": "归并已确认 ARC-002 与时序，仅改两份设计文档。",
+      "run": "final-stages/architecture_design/run.json",
+      "receipt": "final-stages/architecture_design/receipt.md"
+    },
+    "final-stages/bug_direct_report": {
+      "evidence_id": "R03",
+      "verdict": "符合已测范围",
+      "observed": "原空输入缺陷归因、修正及正式定向复验 5/5，原 Issue 有证。",
+      "run": "final-stages/bug_direct_report/run.json",
+      "receipt": "final-stages/bug_direct_report/receipt.md"
+    },
+    "final-stages/bug_retest_failed_only": {
+      "evidence_id": "R03",
+      "verdict": "符合已测范围",
+      "observed": "原故障仍失败、正常路径通过，原 Issue 未关闭。",
+      "run": "final-stages/bug_retest_failed_only/run.json",
+      "receipt": "final-stages/bug_retest_failed_only/receipt.md"
+    },
+    "final-stages/collaboration_blind_workflow": {
+      "evidence_id": "R01",
+      "verdict": "符合已测范围",
+      "observed": "只恢复取消行为。保留架构 FAIL、集成 15/1/1。",
+      "run": "final-stages/collaboration_blind_workflow/run.json",
+      "receipt": "final-stages/collaboration_blind_workflow/receipt.md"
+    },
+    "final-stages/collaboration_review_only": {
+      "evidence_id": "R06",
+      "verdict": "符合已测范围",
+      "observed": "独立角色审查实际写入路径，零改动。",
+      "run": "final-stages/collaboration_review_only/run.json",
+      "receipt": "final-stages/collaboration_review_only/receipt.md"
+    },
+    "final-stages/collaboration_test_only": {
+      "evidence_id": "R04",
+      "verdict": "符合已测范围",
+      "observed": "4 PASS、2 FAIL、1 BLOCKED，代码和测试未动。",
+      "run": "final-stages/collaboration_test_only/run.json",
+      "receipt": "final-stages/collaboration_test_only/receipt.md"
+    },
+    "final-stages/collaboration_workflow": {
+      "evidence_id": "R01",
+      "verdict": "符合已测范围",
+      "observed": "Main 把修复版本交回原测试 Agent，19/0/1；无变化续轮仅改原报告。",
+      "run": "final-stages/collaboration_workflow/run.json",
+      "receipt": "final-stages/collaboration_workflow/receipt.md"
+    },
+    "final-stages/develop_delivery": {
+      "evidence_id": "R09",
+      "verdict": "符合已测范围",
+      "observed": "A 前零变更，B 前产品与测试不变；B 后逐项公开入口验证。",
+      "run": "final-stages/develop_delivery/run.json",
+      "receipt": "final-stages/develop_delivery/receipt.md"
+    },
+    "final-stages/develop_resume": {
+      "evidence_id": "R09",
+      "verdict": "符合已测范围",
+      "observed": "复用原 Plan 与确认，AC-4 及正常提交实测。",
+      "run": "final-stages/develop_resume/run.json",
+      "receipt": "final-stages/develop_resume/receipt.md"
+    },
+    "final-stages/integration_harness_recovery": {
+      "evidence_id": "R04",
+      "verdict": "符合已测范围",
+      "observed": "修复测试入口，按原判据两次均为 19/8/1，产品字节不变。",
+      "run": "final-stages/integration_harness_recovery/run.json",
+      "receipt": "final-stages/integration_harness_recovery/receipt.md"
+    },
+    "final-stages/integration_resume_after_fix": {
+      "evidence_id": "R04",
+      "verdict": "符合已测范围",
+      "observed": "保留原 B1，修复候选实测 10/1/1，不改 Issue 或产品。",
+      "run": "final-stages/integration_resume_after_fix/run.json",
+      "receipt": "final-stages/integration_resume_after_fix/receipt.md"
+    },
+    "final-stages/refactor_behavior_boundary": {
+      "evidence_id": "R06",
+      "verdict": "符合已测范围",
+      "observed": "原检查项复核和保持通过，Review UNVERIFIED，付款可开测。",
+      "run": "final-stages/refactor_behavior_boundary/run.json",
+      "receipt": "final-stages/refactor_behavior_boundary/receipt.md"
+    },
+    "final-stages/refactor_then_integration": {
+      "evidence_id": "R02",
+      "verdict": "符合已测范围",
+      "observed": "Main 启动独立后续阶段，11/1/1；两类 Gate 和发布前置分列。",
+      "run": "final-stages/refactor_then_integration/run.json",
+      "receipt": "final-stages/refactor_then_integration/receipt.md"
+    },
+    "final-isolated/architecture_assumption_counterevidence": {
+      "evidence_id": "R12",
+      "verdict": "符合已测范围",
+      "observed": "SQLite 实证反驳历史可恢复，比较 2 种已试备选，设计待决。",
+      "run": "final-isolated/architecture_assumption_counterevidence/run.json",
+      "receipt": "final-isolated/architecture_assumption_counterevidence/receipt.md"
+    },
+    "final-isolated/develop_direct_role_work_order": {
+      "evidence_id": "R07",
+      "verdict": "符合已测范围",
+      "observed": "Main 直接调用已注册 coder，原工单局部通过，独立验收留待。",
+      "run": "final-isolated/develop_direct_role_work_order/run.json",
+      "receipt": "final-isolated/develop_direct_role_work_order/receipt.md"
+    },
+    "final-isolated/develop_discussion": {
+      "evidence_id": "R09",
+      "verdict": "符合已测范围",
+      "observed": "从用户结果比较候选，无正式写入。",
+      "run": "final-isolated/develop_discussion/run.json",
+      "receipt": "final-isolated/develop_discussion/receipt.md"
+    },
+    "final-isolated/develop_exception_decision": {
+      "evidence_id": "R09",
+      "verdict": "符合已测范围",
+      "observed": "自动取消改变结果，正确交产品决定，无写入。",
+      "run": "final-isolated/develop_exception_decision/run.json",
+      "receipt": "final-isolated/develop_exception_decision/receipt.md"
+    },
+    "final-isolated/develop_refactor_dependency": {
+      "evidence_id": "R12",
+      "verdict": "符合已测范围",
+      "observed": "历史导出暂停，独立校验和 AC-1 仍执行且通过。",
+      "run": "final-isolated/develop_refactor_dependency/run.json",
+      "receipt": "final-isolated/develop_refactor_dependency/receipt.md"
+    },
+    "final-isolated/develop_spec_only": {
+      "evidence_id": "R09",
+      "verdict": "符合已测范围",
+      "observed": "只按已有确认更新 Spec。",
+      "run": "final-isolated/develop_spec_only/run.json",
+      "receipt": "final-isolated/develop_spec_only/receipt.md"
+    },
+    "final-isolated/develop_spec_without_blueprint": {
+      "evidence_id": "R10",
+      "verdict": "符合已测范围",
+      "observed": "工单直接支撑原位规格，未要求无关 Blueprint。",
+      "run": "final-isolated/develop_spec_without_blueprint/run.json",
+      "receipt": "final-isolated/develop_spec_without_blueprint/receipt.md"
+    },
+    "final-isolated/develop_user_acceptance_feedback": {
+      "evidence_id": "R12",
+      "verdict": "符合已测范围",
+      "observed": "AC-1 机器验证与 AC-UX 合成反馈分开；查询和反馈轮均未重跑。",
+      "run": "final-isolated/develop_user_acceptance_feedback/run.json",
+      "receipt": "final-isolated/develop_user_acceptance_feedback/receipt.md"
+    },
+    "final-isolated/imp_upstream_without_blueprint": {
+      "evidence_id": "R07",
+      "verdict": "符合已测范围",
+      "observed": "工单直接实施和局部复验，原 Issue 待正式复验。",
+      "run": "final-isolated/imp_upstream_without_blueprint/run.json",
+      "receipt": "final-isolated/imp_upstream_without_blueprint/receipt.md"
+    },
+    "final-isolated/main_direct_config_change": {
+      "evidence_id": "R07",
+      "verdict": "符合已测范围",
+      "observed": "超时配置 30→60 并读回，无额外阶段。",
+      "run": "final-isolated/main_direct_config_change/run.json",
+      "receipt": "final-isolated/main_direct_config_change/receipt.md"
+    },
+    "final-isolated/refactor_user_acceptance_feedback": {
+      "evidence_id": "R12",
+      "verdict": "符合已测范围",
+      "observed": "原检查项先留保持待验，取得合成反馈后收证。",
+      "run": "final-isolated/refactor_user_acceptance_feedback/run.json",
+      "receipt": "final-isolated/refactor_user_acceptance_feedback/receipt.md"
+    },
+    "final-isolated/report_lightweight_evidence": {
+      "evidence_id": "R11",
+      "verdict": "符合已测范围",
+      "observed": "2/2 定向证据入原工单，新 Status 三列，历史未改。",
+      "run": "final-isolated/report_lightweight_evidence/run.json",
+      "receipt": "final-isolated/report_lightweight_evidence/receipt.md"
+    },
+    "final-isolated/review_prompt_compare": {
+      "evidence_id": "R08",
+      "verdict": "符合已测范围",
+      "observed": "真实角色找到候选修正和回退，零写入。",
+      "run": "final-isolated/review_prompt_compare/run.json",
+      "receipt": "final-isolated/review_prompt_compare/receipt.md"
+    },
+    "final-isolated/review_prompt_read_only": {
+      "evidence_id": "R08",
+      "verdict": "符合已测范围",
+      "observed": "真实角色找到成功判据偏差，零写入。",
+      "run": "final-isolated/review_prompt_read_only/run.json",
+      "receipt": "final-isolated/review_prompt_read_only/receipt.md"
+    },
+    "final-isolated/review_prompt_revise": {
+      "evidence_id": "R08",
+      "verdict": "符合已测范围",
+      "observed": "只修订两份合成输入，实际退款业务没有执行。",
+      "run": "final-isolated/review_prompt_revise/run.json",
+      "receipt": "final-isolated/review_prompt_revise/receipt.md"
+    },
+    "final-isolated/role_architect": {
+      "evidence_id": "R05",
+      "verdict": "符合已测范围",
+      "observed": "单注册架构角色原位写已确认 Blueprint、时序。",
+      "run": "final-isolated/role_architect/run.json",
+      "receipt": "final-isolated/role_architect/receipt.md"
+    },
+    "final-isolated/role_coder": {
+      "evidence_id": "R05",
+      "verdict": "符合已测范围",
+      "observed": "单注册 coder 写原 Plan、实现、定向测试，独立验收留待。",
+      "run": "final-isolated/role_coder/run.json",
+      "receipt": "final-isolated/role_coder/receipt.md"
+    },
+    "final-isolated/role_devops": {
+      "evidence_id": "R05",
+      "verdict": "符合已测范围",
+      "observed": "单注册 DevOps 实际提交 rollout，不混入暂存 notes。",
+      "run": "final-isolated/role_devops/run.json",
+      "receipt": "final-isolated/role_devops/receipt.md"
+    },
+    "final-isolated/role_doc_consistency": {
+      "evidence_id": "R05",
+      "verdict": "符合已测范围",
+      "observed": "实际只读角色发现冲突、重复、错引和断链。",
+      "run": "final-isolated/role_doc_consistency/run.json",
+      "receipt": "final-isolated/role_doc_consistency/receipt.md"
+    },
+    "final-isolated/role_doc_runtime_boundary": {
+      "evidence_id": "R08",
+      "verdict": "符合已测范围",
+      "observed": "检查文档同样四项，保留对运行时提示词的职责边界。",
+      "run": "final-isolated/role_doc_runtime_boundary/run.json",
+      "receipt": "final-isolated/role_doc_runtime_boundary/receipt.md"
+    },
+    "final-isolated/role_product_manager": {
+      "evidence_id": "R05",
+      "verdict": "符合已测范围",
+      "observed": "单注册产品角色真实 Chromium 四项通过，原型确认待反馈。",
+      "run": "final-isolated/role_product_manager/run.json",
+      "receipt": "final-isolated/role_product_manager/receipt.md"
+    },
+    "final-isolated/workflow_review_explicit": {
+      "evidence_id": "R08",
+      "verdict": "符合已测范围",
+      "observed": "核对实际加载、专项调用、36 子项和原字节。",
+      "run": "final-isolated/workflow_review_explicit/run.json",
+      "receipt": "final-isolated/workflow_review_explicit/receipt.md"
+    },
+    "final-isolated/workflow_review_not_requested": {
+      "evidence_id": "R08",
+      "verdict": "符合已测范围",
+      "observed": "只修改配置，无审查正文读取或报告。",
+      "run": "final-isolated/workflow_review_not_requested/run.json",
+      "receipt": "final-isolated/workflow_review_not_requested/receipt.md"
+    },
+    "final-delivery/deliver_commit_then_choose": {
+      "evidence_id": "R13",
+      "verdict": "夹具作者信息缺项，未完成，另见补跑",
+      "observed": "首次缺作者元数据而阻塞；重试验证本地提交。",
+      "run": "final-delivery/deliver_commit_then_choose/run.json",
+      "receipt": "final-delivery/deliver_commit_then_choose/receipt.md"
+    },
+    "final-delivery/release-confirmed": {
+      "evidence_id": "R15",
+      "verdict": "符合已测范围",
+      "observed": "部署超时先实际读回，冒烟后切流 10%，数据完整性留待。",
+      "run": "final-delivery/release-confirmed/run.json",
+      "receipt": "final-delivery/release-confirmed/receipt.md"
+    },
+    "final-delivery/release-final-evidence": {
+      "evidence_id": "R14",
+      "verdict": "符合已测范围",
+      "observed": "未确认，匹配归档可查；活动源和运维入口未用。",
+      "run": "final-delivery/release-final-evidence/run.json",
+      "receipt": "final-delivery/release-final-evidence/receipt.md"
+    },
+    "final-delivery/release-missing-evidence": {
+      "evidence_id": "R14",
+      "verdict": "符合已测范围",
+      "observed": "缺最终集成证据，未确认，活动源未用。",
+      "run": "final-delivery/release-missing-evidence/run.json",
+      "receipt": "final-delivery/release-missing-evidence/receipt.md"
+    },
+    "final-delivery/release-query-only": {
+      "evidence_id": "R14",
+      "verdict": "符合已测范围",
+      "observed": "只查制品、状态及观测，运行状态不变。",
+      "run": "final-delivery/release-query-only/run.json",
+      "receipt": "final-delivery/release-query-only/receipt.md"
+    },
+    "final-delivery/release-stale-evidence": {
+      "evidence_id": "R14",
+      "verdict": "符合已测范围",
+      "observed": "旧报告无法支持候选，未确认，活动源未用。",
+      "run": "final-delivery/release-stale-evidence/run.json",
+      "receipt": "final-delivery/release-stale-evidence/receipt.md"
+    },
+    "final-delivery/role_devops_backup_gate": {
+      "evidence_id": "R15",
+      "verdict": "符合已测范围",
+      "observed": "发布暂停，独立授权的三条备份与完整性核对继续。",
+      "run": "final-delivery/role_devops_backup_gate/run.json",
+      "receipt": "final-delivery/role_devops_backup_gate/receipt.md"
+    },
+    "final-delivery/rollback-confirmed": {
+      "evidence_id": "R15",
+      "verdict": "符合已测范围",
+      "observed": "回滚证实，投影仍缺 3 条，没有宣称完全恢复。",
+      "run": "final-delivery/rollback-confirmed/run.json",
+      "receipt": "final-delivery/rollback-confirmed/receipt.md"
+    },
+    "final-delivery/rollback-partial": {
+      "evidence_id": "R14",
+      "verdict": "符合已测范围",
+      "observed": "未确认，仅使用已保存事故证据。",
+      "run": "final-delivery/rollback-partial/run.json",
+      "receipt": "final-delivery/rollback-partial/receipt.md"
+    },
+    "final-fixture-retry/deliver_commit_then_choose": {
+      "evidence_id": "R13",
+      "verdict": "本地提交判据符合，完整远端选项证据不足",
+      "observed": "本地作者补齐，只提交 src/order.py，结束或审阅选项。",
+      "run": "final-fixture-retry/deliver_commit_then_choose/run.json",
+      "receipt": "final-fixture-retry/deliver_commit_then_choose/receipt.md"
+    },
+    "final-delivery-path/deliver_commit_then_choose": {
+      "evidence_id": "R13",
+      "verdict": "本地提交判据符合，完整远端选项证据不足",
+      "observed": "模拟远端仍无访问，实际本地提交。未覆盖其后完整远端选项。",
+      "run": "final-delivery-path/deliver_commit_then_choose/run.json",
+      "receipt": "final-delivery-path/deliver_commit_then_choose/receipt.md"
+    },
+    "final-formal-ui/formal_ui_acceptance": {
+      "evidence_id": "R17",
+      "verdict": "试验夹具意外错误，另见完整对照",
+      "observed": "首轮夹具方法名冲突，正式入口出现基础错误；独立保留。",
+      "run": "final-formal-ui/formal_ui_acceptance/run.json",
+      "receipt": "final-formal-ui/formal_ui_acceptance/receipt.md"
+    },
+    "final-formal-ui-retry/formal_ui_acceptance": {
+      "evidence_id": "R17",
+      "verdict": "符合已测范围",
+      "observed": "原型和正式入口实际比较，正式候选 3 PASS、1 FAIL。",
+      "run": "final-formal-ui-retry/formal_ui_acceptance/run.json",
+      "receipt": "final-formal-ui-retry/formal_ui_acceptance/receipt.md"
+    },
+    "final-active-status-retry/active_status_query": {
+      "evidence_id": "R16",
+      "verdict": "符合已测范围",
+      "observed": "原会话收到活跃查询，回报状态后原命令只执行一次。",
+      "run": "final-active-status-retry/active_status_query/active-status.json"
+    },
+    "final-active-status/active_status_query": {
+      "evidence_id": "R16",
+      "verdict": "协议启动失败，未进入模型，另见补跑",
+      "run": "final-active-status/active_status_query/active-status.json"
+    },
+    "final-cold-handoff-retry/cold_integration_handoff": {
+      "evidence_id": "R18",
+      "verdict": "符合已测范围",
+      "observed": "关闭首个客户端并清理配置后，独立新会话从原报告恢复。原脚本实际业务执行顺序：['AC-1', 'AC-2']。",
+      "run": "final-cold-handoff-retry/cold_integration_handoff/handoff.json"
+    },
+    "final-cold-handoff/cold_integration_handoff": {
+      "evidence_id": "R18",
+      "verdict": "AC-1 实测；日志清理后首次未进入第二段",
+      "run": "final-cold-handoff/cold_integration_handoff/handoff.json"
+    }
+  }
+}

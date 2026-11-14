@@ -1,0 +1,92 @@
+{
+  "timestamp_utc": "2026-11-14T16:48:18.258050+00:00",
+  "runs": [
+    {
+      "command": [
+        "python",
+        "-B",
+        ".agents/skills/sdd-workflow/sdd/scripts/doc_check.py",
+        "--root",
+        ".",
+        "specs/order/quickstart.md",
+        "docs/index.md",
+        "docs/status.md",
+        "docs/test-reports/order/2026-11-15-integration.md",
+        "docs/issues/ORDER-001.md",
+        "docs/issues/ORDER-002.md",
+        "docs/issues/ORDER-003.md"
+      ],
+      "exit_code": 1,
+      "stdout": "docs/test-reports/order/2026-11-15-integration.md:87: error DOC007: Local target does not exist: evidence/final-validation.json\nChecked 7 Markdown files: 1 errors, 0 warnings (mechanical only)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "HEAD",
+        "--",
+        "src",
+        "runtime.json"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "exit_code": 0,
+      "stdout": " M checks/acceptance.py\n M checks/integration_runner.py\n M docs/index.md\n M specs/order/quickstart.md\n?? docs/issues/\n?? docs/status.md\n?? docs/test-reports/\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.028s\n\nOK\n"
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        ".agents/skills/sdd-workflow/sdd/scripts/doc_check.py",
+        "--root",
+        ".",
+        "specs/order/quickstart.md",
+        "docs/index.md",
+        "docs/status.md",
+        "docs/test-reports/order/2026-11-15-integration.md",
+        "docs/issues/ORDER-001.md",
+        "docs/issues/ORDER-002.md",
+        "docs/issues/ORDER-003.md"
+      ],
+      "exit_code": 0,
+      "stdout": "Checked 7 Markdown files: 0 errors, 0 warnings (mechanical only)\n",
+      "stderr": "",
+      "note": "Rerun after linked evidence file was created; previous DOC007 was a document writing-order issue."
+    }
+  ]
+}

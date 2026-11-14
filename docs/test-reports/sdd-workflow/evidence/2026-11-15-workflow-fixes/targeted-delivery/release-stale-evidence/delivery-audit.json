@@ -1,0 +1,35 @@
+{
+  "exit": 0,
+  "candidate": "repairs-v1",
+  "logged_operations": [],
+  "current_files": {
+    "ops/state.json": {
+      "before": "88809d8fb77b853a3a234b0e2486639486e25b1bd5e35a8f8f705196d0aa5554",
+      "after": "88809d8fb77b853a3a234b0e2486639486e25b1bd5e35a8f8f705196d0aa5554"
+    },
+    "ops/calls.jsonl": {
+      "before": null,
+      "after": null
+    },
+    "ops/data.json": {
+      "before": null,
+      "after": null
+    }
+  },
+  "direct_read_candidates": [
+    {
+      "session": "01a1dadb-ff88-7513-b1a2-a08809ddcc63",
+      "time": "2026-11-14T16:20:43.215Z",
+      "line": 11,
+      "trace": "sessions/rollout-2026-11-15T00-20-13-01a1dadb-ff88-7513-b1a2-a08809ddcc63.jsonl"
+    },
+    {
+      "session": "01a1dadc-51d0-78d3-aa24-9221cff48034",
+      "time": "2026-11-14T16:20:46.317Z",
+      "line": 10,
+      "trace": "sessions/rollout-2026-11-15T00-20-34-01a1dadc-51d0-78d3-aa24-9221cff48034.jsonl"
+    }
+  ],
+  "simulator_call_candidates": [],
+  "note": "Candidate lines need source inspection. Command patterns are not a general access monitor."
+}

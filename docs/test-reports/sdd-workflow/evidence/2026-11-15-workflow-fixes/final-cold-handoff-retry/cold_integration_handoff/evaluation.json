@@ -1,0 +1,11 @@
+{
+  "case": "cold_integration_handoff",
+  "expected": [
+    "AC-1 only, then AC-2 only"
+  ],
+  "forbidden": [
+    "Repeat valid AC-1 at the handoff"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

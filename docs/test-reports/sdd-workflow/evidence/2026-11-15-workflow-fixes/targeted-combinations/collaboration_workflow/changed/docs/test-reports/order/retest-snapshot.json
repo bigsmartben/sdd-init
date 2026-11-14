@@ -1,0 +1,35 @@
+{
+  "time_utc": "2026-11-14T16:25:12.976119+00:00",
+  "head": "a8f4cf7154b9e81d9b4ab62b8cd0cecddb36eec5",
+  "runtime": {
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "sqlite": "3.45.1",
+    "runtime": {
+      "environment": "isolated-local-fixture",
+      "database": "per-scenario temporary SQLite file",
+      "external_endpoint": null,
+      "external_call_authorized": false,
+      "network_access_in_this_run": false
+    },
+    "source_sha256": {
+      "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+      "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+      "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+      "src/ui.py": "c4a9e5b0789129c89bb71387e2aaed619944d115aff5a53c7fb5320fcbff88ae"
+    }
+  },
+  "tests_and_checks_sha256": {
+    "tests/test_order.py": "d17932bbba0bf316399400dd1190ea322e773af52797b31e378f9cb7487a1a0f",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/order_regression.py": "cfe65c5d4bfb7064cc2f170a4b765192b3ead0a5206e626a49ae6aa27ea64a6e",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d"
+  },
+  "source_diff": "diff --git a/src/order_service.py b/src/order_service.py\nindex c755580..89b08b2 100644\n--- a/src/order_service.py\n+++ b/src/order_service.py\n@@ -26,6 +26,7 @@ def cancel_order(connection, order_id):\n \n \n def submit_order(connection, order_id):\n-    read_status(connection, order_id)\n+    if read_status(connection, order_id) == \"cancelled\":\n+        return False\n     set_status(connection, order_id, \"submitted\")\n     return True\ndiff --git a/src/ui.py b/src/ui.py\nindex 6506458..e5dfa93 100644\n--- a/src/ui.py\n+++ b/src/ui.py\n@@ -1,6 +1,6 @@\n \"\"\"UI adapter surface in the evaluation fixture (there is no graphical UI).\"\"\"\n+from . import order_service\n \n \n def mark_paid(connection, order_id):\n-    connection.execute(\"UPDATE orders SET status = ? WHERE order_id = ?\", (\"paid\", order_id))\n-    connection.commit()\n+    order_service.set_status(connection, order_id, \"paid\")\ndiff --git a/tests/test_order.py b/tests/test_order.py\nindex 2294e99..b71a592 100644\n--- a/tests/test_order.py\n+++ b/tests/test_order.py\n@@ -1,11 +1,29 @@\n \"\"\"Existing local tests; acceptance is a separate checks entry point.\"\"\"\n from pathlib import Path\n+import sqlite3\n import tempfile\n import unittest\n \n from src import order_service, storage, ui\n \n \n+class CommitProbe:\n+    \"\"\"Delegate SQL to real SQLite and observe or reject the commit boundary.\"\"\"\n+    def __init__(self, connection, fail=False):\n+        self.connection = connection\n+        self.fail = fail\n+        self.commits = 0\n+\n+    def execute(self, *args):\n+        return self.connection.execute(*args)\n+\n+    def commit(self):\n+        self.commits += 1\n+        if self.fail:\n+            raise sqlite3.OperationalError(\"injected commit failure\")\n+        self.connection.commit()\n+\n+\n class OrderTests(unittest.TestCase):\n     def setUp(self):\n         self.directory = tempfile.TemporaryDirectory()\n@@ -27,6 +45,59 @@ class OrderTests(unittest.TestCase):\n         finally:\n             other.close()\n \n+    def test_cancelled_submit_has_no_write_or_commit(self):\n+        order_service.cancel_order(self.connection, \"ORDER-1\")\n+        statements = []\n+        self.connection.set_trace_callback(statements.append)\n+        probe = CommitProbe(self.connection)\n+        self.assertIs(order_service.submit_order(probe, \"ORDER-1\"), False)\n+        self.assertEqual(probe.commits, 0)\n+        self.assertTrue(statements)\n+        self.assertTrue(all(sql.lstrip().upper().startswith(\"SELECT \") for sql in statements))\n+        self.connection.set_trace_callback(None)\n+        self.connection.close()\n+        other = storage.connect(self.path)\n+        try:\n+            self.assertEqual(order_service.read_status(other, \"ORDER-1\"), \"cancelled\")\n+        finally:\n+            other.close()\n+\n+    def test_mark_paid_missing_raises(self):\n+        with self.assertRaises(ValueError):\n+            ui.mark_paid(self.connection, \"MISSING\")\n+\n+    def test_mark_paid_from_all_existing_states(self):\n+        for initial in (\"pending\", \"cancelled\", \"submitted\", \"paid\"):\n+            with self.subTest(initial=initial):\n+                order_service.set_status(self.connection, \"ORDER-1\", initial)\n+                ui.mark_paid(self.connection, \"ORDER-1\")\n+                other = storage.connect(self.path)\n+                try:\n+                    self.assertEqual(order_service.read_status(other, \"ORDER-1\"), \"paid\")\n+                finally:\n+                    other.close()\n+\n+    def test_commit_errors_propagate_without_persisted_success(self):\n+        for name, operation, order_id in (\n+            (\"create\", order_service.create_order, \"ORDER-2\"),\n+            (\"cancel\", order_service.cancel_order, \"ORDER-1\"),\n+            (\"submit\", order_service.submit_order, \"ORDER-1\"),\n+            (\"set_status\", lambda c, o: order_service.set_status(c, o, \"paid\"), \"ORDER-1\"),\n+            (\"mark_paid\", ui.mark_paid, \"ORDER-1\"),\n+        ):\n+            with self.subTest(operation=name):\n+                probe = CommitProbe(self.connection, fail=True)\n+                with self.assertRaisesRegex(sqlite3.OperationalError, \"commit failure\"):\n+                    operation(probe, order_id)\n+                self.assertEqual(probe.commits, 1)\n+                other = storage.connect(self.path)\n+                try:\n+                    self.assertEqual(order_service.read_status(other, \"ORDER-1\"), \"pending\")\n+                    self.assertEqual(other.execute(\"SELECT COUNT(*) FROM orders\").fetchone()[0], 1)\n+                finally:\n+                    other.close()\n+                    self.connection.rollback()\n+\n \n if __name__ == \"__main__\":\n     unittest.main()\n",
+  "initial_source_sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b"
+  },
+  "matches_bugfix_source_snapshot": true
+}

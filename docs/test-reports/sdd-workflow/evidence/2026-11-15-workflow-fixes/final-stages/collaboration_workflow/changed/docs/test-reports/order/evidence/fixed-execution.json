@@ -1,0 +1,50 @@
+{
+  "utc": "2026-11-14T16:46:31.279635+00:00",
+  "head": "89df9f629407a6b572c6f65c87fc9768e0f52f5d",
+  "git_status": " M docs/index.md\n M specs/order/quickstart.md\n M src/order_service.py\n M src/ui.py\n M tests/test_order.py\n?? checks/order_integration.py\n?? docs/issues/\n?? docs/status.md\n?? docs/test-reports/\n?? specs/order/plan.md\n",
+  "src_diff": "diff --git a/src/order_service.py b/src/order_service.py\nindex c755580..89b08b2 100644\n--- a/src/order_service.py\n+++ b/src/order_service.py\n@@ -26,6 +26,7 @@ def cancel_order(connection, order_id):\n \n \n def submit_order(connection, order_id):\n-    read_status(connection, order_id)\n+    if read_status(connection, order_id) == \"cancelled\":\n+        return False\n     set_status(connection, order_id, \"submitted\")\n     return True\ndiff --git a/src/ui.py b/src/ui.py\nindex 6506458..70b6e08 100644\n--- a/src/ui.py\n+++ b/src/ui.py\n@@ -1,6 +1,7 @@\n \"\"\"UI adapter surface in the evaluation fixture (there is no graphical UI).\"\"\"\n \n+from . import order_service\n+\n \n def mark_paid(connection, order_id):\n-    connection.execute(\"UPDATE orders SET status = ? WHERE order_id = ?\", (\"paid\", order_id))\n-    connection.commit()\n+    order_service.set_status(connection, order_id, \"paid\")\n",
+  "test_sha256": "2fc39d9f577b4c49ee7cab6fcb02f042ecc3bcaa3db07c150ea8fc8f2449e485",
+  "commands": [
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/order_integration.py"
+      ],
+      "exit_code": 3,
+      "evidence": "fixed-integration.json"
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/acceptance.py"
+      ],
+      "exit_code": 3,
+      "evidence": "fixed-acceptance.json"
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/runtime_details.py"
+      ],
+      "exit_code": 0,
+      "evidence": "fixed-runtime.json"
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "evidence": "fixed-unittest.txt"
+    }
+  ]
+}

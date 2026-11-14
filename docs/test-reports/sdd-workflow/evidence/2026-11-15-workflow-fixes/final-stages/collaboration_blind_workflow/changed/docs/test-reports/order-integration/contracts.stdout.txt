@@ -1,0 +1,104 @@
+[
+  {
+    "case": "CT-01",
+    "label": "create pending + commit",
+    "result": "PASS",
+    "detail": "pending visible from independent file connection; no open transaction"
+  },
+  {
+    "case": "CT-02",
+    "label": "cancel + commit",
+    "result": "PASS",
+    "detail": "cancelled visible from independent file connection"
+  },
+  {
+    "case": "CT-03",
+    "label": "set_status documented legal states",
+    "result": "PASS",
+    "detail": "all four documented legal states persisted"
+  },
+  {
+    "case": "CT-04",
+    "label": "mark_paid existing + commit",
+    "result": "PASS",
+    "detail": "paid visible from independent file connection"
+  },
+  {
+    "case": "CT-05",
+    "label": "reject empty/non-string create ID",
+    "result": "PASS",
+    "detail": [
+      "ValueError: order_id is required",
+      "ValueError: order_id is required",
+      "ValueError: order_id is required"
+    ]
+  },
+  {
+    "case": "CT-06",
+    "label": "read_status missing order raises ValueError",
+    "result": "PASS",
+    "detail": "ValueError: order not found"
+  },
+  {
+    "case": "CT-07",
+    "label": "cancel_order missing order raises ValueError",
+    "result": "PASS",
+    "detail": "ValueError: order not found"
+  },
+  {
+    "case": "CT-08",
+    "label": "submit_order missing order raises ValueError",
+    "result": "PASS",
+    "detail": "ValueError: order not found"
+  },
+  {
+    "case": "CT-09",
+    "label": "set_status missing order raises ValueError",
+    "result": "PASS",
+    "detail": "ValueError: order not found"
+  },
+  {
+    "case": "CT-10",
+    "label": "mark_paid missing order raises ValueError",
+    "result": "FAIL",
+    "error": "AssertionError: Expected ValueError; returned normally"
+  },
+  {
+    "case": "CT-11",
+    "label": "closed DB exceptions propagate through public entries",
+    "result": "PASS",
+    "detail": [
+      "ProgrammingError: Cannot operate on a closed database.",
+      "ProgrammingError: Cannot operate on a closed database.",
+      "ProgrammingError: Cannot operate on a closed database.",
+      "ProgrammingError: Cannot operate on a closed database.",
+      "ProgrammingError: Cannot operate on a closed database.",
+      "ProgrammingError: Cannot operate on a closed database."
+    ]
+  },
+  {
+    "case": "CT-12",
+    "label": "real file DB commit failure + rollback recovery",
+    "result": "PASS",
+    "detail": "OperationalError: database is locked; reader observed pending, rollback restored pending"
+  },
+  {
+    "case": "CT-13",
+    "label": "cancelled submit no writes",
+    "result": "PASS",
+    "detail": {
+      "accepted": false,
+      "total_changes_delta": 0,
+      "statements": [
+        "SELECT status FROM orders WHERE order_id = 'ORDER-1'"
+      ],
+      "persisted": "cancelled"
+    }
+  },
+  {
+    "case": "CT-14",
+    "label": "local operations no network",
+    "result": "PASS",
+    "detail": []
+  }
+]

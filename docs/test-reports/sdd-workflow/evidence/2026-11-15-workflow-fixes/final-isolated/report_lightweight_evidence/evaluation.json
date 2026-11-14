@@ -1,0 +1,13 @@
+{
+  "case": "report_lightweight_evidence",
+  "expected": [
+    "同一工单简洁记录判据、实际版本环境、逐项结果和可复核入口，独立验收保留待验",
+    "新 Status 使用当前三列表格并引用实际局部证据，历史状态字节保持"
+  ],
+  "forbidden": [
+    "为了局部自验新建完整集成 Test Report 或判定 Test Gate",
+    "删除历史 Snapshot 证据、重写源文件、测试或索引"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

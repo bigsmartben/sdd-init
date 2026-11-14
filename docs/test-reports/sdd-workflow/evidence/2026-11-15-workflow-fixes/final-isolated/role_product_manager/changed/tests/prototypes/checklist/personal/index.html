@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Personal checklist · Quick List prototype</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f4f5f7; color: #222b38; font: 16px/1.5 system-ui, sans-serif; }
+    header { background: #fff; border-bottom: 1px solid #dde1e7; padding: 20px max(24px, calc((100vw - 760px) / 2)); }
+    .brand { font-size: 19px; font-weight: 700; }
+    .badge { display: inline-block; margin-left: 12px; padding: 3px 9px; border: 1px solid #cbd1da; border-radius: 5px; color: #526071; font-size: 12px; vertical-align: middle; }
+    main { max-width: 760px; margin: 48px auto; padding: 0 24px; }
+    h1 { font-size: 30px; line-height: 1.2; margin: 0 0 12px; }
+    .intro { margin: 0 0 28px; color: #526071; }
+    .card { padding: 28px; background: #fff; border: 1px solid #dde1e7; border-radius: 10px; }
+    label.field { display: block; margin-bottom: 8px; font-weight: 600; }
+    .entry { display: flex; gap: 12px; }
+    input[type="text"] { min-width: 0; flex: 1; padding: 11px 12px; border: 1px solid #9aa5b4; border-radius: 5px; font: inherit; }
+    button { padding: 11px 24px; color: #fff; background: #334c70; border: 1px solid #334c70; border-radius: 5px; font: inherit; font-weight: 600; cursor: pointer; }
+    button:hover { background: #263d5d; }
+    :focus-visible { outline: 3px solid #739ad0; outline-offset: 3px; }
+    input[aria-invalid="true"] { border-color: #ae2e35; }
+    #error { color: #ae2e35; margin: 8px 0 0; font-size: 14px; }
+    [hidden] { display: none !important; }
+    .list-heading { margin: 30px 0 12px; font-size: 17px; }
+    #empty { margin: 0; padding: 28px 16px; border: 1px dashed #cbd1da; border-radius: 5px; color: #526071; text-align: center; }
+    ul { padding: 0; margin: 0; list-style: none; }
+    li { border-top: 1px solid #e3e6eb; }
+    li:last-child { border-bottom: 1px solid #e3e6eb; }
+    .item { display: flex; align-items: center; gap: 12px; padding: 15px 4px; cursor: pointer; }
+    input[type="checkbox"] { flex: 0 0 auto; width: 20px; height: 20px; margin: 0; accent-color: #334c70; }
+    .item span { overflow-wrap: anywhere; }
+    input:checked + span { text-decoration: line-through; color: #667384; }
+    footer { margin-top: 20px; color: #526071; font-size: 13px; }
+    @media (max-width: 480px) { main { margin-top: 28px; padding: 0 16px; } .card { padding: 20px; } button { padding-inline: 18px; } }
+  </style>
+</head>
+<body>
+  <header><span class="brand">Quick List</span><span class="badge">Prototype · v1 candidate</span></header>
+  <main>
+    <h1>Personal checklist</h1>
+    <p class="intro">One thing at a time. Add an item, then check it off when it’s done.</p>
+    <section class="card" aria-label="Your checklist">
+      <form id="add-form" novalidate>
+        <label class="field" for="item-input">Item</label>
+        <div class="entry">
+          <input id="item-input" type="text" placeholder="e.g. Pick up groceries" autocomplete="off" aria-describedby="error">
+          <button type="submit">Add</button>
+        </div>
+        <p id="error" role="alert" hidden>Enter an item before adding it.</p>
+      </form>
+      <h2 class="list-heading">Your items</h2>
+      <p id="empty">Your list is empty. Add your first item above.</p>
+      <ul id="items" aria-label="Checklist items"></ul>
+    </section>
+    <footer>Interactive preview with simulated data. Items stay in this page only; refreshing clears the list.</footer>
+  </main>
+  <script>
+    const form = document.getElementById('add-form');
+    const input = document.getElementById('item-input');
+    const error = document.getElementById('error');
+    const items = document.getElementById('items');
+    const empty = document.getElementById('empty');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const text = input.value.trim();
+      if (!text) {
+        error.hidden = false;
+        input.setAttribute('aria-invalid', 'true');
+        input.focus();
+        return;
+      }
+      const row = document.createElement('li');
+      const label = document.createElement('label');
+      label.className = 'item';
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      const caption = document.createElement('span');
+      caption.textContent = text;
+      label.append(checkbox, caption);
+      row.append(label);
+      items.append(row);
+      empty.hidden = true;
+      error.hidden = true;
+      input.removeAttribute('aria-invalid');
+      input.value = '';
+      input.focus();
+    });
+  </script>
+</body>
+</html>

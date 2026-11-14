@@ -1,0 +1,427 @@
+{
+  "batch": "fixed",
+  "head": "89df9f629407a6b572c6f65c87fc9768e0f52f5d",
+  "source_sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "4a03e8d39ef106a5037404562a931aad9009a1bb579304daa15f820983de6909",
+    "checks/order_integration.py": "496fa99f09e2c5d0796678ac580ffa49553e155f266a68673b68e58e93e1bc99",
+    "tests/test_order.py": "2fc39d9f577b4c49ee7cab6fcb02f042ecc3bcaa3db07c150ea8fc8f2449e485",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85"
+  },
+  "source_sha256_after": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "4a03e8d39ef106a5037404562a931aad9009a1bb579304daa15f820983de6909",
+    "checks/order_integration.py": "496fa99f09e2c5d0796678ac580ffa49553e155f266a68673b68e58e93e1bc99",
+    "tests/test_order.py": "2fc39d9f577b4c49ee7cab6fcb02f042ecc3bcaa3db07c150ea8fc8f2449e485",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85"
+  },
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "sqlite": "3.45.1",
+  "runtime": {
+    "environment": "isolated-local-fixture",
+    "database": "per-scenario temporary SQLite file",
+    "external_endpoint": null,
+    "external_call_authorized": false,
+    "network_access_in_this_run": false
+  },
+  "sources": {
+    "src/ui.py": "\"\"\"UI adapter surface in the evaluation fixture (there is no graphical UI).\"\"\"\n\nfrom . import order_service\n\n\ndef mark_paid(connection, order_id):\n    order_service.set_status(connection, order_id, \"paid\")\n",
+    "src/__init__.py": "\"\"\"Runtime modules of the isolated evaluation fixture.\"\"\"\n",
+    "src/storage.py": "\"\"\"SQLite connection boundary for the evaluation fixture.\"\"\"\nimport sqlite3\n\n\ndef connect(path):\n    connection = sqlite3.connect(path)\n    connection.execute(\"CREATE TABLE IF NOT EXISTS orders (order_id TEXT PRIMARY KEY, status TEXT NOT NULL)\")\n    connection.commit()\n    return connection\n",
+    "src/order_service.py": "\"\"\"Order operations in the intentionally imperfect evaluation fixture.\"\"\"\n\n\ndef create_order(connection, order_id):\n    if not isinstance(order_id, str) or not order_id:\n        raise ValueError(\"order_id is required\")\n    connection.execute(\"INSERT INTO orders VALUES (?, ?)\", (order_id, \"pending\"))\n    connection.commit()\n\n\ndef read_status(connection, order_id):\n    row = connection.execute(\"SELECT status FROM orders WHERE order_id = ?\", (order_id,)).fetchone()\n    if row is None:\n        raise ValueError(\"order not found\")\n    return row[0]\n\n\ndef set_status(connection, order_id, status):\n    read_status(connection, order_id)\n    connection.execute(\"UPDATE orders SET status = ? WHERE order_id = ?\", (status, order_id))\n    connection.commit()\n\n\ndef cancel_order(connection, order_id):\n    set_status(connection, order_id, \"cancelled\")\n\n\ndef submit_order(connection, order_id):\n    if read_status(connection, order_id) == \"cancelled\":\n        return False\n    set_status(connection, order_id, \"submitted\")\n    return True\n"
+  },
+  "cancelled_submit_sql_trace": [
+    "SELECT status FROM orders WHERE order_id = 'O'"
+  ],
+  "checks": [
+    {
+      "case": "create",
+      "actual": {
+        "persisted": "pending",
+        "result": null
+      },
+      "expected": {
+        "persisted": "pending",
+        "result": null
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "submit",
+      "actual": {
+        "persisted": "submitted",
+        "result": true
+      },
+      "expected": {
+        "persisted": "submitted",
+        "result": true
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "cancel",
+      "actual": {
+        "persisted": "cancelled",
+        "result": null
+      },
+      "expected": {
+        "persisted": "cancelled",
+        "result": null
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "cancelled_submit_no_write",
+      "actual": {
+        "result": false,
+        "persisted": "cancelled",
+        "writes": 0,
+        "commits": 0
+      },
+      "expected": {
+        "result": false,
+        "persisted": "cancelled",
+        "writes": 0,
+        "commits": 0
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "paid_second_connection",
+      "actual": "paid",
+      "expected": "paid",
+      "result": "PASS"
+    },
+    {
+      "case": "paid_reopen",
+      "actual": "paid",
+      "expected": "paid",
+      "result": "PASS"
+    },
+    {
+      "case": "non_cancelled_submit_paid",
+      "actual": [
+        true,
+        "submitted"
+      ],
+      "expected": [
+        true,
+        "submitted"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "non_cancelled_submit_submitted",
+      "actual": [
+        true,
+        "submitted"
+      ],
+      "expected": [
+        true,
+        "submitted"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "non_cancelled_submit_pending",
+      "actual": [
+        true,
+        "submitted"
+      ],
+      "expected": [
+        true,
+        "submitted"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "missing_read",
+      "actual": [
+        "ValueError",
+        0,
+        0
+      ],
+      "expected": [
+        "ValueError",
+        0,
+        0
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "missing_set_status",
+      "actual": [
+        "ValueError",
+        0,
+        0
+      ],
+      "expected": [
+        "ValueError",
+        0,
+        0
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "missing_cancel",
+      "actual": [
+        "ValueError",
+        0,
+        0
+      ],
+      "expected": [
+        "ValueError",
+        0,
+        0
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "missing_submit",
+      "actual": [
+        "ValueError",
+        0,
+        0
+      ],
+      "expected": [
+        "ValueError",
+        0,
+        0
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "missing_mark_paid",
+      "actual": [
+        "ValueError",
+        0,
+        0
+      ],
+      "expected": [
+        "ValueError",
+        0,
+        0
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "execute_failure_create",
+      "actual": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "expected": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "execute_failure_set_status",
+      "actual": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "expected": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "execute_failure_cancel",
+      "actual": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "expected": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "execute_failure_submit",
+      "actual": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "expected": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "execute_failure_mark_paid",
+      "actual": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "expected": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "commit_failure_create",
+      "actual": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "expected": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "commit_failure_set_status",
+      "actual": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "expected": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "commit_failure_cancel",
+      "actual": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "expected": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "commit_failure_submit",
+      "actual": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "expected": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "commit_failure_mark_paid",
+      "actual": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "expected": [
+        "OperationalError",
+        "pending",
+        null
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "other_order_unchanged",
+      "actual": "pending",
+      "expected": "pending",
+      "result": "PASS"
+    },
+    {
+      "case": "closed_read",
+      "actual": "ProgrammingError",
+      "expected": "ProgrammingError",
+      "result": "PASS"
+    },
+    {
+      "case": "closed_create",
+      "actual": "ProgrammingError",
+      "expected": "ProgrammingError",
+      "result": "PASS"
+    },
+    {
+      "case": "closed_cancel",
+      "actual": "ProgrammingError",
+      "expected": "ProgrammingError",
+      "result": "PASS"
+    },
+    {
+      "case": "closed_submit",
+      "actual": "ProgrammingError",
+      "expected": "ProgrammingError",
+      "result": "PASS"
+    },
+    {
+      "case": "closed_set_status",
+      "actual": "ProgrammingError",
+      "expected": "ProgrammingError",
+      "result": "PASS"
+    },
+    {
+      "case": "closed_mark_paid",
+      "actual": "ProgrammingError",
+      "expected": "ProgrammingError",
+      "result": "PASS"
+    },
+    {
+      "case": "cleanup",
+      "actual": false,
+      "expected": false,
+      "result": "PASS"
+    },
+    {
+      "case": "source_stability",
+      "actual": {
+        "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+        "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+        "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+        "src/ui.py": "4a03e8d39ef106a5037404562a931aad9009a1bb579304daa15f820983de6909",
+        "checks/order_integration.py": "496fa99f09e2c5d0796678ac580ffa49553e155f266a68673b68e58e93e1bc99",
+        "tests/test_order.py": "2fc39d9f577b4c49ee7cab6fcb02f042ecc3bcaa3db07c150ea8fc8f2449e485",
+        "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85"
+      },
+      "expected": {
+        "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+        "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+        "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+        "src/ui.py": "4a03e8d39ef106a5037404562a931aad9009a1bb579304daa15f820983de6909",
+        "checks/order_integration.py": "496fa99f09e2c5d0796678ac580ffa49553e155f266a68673b68e58e93e1bc99",
+        "tests/test_order.py": "2fc39d9f577b4c49ee7cab6fcb02f042ecc3bcaa3db07c150ea8fc8f2449e485",
+        "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85"
+      },
+      "result": "PASS"
+    }
+  ],
+  "summary": {
+    "PASS": 33,
+    "FAIL": 0
+  },
+  "method": "Independent public calls on real file SQLite; separate connection and reopen; write/commit failure injection only in reviewer wrapper; no network"
+}

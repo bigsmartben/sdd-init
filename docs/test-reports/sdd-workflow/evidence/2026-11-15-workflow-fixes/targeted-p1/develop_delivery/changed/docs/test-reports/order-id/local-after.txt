@@ -1,0 +1,10 @@
+test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) ... ok
+test_non_string_ids_keep_existing_rejection (test_order.OrderIdTests.test_non_string_ids_keep_existing_rejection) ... ok
+test_valid_ids_are_preserved_and_persisted (test_order.OrderIdTests.test_valid_ids_are_preserved_and_persisted) ... ok
+test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok
+test_normal_submit (test_order.OrderTests.test_normal_submit) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.235s
+
+OK

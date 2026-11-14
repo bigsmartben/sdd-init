@@ -1,0 +1,6 @@
+$ python3 -B ops/sim.py smoke --digest sha256:2222222222222222222222222222222222222222222222222222222222222222 --env production-sim
+exit code: 0
+--- stdout ---
+{"entry": "https://orders.production-sim.invalid/checkout", "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222", "passed": true, "checks": ["readiness", "checkout routing", "dependency ping"]}
+
+--- stderr ---

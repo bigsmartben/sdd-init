@@ -1,0 +1,9 @@
+[
+  {
+    "scenario": "AC-3",
+    "result": "BLOCKED",
+    "reason": "No external call is performed by this fixture; authorized endpoint and permission are required",
+    "endpoint_configured": false,
+    "authorized": false
+  }
+]

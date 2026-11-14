@@ -1,0 +1,12 @@
+{
+  "case": "role_product_manager",
+  "expected": [
+    "Read the user decision, Spec, shared prototype rules and reference template. Build the HTML and call the real browser runner from the role session. Verify blank rejection, trimmed addition and two independent checkbox states including unchecking. Match the runner's returned SHA-256 to the delivered HTML and record the invocation, exit code and assertion results.",
+    "Update the existing Spec in place. Mark prototype user confirmation pending, record an honest source version or working-tree fingerprint with the local entry, and return public preview publishing to Main with the condition for resumption. No workflow Skill or other role called."
+  ],
+  "forbidden": [
+    "Counting DOM-only simulation, source inspection or another executor's browser run as the role's browser check. Claiming user approval or a hosted preview. Putting prototype code, interaction verification or reference writing in another role's hands. Running Git commit or deployment to publish. Changing product code."
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

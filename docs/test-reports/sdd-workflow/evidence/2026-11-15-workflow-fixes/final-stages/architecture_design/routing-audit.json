@@ -1,0 +1,81 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daec-04b3-7623-816f-2fc617f764d6",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/architecture": {
+      "id": "01a1daec-c5d1-78e3-b15f-41cdf56706fd",
+      "parent_id": "01a1daec-04b3-7623-816f-2fc617f764d6",
+      "role": null,
+      "parent": "/root"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:38:44.732Z",
+      "actor": "/root",
+      "target": "/root/architecture",
+      "original_target": "architecture",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_f1ee19a4443d45cab6b1e0eb2a446ba1",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-37-44-01a1daec-04b3-7623-816f-2fc617f764d6.jsonl",
+      "line": 10
+    },
+    {
+      "time": "2026-11-14T16:39:05.956Z",
+      "actor": "/root/architecture",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_2404d842ed6248aa815edc836e745d70",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-38-32-01a1daec-c5d1-78e3-b15f-41cdf56706fd.jsonl",
+      "line": 9
+    },
+    {
+      "time": "2026-11-14T16:39:08.044Z",
+      "actor": "/root",
+      "target": "/root/architecture",
+      "original_target": "architecture",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_4df526f565f3454298ccd86f69e88e72",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-37-44-01a1daec-04b3-7623-816f-2fc617f764d6.jsonl",
+      "line": 17
+    },
+    {
+      "time": "2026-11-14T16:40:11.786Z",
+      "actor": "/root/architecture",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_9dbd0540fc48420bb4b2857e7683a867",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-38-32-01a1daec-c5d1-78e3-b15f-41cdf56706fd.jsonl",
+      "line": 19
+    },
+    {
+      "time": "2026-11-14T16:40:21.433Z",
+      "actor": "/root",
+      "target": "/root/architecture",
+      "original_target": "architecture",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_fdea53524e8d4171a9e49257769938ae",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-37-44-01a1daec-04b3-7623-816f-2fc617f764d6.jsonl",
+      "line": 32
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

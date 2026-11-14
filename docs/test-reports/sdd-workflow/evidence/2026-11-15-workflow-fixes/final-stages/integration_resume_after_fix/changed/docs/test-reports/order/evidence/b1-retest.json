@@ -1,0 +1,316 @@
+{
+  "batch": "B1-R1",
+  "time_utc": "2026-11-14T16:44:04.862034+00:00",
+  "head": {
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout": "1decf680e4557f4e5ed802d7a7838957c1dafe5b\n",
+    "stderr": ""
+  },
+  "worktree": {
+    "command": [
+      "git",
+      "status",
+      "--short"
+    ],
+    "exit": 0,
+    "stdout": "?? docs/test-reports/order/evidence/b1-retest.json\n?? docs/test-reports/order/evidence/b1-retest.py\n",
+    "stderr": ""
+  },
+  "source_paths": {
+    "service": "/tmp/sdd-review-execution-7kzokfoo/integration_resume_after_fix-fjdbbcc1/prepared/project/src/order_service.py",
+    "storage": "/tmp/sdd-review-execution-7kzokfoo/integration_resume_after_fix-fjdbbcc1/prepared/project/src/storage.py",
+    "ui": "/tmp/sdd-review-execution-7kzokfoo/integration_resume_after_fix-fjdbbcc1/prepared/project/src/ui.py"
+  },
+  "sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "docs/issues/ISS-001.md": "494b174bf81e605b5501948202cd93bd850c1fc6594e4e810277120de3ce99fc",
+    "docs/test-reports/order/evidence/b1.json": "6f87a300af342ddb06ca49490370d41acafbb58ba3202fc70b510bd135af41bc"
+  },
+  "runtime": {
+    "command": [
+      "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+      "-B",
+      "checks/runtime_details.py"
+    ],
+    "exit": 0,
+    "stdout": "{\n  \"python\": \"3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]\",\n  \"sqlite\": \"3.45.1\",\n  \"runtime\": {\n    \"environment\": \"isolated-local-fixture\",\n    \"database\": \"per-scenario temporary SQLite file\",\n    \"external_endpoint\": null,\n    \"external_call_authorized\": false,\n    \"network_access_in_this_run\": false\n  },\n  \"source_sha256\": {\n    \"src/__init__.py\": \"10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded\",\n    \"src/order_service.py\": \"3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb\",\n    \"src/storage.py\": \"6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9\",\n    \"src/ui.py\": \"89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b\"\n  }\n}\n",
+    "stderr": ""
+  },
+  "acceptance": {
+    "AC-1": {
+      "command": [
+        "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+        "-B",
+        "checks/acceptance.py",
+        "--scenario",
+        "AC-1"
+      ],
+      "exit": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"result\": \"PASS\",\n    \"accepted\": true,\n    \"persisted_status\": \"submitted\",\n    \"expected_accepted\": true,\n    \"expected_status\": \"submitted\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "AC-2": {
+      "command": [
+        "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+        "-B",
+        "checks/acceptance.py",
+        "--scenario",
+        "AC-2"
+      ],
+      "exit": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-2\",\n    \"result\": \"PASS\",\n    \"accepted\": false,\n    \"persisted_status\": \"cancelled\",\n    \"expected_accepted\": false,\n    \"expected_status\": \"cancelled\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "AC-3": {
+      "command": [
+        "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+        "-B",
+        "checks/acceptance.py",
+        "--scenario",
+        "AC-3"
+      ],
+      "exit": 3,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-3\",\n    \"result\": \"BLOCKED\",\n    \"reason\": \"No external call is performed by this fixture; authorized endpoint and permission are required\",\n    \"endpoint_configured\": false,\n    \"authorized\": false\n  }\n]\n",
+      "stderr": ""
+    }
+  },
+  "unittest": {
+    "command": [
+      "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.025s\n\nOK\n"
+  },
+  "local_cases": [
+    {
+      "case": "L-01",
+      "expected": true,
+      "actual": true,
+      "events": [
+        {
+          "stage": "create committed",
+          "reopened_rows": [
+            [
+              "ORDER-1",
+              "pending"
+            ]
+          ]
+        }
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "L-02",
+      "expected": true,
+      "actual": true,
+      "events": [
+        {
+          "stage": "cancel committed",
+          "reopened_rows": [
+            [
+              "ORDER-1",
+              "cancelled"
+            ]
+          ]
+        }
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "L-03",
+      "expected": true,
+      "actual": true,
+      "events": [
+        {
+          "stage": "submit",
+          "accepted": true,
+          "status": "submitted"
+        },
+        {
+          "stage": "paid committed",
+          "reopened_rows": [
+            [
+              "ORDER-1",
+              "paid"
+            ]
+          ]
+        }
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "L-04",
+      "expected": true,
+      "actual": true,
+      "events": [
+        {
+          "input": "",
+          "exception": "ValueError"
+        },
+        {
+          "input": null,
+          "exception": "ValueError"
+        },
+        {
+          "input": 42,
+          "exception": "ValueError"
+        },
+        {
+          "stage": "invalid creates",
+          "reopened_rows": []
+        }
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "L-05",
+      "expected": true,
+      "actual": true,
+      "events": [
+        {
+          "operation": "read",
+          "exception": "ValueError"
+        },
+        {
+          "operation": "cancel",
+          "exception": "ValueError"
+        },
+        {
+          "operation": "submit",
+          "exception": "ValueError"
+        },
+        {
+          "operation": "set_status",
+          "exception": "ValueError"
+        },
+        {
+          "stage": "missing service operations",
+          "reopened_rows": []
+        }
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "L-06",
+      "expected": "ValueError",
+      "actual": "no exception",
+      "events": [
+        {
+          "operation": "mark_paid",
+          "exception": "no exception"
+        },
+        {
+          "stage": "missing paid operation",
+          "reopened_rows": []
+        }
+      ],
+      "result": "FAIL"
+    },
+    {
+      "case": "L-07",
+      "expected": true,
+      "actual": true,
+      "events": [
+        {
+          "operation": "create",
+          "outcome": "OperationalError"
+        },
+        {
+          "operation": "cancel",
+          "outcome": "OperationalError"
+        },
+        {
+          "operation": "submit",
+          "outcome": "OperationalError"
+        },
+        {
+          "operation": "set_status",
+          "outcome": "OperationalError"
+        },
+        {
+          "operation": "mark_paid",
+          "outcome": "OperationalError"
+        },
+        {
+          "stage": "write failures",
+          "reopened_rows": [
+            [
+              "ORDER-1",
+              "pending"
+            ]
+          ]
+        }
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "L-08",
+      "expected": true,
+      "actual": true,
+      "events": [
+        {
+          "stage": "nonempty strings",
+          "reopened_rows": [
+            [
+              " ",
+              "pending"
+            ],
+            [
+              "订-1",
+              "pending"
+            ]
+          ]
+        }
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "L-09",
+      "expected": true,
+      "actual": true,
+      "events": [
+        {
+          "stage": "cancel",
+          "status": "cancelled"
+        },
+        {
+          "stage": "two submissions",
+          "accepted": [
+            false,
+            false
+          ]
+        },
+        {
+          "stage": "repeat cancellation guard",
+          "reopened_rows": [
+            [
+              "ORDER-1",
+              "cancelled"
+            ]
+          ]
+        }
+      ],
+      "result": "PASS"
+    }
+  ],
+  "temp_directory": "/tmp/sdd-review-execution-7kzokfoo/integration_resume_after_fix-fjdbbcc1/prepared/project/docs/test-reports/order/evidence/b1-r1-33m1giq8",
+  "temp_directory_removed": true,
+  "finished_utc": "2026-11-14T16:44:05.193947+00:00"
+}

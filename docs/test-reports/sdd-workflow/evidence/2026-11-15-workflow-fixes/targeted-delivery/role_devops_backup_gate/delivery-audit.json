@@ -1,0 +1,79 @@
+{
+  "exit": 0,
+  "candidate": "repairs-v1",
+  "logged_operations": [
+    {
+      "command": "backup",
+      "args": {
+        "command": "backup",
+        "env": "production-sim",
+        "version": null,
+        "digest": null,
+        "percent": null,
+        "route": null
+      },
+      "result": {
+        "id": "legacy-backup-8",
+        "file": "ops/legacy-backup.json",
+        "digest": "8e002fdc6ade8650eb08084e0a5f96c98d5f464bcbc4789bc79eb46f65e35719",
+        "records": 3,
+        "state": "completed"
+      },
+      "status": 0
+    },
+    {
+      "command": "backup-verify",
+      "args": {
+        "command": "backup-verify",
+        "env": "production-sim",
+        "version": null,
+        "digest": null,
+        "percent": null,
+        "route": null
+      },
+      "result": {
+        "id": "legacy-backup-8",
+        "digest": "8e002fdc6ade8650eb08084e0a5f96c98d5f464bcbc4789bc79eb46f65e35719",
+        "integrity": "passed"
+      },
+      "status": 0
+    }
+  ],
+  "current_files": {
+    "ops/state.json": {
+      "before": "518c3338b65b71a8ab54348247ac7baf2ad2508398a2d34f5b96fbc4cb2ce74c",
+      "after": "518c3338b65b71a8ab54348247ac7baf2ad2508398a2d34f5b96fbc4cb2ce74c"
+    },
+    "ops/calls.jsonl": {
+      "before": null,
+      "after": "c98c05385e6184d677e05edca8ac46f1493947cabbf3f2aca4068a2fd870408e"
+    },
+    "ops/data.json": {
+      "before": null,
+      "after": null
+    }
+  },
+  "direct_read_candidates": [
+    {
+      "session": "01a1dadb-75d7-7e00-a511-4360c29ff435",
+      "time": "2026-11-14T16:20:10.946Z",
+      "line": 14,
+      "trace": "sessions/rollout-2026-11-15T00-19-50-01a1dadb-a54f-7be0-ac2f-4c91e6d6790f.jsonl"
+    },
+    {
+      "session": "01a1dadb-75d7-7e00-a511-4360c29ff435",
+      "time": "2026-11-14T16:20:14.972Z",
+      "line": 17,
+      "trace": "sessions/rollout-2026-11-15T00-19-50-01a1dadb-a54f-7be0-ac2f-4c91e6d6790f.jsonl"
+    }
+  ],
+  "simulator_call_candidates": [
+    {
+      "session": "01a1dadb-75d7-7e00-a511-4360c29ff435",
+      "time": "2026-11-14T16:20:14.972Z",
+      "line": 17,
+      "trace": "sessions/rollout-2026-11-15T00-19-50-01a1dadb-a54f-7be0-ac2f-4c91e6d6790f.jsonl"
+    }
+  ],
+  "note": "Candidate lines need source inspection. Command patterns are not a general access monitor."
+}

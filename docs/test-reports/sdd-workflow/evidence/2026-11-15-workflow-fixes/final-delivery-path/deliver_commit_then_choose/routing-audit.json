@@ -1,0 +1,14 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1dafc-32a0-7093-847f-9bcc058b6085",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    }
+  },
+  "calls": [],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

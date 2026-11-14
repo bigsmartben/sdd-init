@@ -1,0 +1,159 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daef-cd3f-7333-a999-020b8e094d1f",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/architecture_assessment": {
+      "id": "01a1daf0-5455-7b30-ae13-3760afa92cdb",
+      "parent_id": "01a1daef-cd3f-7333-a999-020b8e094d1f",
+      "role": null,
+      "parent": "/root"
+    },
+    "/root/architecture_assessment/history_experiment": {
+      "id": "01a1daf0-db39-7c22-bb07-f187f98f8fdd",
+      "parent_id": "01a1daf0-5455-7b30-ae13-3760afa92cdb",
+      "role": "sdd-coder",
+      "parent": "/root/architecture_assessment"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:42:38.088Z",
+      "actor": "/root",
+      "target": "/root/architecture_assessment",
+      "original_target": "architecture_assessment",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_38a0515f462a405d864aa98f316b2285",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-41-52-01a1daef-cd3f-7333-a999-020b8e094d1f.jsonl",
+      "line": 12
+    },
+    {
+      "time": "2026-11-14T16:43:04.573Z",
+      "actor": "/root/architecture_assessment",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_3c4413183d98428cb3c04f493f313508",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-25-01a1daf0-5455-7b30-ae13-3760afa92cdb.jsonl",
+      "line": 11
+    },
+    {
+      "time": "2026-11-14T16:43:15.175Z",
+      "actor": "/root",
+      "target": "/root/architecture_assessment",
+      "original_target": "architecture_assessment",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_949e65289ee14830891ce4d693620acb",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-41-52-01a1daef-cd3f-7333-a999-020b8e094d1f.jsonl",
+      "line": 19
+    },
+    {
+      "time": "2026-11-14T16:43:18.344Z",
+      "actor": "/root/architecture_assessment",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_47ce8c65284443fa9975982438f837ce",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-25-01a1daf0-5455-7b30-ae13-3760afa92cdb.jsonl",
+      "line": 15
+    },
+    {
+      "time": "2026-11-14T16:44:16.453Z",
+      "actor": "/root",
+      "target": "/root/architecture_assessment",
+      "original_target": "architecture_assessment",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_f565a25d8438411a8999f7aef9972173",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-41-52-01a1daef-cd3f-7333-a999-020b8e094d1f.jsonl",
+      "line": 29
+    },
+    {
+      "time": "2026-11-14T16:44:26.886Z",
+      "actor": "/root/architecture_assessment",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_1c8dff394e91457188018938e98bcd49",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-25-01a1daf0-5455-7b30-ae13-3760afa92cdb.jsonl",
+      "line": 23
+    },
+    {
+      "time": "2026-11-14T16:44:34.696Z",
+      "actor": "/root/architecture_assessment",
+      "target": "/root/architecture_assessment/history_experiment",
+      "original_target": "history_experiment",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_90ae27c686b3496cbc134c22ecd3e153",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-25-01a1daf0-5455-7b30-ae13-3760afa92cdb.jsonl",
+      "line": 25
+    },
+    {
+      "time": "2026-11-14T16:44:38.409Z",
+      "actor": "/root/architecture_assessment/history_experiment",
+      "target": "/root/architecture_assessment",
+      "original_target": "/root/architecture_assessment",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_c46e84da77df4b92bd7bd7e3c61ebdb0",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-00-01a1daf0-db39-7c22-bb07-f187f98f8fdd.jsonl",
+      "line": 13
+    },
+    {
+      "time": "2026-11-14T16:44:46.004Z",
+      "actor": "/root/architecture_assessment",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_cdb75ea75eff47eebae060edc318db0d",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-25-01a1daf0-5455-7b30-ae13-3760afa92cdb.jsonl",
+      "line": 31
+    },
+    {
+      "time": "2026-11-14T16:45:25.528Z",
+      "actor": "/root",
+      "target": "/root/architecture_assessment",
+      "original_target": "architecture_assessment",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_147fcdd89297494fb74b48d9e6aa58ca",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-41-52-01a1daef-cd3f-7333-a999-020b8e094d1f.jsonl",
+      "line": 46
+    },
+    {
+      "time": "2026-11-14T16:45:40.850Z",
+      "actor": "/root/architecture_assessment",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_ec387bd8a6d748f7a334f9b285088d01",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-25-01a1daf0-5455-7b30-ae13-3760afa92cdb.jsonl",
+      "line": 37
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

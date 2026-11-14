@@ -1,0 +1,649 @@
+{
+  "environment": {
+    "head": "89df9f629407a6b572c6f65c87fc9768e0f52f5d",
+    "head_error": null,
+    "python": "3.12.3",
+    "sqlite": "3.45.1",
+    "source_sha256": {
+      "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+      "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+      "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+      "src/ui.py": "4a03e8d39ef106a5037404562a931aad9009a1bb579304daa15f820983de6909",
+      "checks/order_integration.py": "496fa99f09e2c5d0796678ac580ffa49553e155f266a68673b68e58e93e1bc99",
+      "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9"
+    }
+  },
+  "results": [
+    {
+      "case_id": "INT-01",
+      "basis": "pending creation persistence",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "created status",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "status after close and reopen",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "AC-1",
+      "basis": "Spec AC-1",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "created status",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "submit result",
+          "actual": true,
+          "expected": true,
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "status after submit",
+          "actual": "submitted",
+          "expected": "submitted",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "status after close and reopen",
+          "actual": "submitted",
+          "expected": "submitted",
+          "exception_type": null,
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "AC-2",
+      "basis": "Spec AC-2",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "created status",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "cancelled status before submit",
+          "actual": "cancelled",
+          "expected": "cancelled",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "cancel persisted before submit",
+          "actual": "cancelled",
+          "expected": "cancelled",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "submit result",
+          "actual": false,
+          "expected": false,
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "status after submit",
+          "actual": "cancelled",
+          "expected": "cancelled",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "status after close and reopen",
+          "actual": "cancelled",
+          "expected": "cancelled",
+          "exception_type": null,
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "INT-02",
+      "basis": "existing mark_paid persistence",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "created status",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "status after mark_paid",
+          "actual": "paid",
+          "expected": "paid",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "status after close and reopen",
+          "actual": "paid",
+          "expected": "paid",
+          "exception_type": null,
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "INT-03",
+      "basis": "set_status persistence",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "status after set_status",
+          "actual": "paid",
+          "expected": "paid",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "status after close and reopen",
+          "actual": "paid",
+          "expected": "paid",
+          "exception_type": null,
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "INVALID-EMPTY",
+      "basis": "nonempty string order ID",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "create invalid order ID",
+          "actual": {
+            "message": "order_id is required"
+          },
+          "expected": {
+            "exception_family": "ValueError"
+          },
+          "exception_type": "ValueError",
+          "matches": true
+        },
+        {
+          "step": "rows after rejected create",
+          "actual": [],
+          "expected": [],
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "persisted rows after reopen",
+          "actual": [],
+          "expected": [],
+          "exception_type": null,
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "INVALID-NONE",
+      "basis": "nonempty string order ID",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "create invalid order ID",
+          "actual": {
+            "message": "order_id is required"
+          },
+          "expected": {
+            "exception_family": "ValueError"
+          },
+          "exception_type": "ValueError",
+          "matches": true
+        },
+        {
+          "step": "rows after rejected create",
+          "actual": [],
+          "expected": [],
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "persisted rows after reopen",
+          "actual": [],
+          "expected": [],
+          "exception_type": null,
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "INVALID-INTEGER",
+      "basis": "nonempty string order ID",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "create invalid order ID",
+          "actual": {
+            "message": "order_id is required"
+          },
+          "expected": {
+            "exception_family": "ValueError"
+          },
+          "exception_type": "ValueError",
+          "matches": true
+        },
+        {
+          "step": "rows after rejected create",
+          "actual": [],
+          "expected": [],
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "persisted rows after reopen",
+          "actual": [],
+          "expected": [],
+          "exception_type": null,
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "MISSING-READ",
+      "basis": "missing order raises ValueError",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "operation on missing order",
+          "actual": {
+            "message": "order not found"
+          },
+          "expected": {
+            "exception_family": "ValueError"
+          },
+          "exception_type": "ValueError",
+          "matches": true
+        },
+        {
+          "step": "existing order remains persisted",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "missing order remains absent",
+          "actual": {
+            "message": "order not found"
+          },
+          "expected": {
+            "exception_family": "ValueError"
+          },
+          "exception_type": "ValueError",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "MISSING-CANCEL",
+      "basis": "missing order raises ValueError",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "operation on missing order",
+          "actual": {
+            "message": "order not found"
+          },
+          "expected": {
+            "exception_family": "ValueError"
+          },
+          "exception_type": "ValueError",
+          "matches": true
+        },
+        {
+          "step": "existing order remains persisted",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "missing order remains absent",
+          "actual": {
+            "message": "order not found"
+          },
+          "expected": {
+            "exception_family": "ValueError"
+          },
+          "exception_type": "ValueError",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "MISSING-SUBMIT",
+      "basis": "missing order raises ValueError",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "operation on missing order",
+          "actual": {
+            "message": "order not found"
+          },
+          "expected": {
+            "exception_family": "ValueError"
+          },
+          "exception_type": "ValueError",
+          "matches": true
+        },
+        {
+          "step": "existing order remains persisted",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "missing order remains absent",
+          "actual": {
+            "message": "order not found"
+          },
+          "expected": {
+            "exception_family": "ValueError"
+          },
+          "exception_type": "ValueError",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "MISSING-SET_STATUS",
+      "basis": "missing order raises ValueError",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "operation on missing order",
+          "actual": {
+            "message": "order not found"
+          },
+          "expected": {
+            "exception_family": "ValueError"
+          },
+          "exception_type": "ValueError",
+          "matches": true
+        },
+        {
+          "step": "existing order remains persisted",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "missing order remains absent",
+          "actual": {
+            "message": "order not found"
+          },
+          "expected": {
+            "exception_family": "ValueError"
+          },
+          "exception_type": "ValueError",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "MISSING-MARK_PAID",
+      "basis": "missing order raises ValueError",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "operation on missing order",
+          "actual": {
+            "message": "order not found"
+          },
+          "expected": {
+            "exception_family": "ValueError"
+          },
+          "exception_type": "ValueError",
+          "matches": true
+        },
+        {
+          "step": "existing order remains persisted",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "missing order remains absent",
+          "actual": {
+            "message": "order not found"
+          },
+          "expected": {
+            "exception_family": "ValueError"
+          },
+          "exception_type": "ValueError",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "CLOSED-CREATE",
+      "basis": "database exceptions propagate",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "write on closed connection",
+          "actual": {
+            "message": "Cannot operate on a closed database."
+          },
+          "expected": {
+            "exception_family": "Error"
+          },
+          "exception_type": "ProgrammingError",
+          "matches": true
+        },
+        {
+          "step": "original persisted status",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "failed create remains absent",
+          "actual": {
+            "message": "order not found"
+          },
+          "expected": {
+            "exception_family": "ValueError"
+          },
+          "exception_type": "ValueError",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "CLOSED-CANCEL",
+      "basis": "database exceptions propagate",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "write on closed connection",
+          "actual": {
+            "message": "Cannot operate on a closed database."
+          },
+          "expected": {
+            "exception_family": "Error"
+          },
+          "exception_type": "ProgrammingError",
+          "matches": true
+        },
+        {
+          "step": "original persisted status",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "CLOSED-SUBMIT",
+      "basis": "database exceptions propagate",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "write on closed connection",
+          "actual": {
+            "message": "Cannot operate on a closed database."
+          },
+          "expected": {
+            "exception_family": "Error"
+          },
+          "exception_type": "ProgrammingError",
+          "matches": true
+        },
+        {
+          "step": "original persisted status",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "CLOSED-SET_STATUS",
+      "basis": "database exceptions propagate",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "write on closed connection",
+          "actual": {
+            "message": "Cannot operate on a closed database."
+          },
+          "expected": {
+            "exception_family": "Error"
+          },
+          "exception_type": "ProgrammingError",
+          "matches": true
+        },
+        {
+          "step": "original persisted status",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "CLOSED-MARK_PAID",
+      "basis": "database exceptions propagate",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "write on closed connection",
+          "actual": {
+            "message": "Cannot operate on a closed database."
+          },
+          "expected": {
+            "exception_family": "Error"
+          },
+          "exception_type": "ProgrammingError",
+          "matches": true
+        },
+        {
+          "step": "original persisted status",
+          "actual": "pending",
+          "expected": "pending",
+          "exception_type": null,
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "INT-04",
+      "basis": "multiple order isolation",
+      "result": "PASS",
+      "observations": [
+        {
+          "step": "second order submit result",
+          "actual": true,
+          "expected": true,
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "independent states before close",
+          "actual": {
+            "ORDER-1": "cancelled",
+            "ORDER-2": "submitted",
+            "ORDER-3": "paid"
+          },
+          "expected": {
+            "ORDER-1": "cancelled",
+            "ORDER-2": "submitted",
+            "ORDER-3": "paid"
+          },
+          "exception_type": null,
+          "matches": true
+        },
+        {
+          "step": "independent states after reopen",
+          "actual": {
+            "ORDER-1": "cancelled",
+            "ORDER-2": "submitted",
+            "ORDER-3": "paid"
+          },
+          "expected": {
+            "ORDER-1": "cancelled",
+            "ORDER-2": "submitted",
+            "ORDER-3": "paid"
+          },
+          "exception_type": null,
+          "matches": true
+        }
+      ]
+    },
+    {
+      "case_id": "AC-3",
+      "basis": "Spec AC-3: authorized real external service receipt",
+      "result": "BLOCKED",
+      "observations": [],
+      "actual": {
+        "scenario": "AC-3",
+        "result": "BLOCKED",
+        "reason": "No external call is performed by this fixture; authorized endpoint and permission are required",
+        "endpoint_configured": false,
+        "authorized": false
+      },
+      "expected": "Receipt verified against an authorized real external test service",
+      "exception_type": null,
+      "recovery": "Authorized endpoint and call permission required; this script performs no external calls"
+    }
+  ],
+  "summary": {
+    "PASS": 19,
+    "FAIL": 0,
+    "BLOCKED": 1
+  }
+}

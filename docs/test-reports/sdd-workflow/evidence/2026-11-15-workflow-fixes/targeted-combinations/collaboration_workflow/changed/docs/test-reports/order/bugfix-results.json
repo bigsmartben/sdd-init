@@ -1,0 +1,327 @@
+[
+  {
+    "command": [
+      "python",
+      "-B",
+      "checks/order_regression.py",
+      "--scenario",
+      "AC-1"
+    ],
+    "exit_code": 0,
+    "result": [
+      {
+        "scenario": "AC-1",
+        "result": "PASS",
+        "accepted": true,
+        "persisted_status": "submitted",
+        "expected_accepted": true,
+        "expected_status": "submitted"
+      }
+    ]
+  },
+  {
+    "command": [
+      "python",
+      "-B",
+      "checks/order_regression.py",
+      "--scenario",
+      "AC-2"
+    ],
+    "exit_code": 0,
+    "result": [
+      {
+        "scenario": "AC-2",
+        "result": "PASS",
+        "accepted": false,
+        "persisted_status": "cancelled",
+        "expected_accepted": false,
+        "expected_status": "cancelled"
+      }
+    ]
+  },
+  {
+    "command": [
+      "python",
+      "-B",
+      "checks/order_regression.py",
+      "--scenario",
+      "MISSING"
+    ],
+    "exit_code": 0,
+    "result": [
+      {
+        "scenario": "MISSING",
+        "result": "PASS",
+        "observations": [
+          {
+            "operation": "cancel_order",
+            "exception": "ValueError",
+            "expected": "ValueError"
+          },
+          {
+            "operation": "submit_order",
+            "exception": "ValueError",
+            "expected": "ValueError"
+          },
+          {
+            "operation": "set_status",
+            "exception": "ValueError",
+            "expected": "ValueError"
+          },
+          {
+            "operation": "mark_paid",
+            "exception": "ValueError",
+            "expected": "ValueError"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "command": [
+      "python",
+      "-B",
+      "checks/order_regression.py",
+      "--scenario",
+      "PAID-PENDING"
+    ],
+    "exit_code": 0,
+    "result": [
+      {
+        "scenario": "PAID-PENDING",
+        "result": "PASS",
+        "observations": [
+          {
+            "initial_status": "pending",
+            "expected": "pending"
+          },
+          {
+            "persisted_status": "paid",
+            "expected": "paid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "command": [
+      "python",
+      "-B",
+      "checks/order_regression.py",
+      "--scenario",
+      "PAID-CANCELLED"
+    ],
+    "exit_code": 0,
+    "result": [
+      {
+        "scenario": "PAID-CANCELLED",
+        "result": "PASS",
+        "observations": [
+          {
+            "initial_status": "cancelled",
+            "expected": "cancelled"
+          },
+          {
+            "persisted_status": "paid",
+            "expected": "paid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "command": [
+      "python",
+      "-B",
+      "checks/order_regression.py",
+      "--scenario",
+      "PAID-SUBMITTED"
+    ],
+    "exit_code": 0,
+    "result": [
+      {
+        "scenario": "PAID-SUBMITTED",
+        "result": "PASS",
+        "observations": [
+          {
+            "initial_status": "submitted",
+            "expected": "submitted"
+          },
+          {
+            "persisted_status": "paid",
+            "expected": "paid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "command": [
+      "python",
+      "-B",
+      "checks/order_regression.py",
+      "--scenario",
+      "DB-ERROR"
+    ],
+    "exit_code": 0,
+    "result": [
+      {
+        "scenario": "DB-ERROR",
+        "result": "PASS",
+        "observations": [
+          {
+            "operation": "create_order",
+            "exception": "OperationalError",
+            "expected": "OperationalError"
+          },
+          {
+            "operation": "cancel_order",
+            "exception": "OperationalError",
+            "expected": "OperationalError"
+          },
+          {
+            "operation": "submit_order",
+            "exception": "OperationalError",
+            "expected": "OperationalError"
+          },
+          {
+            "operation": "set_status",
+            "exception": "OperationalError",
+            "expected": "OperationalError"
+          },
+          {
+            "operation": "mark_paid",
+            "exception": "OperationalError",
+            "expected": "OperationalError"
+          },
+          {
+            "persisted_status": "pending",
+            "expected": "pending"
+          },
+          {
+            "row_count": 1,
+            "expected": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "command": [
+      "python",
+      "-B",
+      "checks/order_regression.py",
+      "--scenario",
+      "CREATE"
+    ],
+    "exit_code": 0,
+    "result": [
+      {
+        "scenario": "CREATE",
+        "result": "PASS",
+        "observations": [
+          {
+            "persisted_status": "pending",
+            "expected": "pending"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "command": [
+      "python",
+      "-B",
+      "checks/order_regression.py",
+      "--scenario",
+      "CANCEL"
+    ],
+    "exit_code": 0,
+    "result": [
+      {
+        "scenario": "CANCEL",
+        "result": "PASS",
+        "observations": [
+          {
+            "persisted_status": "cancelled",
+            "expected": "cancelled"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "command": [
+      "python",
+      "-B",
+      "checks/order_regression.py",
+      "--scenario",
+      "SET-STATUS"
+    ],
+    "exit_code": 0,
+    "result": [
+      {
+        "scenario": "SET-STATUS",
+        "result": "PASS",
+        "observations": [
+          {
+            "persisted_status": "paid",
+            "expected": "paid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "command": [
+      "python",
+      "-B",
+      "checks/order_regression.py",
+      "--scenario",
+      "INVALID-ID"
+    ],
+    "exit_code": 0,
+    "result": [
+      {
+        "scenario": "INVALID-ID",
+        "result": "PASS",
+        "observations": [
+          {
+            "input": "",
+            "exception": "ValueError",
+            "expected": "ValueError"
+          },
+          {
+            "input": null,
+            "exception": "ValueError",
+            "expected": "ValueError"
+          },
+          {
+            "input": 0,
+            "exception": "ValueError",
+            "expected": "ValueError"
+          },
+          {
+            "row_count": 0,
+            "expected": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "command": [
+      "python",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "test_cancelled_submit_has_no_write_or_commit (test_order.OrderTests.test_cancelled_submit_has_no_write_or_commit) ... ok\ntest_commit_errors_propagate_without_persisted_success (test_order.OrderTests.test_commit_errors_propagate_without_persisted_success) ... ok\ntest_mark_paid_from_all_existing_states (test_order.OrderTests.test_mark_paid_from_all_existing_states) ... ok\ntest_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_mark_paid_missing_raises (test_order.OrderTests.test_mark_paid_missing_raises) ... ok\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.086s\n\nOK\n"
+  }
+]

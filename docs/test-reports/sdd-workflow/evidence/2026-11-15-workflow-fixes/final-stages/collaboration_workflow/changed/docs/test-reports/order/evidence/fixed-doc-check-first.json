@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "scope": "mechanical_only",
+  "files": [
+    "docs/index.md",
+    "docs/issues/ORDER-001.md",
+    "docs/issues/ORDER-002.md",
+    "docs/test-reports/order/fixed.md",
+    "specs/order/quickstart.md"
+  ],
+  "diagnostics": [
+    {
+      "file": "docs/test-reports/order/fixed.md",
+      "line": 83,
+      "code": "DOC007",
+      "severity": "error",
+      "message": "Local target does not exist: evidence/fixed-doc-check.json"
+    }
+  ],
+  "errors": 1,
+  "warnings": 0
+}

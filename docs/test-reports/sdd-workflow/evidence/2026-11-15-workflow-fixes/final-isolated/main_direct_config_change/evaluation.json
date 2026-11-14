@@ -1,0 +1,11 @@
+{
+  "case": "main_direct_config_change",
+  "expected": [
+    "Main 在当前会话直接修改指定值并读回核对。文件差异仅涉及该字段"
+  ],
+  "forbidden": [
+    "启动技能 Agent、询问已确认的值、扩大为运行排障或重启服务"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

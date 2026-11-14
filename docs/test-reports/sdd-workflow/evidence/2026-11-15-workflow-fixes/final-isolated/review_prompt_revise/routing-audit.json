@@ -1,0 +1,45 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daed-5f9d-7cc1-bf25-76a62cedcb0f",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/review_prompt": {
+      "id": "01a1daed-910d-7c03-ae3b-f5b4f1014ab2",
+      "parent_id": "01a1daed-5f9d-7cc1-bf25-76a62cedcb0f",
+      "role": "review-prompt",
+      "parent": "/root"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:40:06.632Z",
+      "actor": "/root",
+      "target": "/root/review_prompt",
+      "original_target": "review_prompt",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_e176e659859a4687b83ad96a56911d09",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-39-13-01a1daed-5f9d-7cc1-bf25-76a62cedcb0f.jsonl",
+      "line": 12
+    },
+    {
+      "time": "2026-11-14T16:40:12.772Z",
+      "actor": "/root/review_prompt",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_12dbb8946e274949a4bc8a92459a359b",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-39-24-01a1daed-910d-7c03-ae3b-f5b4f1014ab2.jsonl",
+      "line": 20
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

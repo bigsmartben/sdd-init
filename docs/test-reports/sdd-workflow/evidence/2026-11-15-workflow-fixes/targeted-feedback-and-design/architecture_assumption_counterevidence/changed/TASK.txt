@@ -1,0 +1,56 @@
+用 $sdd-architecture 做一次只读设计评估。有人提出直接从 SQLite 的现有记录导出订单状态历史，以为每次变更都能读取。用户结果要求跨连接恢复逐次状态及顺序。请在本地验证这个假设，再用证据比较可行方案。设计方案仍待决定，允许临时数据库验证及任务记录。
+
+专项评估回执（设计仍待决定）
+
+目标与授权：沿用以上用户目标及 Main 工单；仅当前隔离项目，只读业务实现、Blueprint 和契约。允许合成临时数据库、隔离实验及本任务证据记录；不修改正式设计/产品代码，不提交 Git，不访问外部平台或真实服务。完成条件是验证关键假设、依据结果重新比较可行方案，并交付复跑入口、局限及待决事项；本轮不是产品实现、全功能验收或正式 Blueprint 交付。
+
+执行者：独立 sdd-architecture 技能 Agent /root/architecture_assessment，实际调用者及回执接收方 Main /root。本轮直接承担限定实验及方案分析，无额外委派或独立复核要求。
+
+版本与取证条件：HEAD 26122222bf0fc29f74c42930525867aa5d13be61；开始时 git status --short 为空。运行时间按本地系统 UTC 为 2026-11-14T16:25:59Z（上海日期 2026-11-15）；Python 3.12.3，SQLite 3.45.1。真实本地 SQLite 引擎、合成订单 O，每场景独立文件数据库，默认连接配置；TemporaryDirectory 在成功结束后清理。未使用真实订单或运行库。
+
+现状依据：
+- docs/index.md 定位 docs/blueprint.md、docs/contracts/order.md、specs/order/spec.md、runtime.json。
+- Blueprint ARC-1：order_service 为唯一业务状态写入入口，storage 负责连接和建表；ARC-2：文件 SQLite 及 commit 承载提交完成。其余现有边界保持。
+- src/storage.py 只有 orders(order_id TEXT PRIMARY KEY, status TEXT NOT NULL)，无历史实体。
+- src/order_service.py 的 set_status 读取后执行 UPDATE 并 commit；create_order 插入并 commit。现有接口不会追加变更历史。
+- 因而“导出当前记录能恢复每次状态”的前提需要反证，不能从文件持久化推导出历史持久化。
+
+可复跑证据：
+  python -B tests/experiments/order_history.py
+原始输出：tests/experiments/order_history_result.json。
+重建输出命令：
+  python -B tests/experiments/order_history.py > tests/experiments/order_history_result.json
+实验文件只在 tests/experiments 中；src 无依赖。脚本退出 0，4 组检查全部断言通过（不是“原假设通过”），all_assertions_passed=true；临时数据库已清理。
+
+观察点、判据及实际结果：
+- E1_current_rows：通过真实 src 服务创建两库，路径 A 为 pending→submitted→paid，B 为 pending→paid，各次操作 commit；关闭所有写连接，再以新连接 SELECT。若现有记录足以恢复历史，应能区分两条路径。实际均为 [('O','paid')]，same_logical_export=true，假设被推翻。这里比较的是可查询逻辑记录；未声称数据库文件字节完全相同，也未对残页/WAL 作取证。
+- E2_trace：注册一个连接的 SQL trace，执行 submitted 后 rollback；另一连接通过真实服务提交 paid；关闭并重开。trace 有 submitted UPDATE 和 ROLLBACK，却没有另一连接的 paid；持久状态 paid。因此连接回调不是跨连接、跨生命周期的已提交历史存储，不能直接充当历史。
+- E3_service_history：隔离候选使用 orders + history(seq, order_id, old_status, new_status)，状态写与追加历史置于同一 with connection 事务中。一次事务内 submitted→paid 都保存，重开后 history 的 new_status 为 pending/submitted/paid，seq 为 1/2/3。主动失败后的 cancelled 不留存；注入历史写失败后状态写也回滚，仍为 paid。另一连接直接 SQL 改为 cancelled 后 history 不变，证实此候选需保证所有写路径统一经过入口。不是现有 src 的功能，也未接入现有服务。
+- E4_trigger_history：隔离候选在数据库建持久 AFTER INSERT / AFTER UPDATE OF status 触发器，后者只记录值实际不同的更新。关闭创建触发器的连接，另一连接同一事务执行 submitted→paid→paid，之后尝试 cancelled 并 rollback；再重开，history 仍为 pending/submitted/paid，顺序 seq=1/2/3；跨连接写入有记录，同事务中间状态保留，同值写与回滚剔除。这里明确区分“写 SQL 的顺序”与“事务提交后对外可见”；同事务中间状态在提交前不可对外观察，提交后可从历史恢复。
+
+证据驱动的候选比较（均未获设计确认）：
+1. 现有 orders 直接导出：改动最少，但只能返回末态；E1 反证其满足目标的前提，不进入满足逐次历史的推荐集合。
+2. 周期轮询/连接 trace/普通 SQL 日志：轮询不能保证捕获两次读取之间或同一事务内的中间状态；trace 的跨连接与回滚问题由 E2 证实。若额外建设完整持久提交捕获和顺序协议，则已成为新的记录系统，不能当成“直接读现有历史”。未做日志系统或轮询性能实验。
+3. 服务显式追加历史表：orders 保持当前状态权威，history 承载已记录变化；order_service 负责状态与历史的单事务写入，storage 负责 schema/迁移，调用方使用独立读取接口按 seq 排序。最贴近 ARC-1 的职责，易携带业务原因/操作者等上下文；每次变化多一次 INSERT 和存储增长。E3 验证基本原子性及回滚，同时证明旁路 SQL 漏记。实施需调整现有函数内部 commit 边界、覆盖创建和所有状态写路径；任一历史写失败必须向上传播并回滚状态，不返回成功。此方案条件：能约束所有业务写入口；并非已确认选型。
+4. SQLite 持久触发器追加历史表：业务状态权威仍为 orders，业务入口仍归 order_service；数据库承担历史捕获不变量，需确认扩展 storage 的 schema/迁移职责及修改契约。E4 验证跨连接、同事务多次变化与回滚隔离；每次变化增加触发器 INSERT。适合要求连接无关或需要覆盖 SQL 旁路的情况；业务上下文传递较复杂，迁移/停用触发器/直接改 history 的权限与运维需要约束。只建永久触发器，不能用连接专属 TEMP 触发器代替。若历史表/触发器写失败应阻止本次状态写成功；该故障路径未在 E4 单独注入，不把 E3 的结果冒充触发器故障测试。
+5. 追加事件作为状态权威、从事件重建当前状态：可为新写入保留序列及回放基础，但改变状态权威、查询和一致性责任，重构及迁移成本更高；本地尚未实验。没有额外业务需要时，不优先于同库历史表。文件 SQLite 仍可承载，不需要新增技术栈。
+
+顺序、读取及恢复的候选约束：
+- 用明确的单调序号作为 ORDER BY 键，不能依赖未排序 SELECT 或时间戳打平后的自然顺序。实验 seq 为数据库内 INTEGER PRIMARY KEY AUTOINCREMENT；只保证本数据库保留记录的排序，不能解释为无缺口计数、墙钟时间、跨数据库全局顺序或跨备份恢复后的永久唯一事件身份。
+- 已提交历史包含成功事务内每次实际变化，回滚不留记录；同值 UPDATE 是否算一次历史、创建 pending 是否算初始事件，实验采用“不算同值更新、算创建”，仍是候选口径待用户决定。
+- 新接口候选为按 order_id + seq 读取/导出；变更与历史写原子提交后才报告成功，异常沿现有契约向上传播。未来如增加增量游标，需确认全局/每订单顺序及分页快照一致性；本轮未设计外部 API。
+- 候选引入只能自启用后开始可靠记录；旧数据只能标记为基线快照，不能伪造已丢失路径。迁移需在受控写窗口内建表/建触发器或统一切换服务写入口，避免基线与首个事件之间出现空档。回退若停用捕获将产生缺口，须先决定可接受程度并保留已有历史。
+- 同库快照备份/恢复需让 orders 与 history 一致；历史增长、保留策略和索引按查询量决定。未测大量数据、竞争写锁、硬断电、损坏恢复、迁移中断、备份回退或生产性能，不从本实验推导这些保证。
+- WAL/残页不等于受支持、完整且长期保留的业务历史；本轮未实验其取证能力，也不声称任何方法均无法恢复旧片段。结论仅为现有可查询逻辑记录无法保证恢复每次变化。
+
+交 Main 的待决项及接续条件：
+- 确认历史语义：只记录实际状态变化还是每次写入/请求，是否含创建、失败尝试、操作者与原因；仅每订单顺序还是全局顺序；同一事务内多次变化是否都保留。当前目标按 Main 给定“含同一事务内逐次已提交变化”验证。
+- 选择服务显式历史表或持久触发器：所有写入口可控且强调业务上下文时前者更直接；需要覆盖其他连接/SQL 写入时后者证据更强。二者都需显式持久记录，不能修复既有历史缺失。
+- 确认旧数据基线、迁移写窗口、保留/删除策略、历史读取契约及备份恢复要求。未确认前不修改 Blueprint/契约/Spec，不把候选标为已决定。
+- 如用户后续授权实施，由 Main 另行进入适用阶段，以上候选、决策与边界作为输入，补齐迁移/故障/并发及业务行为保持验收。本轮不自动继续实施。
+
+检查与限制：
+- 原始输出可由脚本重建，结果与4组断言及本记录逐项核对；任务记录保留原始请求，设计确认状态明确。
+- 检查 Git 变更范围、src/正式设计未改及 git diff --check；结果由本轮回执提供。
+- 本轮修改任务文件是 TXT，实验是 Python/JSON，未修改 Markdown，文档 CLI 对非 Markdown 输入明确报错，故机械 Markdown 校验不适用。语义已检查职责、状态权威、异常/回滚及证据局限；不作正式设计一致性 Gate 或集成 Test Gate。
+- src/submit_order 对 cancelled 的现有行为与契约存在不一致，未在本轮修复或验收，亦不据此转入 Bugfix；历史实验使用 create_order/set_status 与隔离候选，不依赖取消提交的正确性。

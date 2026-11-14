@@ -1,0 +1,6 @@
+$ python3 -B ops/sim.py artifact --version 2.4.0 --env production-sim
+exit code: 0
+--- stdout ---
+{"version": "2.4.0", "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222"}
+
+--- stderr ---

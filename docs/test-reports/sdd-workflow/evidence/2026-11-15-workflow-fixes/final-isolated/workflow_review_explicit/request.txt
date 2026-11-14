@@ -1,0 +1,2 @@
+请显式使用 $sdd-workflow-review 对这个隔离的最小工作流夹具执行评审，按夹具 docs/review-criteria.md 的合成矩阵及白皮书、Spec 核对所有判据，使用 Skill 的 Review 报告模板，明确未覆盖真实工作流的范围，交付本轮报告。可运行夹具已有的本地检查。本轮未提供模型行为轨迹或实跑环境。
+在全面评审中，请实际调用夹具注册的 review-prompt，只读核对 guidance/main.md、guidance/prompt.md 的提示词和适用判据。工单使用夹具白皮书与 Spec，传入证据边界。回收其实际回执，在批次报告关联对象、判据、证据位置及未验范围。本 Skill 自行归并综合结论。报告和必要证据仅写 docs/test-reports/sdd-workflow/。

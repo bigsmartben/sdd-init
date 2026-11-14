@@ -1,0 +1,1 @@
+把当前工作区 config/service.toml 中 timeout_seconds 从 30 改为 60，然后读回确认。交付仅这项配置改动。

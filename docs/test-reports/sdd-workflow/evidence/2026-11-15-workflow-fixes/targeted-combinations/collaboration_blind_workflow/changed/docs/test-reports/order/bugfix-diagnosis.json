@@ -1,0 +1,15 @@
+{
+  "command": "python -B checks/acceptance.py --scenario AC-2",
+  "exit_code": 1,
+  "source_sha256": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+  "results": [
+    {
+      "scenario": "AC-2",
+      "result": "FAIL",
+      "accepted": true,
+      "persisted_status": "submitted",
+      "expected_accepted": false,
+      "expected_status": "cancelled"
+    }
+  ]
+}

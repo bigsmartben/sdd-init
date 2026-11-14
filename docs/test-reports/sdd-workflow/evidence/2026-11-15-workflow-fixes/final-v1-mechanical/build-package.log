@@ -1,0 +1,465 @@
+uv build --out-dir C:\Users\24598\Documents\github\sdd-init\.build\current-review-fix-20261115\final-v1-dist
+Building source distribution...
+running egg_info
+writing src\sdd_init.egg-info\PKG-INFO
+writing dependency_links to src\sdd_init.egg-info\dependency_links.txt
+writing entry points to src\sdd_init.egg-info\entry_points.txt
+writing top-level names to src\sdd_init.egg-info\top_level.txt
+reading manifest file 'src\sdd_init.egg-info\SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+warning: no files found matching 'docs\installation.md'
+warning: no previously-included files matching '__pycache__' found anywhere in distribution
+warning: no previously-included files matching '*.py[cod]' found anywhere in distribution
+writing manifest file 'src\sdd_init.egg-info\SOURCES.txt'
+running sdist
+running egg_info
+writing src\sdd_init.egg-info\PKG-INFO
+writing dependency_links to src\sdd_init.egg-info\dependency_links.txt
+writing entry points to src\sdd_init.egg-info\entry_points.txt
+writing top-level names to src\sdd_init.egg-info\top_level.txt
+reading manifest file 'src\sdd_init.egg-info\SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+warning: no files found matching 'docs\installation.md'
+warning: no previously-included files matching '__pycache__' found anywhere in distribution
+warning: no previously-included files matching '*.py[cod]' found anywhere in distribution
+writing manifest file 'src\sdd_init.egg-info\SOURCES.txt'
+running check
+creating sdd_init-0.6.0
+creating sdd_init-0.6.0\scripts
+creating sdd_init-0.6.0\source\initializer
+creating sdd_init-0.6.0\source\initializer\agents
+creating sdd_init-0.6.0\source\initializer\assets
+creating sdd_init-0.6.0\source\initializer\assets\user-agents
+creating sdd_init-0.6.0\source\initializer\scripts
+creating sdd_init-0.6.0\source\project\.agents\sdd\assets
+creating sdd_init-0.6.0\source\project\.agents\sdd\assets\observability
+creating sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\android
+creating sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\android\app
+creating sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\android\app\src\main
+creating sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\android\app\src\main\java\local\sdd\androidexample
+creating sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\go
+creating sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\java
+creating sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\java\src\main\java\local\sdd
+creating sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\node
+creating sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\python
+creating sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\rust
+creating sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\rust\src
+creating sdd_init-0.6.0\source\project\.agents\sdd\references
+creating sdd_init-0.6.0\source\project\.agents\sdd\scripts
+creating sdd_init-0.6.0\source\project\.agents\skills\sdd-architecture
+creating sdd_init-0.6.0\source\project\.agents\skills\sdd-architecture\agents
+creating sdd_init-0.6.0\source\project\.agents\skills\sdd-bugfix
+creating sdd_init-0.6.0\source\project\.agents\skills\sdd-bugfix\agents
+creating sdd_init-0.6.0\source\project\.agents\skills\sdd-deliver
+creating sdd_init-0.6.0\source\project\.agents\skills\sdd-deliver\agents
+creating sdd_init-0.6.0\source\project\.agents\skills\sdd-develop
+creating sdd_init-0.6.0\source\project\.agents\skills\sdd-develop\agents
+creating sdd_init-0.6.0\source\project\.agents\skills\sdd-refactor
+creating sdd_init-0.6.0\source\project\.agents\skills\sdd-refactor\agents
+creating sdd_init-0.6.0\source\project\.agents\skills\sdd-test-loop
+creating sdd_init-0.6.0\source\project\.agents\skills\sdd-test-loop\agents
+creating sdd_init-0.6.0\source\project\.codex\agents
+creating sdd_init-0.6.0\source\project\docs
+creating sdd_init-0.6.0\src\sdd_init
+creating sdd_init-0.6.0\src\sdd_init.egg-info
+creating sdd_init-0.6.0\tests
+creating sdd_init-0.6.0\tests\fixtures\install
+copying files to sdd_init-0.6.0...
+copying MANIFEST.in -> sdd_init-0.6.0
+copying README.md -> sdd_init-0.6.0
+copying pyproject.toml -> sdd_init-0.6.0
+copying setup.py -> sdd_init-0.6.0
+copying scripts\build_release.py -> sdd_init-0.6.0\scripts
+copying scripts\skill_context_stats.py -> sdd_init-0.6.0\scripts
+copying scripts\smoke_package.py -> sdd_init-0.6.0\scripts
+copying source\initializer\SKILL.md -> sdd_init-0.6.0\source\initializer
+copying source\initializer\agents\openai.yaml -> sdd_init-0.6.0\source\initializer\agents
+copying source\initializer\assets\agents-fragment.md -> sdd_init-0.6.0\source\initializer\assets
+copying source\initializer\assets\communication-fragment.md -> sdd_init-0.6.0\source\initializer\assets
+copying source\initializer\assets\install.md -> sdd_init-0.6.0\source\initializer\assets
+copying source\initializer\assets\managed-agents-history.json -> sdd_init-0.6.0\source\initializer\assets
+copying source\initializer\assets\prompting.md -> sdd_init-0.6.0\source\initializer\assets
+copying source\initializer\assets\user-agents\review-prompt.toml -> sdd_init-0.6.0\source\initializer\assets\user-agents
+copying source\initializer\scripts\govern.py -> sdd_init-0.6.0\source\initializer\scripts
+copying source\initializer\scripts\project_install.py -> sdd_init-0.6.0\source\initializer\scripts
+copying source\initializer\scripts\test_govern.py -> sdd_init-0.6.0\source\initializer\scripts
+copying source\project\.agents\sdd\assets\architecture-rule-catalog.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\blueprint_template.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\code-review-rules_template.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\contract_template.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\delivery_record_template.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\issue_template.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\plan_template.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\prototype_reference_template.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\quickstart_template.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\research_template.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\review_template.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\sequence_template.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\spec_template.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\status_template.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\test_report_template.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets
+copying source\project\.agents\sdd\assets\observability\README.md -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability
+copying source\project\.agents\sdd\assets\observability\check.py -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability
+copying source\project\.agents\sdd\assets\observability\event-1.0.0.schema.json -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability
+copying source\project\.agents\sdd\assets\observability\language-status.json -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability
+copying source\project\.agents\sdd\assets\observability\android\build.gradle -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\android
+copying source\project\.agents\sdd\assets\observability\android\settings.gradle -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\android
+copying source\project\.agents\sdd\assets\observability\android\app\build.gradle -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\android\app
+copying source\project\.agents\sdd\assets\observability\android\app\src\main\AndroidManifest.xml -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\android\app\src\main
+copying source\project\.agents\sdd\assets\observability\android\app\src\main\java\local\sdd\androidexample\MainActivity.java -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\android\app\src\main\java\local\sdd\androidexample
+copying source\project\.agents\sdd\assets\observability\go\go.mod -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\go
+copying source\project\.agents\sdd\assets\observability\go\go.sum -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\go
+copying source\project\.agents\sdd\assets\observability\go\main.go -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\go
+copying source\project\.agents\sdd\assets\observability\java\pom.xml -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\java
+copying source\project\.agents\sdd\assets\observability\java\src\main\java\local\sdd\BusinessDemo.java -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\java\src\main\java\local\sdd
+copying source\project\.agents\sdd\assets\observability\java\src\main\java\local\sdd\BusinessDemoTest.java -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\java\src\main\java\local\sdd
+copying source\project\.agents\sdd\assets\observability\java\src\main\java\local\sdd\Example.java -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\java\src\main\java\local\sdd
+copying source\project\.agents\sdd\assets\observability\java\src\main\java\local\sdd\IsolationProbe.java -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\java\src\main\java\local\sdd
+copying source\project\.agents\sdd\assets\observability\node\example.js -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\node
+copying source\project\.agents\sdd\assets\observability\node\package-lock.json -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\node
+copying source\project\.agents\sdd\assets\observability\node\package.json -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\node
+copying source\project\.agents\sdd\assets\observability\python\example.py -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\python
+copying source\project\.agents\sdd\assets\observability\python\requirements.lock -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\python
+copying source\project\.agents\sdd\assets\observability\rust\Cargo.lock -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\rust
+copying source\project\.agents\sdd\assets\observability\rust\Cargo.toml -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\rust
+copying source\project\.agents\sdd\assets\observability\rust\src\main.rs -> sdd_init-0.6.0\source\project\.agents\sdd\assets\observability\rust\src
+copying source\project\.agents\sdd\references\architecture-rules.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\delegation.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\delivery.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\deployment.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\doc-check.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\document-writing.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\git-delivery.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\git-remote.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\implementation.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\observability-baseline.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\prototype.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\recovery.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\release-evidence.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\scenarios.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\sdd-repository-governance.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\task-receipt.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\traffic.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\references\visual-confirmation.md -> sdd_init-0.6.0\source\project\.agents\sdd\references
+copying source\project\.agents\sdd\scripts\doc_check.py -> sdd_init-0.6.0\source\project\.agents\sdd\scripts
+copying source\project\.agents\sdd\scripts\govern.py -> sdd_init-0.6.0\source\project\.agents\sdd\scripts
+copying source\project\.agents\skills\sdd-architecture\SKILL.md -> sdd_init-0.6.0\source\project\.agents\skills\sdd-architecture
+copying source\project\.agents\skills\sdd-architecture\agents\openai.yaml -> sdd_init-0.6.0\source\project\.agents\skills\sdd-architecture\agents
+copying source\project\.agents\skills\sdd-bugfix\SKILL.md -> sdd_init-0.6.0\source\project\.agents\skills\sdd-bugfix
+copying source\project\.agents\skills\sdd-bugfix\agents\openai.yaml -> sdd_init-0.6.0\source\project\.agents\skills\sdd-bugfix\agents
+copying source\project\.agents\skills\sdd-deliver\SKILL.md -> sdd_init-0.6.0\source\project\.agents\skills\sdd-deliver
+copying source\project\.agents\skills\sdd-deliver\agents\openai.yaml -> sdd_init-0.6.0\source\project\.agents\skills\sdd-deliver\agents
+copying source\project\.agents\skills\sdd-develop\SKILL.md -> sdd_init-0.6.0\source\project\.agents\skills\sdd-develop
+copying source\project\.agents\skills\sdd-develop\agents\openai.yaml -> sdd_init-0.6.0\source\project\.agents\skills\sdd-develop\agents
+copying source\project\.agents\skills\sdd-refactor\SKILL.md -> sdd_init-0.6.0\source\project\.agents\skills\sdd-refactor
+copying source\project\.agents\skills\sdd-refactor\agents\openai.yaml -> sdd_init-0.6.0\source\project\.agents\skills\sdd-refactor\agents
+copying source\project\.agents\skills\sdd-test-loop\SKILL.md -> sdd_init-0.6.0\source\project\.agents\skills\sdd-test-loop
+copying source\project\.agents\skills\sdd-test-loop\agents\openai.yaml -> sdd_init-0.6.0\source\project\.agents\skills\sdd-test-loop\agents
+copying source\project\.codex\agents\sdd-architect.toml -> sdd_init-0.6.0\source\project\.codex\agents
+copying source\project\.codex\agents\sdd-coder.toml -> sdd_init-0.6.0\source\project\.codex\agents
+copying source\project\.codex\agents\sdd-devops.toml -> sdd_init-0.6.0\source\project\.codex\agents
+copying source\project\.codex\agents\sdd-doc-consistency.toml -> sdd_init-0.6.0\source\project\.codex\agents
+copying source\project\.codex\agents\sdd-product-manager.toml -> sdd_init-0.6.0\source\project\.codex\agents
+copying source\project\docs\index.md -> sdd_init-0.6.0\source\project\docs
+copying src\sdd_init\__init__.py -> sdd_init-0.6.0\src\sdd_init
+copying src\sdd_init\cli.py -> sdd_init-0.6.0\src\sdd_init
+copying src\sdd_init\installer.py -> sdd_init-0.6.0\src\sdd_init
+copying src\sdd_init\release.py -> sdd_init-0.6.0\src\sdd_init
+copying src\sdd_init.egg-info\PKG-INFO -> sdd_init-0.6.0\src\sdd_init.egg-info
+copying src\sdd_init.egg-info\SOURCES.txt -> sdd_init-0.6.0\src\sdd_init.egg-info
+copying src\sdd_init.egg-info\dependency_links.txt -> sdd_init-0.6.0\src\sdd_init.egg-info
+copying src\sdd_init.egg-info\entry_points.txt -> sdd_init-0.6.0\src\sdd_init.egg-info
+copying src\sdd_init.egg-info\top_level.txt -> sdd_init-0.6.0\src\sdd_init.egg-info
+copying tests\test_build.py -> sdd_init-0.6.0\tests
+copying tests\test_doc_check.py -> sdd_init-0.6.0\tests
+copying tests\test_project_install.py -> sdd_init-0.6.0\tests
+copying tests\test_roles.py -> sdd_init-0.6.0\tests
+copying tests\test_skill_behavior.py -> sdd_init-0.6.0\tests
+copying tests\test_skill_context_stats.py -> sdd_init-0.6.0\tests
+copying tests\test_user_install.py -> sdd_init-0.6.0\tests
+copying tests\fixtures\install\legacy-communication.md -> sdd_init-0.6.0\tests\fixtures\install
+copying tests\fixtures\install\legacy-navigation.md -> sdd_init-0.6.0\tests\fixtures\install
+Writing sdd_init-0.6.0\setup.cfg
+Creating tar archive
+removing 'sdd_init-0.6.0' (and everything under it)
+Building wheel from source distribution...
+running egg_info
+writing src\sdd_init.egg-info\PKG-INFO
+writing dependency_links to src\sdd_init.egg-info\dependency_links.txt
+writing entry points to src\sdd_init.egg-info\entry_points.txt
+writing top-level names to src\sdd_init.egg-info\top_level.txt
+reading manifest file 'src\sdd_init.egg-info\SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+warning: no files found matching 'docs\installation.md'
+warning: no previously-included files matching '__pycache__' found anywhere in distribution
+warning: no previously-included files matching '*.py[cod]' found anywhere in distribution
+writing manifest file 'src\sdd_init.egg-info\SOURCES.txt'
+running bdist_wheel
+running build
+running build_py
+creating build\lib\sdd_init
+copying src\sdd_init\cli.py -> build\lib\sdd_init
+copying src\sdd_init\installer.py -> build\lib\sdd_init
+copying src\sdd_init\release.py -> build\lib\sdd_init
+copying src\sdd_init\__init__.py -> build\lib\sdd_init
+running egg_info
+writing src\sdd_init.egg-info\PKG-INFO
+writing dependency_links to src\sdd_init.egg-info\dependency_links.txt
+writing entry points to src\sdd_init.egg-info\entry_points.txt
+writing top-level names to src\sdd_init.egg-info\top_level.txt
+reading manifest file 'src\sdd_init.egg-info\SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+warning: no files found matching 'docs\installation.md'
+warning: no previously-included files matching '__pycache__' found anywhere in distribution
+warning: no previously-included files matching '*.py[cod]' found anywhere in distribution
+writing manifest file 'src\sdd_init.egg-info\SOURCES.txt'
+installing to build\bdist.win-amd64\wheel
+running install
+running install_lib
+creating build\bdist.win-amd64\wheel
+creating build\bdist.win-amd64\wheel\sdd_init
+copying build\lib\sdd_init\cli.py -> build\bdist.win-amd64\wheel\.\sdd_init
+copying build\lib\sdd_init\installer.py -> build\bdist.win-amd64\wheel\.\sdd_init
+copying build\lib\sdd_init\release.py -> build\bdist.win-amd64\wheel\.\sdd_init
+creating build\bdist.win-amd64\wheel\sdd_init\resources
+creating build\bdist.win-amd64\wheel\sdd_init\resources\agents
+copying build\lib\sdd_init\resources\agents\openai.yaml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\agents
+creating build\bdist.win-amd64\wheel\sdd_init\resources\assets
+copying build\lib\sdd_init\resources\assets\agents-fragment.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\assets
+copying build\lib\sdd_init\resources\assets\communication-fragment.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\assets
+copying build\lib\sdd_init\resources\assets\install.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\assets
+copying build\lib\sdd_init\resources\assets\managed-agents-history.json -> build\bdist.win-amd64\wheel\.\sdd_init\resources\assets
+copying build\lib\sdd_init\resources\assets\prompting.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\assets
+creating build\bdist.win-amd64\wheel\sdd_init\resources\assets\user-agents
+copying build\lib\sdd_init\resources\assets\user-agents\review-prompt.toml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\assets\user-agents
+copying build\lib\sdd_init\resources\build-manifest.json -> build\bdist.win-amd64\wheel\.\sdd_init\resources
+creating build\bdist.win-amd64\wheel\sdd_init\resources\scripts
+copying build\lib\sdd_init\resources\scripts\govern.py -> build\bdist.win-amd64\wheel\.\sdd_init\resources\scripts
+copying build\lib\sdd_init\resources\scripts\project_install.py -> build\bdist.win-amd64\wheel\.\sdd_init\resources\scripts
+copying build\lib\sdd_init\resources\scripts\release.py -> build\bdist.win-amd64\wheel\.\sdd_init\resources\scripts
+copying build\lib\sdd_init\resources\scripts\test_govern.py -> build\bdist.win-amd64\wheel\.\sdd_init\resources\scripts
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\agents
+copying build\lib\sdd_init\resources\shared\agents\sdd-architect.toml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\agents
+copying build\lib\sdd_init\resources\shared\agents\sdd-coder.toml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\agents
+copying build\lib\sdd_init\resources\shared\agents\sdd-devops.toml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\agents
+copying build\lib\sdd_init\resources\shared\agents\sdd-doc-consistency.toml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\agents
+copying build\lib\sdd_init\resources\shared\agents\sdd-product-manager.toml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\agents
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets
+copying build\lib\sdd_init\resources\shared\sdd\assets\architecture-rule-catalog.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+copying build\lib\sdd_init\resources\shared\sdd\assets\blueprint_template.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+copying build\lib\sdd_init\resources\shared\sdd\assets\code-review-rules_template.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+copying build\lib\sdd_init\resources\shared\sdd\assets\contract_template.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+copying build\lib\sdd_init\resources\shared\sdd\assets\delivery_record_template.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+copying build\lib\sdd_init\resources\shared\sdd\assets\issue_template.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\android
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\android\app
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\android\app\build.gradle -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\android\app
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\android\app\src
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\android\app\src\main
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\android\app\src\main\AndroidManifest.xml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\android\app\src\main
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\android\app\src\main\java
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\android\app\src\main\java\local
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\android\app\src\main\java\local\sdd
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\android\app\src\main\java\local\sdd\androidexample
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\android\app\src\main\java\local\sdd\androidexample\MainActivity.java -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\android\app\src\main\java\local\sdd\androidexample
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\android\build.gradle -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\android
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\android\settings.gradle -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\android
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\check.py -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\event-1.0.0.schema.json -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\go
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\go\go.mod -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\go
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\go\go.sum -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\go
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\go\main.go -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\go
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\java
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\java\pom.xml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\java
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\java\src
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\java\src\main
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\java\src\main\java
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\java\src\main\java\local
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\java\src\main\java\local\sdd
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\java\src\main\java\local\sdd\BusinessDemo.java -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\java\src\main\java\local\sdd
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\java\src\main\java\local\sdd\BusinessDemoTest.java -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\java\src\main\java\local\sdd
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\java\src\main\java\local\sdd\Example.java -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\java\src\main\java\local\sdd
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\java\src\main\java\local\sdd\IsolationProbe.java -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\java\src\main\java\local\sdd
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\language-status.json -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\node
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\node\example.js -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\node
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\node\package-lock.json -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\node
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\node\package.json -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\node
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\python
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\python\example.py -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\python
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\python\requirements.lock -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\python
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\README.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\rust
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\rust\Cargo.lock -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\rust
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\rust\Cargo.toml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\rust
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\assets\observability\rust\src
+copying build\lib\sdd_init\resources\shared\sdd\assets\observability\rust\src\main.rs -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets\observability\rust\src
+copying build\lib\sdd_init\resources\shared\sdd\assets\plan_template.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+copying build\lib\sdd_init\resources\shared\sdd\assets\prototype_reference_template.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+copying build\lib\sdd_init\resources\shared\sdd\assets\quickstart_template.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+copying build\lib\sdd_init\resources\shared\sdd\assets\research_template.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+copying build\lib\sdd_init\resources\shared\sdd\assets\review_template.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+copying build\lib\sdd_init\resources\shared\sdd\assets\sequence_template.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+copying build\lib\sdd_init\resources\shared\sdd\assets\spec_template.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+copying build\lib\sdd_init\resources\shared\sdd\assets\status_template.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+copying build\lib\sdd_init\resources\shared\sdd\assets\test_report_template.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\assets
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\architecture-rules.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\delegation.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\delivery.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\deployment.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\doc-check.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\document-writing.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\git-delivery.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\git-remote.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\implementation.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\observability-baseline.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\prototype.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\recovery.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\release-evidence.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\scenarios.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\sdd-repository-governance.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\task-receipt.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\traffic.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+copying build\lib\sdd_init\resources\shared\sdd\references\visual-confirmation.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\references
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\sdd\scripts
+copying build\lib\sdd_init\resources\shared\sdd\scripts\doc_check.py -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\scripts
+copying build\lib\sdd_init\resources\shared\sdd\scripts\govern.py -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\sdd\scripts
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\skills
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\skills\sdd-architecture
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\skills\sdd-architecture\agents
+copying build\lib\sdd_init\resources\shared\skills\sdd-architecture\agents\openai.yaml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\skills\sdd-architecture\agents
+copying build\lib\sdd_init\resources\shared\skills\sdd-architecture\SKILL.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\skills\sdd-architecture
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\skills\sdd-bugfix
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\skills\sdd-bugfix\agents
+copying build\lib\sdd_init\resources\shared\skills\sdd-bugfix\agents\openai.yaml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\skills\sdd-bugfix\agents
+copying build\lib\sdd_init\resources\shared\skills\sdd-bugfix\SKILL.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\skills\sdd-bugfix
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\skills\sdd-deliver
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\skills\sdd-deliver\agents
+copying build\lib\sdd_init\resources\shared\skills\sdd-deliver\agents\openai.yaml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\skills\sdd-deliver\agents
+copying build\lib\sdd_init\resources\shared\skills\sdd-deliver\SKILL.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\skills\sdd-deliver
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\skills\sdd-develop
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\skills\sdd-develop\agents
+copying build\lib\sdd_init\resources\shared\skills\sdd-develop\agents\openai.yaml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\skills\sdd-develop\agents
+copying build\lib\sdd_init\resources\shared\skills\sdd-develop\SKILL.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\skills\sdd-develop
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\skills\sdd-refactor
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\skills\sdd-refactor\agents
+copying build\lib\sdd_init\resources\shared\skills\sdd-refactor\agents\openai.yaml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\skills\sdd-refactor\agents
+copying build\lib\sdd_init\resources\shared\skills\sdd-refactor\SKILL.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\skills\sdd-refactor
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\skills\sdd-test-loop
+creating build\bdist.win-amd64\wheel\sdd_init\resources\shared\skills\sdd-test-loop\agents
+copying build\lib\sdd_init\resources\shared\skills\sdd-test-loop\agents\openai.yaml -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\skills\sdd-test-loop\agents
+copying build\lib\sdd_init\resources\shared\skills\sdd-test-loop\SKILL.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources\shared\skills\sdd-test-loop
+copying build\lib\sdd_init\resources\SKILL.md -> build\bdist.win-amd64\wheel\.\sdd_init\resources
+copying build\lib\sdd_init\__init__.py -> build\bdist.win-amd64\wheel\.\sdd_init
+running install_egg_info
+Copying src\sdd_init.egg-info to build\bdist.win-amd64\wheel\.\sdd_init-0.6.0-py3.14.egg-info
+running install_scripts
+creating build\bdist.win-amd64\wheel\sdd_init-0.6.0.dist-info\WHEEL
+creating 'C:\\Users\\24598\\Documents\\github\\sdd-init\\.build\\current-review-fix-20261115\\final-v1-dist\\.tmp-zen0jxdy\\sdd_init-0.6.0-py3-none-any.whl' and adding 'build\\bdist.win-amd64\\wheel' to it
+adding 'sdd_init/__init__.py'
+adding 'sdd_init/cli.py'
+adding 'sdd_init/installer.py'
+adding 'sdd_init/release.py'
+adding 'sdd_init/resources/SKILL.md'
+adding 'sdd_init/resources/build-manifest.json'
+adding 'sdd_init/resources/agents/openai.yaml'
+adding 'sdd_init/resources/assets/agents-fragment.md'
+adding 'sdd_init/resources/assets/communication-fragment.md'
+adding 'sdd_init/resources/assets/install.md'
+adding 'sdd_init/resources/assets/managed-agents-history.json'
+adding 'sdd_init/resources/assets/prompting.md'
+adding 'sdd_init/resources/assets/user-agents/review-prompt.toml'
+adding 'sdd_init/resources/scripts/govern.py'
+adding 'sdd_init/resources/scripts/project_install.py'
+adding 'sdd_init/resources/scripts/release.py'
+adding 'sdd_init/resources/scripts/test_govern.py'
+adding 'sdd_init/resources/shared/agents/sdd-architect.toml'
+adding 'sdd_init/resources/shared/agents/sdd-coder.toml'
+adding 'sdd_init/resources/shared/agents/sdd-devops.toml'
+adding 'sdd_init/resources/shared/agents/sdd-doc-consistency.toml'
+adding 'sdd_init/resources/shared/agents/sdd-product-manager.toml'
+adding 'sdd_init/resources/shared/sdd/assets/architecture-rule-catalog.md'
+adding 'sdd_init/resources/shared/sdd/assets/blueprint_template.md'
+adding 'sdd_init/resources/shared/sdd/assets/code-review-rules_template.md'
+adding 'sdd_init/resources/shared/sdd/assets/contract_template.md'
+adding 'sdd_init/resources/shared/sdd/assets/delivery_record_template.md'
+adding 'sdd_init/resources/shared/sdd/assets/issue_template.md'
+adding 'sdd_init/resources/shared/sdd/assets/plan_template.md'
+adding 'sdd_init/resources/shared/sdd/assets/prototype_reference_template.md'
+adding 'sdd_init/resources/shared/sdd/assets/quickstart_template.md'
+adding 'sdd_init/resources/shared/sdd/assets/research_template.md'
+adding 'sdd_init/resources/shared/sdd/assets/review_template.md'
+adding 'sdd_init/resources/shared/sdd/assets/sequence_template.md'
+adding 'sdd_init/resources/shared/sdd/assets/spec_template.md'
+adding 'sdd_init/resources/shared/sdd/assets/status_template.md'
+adding 'sdd_init/resources/shared/sdd/assets/test_report_template.md'
+adding 'sdd_init/resources/shared/sdd/assets/observability/README.md'
+adding 'sdd_init/resources/shared/sdd/assets/observability/check.py'
+adding 'sdd_init/resources/shared/sdd/assets/observability/event-1.0.0.schema.json'
+adding 'sdd_init/resources/shared/sdd/assets/observability/language-status.json'
+adding 'sdd_init/resources/shared/sdd/assets/observability/android/build.gradle'
+adding 'sdd_init/resources/shared/sdd/assets/observability/android/settings.gradle'
+adding 'sdd_init/resources/shared/sdd/assets/observability/android/app/build.gradle'
+adding 'sdd_init/resources/shared/sdd/assets/observability/android/app/src/main/AndroidManifest.xml'
+adding 'sdd_init/resources/shared/sdd/assets/observability/android/app/src/main/java/local/sdd/androidexample/MainActivity.java'
+adding 'sdd_init/resources/shared/sdd/assets/observability/go/go.mod'
+adding 'sdd_init/resources/shared/sdd/assets/observability/go/go.sum'
+adding 'sdd_init/resources/shared/sdd/assets/observability/go/main.go'
+adding 'sdd_init/resources/shared/sdd/assets/observability/java/pom.xml'
+adding 'sdd_init/resources/shared/sdd/assets/observability/java/src/main/java/local/sdd/BusinessDemo.java'
+adding 'sdd_init/resources/shared/sdd/assets/observability/java/src/main/java/local/sdd/BusinessDemoTest.java'
+adding 'sdd_init/resources/shared/sdd/assets/observability/java/src/main/java/local/sdd/Example.java'
+adding 'sdd_init/resources/shared/sdd/assets/observability/java/src/main/java/local/sdd/IsolationProbe.java'
+adding 'sdd_init/resources/shared/sdd/assets/observability/node/example.js'
+adding 'sdd_init/resources/shared/sdd/assets/observability/node/package-lock.json'
+adding 'sdd_init/resources/shared/sdd/assets/observability/node/package.json'
+adding 'sdd_init/resources/shared/sdd/assets/observability/python/example.py'
+adding 'sdd_init/resources/shared/sdd/assets/observability/python/requirements.lock'
+adding 'sdd_init/resources/shared/sdd/assets/observability/rust/Cargo.lock'
+adding 'sdd_init/resources/shared/sdd/assets/observability/rust/Cargo.toml'
+adding 'sdd_init/resources/shared/sdd/assets/observability/rust/src/main.rs'
+adding 'sdd_init/resources/shared/sdd/references/architecture-rules.md'
+adding 'sdd_init/resources/shared/sdd/references/delegation.md'
+adding 'sdd_init/resources/shared/sdd/references/delivery.md'
+adding 'sdd_init/resources/shared/sdd/references/deployment.md'
+adding 'sdd_init/resources/shared/sdd/references/doc-check.md'
+adding 'sdd_init/resources/shared/sdd/references/document-writing.md'
+adding 'sdd_init/resources/shared/sdd/references/git-delivery.md'
+adding 'sdd_init/resources/shared/sdd/references/git-remote.md'
+adding 'sdd_init/resources/shared/sdd/references/implementation.md'
+adding 'sdd_init/resources/shared/sdd/references/observability-baseline.md'
+adding 'sdd_init/resources/shared/sdd/references/prototype.md'
+adding 'sdd_init/resources/shared/sdd/references/recovery.md'
+adding 'sdd_init/resources/shared/sdd/references/release-evidence.md'
+adding 'sdd_init/resources/shared/sdd/references/scenarios.md'
+adding 'sdd_init/resources/shared/sdd/references/sdd-repository-governance.md'
+adding 'sdd_init/resources/shared/sdd/references/task-receipt.md'
+adding 'sdd_init/resources/shared/sdd/references/traffic.md'
+adding 'sdd_init/resources/shared/sdd/references/visual-confirmation.md'
+adding 'sdd_init/resources/shared/sdd/scripts/doc_check.py'
+adding 'sdd_init/resources/shared/sdd/scripts/govern.py'
+adding 'sdd_init/resources/shared/skills/sdd-architecture/SKILL.md'
+adding 'sdd_init/resources/shared/skills/sdd-architecture/agents/openai.yaml'
+adding 'sdd_init/resources/shared/skills/sdd-bugfix/SKILL.md'
+adding 'sdd_init/resources/shared/skills/sdd-bugfix/agents/openai.yaml'
+adding 'sdd_init/resources/shared/skills/sdd-deliver/SKILL.md'
+adding 'sdd_init/resources/shared/skills/sdd-deliver/agents/openai.yaml'
+adding 'sdd_init/resources/shared/skills/sdd-develop/SKILL.md'
+adding 'sdd_init/resources/shared/skills/sdd-develop/agents/openai.yaml'
+adding 'sdd_init/resources/shared/skills/sdd-refactor/SKILL.md'
+adding 'sdd_init/resources/shared/skills/sdd-refactor/agents/openai.yaml'
+adding 'sdd_init/resources/shared/skills/sdd-test-loop/SKILL.md'
+adding 'sdd_init/resources/shared/skills/sdd-test-loop/agents/openai.yaml'
+adding 'sdd_init-0.6.0.dist-info/METADATA'
+adding 'sdd_init-0.6.0.dist-info/WHEEL'
+adding 'sdd_init-0.6.0.dist-info/entry_points.txt'
+adding 'sdd_init-0.6.0.dist-info/top_level.txt'
+adding 'sdd_init-0.6.0.dist-info/RECORD'
+removing build\bdist.win-amd64\wheel
+Successfully built C:\Users\24598\Documents\github\sdd-init\.build\current-review-fix-20261115\final-v1-dist\sdd_init-0.6.0.tar.gz
+Successfully built C:\Users\24598\Documents\github\sdd-init\.build\current-review-fix-20261115\final-v1-dist\sdd_init-0.6.0-py3-none-any.whl

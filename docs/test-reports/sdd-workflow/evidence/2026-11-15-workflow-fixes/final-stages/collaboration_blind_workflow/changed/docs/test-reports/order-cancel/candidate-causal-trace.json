@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+    "-B",
+    "-c",
+    "import json,tempfile\nfrom pathlib import Path\nfrom src import order_service,storage\nwith tempfile.TemporaryDirectory() as directory:\n path=Path(directory)/\"orders.sqlite\"\n connection=storage.connect(path)\n order_service.create_order(connection,\"ORDER-1\")\n order_service.cancel_order(connection,\"ORDER-1\")\n before=order_service.read_status(connection,\"ORDER-1\")\n trace=[]\n connection.set_trace_callback(trace.append)\n accepted=order_service.submit_order(connection,\"ORDER-1\")\n connection.close()\n reopened=storage.connect(path)\n after=order_service.read_status(reopened,\"ORDER-1\")\n reopened.close()\n print(json.dumps({\"before_submit\":before,\"accepted\":accepted,\"submit_sql_trace\":trace,\"reopened_status\":after},indent=2))\n"
+  ],
+  "exit_code": 0,
+  "stdout": "{\n  \"before_submit\": \"cancelled\",\n  \"accepted\": false,\n  \"submit_sql_trace\": [\n    \"SELECT status FROM orders WHERE order_id = 'ORDER-1'\"\n  ],\n  \"reopened_status\": \"cancelled\"\n}\n",
+  "stderr": "",
+  "source_sha256": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb"
+}

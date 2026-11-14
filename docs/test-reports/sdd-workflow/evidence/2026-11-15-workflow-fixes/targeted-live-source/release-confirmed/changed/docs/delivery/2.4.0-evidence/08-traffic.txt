@@ -1,0 +1,6 @@
+$ python3 -B ops/sim.py traffic --route /checkout --percent 10 --env production-sim
+exit code: 0
+--- stdout ---
+{"receipt": "route-51", "canary_percent": 10}
+
+--- stderr ---

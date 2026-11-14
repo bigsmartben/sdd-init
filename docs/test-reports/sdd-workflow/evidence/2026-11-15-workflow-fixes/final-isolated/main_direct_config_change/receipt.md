@@ -1,0 +1,1 @@
+已修改 [config/service.toml](config/service.toml)：`timeout_seconds` 从 `30` 改为 `60`。读回核对通过，`retry_count = 3` 保持不变。

@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+    "-B",
+    "checks/acceptance.py",
+    "--scenario",
+    "AC-1"
+  ],
+  "exit_code": 0,
+  "source_sha256": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+  "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"result\": \"PASS\",\n    \"accepted\": true,\n    \"persisted_status\": \"submitted\",\n    \"expected_accepted\": true,\n    \"expected_status\": \"submitted\"\n  }\n]\n",
+  "stderr": ""
+}

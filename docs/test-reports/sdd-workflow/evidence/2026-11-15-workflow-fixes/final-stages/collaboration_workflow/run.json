@@ -1,0 +1,550 @@
+{
+  "start": "2026-11-15T00:37:44+08:00",
+  "end": "2026-11-15T00:49:45+08:00",
+  "seconds": 625.789,
+  "exit": 0,
+  "turns": [
+    {
+      "turn": "initial",
+      "metrics": {
+        "start": "2026-11-15T00:37:44+08:00",
+        "end": "2026-11-15T00:49:06+08:00",
+        "seconds": 625.789,
+        "exit": 0
+      },
+      "files": {
+        ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+        ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+        ".sdd-init-state.json": "e95d50cbf7776c1f251e4db8647a8404317f1e8aa7e45ee5e2b85671e97ddd94",
+        ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "AGENTS.md": "635bc4acdbd7fef743cd5bcfd8903ee1d91f3db675fb1216b8fc37c2d85303da",
+        "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+        "TASK.txt": "8dcaca56daedf77b0a97411b1cacc154c8ac454f6e8a16ae019652c5455076ef",
+        "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+        "checks/order_integration.py": "496fa99f09e2c5d0796678ac580ffa49553e155f266a68673b68e58e93e1bc99",
+        "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+        "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+        "docs/code-review-rules.md": "4aa0493f16fa3c1ccfdfac11ed5dcd9d322d27adf8c2e46b5e7e1b85fcbe2511",
+        "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+        "docs/index.md": "c4dc8e1c63ded9eb6bbe626d1ea6720526895d99a32aefc0fd2b9d71b7920f33",
+        "docs/issues/ORDER-001.md": "23201b476f5aae91996ff5fa2a88e8cb6994320fc4aa487d0c55bd1fd452c834",
+        "docs/issues/ORDER-002.md": "e3c9ea4c3eae2f9bb3e71c616565be6b612128e30bda01979c67fc593aa490e5",
+        "docs/status.md": "93321929f38fd5865755792c9ae70de19581e9dc0b4f0cd046b8b071a6a1e732",
+        "docs/test-reports/order/architecture-review.md": "6d657026e25a8a71881ae8b65d11ab41b5b683fee5fd40d0d926a55aaef6cc81",
+        "docs/test-reports/order/bugfix.md": "9670d719ee36f0e566da0ea414321ce0412b1dc4354b8cbc276d833b59bbb3ba",
+        "docs/test-reports/order/evidence/bugfix-coder-checks.json": "d9820a6edfa8dd0df2bda5b99e24c916b166aabda79cf3721e3f6a763e5b3997",
+        "docs/test-reports/order/evidence/bugfix-coder-green.json": "43d219bd35893554258c075deba9404ef333381c88e94b2e40bb57fceb0bc4d6",
+        "docs/test-reports/order/evidence/bugfix-coder-red.json": "7baa01e58f019f2c8bc5258736e37b79df28a4bb61646ad6f4f006d561408ff8",
+        "docs/test-reports/order/evidence/bugfix-coder-source.diff": "c68ad2fb25cb00a20146d204e9f34af228831689a85530bd575f6ea3f51feb0f",
+        "docs/test-reports/order/evidence/bugfix-diagnosis.json": "531887f13a911a6ec270e707b64f43764974caef0e7def569b93e66bada72c05",
+        "docs/test-reports/order/evidence/bugfix-doc-check.json": "82d74545adc92e63fd31601cfb2c0e322b88f4b7b2ff909f33d1346ae17110c2",
+        "docs/test-reports/order/evidence/bugfix-retest.json": "36eb818f49d6b1e42b176d495f669fadbd1e9a9013881b9401532fae39a790c0",
+        "docs/test-reports/order/evidence/bugfix-retest.py": "410cabbf18ceb916cb40355b98d0d6f619211927e8c6399b6ba6352fe94e19f8",
+        "docs/test-reports/order/evidence/fixed-acceptance.json": "8ebe7323448b0e9470aff0aef9825c7e198d244420b8495e2201a5bd9ed77787",
+        "docs/test-reports/order/evidence/fixed-doc-check-first.json": "071bc2174150abd8f172fc92b8b8008bf3e3bfb13b893cdba257a4f4536d8018",
+        "docs/test-reports/order/evidence/fixed-doc-check.json": "48c5fc5d85b893c5cf9150861f7f9285ab3b65faec0b5c295f79fbdb22b191a4",
+        "docs/test-reports/order/evidence/fixed-execution.json": "0a462fd229c839abcbf1e946fa16ef76e9bec660de792a55a4ecd2ad8a4a1929",
+        "docs/test-reports/order/evidence/fixed-integration.json": "3ccf7bc91416723050f4ec26310844f8e3e47b19012c9cffb47f215f9f77ae90",
+        "docs/test-reports/order/evidence/fixed-runtime.json": "d3e78c7f0d3a2199c8bcc2eac1858719d82a4c73d50296ad08a868b4fc6c8f7e",
+        "docs/test-reports/order/evidence/fixed-unittest.txt": "962aee0b0c237ed2cde0bd8479578facfd9a78217bb96c301afbcc0da4812030",
+        "docs/test-reports/order/evidence/initial-acceptance.json": "3c2fa0aafac0662a0df0593578bb37f106fad2a38e47e8cfd0b5b8aef9e573d4",
+        "docs/test-reports/order/evidence/initial-execution.json": "f2263fa661d2d49384be02a56e749964bba55087134891f36be1e969ba91c536",
+        "docs/test-reports/order/evidence/initial-integration.json": "7201fae86d4582d8408378451f19d5416a43b2ca0ea0061eadb8daecf334091c",
+        "docs/test-reports/order/evidence/initial-runtime.json": "389a9665eb1f17a1181e2da68323b46ab5dd0cc3d949665990c39ba10a6ffcc4",
+        "docs/test-reports/order/evidence/initial-unittest.txt": "efcf3a8ea2deb62440eff663b5a6844c38662519da6379a9dbb789e8ce9a63d0",
+        "docs/test-reports/order/fixed.md": "f0db75e66e8b625cd596651a6277406ae56f42c92c9a7be00ddf522438df1d12",
+        "docs/test-reports/order/initial.md": "6e104a8f6f0e3d2101a86a6eeb8d4108faba0e0785c6cbf024c6692dbe255d9d",
+        "docs/test-reports/order/review-fixed.json": "d022f763d391d4d82eb87754d7c19a93171d36a079babe8a23cd9b0e200286b5",
+        "docs/test-reports/order/review-initial.json": "5a585e11f2042ff07417746c165128dea290465e141f32124120b0fd2999d26f",
+        "docs/test-reports/order/review-probe.txt": "cdbf693d2227bf8332c59512d9d522afa75abc0a7c5c98bab2f579e3034f0d4a",
+        "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+        "specs/order/plan.md": "23e069ac8567161470f5af528185f142e12b5f52ccc1411316701c3fc83ccc04",
+        "specs/order/quickstart.md": "a1a28bc2b1b5aff7967fb60060c1ecb393a090eaa8a475ec820d250eb85bcbcc",
+        "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+        "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+        "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+        "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+        "src/ui.py": "4a03e8d39ef106a5037404562a931aad9009a1bb579304daa15f820983de6909",
+        "tests/test_order.py": "2fc39d9f577b4c49ee7cab6fcb02f042ecc3bcaa3db07c150ea8fc8f2449e485"
+      }
+    },
+    {
+      "turn": "unchanged-evidence",
+      "metrics": {
+        "start": "2026-11-15T00:49:06+08:00",
+        "end": "2026-11-15T00:49:45+08:00",
+        "seconds": 36.664,
+        "exit": 0
+      },
+      "files": {
+        ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+        ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+        ".sdd-init-state.json": "e95d50cbf7776c1f251e4db8647a8404317f1e8aa7e45ee5e2b85671e97ddd94",
+        ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "AGENTS.md": "635bc4acdbd7fef743cd5bcfd8903ee1d91f3db675fb1216b8fc37c2d85303da",
+        "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+        "TASK.txt": "8dcaca56daedf77b0a97411b1cacc154c8ac454f6e8a16ae019652c5455076ef",
+        "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+        "checks/order_integration.py": "496fa99f09e2c5d0796678ac580ffa49553e155f266a68673b68e58e93e1bc99",
+        "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+        "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+        "docs/code-review-rules.md": "4aa0493f16fa3c1ccfdfac11ed5dcd9d322d27adf8c2e46b5e7e1b85fcbe2511",
+        "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+        "docs/index.md": "c4dc8e1c63ded9eb6bbe626d1ea6720526895d99a32aefc0fd2b9d71b7920f33",
+        "docs/issues/ORDER-001.md": "23201b476f5aae91996ff5fa2a88e8cb6994320fc4aa487d0c55bd1fd452c834",
+        "docs/issues/ORDER-002.md": "e3c9ea4c3eae2f9bb3e71c616565be6b612128e30bda01979c67fc593aa490e5",
+        "docs/status.md": "93321929f38fd5865755792c9ae70de19581e9dc0b4f0cd046b8b071a6a1e732",
+        "docs/test-reports/order/architecture-review.md": "6d657026e25a8a71881ae8b65d11ab41b5b683fee5fd40d0d926a55aaef6cc81",
+        "docs/test-reports/order/bugfix.md": "9670d719ee36f0e566da0ea414321ce0412b1dc4354b8cbc276d833b59bbb3ba",
+        "docs/test-reports/order/evidence/bugfix-coder-checks.json": "d9820a6edfa8dd0df2bda5b99e24c916b166aabda79cf3721e3f6a763e5b3997",
+        "docs/test-reports/order/evidence/bugfix-coder-green.json": "43d219bd35893554258c075deba9404ef333381c88e94b2e40bb57fceb0bc4d6",
+        "docs/test-reports/order/evidence/bugfix-coder-red.json": "7baa01e58f019f2c8bc5258736e37b79df28a4bb61646ad6f4f006d561408ff8",
+        "docs/test-reports/order/evidence/bugfix-coder-source.diff": "c68ad2fb25cb00a20146d204e9f34af228831689a85530bd575f6ea3f51feb0f",
+        "docs/test-reports/order/evidence/bugfix-diagnosis.json": "531887f13a911a6ec270e707b64f43764974caef0e7def569b93e66bada72c05",
+        "docs/test-reports/order/evidence/bugfix-doc-check.json": "82d74545adc92e63fd31601cfb2c0e322b88f4b7b2ff909f33d1346ae17110c2",
+        "docs/test-reports/order/evidence/bugfix-retest.json": "36eb818f49d6b1e42b176d495f669fadbd1e9a9013881b9401532fae39a790c0",
+        "docs/test-reports/order/evidence/bugfix-retest.py": "410cabbf18ceb916cb40355b98d0d6f619211927e8c6399b6ba6352fe94e19f8",
+        "docs/test-reports/order/evidence/fixed-acceptance.json": "8ebe7323448b0e9470aff0aef9825c7e198d244420b8495e2201a5bd9ed77787",
+        "docs/test-reports/order/evidence/fixed-doc-check-first.json": "071bc2174150abd8f172fc92b8b8008bf3e3bfb13b893cdba257a4f4536d8018",
+        "docs/test-reports/order/evidence/fixed-doc-check.json": "48c5fc5d85b893c5cf9150861f7f9285ab3b65faec0b5c295f79fbdb22b191a4",
+        "docs/test-reports/order/evidence/fixed-execution.json": "0a462fd229c839abcbf1e946fa16ef76e9bec660de792a55a4ecd2ad8a4a1929",
+        "docs/test-reports/order/evidence/fixed-integration.json": "3ccf7bc91416723050f4ec26310844f8e3e47b19012c9cffb47f215f9f77ae90",
+        "docs/test-reports/order/evidence/fixed-runtime.json": "d3e78c7f0d3a2199c8bcc2eac1858719d82a4c73d50296ad08a868b4fc6c8f7e",
+        "docs/test-reports/order/evidence/fixed-unittest.txt": "962aee0b0c237ed2cde0bd8479578facfd9a78217bb96c301afbcc0da4812030",
+        "docs/test-reports/order/evidence/initial-acceptance.json": "3c2fa0aafac0662a0df0593578bb37f106fad2a38e47e8cfd0b5b8aef9e573d4",
+        "docs/test-reports/order/evidence/initial-execution.json": "f2263fa661d2d49384be02a56e749964bba55087134891f36be1e969ba91c536",
+        "docs/test-reports/order/evidence/initial-integration.json": "7201fae86d4582d8408378451f19d5416a43b2ca0ea0061eadb8daecf334091c",
+        "docs/test-reports/order/evidence/initial-runtime.json": "389a9665eb1f17a1181e2da68323b46ab5dd0cc3d949665990c39ba10a6ffcc4",
+        "docs/test-reports/order/evidence/initial-unittest.txt": "efcf3a8ea2deb62440eff663b5a6844c38662519da6379a9dbb789e8ce9a63d0",
+        "docs/test-reports/order/fixed.md": "588fe3e83dbf030a39d28f96f0b45d5bd8b7d8bbedf7d71ecf1642466d976cca",
+        "docs/test-reports/order/initial.md": "6e104a8f6f0e3d2101a86a6eeb8d4108faba0e0785c6cbf024c6692dbe255d9d",
+        "docs/test-reports/order/review-fixed.json": "d022f763d391d4d82eb87754d7c19a93171d36a079babe8a23cd9b0e200286b5",
+        "docs/test-reports/order/review-initial.json": "5a585e11f2042ff07417746c165128dea290465e141f32124120b0fd2999d26f",
+        "docs/test-reports/order/review-probe.txt": "cdbf693d2227bf8332c59512d9d522afa75abc0a7c5c98bab2f579e3034f0d4a",
+        "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+        "specs/order/plan.md": "23e069ac8567161470f5af528185f142e12b5f52ccc1411316701c3fc83ccc04",
+        "specs/order/quickstart.md": "a1a28bc2b1b5aff7967fb60060c1ecb393a090eaa8a475ec820d250eb85bcbcc",
+        "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+        "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+        "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+        "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+        "src/ui.py": "4a03e8d39ef106a5037404562a931aad9009a1bb579304daa15f820983de6909",
+        "tests/test_order.py": "2fc39d9f577b4c49ee7cab6fcb02f042ecc3bcaa3db07c150ea8fc8f2449e485"
+      }
+    }
+  ],
+  "case": "collaboration_workflow",
+  "permission_profile": "fixture-write",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "before": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "e95d50cbf7776c1f251e4db8647a8404317f1e8aa7e45ee5e2b85671e97ddd94",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "635bc4acdbd7fef743cd5bcfd8903ee1d91f3db675fb1216b8fc37c2d85303da",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "8dcaca56daedf77b0a97411b1cacc154c8ac454f6e8a16ae019652c5455076ef",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+    "docs/code-review-rules.md": "4aa0493f16fa3c1ccfdfac11ed5dcd9d322d27adf8c2e46b5e7e1b85fcbe2511",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/index.md": "a07c6ddac82ca52876aeb32c5bb089ddafb08aff80a2dc7a513079995777ee05",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "specs/order/quickstart.md": "d4e6342af3d53e5478025bf5949c49c9d47ec9ae8b44c48263a524a1020643b7",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311"
+  },
+  "after": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "e95d50cbf7776c1f251e4db8647a8404317f1e8aa7e45ee5e2b85671e97ddd94",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "635bc4acdbd7fef743cd5bcfd8903ee1d91f3db675fb1216b8fc37c2d85303da",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "8dcaca56daedf77b0a97411b1cacc154c8ac454f6e8a16ae019652c5455076ef",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/order_integration.py": "496fa99f09e2c5d0796678ac580ffa49553e155f266a68673b68e58e93e1bc99",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+    "docs/code-review-rules.md": "4aa0493f16fa3c1ccfdfac11ed5dcd9d322d27adf8c2e46b5e7e1b85fcbe2511",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/index.md": "c4dc8e1c63ded9eb6bbe626d1ea6720526895d99a32aefc0fd2b9d71b7920f33",
+    "docs/issues/ORDER-001.md": "23201b476f5aae91996ff5fa2a88e8cb6994320fc4aa487d0c55bd1fd452c834",
+    "docs/issues/ORDER-002.md": "e3c9ea4c3eae2f9bb3e71c616565be6b612128e30bda01979c67fc593aa490e5",
+    "docs/status.md": "93321929f38fd5865755792c9ae70de19581e9dc0b4f0cd046b8b071a6a1e732",
+    "docs/test-reports/order/architecture-review.md": "6d657026e25a8a71881ae8b65d11ab41b5b683fee5fd40d0d926a55aaef6cc81",
+    "docs/test-reports/order/bugfix.md": "9670d719ee36f0e566da0ea414321ce0412b1dc4354b8cbc276d833b59bbb3ba",
+    "docs/test-reports/order/evidence/bugfix-coder-checks.json": "d9820a6edfa8dd0df2bda5b99e24c916b166aabda79cf3721e3f6a763e5b3997",
+    "docs/test-reports/order/evidence/bugfix-coder-green.json": "43d219bd35893554258c075deba9404ef333381c88e94b2e40bb57fceb0bc4d6",
+    "docs/test-reports/order/evidence/bugfix-coder-red.json": "7baa01e58f019f2c8bc5258736e37b79df28a4bb61646ad6f4f006d561408ff8",
+    "docs/test-reports/order/evidence/bugfix-coder-source.diff": "c68ad2fb25cb00a20146d204e9f34af228831689a85530bd575f6ea3f51feb0f",
+    "docs/test-reports/order/evidence/bugfix-diagnosis.json": "531887f13a911a6ec270e707b64f43764974caef0e7def569b93e66bada72c05",
+    "docs/test-reports/order/evidence/bugfix-doc-check.json": "82d74545adc92e63fd31601cfb2c0e322b88f4b7b2ff909f33d1346ae17110c2",
+    "docs/test-reports/order/evidence/bugfix-retest.json": "36eb818f49d6b1e42b176d495f669fadbd1e9a9013881b9401532fae39a790c0",
+    "docs/test-reports/order/evidence/bugfix-retest.py": "410cabbf18ceb916cb40355b98d0d6f619211927e8c6399b6ba6352fe94e19f8",
+    "docs/test-reports/order/evidence/fixed-acceptance.json": "8ebe7323448b0e9470aff0aef9825c7e198d244420b8495e2201a5bd9ed77787",
+    "docs/test-reports/order/evidence/fixed-doc-check-first.json": "071bc2174150abd8f172fc92b8b8008bf3e3bfb13b893cdba257a4f4536d8018",
+    "docs/test-reports/order/evidence/fixed-doc-check.json": "48c5fc5d85b893c5cf9150861f7f9285ab3b65faec0b5c295f79fbdb22b191a4",
+    "docs/test-reports/order/evidence/fixed-execution.json": "0a462fd229c839abcbf1e946fa16ef76e9bec660de792a55a4ecd2ad8a4a1929",
+    "docs/test-reports/order/evidence/fixed-integration.json": "3ccf7bc91416723050f4ec26310844f8e3e47b19012c9cffb47f215f9f77ae90",
+    "docs/test-reports/order/evidence/fixed-runtime.json": "d3e78c7f0d3a2199c8bcc2eac1858719d82a4c73d50296ad08a868b4fc6c8f7e",
+    "docs/test-reports/order/evidence/fixed-unittest.txt": "962aee0b0c237ed2cde0bd8479578facfd9a78217bb96c301afbcc0da4812030",
+    "docs/test-reports/order/evidence/initial-acceptance.json": "3c2fa0aafac0662a0df0593578bb37f106fad2a38e47e8cfd0b5b8aef9e573d4",
+    "docs/test-reports/order/evidence/initial-execution.json": "f2263fa661d2d49384be02a56e749964bba55087134891f36be1e969ba91c536",
+    "docs/test-reports/order/evidence/initial-integration.json": "7201fae86d4582d8408378451f19d5416a43b2ca0ea0061eadb8daecf334091c",
+    "docs/test-reports/order/evidence/initial-runtime.json": "389a9665eb1f17a1181e2da68323b46ab5dd0cc3d949665990c39ba10a6ffcc4",
+    "docs/test-reports/order/evidence/initial-unittest.txt": "efcf3a8ea2deb62440eff663b5a6844c38662519da6379a9dbb789e8ce9a63d0",
+    "docs/test-reports/order/fixed.md": "588fe3e83dbf030a39d28f96f0b45d5bd8b7d8bbedf7d71ecf1642466d976cca",
+    "docs/test-reports/order/initial.md": "6e104a8f6f0e3d2101a86a6eeb8d4108faba0e0785c6cbf024c6692dbe255d9d",
+    "docs/test-reports/order/review-fixed.json": "d022f763d391d4d82eb87754d7c19a93171d36a079babe8a23cd9b0e200286b5",
+    "docs/test-reports/order/review-initial.json": "5a585e11f2042ff07417746c165128dea290465e141f32124120b0fd2999d26f",
+    "docs/test-reports/order/review-probe.txt": "cdbf693d2227bf8332c59512d9d522afa75abc0a7c5c98bab2f579e3034f0d4a",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "specs/order/plan.md": "23e069ac8567161470f5af528185f142e12b5f52ccc1411316701c3fc83ccc04",
+    "specs/order/quickstart.md": "a1a28bc2b1b5aff7967fb60060c1ecb393a090eaa8a475ec820d250eb85bcbcc",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "4a03e8d39ef106a5037404562a931aad9009a1bb579304daa15f820983de6909",
+    "tests/test_order.py": "2fc39d9f577b4c49ee7cab6fcb02f042ecc3bcaa3db07c150ea8fc8f2449e485"
+  },
+  "changed": [
+    "checks/order_integration.py",
+    "docs/index.md",
+    "docs/issues/ORDER-001.md",
+    "docs/issues/ORDER-002.md",
+    "docs/status.md",
+    "docs/test-reports/order/architecture-review.md",
+    "docs/test-reports/order/bugfix.md",
+    "docs/test-reports/order/evidence/bugfix-coder-checks.json",
+    "docs/test-reports/order/evidence/bugfix-coder-green.json",
+    "docs/test-reports/order/evidence/bugfix-coder-red.json",
+    "docs/test-reports/order/evidence/bugfix-coder-source.diff",
+    "docs/test-reports/order/evidence/bugfix-diagnosis.json",
+    "docs/test-reports/order/evidence/bugfix-doc-check.json",
+    "docs/test-reports/order/evidence/bugfix-retest.json",
+    "docs/test-reports/order/evidence/bugfix-retest.py",
+    "docs/test-reports/order/evidence/fixed-acceptance.json",
+    "docs/test-reports/order/evidence/fixed-doc-check-first.json",
+    "docs/test-reports/order/evidence/fixed-doc-check.json",
+    "docs/test-reports/order/evidence/fixed-execution.json",
+    "docs/test-reports/order/evidence/fixed-integration.json",
+    "docs/test-reports/order/evidence/fixed-runtime.json",
+    "docs/test-reports/order/evidence/fixed-unittest.txt",
+    "docs/test-reports/order/evidence/initial-acceptance.json",
+    "docs/test-reports/order/evidence/initial-execution.json",
+    "docs/test-reports/order/evidence/initial-integration.json",
+    "docs/test-reports/order/evidence/initial-runtime.json",
+    "docs/test-reports/order/evidence/initial-unittest.txt",
+    "docs/test-reports/order/fixed.md",
+    "docs/test-reports/order/initial.md",
+    "docs/test-reports/order/review-fixed.json",
+    "docs/test-reports/order/review-initial.json",
+    "docs/test-reports/order/review-probe.txt",
+    "specs/order/plan.md",
+    "specs/order/quickstart.md",
+    "src/order_service.py",
+    "src/ui.py",
+    "tests/test_order.py"
+  ],
+  "base_commit": "89df9f629407a6b572c6f65c87fc9768e0f52f5d",
+  "head_after": "89df9f629407a6b572c6f65c87fc9768e0f52f5d",
+  "commit_paths": [],
+  "git_before": "",
+  "git_after": "M docs/index.md\n M specs/order/quickstart.md\n M src/order_service.py\n M src/ui.py\n M tests/test_order.py\n?? checks/order_integration.py\n?? docs/issues/\n?? docs/status.md\n?? docs/test-reports/\n?? specs/order/plan.md",
+  "sessions": [
+    {
+      "identity": {
+        "id": "01a1daec-0cbe-71e1-b027-c69a3fe9b335",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daec-0cbe-71e1-b027-c69a3fe9b335",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 3017323,
+        "cached_input_tokens": 2892288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 9748,
+        "reasoning_output_tokens": 693,
+        "total_tokens": 3027071
+      },
+      "records": 121,
+      "trace": "sessions/rollout-2026-11-15T00-37-47-01a1daec-0cbe-71e1-b027-c69a3fe9b335.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1daec-f1c4-7461-9d52-109a3d77628e",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1daec-0cbe-71e1-b027-c69a3fe9b335",
+              "depth": 1,
+              "agent_path": "/root/order_integration",
+              "agent_nickname": "Goodall",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Goodall",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daec-f1c4-7461-9d52-109a3d77628e",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daec-0cbe-71e1-b027-c69a3fe9b335",
+                "depth": 1,
+                "agent_path": "/root/order_integration",
+                "agent_nickname": "Goodall",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Goodall",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 1709059,
+        "cached_input_tokens": 1662848,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 13318,
+        "reasoning_output_tokens": 465,
+        "total_tokens": 1722377
+      },
+      "records": 77,
+      "trace": "sessions/rollout-2026-11-15T00-38-43-01a1daec-f1c4-7461-9d52-109a3d77628e.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1daed-393c-7463-a080-b9c47364ae63",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1daec-0cbe-71e1-b027-c69a3fe9b335",
+              "depth": 1,
+              "agent_path": "/root/order_architecture_check",
+              "agent_nickname": "Singer",
+              "agent_role": "sdd-architect"
+            }
+          }
+        },
+        "agent_role": "sdd-architect",
+        "agent_nickname": "Singer",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daed-393c-7463-a080-b9c47364ae63",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daec-0cbe-71e1-b027-c69a3fe9b335",
+                "depth": 1,
+                "agent_path": "/root/order_architecture_check",
+                "agent_nickname": "Singer",
+                "agent_role": "sdd-architect"
+              }
+            }
+          },
+          "agent_role": "sdd-architect",
+          "agent_nickname": "Singer",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": "7d516d4c6ce2683efd674a3a62c93c70448b92523b45a60941efd8fc8fe97c96",
+      "model": "gpt-6-astra",
+      "usage": {
+        "input_tokens": 942936,
+        "cached_input_tokens": 894336,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10765,
+        "reasoning_output_tokens": 314,
+        "total_tokens": 953701
+      },
+      "records": 45,
+      "trace": "sessions/rollout-2026-11-15T00-39-02-01a1daed-393c-7463-a080-b9c47364ae63.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1daed-7da8-7800-a413-2a7db3be35a0",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1daec-f1c4-7461-9d52-109a3d77628e",
+              "depth": 2,
+              "agent_path": "/root/order_integration/order_test_assets",
+              "agent_nickname": "Confucius",
+              "agent_role": "sdd-coder"
+            }
+          }
+        },
+        "agent_role": "sdd-coder",
+        "agent_nickname": "Confucius",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daed-7da8-7800-a413-2a7db3be35a0",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daec-f1c4-7461-9d52-109a3d77628e",
+                "depth": 2,
+                "agent_path": "/root/order_integration/order_test_assets",
+                "agent_nickname": "Confucius",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "agent_role": "sdd-coder",
+          "agent_nickname": "Confucius",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 276360,
+        "cached_input_tokens": 258816,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 4828,
+        "reasoning_output_tokens": 341,
+        "total_tokens": 281188
+      },
+      "records": 19,
+      "trace": "sessions/rollout-2026-11-15T00-39-19-01a1daed-7da8-7800-a413-2a7db3be35a0.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1daf0-b842-7842-9456-5a2fd99f25e0",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1daec-0cbe-71e1-b027-c69a3fe9b335",
+              "depth": 1,
+              "agent_path": "/root/order_bugfix",
+              "agent_nickname": "Pauli",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Pauli",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daf0-b842-7842-9456-5a2fd99f25e0",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daec-0cbe-71e1-b027-c69a3fe9b335",
+                "depth": 1,
+                "agent_path": "/root/order_bugfix",
+                "agent_nickname": "Pauli",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Pauli",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 999096,
+        "cached_input_tokens": 961920,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 8963,
+        "reasoning_output_tokens": 614,
+        "total_tokens": 1008059
+      },
+      "records": 49,
+      "trace": "sessions/rollout-2026-11-15T00-42-51-01a1daf0-b842-7842-9456-5a2fd99f25e0.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1daf1-c850-7603-ab47-5cd20f4d5190",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1daf0-b842-7842-9456-5a2fd99f25e0",
+              "depth": 2,
+              "agent_path": "/root/order_bugfix/coder",
+              "agent_nickname": "Gibbs",
+              "agent_role": "sdd-coder"
+            }
+          }
+        },
+        "agent_role": "sdd-coder",
+        "agent_nickname": "Gibbs",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daf1-c850-7603-ab47-5cd20f4d5190",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daf0-b842-7842-9456-5a2fd99f25e0",
+                "depth": 2,
+                "agent_path": "/root/order_bugfix/coder",
+                "agent_nickname": "Gibbs",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "agent_role": "sdd-coder",
+          "agent_nickname": "Gibbs",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 363286,
+        "cached_input_tokens": 334720,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5003,
+        "reasoning_output_tokens": 230,
+        "total_tokens": 368289
+      },
+      "records": 23,
+      "trace": "sessions/rollout-2026-11-15T00-44-00-01a1daf1-c850-7603-ab47-5cd20f4d5190.jsonl"
+    }
+  ],
+  "candidate": "final-v2",
+  "candidate_manifest_sha256": "207b6815958537fca02ecae96449d90c301dc9cb650ab6da881fee36598c7aec"
+}

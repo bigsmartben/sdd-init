@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-v"
+  ],
+  "exit_code": 0,
+  "source_sha256": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+  "stdout": "",
+  "stderr": "test_cancelled_submit_preserves_persisted_status_without_writes (test_order.OrderTests.test_cancelled_submit_preserves_persisted_status_without_writes) ... ok\ntest_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_missing_order_submit_raises (test_order.OrderTests.test_missing_order_submit_raises) ... ok\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\ntest_submit_propagates_database_read_error (test_order.OrderTests.test_submit_propagates_database_read_error) ... ok\ntest_submit_propagates_real_commit_failure (test_order.OrderTests.test_submit_propagates_real_commit_failure) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.079s\n\nOK\n"
+}

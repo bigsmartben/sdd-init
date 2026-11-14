@@ -1,0 +1,20 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daec-10b8-79e2-9511-cf46957bb45c",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/order_id_coder": {
+      "id": "01a1daec-930c-7fd2-9faa-5114f30cf847",
+      "parent_id": "01a1daec-10b8-79e2-9511-cf46957bb45c",
+      "role": "sdd-coder",
+      "parent": "/root"
+    }
+  },
+  "calls": [],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

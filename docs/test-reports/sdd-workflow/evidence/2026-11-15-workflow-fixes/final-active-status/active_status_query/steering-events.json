@@ -1,0 +1,24 @@
+[
+  {
+    "time": 1794675525.9456918,
+    "message": {
+      "id": 1,
+      "result": {
+        "userAgent": "sdd-active-status/0.169.0 (Ubuntu 24.4.0; x86_64) unknown (sdd-active-status; 1)",
+        "codexHome": "/tmp/sdd-active-status-6oo_xcb6/user-profile/.codex",
+        "platformFamily": "unix",
+        "platformOs": "linux"
+      }
+    }
+  },
+  {
+    "time": 1794675525.9463294,
+    "message": {
+      "error": {
+        "code": -32600,
+        "message": "thread/start.permissions requires experimentalApi capability"
+      },
+      "id": 2
+    }
+  }
+]

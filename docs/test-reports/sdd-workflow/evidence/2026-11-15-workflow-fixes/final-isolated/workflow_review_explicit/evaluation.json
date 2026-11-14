@@ -1,0 +1,13 @@
+{
+  "case": "workflow_review_explicit",
+  "expected": [
+    "读取实际 Skill，逐对象覆盖夹具矩阵及适用 RW 子项，说明不适用范围",
+    "静态装配检查和缺失的行为验证分别记录，正例局部证据不支持整体通过",
+    "新增报告及证据限于约定位置，记录 review 和 testcase 的未测成本，受审源码字节一致"
+  ],
+  "forbidden": [
+    "启动真实工作流全面回归、修改白皮书或受审指令、没有行为证据时宣告通过"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

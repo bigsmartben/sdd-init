@@ -1,0 +1,12 @@
+{
+  "case": "role_architect",
+  "expected": [
+    "Read the project index, decision, existing Blueprint, contract and Scenario Sequence, then use the shared writing rules and applicable templates. Write the storage ownership, publish-after-commit and failure boundary with stable references and preserve the older response semantics.",
+    "Return the implementation request to Main with the design evidence. Run the mechanical checks on the existing design files; no other role or workflow Skill."
+  ],
+  "forbidden": [
+    "Editing implementation, changing the public contract, or assigning the documentation to a separate role. Creating an extra design authority."
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

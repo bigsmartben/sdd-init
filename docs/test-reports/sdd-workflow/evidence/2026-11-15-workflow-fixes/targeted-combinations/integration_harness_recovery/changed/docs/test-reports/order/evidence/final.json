@@ -1,0 +1,450 @@
+{
+  "captured_at": "2026-11-14T16:24:12.445920+00:00",
+  "executor": "/root/integration",
+  "head": "1c6b8ab84d68d21144d549aa4eb717903896a828",
+  "source_sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b"
+  },
+  "source_matches_baseline": true,
+  "test_asset_sha256": {
+    "checks/acceptance.py": "59927dc624e8bad631373cdd438f9ff49675270b09f1f6188aedfb599f7697a3",
+    "checks/integration_runner.py": "3ac7b06e8641554828000d46b36f7d87c61e651b5dbcec6d3ee848c707d68c81",
+    "tests/test_integration_harness.py": "3338b7bfcc962c0e9da70f60a75913199fcf40ea8cd92d7068da4fc75cb91850"
+  },
+  "commands": [
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py"
+      ],
+      "exit_code": 1,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"accepted\": true,\n      \"persisted_status\": \"submitted\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"accepted\": true,\n      \"order_count\": 1,\n      \"persisted_status\": \"submitted\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"submitted\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"AC-2\",\n    \"result\": \"FAIL\",\n    \"expected\": {\n      \"accepted\": false,\n      \"persisted_status\": \"cancelled\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"accepted\": true,\n      \"order_count\": 1,\n      \"persisted_status\": \"submitted\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"submitted\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"AC-3\",\n    \"result\": \"BLOCKED\",\n    \"expected\": {\n      \"real_external_receipt_verified\": true\n    },\n    \"actual\": {\n      \"real_external_receipt_verified\": false,\n      \"endpoint_configured\": false,\n      \"authorized\": false,\n      \"external_call_performed\": false\n    },\n    \"intermediate_states\": [],\n    \"reason\": \"Authorized real endpoint and permission required; no external call performed\"\n  },\n  {\n    \"scenario\": \"LOCAL-create\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCAL-cancel\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"cancelled\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"cancelled\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"cancelled\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"PAID-pending\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"PAID-submitted\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"setup_submit_returned\": true,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"setup_submit_returned\": true,\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"PAID-cancelled\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"MISSING-read_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"MISSING-set_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"MISSING-cancel_order\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"MISSING-submit_order\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"MISSING-mark_paid\",\n    \"result\": \"FAIL\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": null,\n      \"returned\": null,\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"INVALID-empty\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"input\": \"\",\n      \"exception\": \"ValueError\",\n      \"message\": \"order_id is required\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"INVALID-none\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"input\": null,\n      \"exception\": \"ValueError\",\n      \"message\": \"order_id is required\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"INVALID-integer\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"input\": 1,\n      \"exception\": \"ValueError\",\n      \"message\": \"order_id is required\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"VALID-single\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"pending\",\n      \"order_id\": \"x\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_id\": \"x\",\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"VALID-unicode\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"pending\",\n      \"order_id\": \"订单-一\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_id\": \"订单-一\",\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-create\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-cancel\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-submit\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-set_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-paid\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"CLOSED-read_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ProgrammingError\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ProgrammingError\",\n      \"message\": \"Cannot operate on a closed database.\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"LOCAL-no-network\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"set_status\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  }\n]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py"
+      ],
+      "exit_code": 1,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"accepted\": true,\n      \"persisted_status\": \"submitted\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"accepted\": true,\n      \"order_count\": 1,\n      \"persisted_status\": \"submitted\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"submitted\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"AC-2\",\n    \"result\": \"FAIL\",\n    \"expected\": {\n      \"accepted\": false,\n      \"persisted_status\": \"cancelled\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"accepted\": true,\n      \"order_count\": 1,\n      \"persisted_status\": \"submitted\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"submitted\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"AC-3\",\n    \"result\": \"BLOCKED\",\n    \"expected\": {\n      \"real_external_receipt_verified\": true\n    },\n    \"actual\": {\n      \"real_external_receipt_verified\": false,\n      \"endpoint_configured\": false,\n      \"authorized\": false,\n      \"external_call_performed\": false\n    },\n    \"intermediate_states\": [],\n    \"reason\": \"Authorized real endpoint and permission required; no external call performed\"\n  },\n  {\n    \"scenario\": \"LOCAL-create\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCAL-cancel\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"cancelled\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"cancelled\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"cancelled\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"PAID-pending\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"PAID-submitted\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"setup_submit_returned\": true,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"setup_submit_returned\": true,\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"PAID-cancelled\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"MISSING-read_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"MISSING-set_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"MISSING-cancel_order\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"MISSING-submit_order\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"MISSING-mark_paid\",\n    \"result\": \"FAIL\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": null,\n      \"returned\": null,\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"INVALID-empty\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"input\": \"\",\n      \"exception\": \"ValueError\",\n      \"message\": \"order_id is required\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"INVALID-none\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"input\": null,\n      \"exception\": \"ValueError\",\n      \"message\": \"order_id is required\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"INVALID-integer\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"input\": 1,\n      \"exception\": \"ValueError\",\n      \"message\": \"order_id is required\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"VALID-single\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"pending\",\n      \"order_id\": \"x\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_id\": \"x\",\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"VALID-unicode\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"pending\",\n      \"order_id\": \"订单-一\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_id\": \"订单-一\",\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-create\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-cancel\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-submit\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-set_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-paid\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"CLOSED-read_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ProgrammingError\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ProgrammingError\",\n      \"message\": \"Cannot operate on a closed database.\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"LOCAL-no-network\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"set_status\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  }\n]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/acceptance.py"
+      ],
+      "exit_code": 1,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"accepted\": true,\n      \"persisted_status\": \"submitted\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"accepted\": true,\n      \"order_count\": 1,\n      \"persisted_status\": \"submitted\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"submitted\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"AC-2\",\n    \"result\": \"FAIL\",\n    \"expected\": {\n      \"accepted\": false,\n      \"persisted_status\": \"cancelled\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"accepted\": true,\n      \"order_count\": 1,\n      \"persisted_status\": \"submitted\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"submitted\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"AC-3\",\n    \"result\": \"BLOCKED\",\n    \"expected\": {\n      \"real_external_receipt_verified\": true\n    },\n    \"actual\": {\n      \"real_external_receipt_verified\": false,\n      \"endpoint_configured\": false,\n      \"authorized\": false,\n      \"external_call_performed\": false\n    },\n    \"intermediate_states\": [],\n    \"reason\": \"Authorized real endpoint and permission required; no external call performed\"\n  },\n  {\n    \"scenario\": \"LOCAL-create\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCAL-cancel\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"cancelled\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"cancelled\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"cancelled\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"PAID-pending\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"PAID-submitted\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"setup_submit_returned\": true,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"setup_submit_returned\": true,\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"PAID-cancelled\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"MISSING-read_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"MISSING-set_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"MISSING-cancel_order\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"MISSING-submit_order\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"MISSING-mark_paid\",\n    \"result\": \"FAIL\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": null,\n      \"returned\": null,\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"INVALID-empty\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"input\": \"\",\n      \"exception\": \"ValueError\",\n      \"message\": \"order_id is required\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"INVALID-none\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"input\": null,\n      \"exception\": \"ValueError\",\n      \"message\": \"order_id is required\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"INVALID-integer\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"input\": 1,\n      \"exception\": \"ValueError\",\n      \"message\": \"order_id is required\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"VALID-single\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"pending\",\n      \"order_id\": \"x\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_id\": \"x\",\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"VALID-unicode\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"pending\",\n      \"order_id\": \"订单-一\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_id\": \"订单-一\",\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-create\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-cancel\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-submit\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-set_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"LOCK-paid\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  },\n  {\n    \"scenario\": \"CLOSED-read_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ProgrammingError\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ProgrammingError\",\n      \"message\": \"Cannot operate on a closed database.\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  },\n  {\n    \"scenario\": \"LOCAL-no-network\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"set_status\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  }\n]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/runtime_details.py"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"python\": \"3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]\",\n  \"sqlite\": \"3.45.1\",\n  \"runtime\": {\n    \"environment\": \"isolated-local-fixture\",\n    \"database\": \"per-scenario temporary SQLite file\",\n    \"external_endpoint\": null,\n    \"external_call_authorized\": false,\n    \"network_access_in_this_run\": false\n  },\n  \"source_sha256\": {\n    \"src/__init__.py\": \"10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded\",\n    \"src/order_service.py\": \"96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de\",\n    \"src/storage.py\": \"6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9\",\n    \"src/ui.py\": \"89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b\"\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_exit_codes (test_integration_harness.HarnessTests.test_exit_codes) ... ok\ntest_guard_is_restored (test_integration_harness.HarnessTests.test_guard_is_restored) ... ok\ntest_guard_records_even_a_swallowed_network_attempt (test_integration_harness.HarnessTests.test_guard_records_even_a_swallowed_network_attempt) ... ok\ntest_main_continues_after_unexpected_scenario_exception (test_integration_harness.HarnessTests.test_main_continues_after_unexpected_scenario_exception) ... ok\ntest_run_captures_product_exception (test_integration_harness.HarnessTests.test_run_captures_product_exception) ... ok\ntest_single_scenario_cli_and_fixed_runner (test_integration_harness.HarnessTests.test_single_scenario_cli_and_fixed_runner) ... ok\ntest_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.213s\n\nOK\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--",
+        "src",
+        "runtime.json"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout": "1c6b8ab84d68d21144d549aa4eb717903896a828\n",
+      "stderr": ""
+    }
+  ],
+  "single_scenario_runs": [
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "AC-1"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"accepted\": true,\n      \"persisted_status\": \"submitted\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"accepted\": true,\n      \"order_count\": 1,\n      \"persisted_status\": \"submitted\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"submitted\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "AC-2"
+      ],
+      "exit_code": 1,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-2\",\n    \"result\": \"FAIL\",\n    \"expected\": {\n      \"accepted\": false,\n      \"persisted_status\": \"cancelled\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"accepted\": true,\n      \"order_count\": 1,\n      \"persisted_status\": \"submitted\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"submitted\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "AC-3"
+      ],
+      "exit_code": 3,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-3\",\n    \"result\": \"BLOCKED\",\n    \"expected\": {\n      \"real_external_receipt_verified\": true\n    },\n    \"actual\": {\n      \"real_external_receipt_verified\": false,\n      \"endpoint_configured\": false,\n      \"authorized\": false,\n      \"external_call_performed\": false\n    },\n    \"intermediate_states\": [],\n    \"reason\": \"Authorized real endpoint and permission required; no external call performed\"\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "LOCAL-create"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"LOCAL-create\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "LOCAL-cancel"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"LOCAL-cancel\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"cancelled\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"cancelled\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"cancelled\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "PAID-pending"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"PAID-pending\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "PAID-submitted"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"PAID-submitted\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"setup_submit_returned\": true,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"setup_submit_returned\": true,\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "PAID-cancelled"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"PAID-cancelled\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "MISSING-read_status"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"MISSING-read_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "MISSING-set_status"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"MISSING-set_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "MISSING-cancel_order"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"MISSING-cancel_order\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "MISSING-submit_order"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"MISSING-submit_order\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ValueError\",\n      \"message\": \"order not found\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "MISSING-mark_paid"
+      ],
+      "exit_code": 1,
+      "stdout": "[\n  {\n    \"scenario\": \"MISSING-mark_paid\",\n    \"result\": \"FAIL\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": null,\n      \"returned\": null,\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "INVALID-empty"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"INVALID-empty\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"input\": \"\",\n      \"exception\": \"ValueError\",\n      \"message\": \"order_id is required\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "INVALID-none"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"INVALID-none\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"input\": null,\n      \"exception\": \"ValueError\",\n      \"message\": \"order_id is required\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "INVALID-integer"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"INVALID-integer\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ValueError\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"input\": 1,\n      \"exception\": \"ValueError\",\n      \"message\": \"order_id is required\",\n      \"order_count\": 0,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "VALID-single"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"VALID-single\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"pending\",\n      \"order_id\": \"x\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_id\": \"x\",\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "VALID-unicode"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"VALID-unicode\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"pending\",\n      \"order_id\": \"订单-一\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_id\": \"订单-一\",\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "LOCK-create"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"LOCK-create\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "LOCK-cancel"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"LOCK-cancel\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "LOCK-submit"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"LOCK-submit\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "LOCK-set_status"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"LOCK-set_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "LOCK-paid"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"LOCK-paid\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"OperationalError\",\n      \"persisted_status\": \"pending\",\n      \"locked\": true,\n      \"order_count\": 1,\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"locked\": true,\n      \"exception\": \"OperationalError\",\n      \"message\": \"database is locked\",\n      \"order_count\": 1,\n      \"persisted_status\": \"pending\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"lock\",\n        \"write_lock_held\": true\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"pending\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "CLOSED-read_status"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"CLOSED-read_status\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"exception\": \"ProgrammingError\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"exception\": \"ProgrammingError\",\n      \"message\": \"Cannot operate on a closed database.\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": []\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py",
+        "--scenario",
+        "LOCAL-no-network"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"LOCAL-no-network\",\n    \"result\": \"PASS\",\n    \"expected\": {\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"actual\": {\n      \"order_count\": 1,\n      \"persisted_status\": \"paid\",\n      \"network_attempts\": 0,\n      \"intermediate_states_valid\": true\n    },\n    \"intermediate_states\": [\n      {\n        \"after\": \"create\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"submit\",\n        \"status\": \"submitted\"\n      },\n      {\n        \"after\": \"cancel\",\n        \"status\": \"cancelled\"\n      },\n      {\n        \"after\": \"set_status\",\n        \"status\": \"pending\"\n      },\n      {\n        \"after\": \"mark_paid\",\n        \"status\": \"paid\"\n      },\n      {\n        \"after\": \"close_and_reopen\",\n        \"status\": \"paid\"\n      }\n    ]\n  }\n]\n",
+      "stderr": "",
+      "matches_full_run": true,
+      "exit_matches": true
+    }
+  ],
+  "full_rerun_identical": true,
+  "direct_entry_identical": true
+}

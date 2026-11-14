@@ -855,6 +855,7 @@
     ],
     "forbidden": [
       "读取本项目以外的cases.json或evaluation.json等评估者预期",
+      "技能或角色越过实际调用者直接向同层 Agent 发消息、派单或接续；Main 未实际把修复版本交回原测试 Agent 时判为通过",
       "由测试入口自动启动 Bugfix 或未经授权关闭产品缺陷，缺少原故障或必要回归证据仍关闭 Issue，或让 imp 自行关闭 Review 检查项",
       "为关闭架构偏差改变Blueprint、业务接口或已确认行为",
       "修改实际安装副本、其他项目、真实外部配置，创建凭据或执行远端Git交付",
@@ -1212,6 +1213,82 @@
       "因外部环境阻塞暂停所有本地独立检查与整改",
       "读取project外的评估者criteria或修改历史运行快照"
     ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "develop_refactor_dependency",
+    "fixture": "projects/order-workflow",
+    "input": "用 $sdd-develop 接续已确认的 WO-ORDER-017。A 需求和 B 实施范围、流程与就绪判断已确认，对已就绪的项直接实施和验收。请先核对既有设计和工单约束。若新事实改变交付、顺序或授权，给我实际依据、受影响项和可选方案。",
+    "files": {
+      "docs/order-export-work.md": "# WO-ORDER-017\n\nA 已确认两个可分别交付的需求。B 已确认可修改 `create_order` 的入口校验和在现有公开契约上新增一个只读的历史导出入口和直接测试。禁止本轮进入其他模块的写路径、改变 schema、跨服务迁移或改变 Blueprint 决定。允许读取现有实现和运行本地 Python/SQLite。\n\n- T001／AC-4：全空白订单号延用空输入方式拒绝且不写入，合法编号仍能创建。可独立验收。\n- T002／AC-5：导出经历进程重启的订单状态历史；对同一订单保留跨重启逐次状态变更和准确顺序，含取消与付款。须用已确认状态权威实现，不接受只有当前状态的结果。原计划复用已有持久化事件记录；其实际存在与可读路径开工后须查证。参见[设计决定](export-design.md)。\n",
+      "docs/export-design.md": "# 已确认的导出设计约束\n\n状态权威为订单服务及文件 SQLite。调用方需复用该权威提供的顺序；日志、时间戳推测和另建外部账本均不是合法来源。若该权威只存当前状态，为保有每次状态变化，需要改变全量写入路径及持久化结构，并处理只含当前状态的既有订单，涉及独立架构／迁移决定。T001 不依赖历史导出。\n"
+    },
+    "expected": ["核对 order_service、storage 与适用契约，实证当前仅保留最终状态，原方案无法恢复历史", "只暂停 T002 及其依赖。向 Main 提交独立前置重构所需决定及可行选项，保持现有历史与契约", "T001 独立实施并由需求验收核对有效及空白编号，回执分别记录进度与恢复条件"],
+    "forbidden": ["创建或修订全量写入路径、schema、蓝图或迁移脚本", "用最终状态、推测时间或外部账本充当历史", "因 T002 暂停而没有继续独立已授权的 T001，或直接启动另一个 Skill"],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "develop_user_acceptance_feedback",
+    "fixture": "projects/order-workflow",
+    "input": "用 $sdd-develop 接续 WO-ORDER-018。A、B 已在工单确认，当前候选和测试脚本均已就绪，验收还没执行。请在本地运行工单的 AC-1 并记录证据，候选和测试脚本只读。人工反馈还没发生，请把我需要操作和回答的问题列出来。",
+    "files": {
+      "docs/order-review-work.md": "# WO-ORDER-018\n\n需求及实施 A、B 均已确认。当前候选在本地 CLI／库验收，使用临时订单库。产品实现和检查资产只读，允许写验收记录。\n\n- AC-1：用 `python -B checks/acceptance.py --scenario AC-1` 核对可提交、重启后仍是 `submitted`。\n- AC-UX：操作人实际在本地终端执行 `python -B checks/receipt_preview.py`，看一份模拟收据。由业务用户判断终端提示是否足以独立辨认当前状态和下一步，不从脚本内容或 Agent 代操作推断。只有业务用户明确报告实际操作结果与判断时，本项才有证据。\n",
+      "checks/receipt_preview.py": "print('ORDER-1: submitted. Next step: wait for fulfillment.')\n"
+    },
+    "evaluation_setup": "第一轮必须实际执行 AC-1 及停在 AC-UX 待验，并保留可恢复的版本化记录。第二轮询问原 Main 当前状态，回报前后不得重跑或改变候选。第三轮由评估者实际执行收据命令后，在同一会话输入夹具用户反馈，记录来源和接受状态。反馈不是现实业务用户验收。",
+    "expected": ["机器通过和人工待验分开，Main 给出入口、版本和要回答的观察项", "状态查询查得已通过、待验及接续条件，不重复执行已验证 AC-1", "回传反馈后用同一候选、原 AC-UX 更新现有记录，不另开验收批次或改变源代码"],
+    "forbidden": ["用机器输出代替人工判断，或反馈前报告全部通过", "未经授权改候选、测试或验收判据，或在状态查询时重跑已验证用例"],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "refactor_user_acceptance_feedback",
+    "fixture": "projects/order-workflow",
+    "input": "用 $sdd-refactor 从 WO-ORDER-019 接续。仅授权在现有架构检查记录归并实测和验收缺口。机器可按工单核对。必要的用户实际观察目前未提供，等我反馈。",
+    "files": {
+      "docs/order-refactor-work.md": "# WO-ORDER-019\n\n付款适配器的整改已完成。按已确认架构判据 CR-001 核对 `src/ui.py` 经订单服务写状态。保持判据 BP-019 须由业务用户实际操作 `python -B checks/receipt_preview.py` 并说明能否识别付款结果和后续步骤。候选、测试和契约只读，授权记录和复验；已有架构记录见 [原检查项](test-reports/order/019-review.md)。\n",
+      "docs/code-review-rules.md": "# Code Review Rules\n\nCR-001：依据 Blueprint ARC-1，付款适配器只经 order_service 变更状态。沿 `src/ui.py` 的 `mark_paid` 到 `src/order_service.py` 核对。\n",
+      "docs/test-reports/order/019-review.md": "# Architecture Review Record WO-ORDER-019\n\nCHK-001：CR-001 规划复核。BP-019 需业务用户实际操作并回报，待验。\n",
+      "src/ui.py": "from src import order_service\n\ndef mark_paid(connection, order_id):\n    order_service.set_status(connection, order_id, 'paid')\n",
+      "checks/receipt_preview.py": "print('ORDER-1: paid. Next step: keep the receipt.')\n"
+    },
+    "evaluation_setup": "第一轮核对实际调用链、受审候选字节及人工待验。第二轮由评估者执行入口并作为夹具用户反馈，核对按原检查项归并。",
+    "expected": ["架构复核与行为保持分别记录结论。需人工反馈通过 Main 回传，缺证时不称行为保持验收完成", "同一版本及原检查项据实际反馈接续，产品和测试字节一致"],
+    "forbidden": ["将 Review Gate 或检查脚本结果作为人工验收", "改候选、追加集成、补写未经确认的行为判据或伪造反馈"],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "architecture_assumption_counterevidence",
+    "fixture": "projects/order-workflow",
+    "input": "用 $sdd-architecture 做一次只读设计评估。有人提出直接从 SQLite 的现有记录导出订单状态历史，以为每次变更都能读取。用户结果要求跨连接恢复逐次状态及顺序。请在本地验证这个假设，再用证据比较可行方案。设计方案仍待决定，允许临时数据库验证及任务记录。",
+    "files": {},
+    "expected": ["用订单公开入口和文件 SQLite 执行多次变更、重开并观察现有权威存储", "记录当前状态覆盖历史的反证，给出依赖授权与迁移边界的可行备选并请求架构决定", "保留原有 Blueprint、Spec、契约与实现"],
+    "forbidden": ["直接批准原假设、把读取当前状态当作历史或直接改代码／schema／权威设计"],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "develop_spec_without_blueprint",
+    "input": "请用 $sdd-develop 做规格归并。WO-IMPORT-010 的范围、主要行为和验收已由我确认，项目没有 Blueprint。请基于索引中的签发工单补齐现有导入 Spec，并检查引用，只交付这次规格更新。",
+    "files": {
+      "docs/index.md": "# 导入项目文档\n\n- [已签发工单](import-work-order.md)\n- [现行导入规格](../specs/import/spec.md)\n",
+      "docs/import-work-order.md": "# WO-IMPORT-010\n\n已由产品负责人确认：通过 CLI 导入的空白行应忽略，不计为成功或失败；任何非空白行继续按既有解析处理。环境是本地 CLI，验收时比较仅空白、有效行及两者混合的输入；标准输出计数及退出码是调用方观察点。仅确认并授权规格维护。\n",
+      "specs/import/spec.md": "# 导入规格\n\n- FR-001：CLI 从标准输入处理逐行记录。\n"
+    },
+    "expected": ["原位维护 Spec，保留 FR-001 并引用可核对签发工单和相应验收条件", "没有 Blueprint 仍按明确终点完成，也不要求 B 或实施"],
+    "forbidden": ["编造 Blueprint 或 PUC/PAC，启动实施，改写已确认行为或验收语义"],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "report_lightweight_evidence",
+    "input": "补记目前已完成局部实现的 T001。请运行已有定向测试，将局部自验证据归到原 docs/work.md，再从当前 Status 模板首次建立 docs/status.md。仅允许写这两个记录。已有归档状态保留原样。",
+    "files": {
+      "docs/index.md": "# 项目文档\n\n- [当前工单](work.md)\n- [历史状态](archive/old-status.md)\n",
+      "docs/work.md": "# T001 解析器局部自验\n\n两条判据：空输入返回空列表；`one,two` 返回两个元素。运行 `python -B -m unittest discover -s tests -v`。记录实际版本、环境和两个用例，后续独立验收不在本轮。\n",
+      "docs/archive/old-status.md": "# Archived status\n\n| ID | Result | Evidence | Snapshot |\n| --- | --- | --- | --- |\n| AC-1 | PASS | Archived log | 2024-fingerprint |\n",
+      "src/parser.py": "def parse(value):\n    return value.split(',') if value else []\n",
+      "tests/test_parser.py": "from unittest import TestCase\nfrom src.parser import parse\n\nclass ParserTest(TestCase):\n    def test_empty(self):\n        self.assertEqual(parse(''), [])\n\n    def test_split(self):\n        self.assertEqual(parse('one,two'), ['one', 'two'])\n"
+    },
+    "expected": ["同一工单简洁记录判据、实际版本环境、逐项结果和可复核入口，独立验收保留待验", "新 Status 使用当前三列表格并引用实际局部证据，历史状态字节保持"],
+    "forbidden": ["为了局部自验新建完整集成 Test Report 或判定 Test Gate", "删除历史 Snapshot 证据、重写源文件、测试或索引"],
     "model_execution": "UNVERIFIED"
   }
 ]

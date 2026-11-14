@@ -1,0 +1,13 @@
+test_cancelled_submit_does_not_write_or_commit (test_order.OrderTests.test_cancelled_submit_does_not_write_or_commit) ... ok
+test_closed_connection_errors_propagate (test_order.OrderTests.test_closed_connection_errors_propagate) ... ok
+test_database_errors_propagate (test_order.OrderTests.test_database_errors_propagate) ... ok
+test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok
+test_missing_operations_raise_without_write_or_commit (test_order.OrderTests.test_missing_operations_raise_without_write_or_commit) ... ok
+test_normal_submit (test_order.OrderTests.test_normal_submit) ... ok
+test_orders_are_isolated (test_order.OrderTests.test_orders_are_isolated) ... ok
+test_other_existing_statuses_still_submit (test_order.OrderTests.test_other_existing_statuses_still_submit) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.116s
+
+OK

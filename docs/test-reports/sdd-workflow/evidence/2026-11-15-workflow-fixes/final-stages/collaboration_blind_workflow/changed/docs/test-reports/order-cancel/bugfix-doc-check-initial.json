@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+    "-B",
+    ".agents/skills/sdd-workflow/sdd/scripts/doc_check.py",
+    "--root",
+    ".",
+    "--format",
+    "json",
+    "docs/issues/BUG-001.md",
+    "docs/test-reports/order-cancel/bugfix-retest.md"
+  ],
+  "exit_code": 1,
+  "stdout": "{\n  \"schema_version\": 1,\n  \"scope\": \"mechanical_only\",\n  \"files\": [\n    \"docs/issues/BUG-001.md\",\n    \"docs/test-reports/order-cancel/bugfix-retest.md\"\n  ],\n  \"diagnostics\": [\n    {\n      \"file\": \"docs/test-reports/order-cancel/bugfix-retest.md\",\n      \"line\": 32,\n      \"code\": \"DOC007\",\n      \"severity\": \"error\",\n      \"message\": \"Local target does not exist: bugfix-doc-check.json\"\n    }\n  ],\n  \"errors\": 1,\n  \"warnings\": 0\n}\n",
+  "stderr": ""
+}

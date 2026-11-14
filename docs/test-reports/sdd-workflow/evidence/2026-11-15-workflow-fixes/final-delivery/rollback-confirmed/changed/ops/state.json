@@ -1,0 +1,48 @@
+{
+  "artifacts": {
+    "2.4.0": {
+      "version": "2.4.0",
+      "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    "2.3.9": {
+      "version": "2.3.9",
+      "source_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    }
+  },
+  "incident": {
+    "incident": "INC-619",
+    "cause": "2.4.0 application projected checkouts incorrectly during schema-7 migration",
+    "symptoms": {
+      "checkout_http_500": 18,
+      "projection_missing": 3
+    },
+    "rollback_target": {
+      "version": "2.3.9",
+      "source_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "approved_data_scope": "read-only"
+  },
+  "runtime": {
+    "env": "production-sim",
+    "workload": "orders",
+    "stable": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+    "stable_ready": true,
+    "canary": null,
+    "canary_ready": false,
+    "canary_percent": 0,
+    "schema": 7,
+    "checkout_errors": 0,
+    "log": "ops/calls.jsonl"
+  },
+  "backup_catalog": [
+    {
+      "name": "b-201",
+      "age_at_incident_minutes": 90,
+      "integrity": "verified",
+      "schema": 7
+    }
+  ]
+}

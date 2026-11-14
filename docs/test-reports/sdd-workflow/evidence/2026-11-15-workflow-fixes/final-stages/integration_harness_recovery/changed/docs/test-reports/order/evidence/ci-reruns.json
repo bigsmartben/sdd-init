@@ -1,0 +1,1054 @@
+{
+  "timestamp_utc": "2026-11-14T16:46:01.710874+00:00",
+  "cwd": "/tmp/sdd-review-execution-7kzokfoo/integration_harness_recovery-llla0st9/prepared/project",
+  "head": "67e0283f880b4995f5df4d58f2c2b6a3ca8b2003",
+  "sha256": {
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "checks/acceptance.py": "d3a8bdd3773f534f83f9cac15112e075a8c931fb1564e60371ccd9d66a48bbfd",
+    "checks/integration_runner.py": "3ac7b06e8641554828000d46b36f7d87c61e651b5dbcec6d3ee848c707d68c81",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d"
+  },
+  "product_diff": {
+    "command": [
+      "git",
+      "diff",
+      "HEAD",
+      "--",
+      "src",
+      "runtime.json"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "runs": [
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py"
+      ],
+      "exit_code": 1,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"created\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"after_submit\": {\n        \"ORDER-1\": \"submitted\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"submitted\"\n      }\n    },\n    \"accepted\": true,\n    \"expected_accepted\": true,\n    \"expected_status\": \"submitted\",\n    \"persisted_status\": \"submitted\"\n  },\n  {\n    \"scenario\": \"AC-2\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"created\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"cancelled\": {\n        \"ORDER-1\": \"cancelled\"\n      },\n      \"after_submit\": {\n        \"ORDER-1\": \"submitted\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"submitted\"\n      }\n    },\n    \"accepted\": true,\n    \"expected_accepted\": false,\n    \"expected_status\": \"cancelled\",\n    \"persisted_status\": \"submitted\",\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Unexpected submit return value\"\n    }\n  },\n  {\n    \"scenario\": \"AC-3\",\n    \"result\": \"BLOCKED\",\n    \"states\": {},\n    \"reason\": \"Real external receipt requires an authorized endpoint and network access; this local runner never makes network calls\",\n    \"endpoint_configured\": false,\n    \"authorized\": false,\n    \"network_access\": false,\n    \"external_call_performed\": false\n  },\n  {\n    \"scenario\": \"PAY-1\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"created\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"after_submit\": {\n        \"ORDER-1\": \"submitted\"\n      },\n      \"after_paid\": {\n        \"ORDER-1\": \"paid\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"paid\"\n      }\n    },\n    \"accepted\": true,\n    \"expected_accepted\": true,\n    \"expected_status\": \"paid\",\n    \"persisted_status\": \"paid\"\n  },\n  {\n    \"scenario\": \"PAY-2\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"expected_error\": \"ValueError\",\n    \"unexpected_return\": null,\n    \"error_matches\": false,\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Expected ValueError to propagate\"\n    }\n  },\n  {\n    \"scenario\": \"ID-create-empty\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": \"\",\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order_id is required\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-create-none\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": null,\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order_id is required\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-create-integer\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {\n        \"42\": \"pending\"\n      },\n      \"after_operation\": {\n        \"42\": \"pending\"\n      },\n      \"reopened\": {\n        \"42\": \"pending\"\n      }\n    },\n    \"input_order_id\": 42,\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order_id is required\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-submit-empty\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": \"\",\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-submit-none\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": null,\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-submit-integer\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"before_operation\": {\n        \"42\": \"pending\"\n      },\n      \"after_operation\": {\n        \"42\": \"submitted\"\n      },\n      \"reopened\": {\n        \"42\": \"submitted\"\n      }\n    },\n    \"input_order_id\": 42,\n    \"expected_error\": \"ValueError\",\n    \"unexpected_return\": true,\n    \"error_matches\": false,\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Expected ValueError to propagate\"\n    }\n  },\n  {\n    \"scenario\": \"ID-cancel-empty\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": \"\",\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-cancel-none\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": null,\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-cancel-integer\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"before_operation\": {\n        \"42\": \"pending\"\n      },\n      \"after_operation\": {\n        \"42\": \"cancelled\"\n      },\n      \"reopened\": {\n        \"42\": \"cancelled\"\n      }\n    },\n    \"input_order_id\": 42,\n    \"expected_error\": \"ValueError\",\n    \"unexpected_return\": null,\n    \"error_matches\": false,\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Expected ValueError to propagate\"\n    }\n  },\n  {\n    \"scenario\": \"ID-set_status-empty\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": \"\",\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-set_status-none\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": null,\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-set_status-integer\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"before_operation\": {\n        \"42\": \"pending\"\n      },\n      \"after_operation\": {\n        \"42\": \"paid\"\n      },\n      \"reopened\": {\n        \"42\": \"paid\"\n      }\n    },\n    \"input_order_id\": 42,\n    \"expected_error\": \"ValueError\",\n    \"unexpected_return\": null,\n    \"error_matches\": false,\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Expected ValueError to propagate\"\n    }\n  },\n  {\n    \"scenario\": \"ID-mark_paid-empty\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": \"\",\n    \"expected_error\": \"ValueError\",\n    \"unexpected_return\": null,\n    \"error_matches\": false,\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Expected ValueError to propagate\"\n    }\n  },\n  {\n    \"scenario\": \"ID-mark_paid-none\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": null,\n    \"expected_error\": \"ValueError\",\n    \"unexpected_return\": null,\n    \"error_matches\": false,\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Expected ValueError to propagate\"\n    }\n  },\n  {\n    \"scenario\": \"ID-mark_paid-integer\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"before_operation\": {\n        \"42\": \"pending\"\n      },\n      \"after_operation\": {\n        \"42\": \"paid\"\n      },\n      \"reopened\": {\n        \"42\": \"paid\"\n      }\n    },\n    \"input_order_id\": 42,\n    \"expected_error\": \"ValueError\",\n    \"unexpected_return\": null,\n    \"error_matches\": false,\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Expected ValueError to propagate\"\n    }\n  },\n  {\n    \"scenario\": \"MISSING-submit\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"MISSING-cancel\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"MISSING-set_status\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"DB-create\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_close\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"pending\"\n      }\n    },\n    \"expected_error\": \"sqlite3.Error\",\n    \"observed_error\": {\n      \"type\": \"ProgrammingError\",\n      \"message\": \"Cannot operate on a closed database.\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"DB-submit\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_close\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"pending\"\n      }\n    },\n    \"expected_error\": \"sqlite3.Error\",\n    \"observed_error\": {\n      \"type\": \"ProgrammingError\",\n      \"message\": \"Cannot operate on a closed database.\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"DB-cancel\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_close\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"pending\"\n      }\n    },\n    \"expected_error\": \"sqlite3.Error\",\n    \"observed_error\": {\n      \"type\": \"ProgrammingError\",\n      \"message\": \"Cannot operate on a closed database.\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"DB-set_status\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_close\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"pending\"\n      }\n    },\n    \"expected_error\": \"sqlite3.Error\",\n    \"observed_error\": {\n      \"type\": \"ProgrammingError\",\n      \"message\": \"Cannot operate on a closed database.\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"DB-mark_paid\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_close\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"pending\"\n      }\n    },\n    \"expected_error\": \"sqlite3.Error\",\n    \"observed_error\": {\n      \"type\": \"ProgrammingError\",\n      \"message\": \"Cannot operate on a closed database.\"\n    },\n    \"error_matches\": true\n  }\n]\n",
+      "stderr": "",
+      "results": [
+        {
+          "scenario": "AC-1",
+          "result": "PASS",
+          "states": {
+            "created": {
+              "ORDER-1": "pending"
+            },
+            "after_submit": {
+              "ORDER-1": "submitted"
+            },
+            "reopened": {
+              "ORDER-1": "submitted"
+            }
+          },
+          "accepted": true,
+          "expected_accepted": true,
+          "expected_status": "submitted",
+          "persisted_status": "submitted"
+        },
+        {
+          "scenario": "AC-2",
+          "result": "FAIL",
+          "states": {
+            "created": {
+              "ORDER-1": "pending"
+            },
+            "cancelled": {
+              "ORDER-1": "cancelled"
+            },
+            "after_submit": {
+              "ORDER-1": "submitted"
+            },
+            "reopened": {
+              "ORDER-1": "submitted"
+            }
+          },
+          "accepted": true,
+          "expected_accepted": false,
+          "expected_status": "cancelled",
+          "persisted_status": "submitted",
+          "error": {
+            "type": "AssertionError",
+            "message": "Unexpected submit return value"
+          }
+        },
+        {
+          "scenario": "AC-3",
+          "result": "BLOCKED",
+          "states": {},
+          "reason": "Real external receipt requires an authorized endpoint and network access; this local runner never makes network calls",
+          "endpoint_configured": false,
+          "authorized": false,
+          "network_access": false,
+          "external_call_performed": false
+        },
+        {
+          "scenario": "PAY-1",
+          "result": "PASS",
+          "states": {
+            "created": {
+              "ORDER-1": "pending"
+            },
+            "after_submit": {
+              "ORDER-1": "submitted"
+            },
+            "after_paid": {
+              "ORDER-1": "paid"
+            },
+            "reopened": {
+              "ORDER-1": "paid"
+            }
+          },
+          "accepted": true,
+          "expected_accepted": true,
+          "expected_status": "paid",
+          "persisted_status": "paid"
+        },
+        {
+          "scenario": "PAY-2",
+          "result": "FAIL",
+          "states": {
+            "after_operation": {},
+            "reopened": {}
+          },
+          "expected_error": "ValueError",
+          "unexpected_return": null,
+          "error_matches": false,
+          "error": {
+            "type": "AssertionError",
+            "message": "Expected ValueError to propagate"
+          }
+        },
+        {
+          "scenario": "ID-create-empty",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": "",
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order_id is required"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-create-none",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": null,
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order_id is required"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-create-integer",
+          "result": "PASS",
+          "states": {
+            "before_operation": {
+              "42": "pending"
+            },
+            "after_operation": {
+              "42": "pending"
+            },
+            "reopened": {
+              "42": "pending"
+            }
+          },
+          "input_order_id": 42,
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order_id is required"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-submit-empty",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": "",
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-submit-none",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": null,
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-submit-integer",
+          "result": "FAIL",
+          "states": {
+            "before_operation": {
+              "42": "pending"
+            },
+            "after_operation": {
+              "42": "submitted"
+            },
+            "reopened": {
+              "42": "submitted"
+            }
+          },
+          "input_order_id": 42,
+          "expected_error": "ValueError",
+          "unexpected_return": true,
+          "error_matches": false,
+          "error": {
+            "type": "AssertionError",
+            "message": "Expected ValueError to propagate"
+          }
+        },
+        {
+          "scenario": "ID-cancel-empty",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": "",
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-cancel-none",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": null,
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-cancel-integer",
+          "result": "FAIL",
+          "states": {
+            "before_operation": {
+              "42": "pending"
+            },
+            "after_operation": {
+              "42": "cancelled"
+            },
+            "reopened": {
+              "42": "cancelled"
+            }
+          },
+          "input_order_id": 42,
+          "expected_error": "ValueError",
+          "unexpected_return": null,
+          "error_matches": false,
+          "error": {
+            "type": "AssertionError",
+            "message": "Expected ValueError to propagate"
+          }
+        },
+        {
+          "scenario": "ID-set_status-empty",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": "",
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-set_status-none",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": null,
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-set_status-integer",
+          "result": "FAIL",
+          "states": {
+            "before_operation": {
+              "42": "pending"
+            },
+            "after_operation": {
+              "42": "paid"
+            },
+            "reopened": {
+              "42": "paid"
+            }
+          },
+          "input_order_id": 42,
+          "expected_error": "ValueError",
+          "unexpected_return": null,
+          "error_matches": false,
+          "error": {
+            "type": "AssertionError",
+            "message": "Expected ValueError to propagate"
+          }
+        },
+        {
+          "scenario": "ID-mark_paid-empty",
+          "result": "FAIL",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": "",
+          "expected_error": "ValueError",
+          "unexpected_return": null,
+          "error_matches": false,
+          "error": {
+            "type": "AssertionError",
+            "message": "Expected ValueError to propagate"
+          }
+        },
+        {
+          "scenario": "ID-mark_paid-none",
+          "result": "FAIL",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": null,
+          "expected_error": "ValueError",
+          "unexpected_return": null,
+          "error_matches": false,
+          "error": {
+            "type": "AssertionError",
+            "message": "Expected ValueError to propagate"
+          }
+        },
+        {
+          "scenario": "ID-mark_paid-integer",
+          "result": "FAIL",
+          "states": {
+            "before_operation": {
+              "42": "pending"
+            },
+            "after_operation": {
+              "42": "paid"
+            },
+            "reopened": {
+              "42": "paid"
+            }
+          },
+          "input_order_id": 42,
+          "expected_error": "ValueError",
+          "unexpected_return": null,
+          "error_matches": false,
+          "error": {
+            "type": "AssertionError",
+            "message": "Expected ValueError to propagate"
+          }
+        },
+        {
+          "scenario": "MISSING-submit",
+          "result": "PASS",
+          "states": {
+            "after_operation": {},
+            "reopened": {}
+          },
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "MISSING-cancel",
+          "result": "PASS",
+          "states": {
+            "after_operation": {},
+            "reopened": {}
+          },
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "MISSING-set_status",
+          "result": "PASS",
+          "states": {
+            "after_operation": {},
+            "reopened": {}
+          },
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "DB-create",
+          "result": "PASS",
+          "states": {
+            "before_close": {
+              "ORDER-1": "pending"
+            },
+            "reopened": {
+              "ORDER-1": "pending"
+            }
+          },
+          "expected_error": "sqlite3.Error",
+          "observed_error": {
+            "type": "ProgrammingError",
+            "message": "Cannot operate on a closed database."
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "DB-submit",
+          "result": "PASS",
+          "states": {
+            "before_close": {
+              "ORDER-1": "pending"
+            },
+            "reopened": {
+              "ORDER-1": "pending"
+            }
+          },
+          "expected_error": "sqlite3.Error",
+          "observed_error": {
+            "type": "ProgrammingError",
+            "message": "Cannot operate on a closed database."
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "DB-cancel",
+          "result": "PASS",
+          "states": {
+            "before_close": {
+              "ORDER-1": "pending"
+            },
+            "reopened": {
+              "ORDER-1": "pending"
+            }
+          },
+          "expected_error": "sqlite3.Error",
+          "observed_error": {
+            "type": "ProgrammingError",
+            "message": "Cannot operate on a closed database."
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "DB-set_status",
+          "result": "PASS",
+          "states": {
+            "before_close": {
+              "ORDER-1": "pending"
+            },
+            "reopened": {
+              "ORDER-1": "pending"
+            }
+          },
+          "expected_error": "sqlite3.Error",
+          "observed_error": {
+            "type": "ProgrammingError",
+            "message": "Cannot operate on a closed database."
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "DB-mark_paid",
+          "result": "PASS",
+          "states": {
+            "before_close": {
+              "ORDER-1": "pending"
+            },
+            "reopened": {
+              "ORDER-1": "pending"
+            }
+          },
+          "expected_error": "sqlite3.Error",
+          "observed_error": {
+            "type": "ProgrammingError",
+            "message": "Cannot operate on a closed database."
+          },
+          "error_matches": true
+        }
+      ]
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/integration_runner.py"
+      ],
+      "exit_code": 1,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"created\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"after_submit\": {\n        \"ORDER-1\": \"submitted\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"submitted\"\n      }\n    },\n    \"accepted\": true,\n    \"expected_accepted\": true,\n    \"expected_status\": \"submitted\",\n    \"persisted_status\": \"submitted\"\n  },\n  {\n    \"scenario\": \"AC-2\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"created\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"cancelled\": {\n        \"ORDER-1\": \"cancelled\"\n      },\n      \"after_submit\": {\n        \"ORDER-1\": \"submitted\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"submitted\"\n      }\n    },\n    \"accepted\": true,\n    \"expected_accepted\": false,\n    \"expected_status\": \"cancelled\",\n    \"persisted_status\": \"submitted\",\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Unexpected submit return value\"\n    }\n  },\n  {\n    \"scenario\": \"AC-3\",\n    \"result\": \"BLOCKED\",\n    \"states\": {},\n    \"reason\": \"Real external receipt requires an authorized endpoint and network access; this local runner never makes network calls\",\n    \"endpoint_configured\": false,\n    \"authorized\": false,\n    \"network_access\": false,\n    \"external_call_performed\": false\n  },\n  {\n    \"scenario\": \"PAY-1\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"created\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"after_submit\": {\n        \"ORDER-1\": \"submitted\"\n      },\n      \"after_paid\": {\n        \"ORDER-1\": \"paid\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"paid\"\n      }\n    },\n    \"accepted\": true,\n    \"expected_accepted\": true,\n    \"expected_status\": \"paid\",\n    \"persisted_status\": \"paid\"\n  },\n  {\n    \"scenario\": \"PAY-2\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"expected_error\": \"ValueError\",\n    \"unexpected_return\": null,\n    \"error_matches\": false,\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Expected ValueError to propagate\"\n    }\n  },\n  {\n    \"scenario\": \"ID-create-empty\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": \"\",\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order_id is required\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-create-none\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": null,\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order_id is required\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-create-integer\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {\n        \"42\": \"pending\"\n      },\n      \"after_operation\": {\n        \"42\": \"pending\"\n      },\n      \"reopened\": {\n        \"42\": \"pending\"\n      }\n    },\n    \"input_order_id\": 42,\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order_id is required\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-submit-empty\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": \"\",\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-submit-none\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": null,\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-submit-integer\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"before_operation\": {\n        \"42\": \"pending\"\n      },\n      \"after_operation\": {\n        \"42\": \"submitted\"\n      },\n      \"reopened\": {\n        \"42\": \"submitted\"\n      }\n    },\n    \"input_order_id\": 42,\n    \"expected_error\": \"ValueError\",\n    \"unexpected_return\": true,\n    \"error_matches\": false,\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Expected ValueError to propagate\"\n    }\n  },\n  {\n    \"scenario\": \"ID-cancel-empty\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": \"\",\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-cancel-none\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": null,\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-cancel-integer\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"before_operation\": {\n        \"42\": \"pending\"\n      },\n      \"after_operation\": {\n        \"42\": \"cancelled\"\n      },\n      \"reopened\": {\n        \"42\": \"cancelled\"\n      }\n    },\n    \"input_order_id\": 42,\n    \"expected_error\": \"ValueError\",\n    \"unexpected_return\": null,\n    \"error_matches\": false,\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Expected ValueError to propagate\"\n    }\n  },\n  {\n    \"scenario\": \"ID-set_status-empty\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": \"\",\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-set_status-none\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": null,\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"ID-set_status-integer\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"before_operation\": {\n        \"42\": \"pending\"\n      },\n      \"after_operation\": {\n        \"42\": \"paid\"\n      },\n      \"reopened\": {\n        \"42\": \"paid\"\n      }\n    },\n    \"input_order_id\": 42,\n    \"expected_error\": \"ValueError\",\n    \"unexpected_return\": null,\n    \"error_matches\": false,\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Expected ValueError to propagate\"\n    }\n  },\n  {\n    \"scenario\": \"ID-mark_paid-empty\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": \"\",\n    \"expected_error\": \"ValueError\",\n    \"unexpected_return\": null,\n    \"error_matches\": false,\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Expected ValueError to propagate\"\n    }\n  },\n  {\n    \"scenario\": \"ID-mark_paid-none\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"before_operation\": {},\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"input_order_id\": null,\n    \"expected_error\": \"ValueError\",\n    \"unexpected_return\": null,\n    \"error_matches\": false,\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Expected ValueError to propagate\"\n    }\n  },\n  {\n    \"scenario\": \"ID-mark_paid-integer\",\n    \"result\": \"FAIL\",\n    \"states\": {\n      \"before_operation\": {\n        \"42\": \"pending\"\n      },\n      \"after_operation\": {\n        \"42\": \"paid\"\n      },\n      \"reopened\": {\n        \"42\": \"paid\"\n      }\n    },\n    \"input_order_id\": 42,\n    \"expected_error\": \"ValueError\",\n    \"unexpected_return\": null,\n    \"error_matches\": false,\n    \"error\": {\n      \"type\": \"AssertionError\",\n      \"message\": \"Expected ValueError to propagate\"\n    }\n  },\n  {\n    \"scenario\": \"MISSING-submit\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"MISSING-cancel\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"MISSING-set_status\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"after_operation\": {},\n      \"reopened\": {}\n    },\n    \"expected_error\": \"ValueError\",\n    \"observed_error\": {\n      \"type\": \"ValueError\",\n      \"message\": \"order not found\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"DB-create\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_close\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"pending\"\n      }\n    },\n    \"expected_error\": \"sqlite3.Error\",\n    \"observed_error\": {\n      \"type\": \"ProgrammingError\",\n      \"message\": \"Cannot operate on a closed database.\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"DB-submit\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_close\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"pending\"\n      }\n    },\n    \"expected_error\": \"sqlite3.Error\",\n    \"observed_error\": {\n      \"type\": \"ProgrammingError\",\n      \"message\": \"Cannot operate on a closed database.\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"DB-cancel\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_close\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"pending\"\n      }\n    },\n    \"expected_error\": \"sqlite3.Error\",\n    \"observed_error\": {\n      \"type\": \"ProgrammingError\",\n      \"message\": \"Cannot operate on a closed database.\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"DB-set_status\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_close\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"pending\"\n      }\n    },\n    \"expected_error\": \"sqlite3.Error\",\n    \"observed_error\": {\n      \"type\": \"ProgrammingError\",\n      \"message\": \"Cannot operate on a closed database.\"\n    },\n    \"error_matches\": true\n  },\n  {\n    \"scenario\": \"DB-mark_paid\",\n    \"result\": \"PASS\",\n    \"states\": {\n      \"before_close\": {\n        \"ORDER-1\": \"pending\"\n      },\n      \"reopened\": {\n        \"ORDER-1\": \"pending\"\n      }\n    },\n    \"expected_error\": \"sqlite3.Error\",\n    \"observed_error\": {\n      \"type\": \"ProgrammingError\",\n      \"message\": \"Cannot operate on a closed database.\"\n    },\n    \"error_matches\": true\n  }\n]\n",
+      "stderr": "",
+      "results": [
+        {
+          "scenario": "AC-1",
+          "result": "PASS",
+          "states": {
+            "created": {
+              "ORDER-1": "pending"
+            },
+            "after_submit": {
+              "ORDER-1": "submitted"
+            },
+            "reopened": {
+              "ORDER-1": "submitted"
+            }
+          },
+          "accepted": true,
+          "expected_accepted": true,
+          "expected_status": "submitted",
+          "persisted_status": "submitted"
+        },
+        {
+          "scenario": "AC-2",
+          "result": "FAIL",
+          "states": {
+            "created": {
+              "ORDER-1": "pending"
+            },
+            "cancelled": {
+              "ORDER-1": "cancelled"
+            },
+            "after_submit": {
+              "ORDER-1": "submitted"
+            },
+            "reopened": {
+              "ORDER-1": "submitted"
+            }
+          },
+          "accepted": true,
+          "expected_accepted": false,
+          "expected_status": "cancelled",
+          "persisted_status": "submitted",
+          "error": {
+            "type": "AssertionError",
+            "message": "Unexpected submit return value"
+          }
+        },
+        {
+          "scenario": "AC-3",
+          "result": "BLOCKED",
+          "states": {},
+          "reason": "Real external receipt requires an authorized endpoint and network access; this local runner never makes network calls",
+          "endpoint_configured": false,
+          "authorized": false,
+          "network_access": false,
+          "external_call_performed": false
+        },
+        {
+          "scenario": "PAY-1",
+          "result": "PASS",
+          "states": {
+            "created": {
+              "ORDER-1": "pending"
+            },
+            "after_submit": {
+              "ORDER-1": "submitted"
+            },
+            "after_paid": {
+              "ORDER-1": "paid"
+            },
+            "reopened": {
+              "ORDER-1": "paid"
+            }
+          },
+          "accepted": true,
+          "expected_accepted": true,
+          "expected_status": "paid",
+          "persisted_status": "paid"
+        },
+        {
+          "scenario": "PAY-2",
+          "result": "FAIL",
+          "states": {
+            "after_operation": {},
+            "reopened": {}
+          },
+          "expected_error": "ValueError",
+          "unexpected_return": null,
+          "error_matches": false,
+          "error": {
+            "type": "AssertionError",
+            "message": "Expected ValueError to propagate"
+          }
+        },
+        {
+          "scenario": "ID-create-empty",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": "",
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order_id is required"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-create-none",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": null,
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order_id is required"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-create-integer",
+          "result": "PASS",
+          "states": {
+            "before_operation": {
+              "42": "pending"
+            },
+            "after_operation": {
+              "42": "pending"
+            },
+            "reopened": {
+              "42": "pending"
+            }
+          },
+          "input_order_id": 42,
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order_id is required"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-submit-empty",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": "",
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-submit-none",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": null,
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-submit-integer",
+          "result": "FAIL",
+          "states": {
+            "before_operation": {
+              "42": "pending"
+            },
+            "after_operation": {
+              "42": "submitted"
+            },
+            "reopened": {
+              "42": "submitted"
+            }
+          },
+          "input_order_id": 42,
+          "expected_error": "ValueError",
+          "unexpected_return": true,
+          "error_matches": false,
+          "error": {
+            "type": "AssertionError",
+            "message": "Expected ValueError to propagate"
+          }
+        },
+        {
+          "scenario": "ID-cancel-empty",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": "",
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-cancel-none",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": null,
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-cancel-integer",
+          "result": "FAIL",
+          "states": {
+            "before_operation": {
+              "42": "pending"
+            },
+            "after_operation": {
+              "42": "cancelled"
+            },
+            "reopened": {
+              "42": "cancelled"
+            }
+          },
+          "input_order_id": 42,
+          "expected_error": "ValueError",
+          "unexpected_return": null,
+          "error_matches": false,
+          "error": {
+            "type": "AssertionError",
+            "message": "Expected ValueError to propagate"
+          }
+        },
+        {
+          "scenario": "ID-set_status-empty",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": "",
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-set_status-none",
+          "result": "PASS",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": null,
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "ID-set_status-integer",
+          "result": "FAIL",
+          "states": {
+            "before_operation": {
+              "42": "pending"
+            },
+            "after_operation": {
+              "42": "paid"
+            },
+            "reopened": {
+              "42": "paid"
+            }
+          },
+          "input_order_id": 42,
+          "expected_error": "ValueError",
+          "unexpected_return": null,
+          "error_matches": false,
+          "error": {
+            "type": "AssertionError",
+            "message": "Expected ValueError to propagate"
+          }
+        },
+        {
+          "scenario": "ID-mark_paid-empty",
+          "result": "FAIL",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": "",
+          "expected_error": "ValueError",
+          "unexpected_return": null,
+          "error_matches": false,
+          "error": {
+            "type": "AssertionError",
+            "message": "Expected ValueError to propagate"
+          }
+        },
+        {
+          "scenario": "ID-mark_paid-none",
+          "result": "FAIL",
+          "states": {
+            "before_operation": {},
+            "after_operation": {},
+            "reopened": {}
+          },
+          "input_order_id": null,
+          "expected_error": "ValueError",
+          "unexpected_return": null,
+          "error_matches": false,
+          "error": {
+            "type": "AssertionError",
+            "message": "Expected ValueError to propagate"
+          }
+        },
+        {
+          "scenario": "ID-mark_paid-integer",
+          "result": "FAIL",
+          "states": {
+            "before_operation": {
+              "42": "pending"
+            },
+            "after_operation": {
+              "42": "paid"
+            },
+            "reopened": {
+              "42": "paid"
+            }
+          },
+          "input_order_id": 42,
+          "expected_error": "ValueError",
+          "unexpected_return": null,
+          "error_matches": false,
+          "error": {
+            "type": "AssertionError",
+            "message": "Expected ValueError to propagate"
+          }
+        },
+        {
+          "scenario": "MISSING-submit",
+          "result": "PASS",
+          "states": {
+            "after_operation": {},
+            "reopened": {}
+          },
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "MISSING-cancel",
+          "result": "PASS",
+          "states": {
+            "after_operation": {},
+            "reopened": {}
+          },
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "MISSING-set_status",
+          "result": "PASS",
+          "states": {
+            "after_operation": {},
+            "reopened": {}
+          },
+          "expected_error": "ValueError",
+          "observed_error": {
+            "type": "ValueError",
+            "message": "order not found"
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "DB-create",
+          "result": "PASS",
+          "states": {
+            "before_close": {
+              "ORDER-1": "pending"
+            },
+            "reopened": {
+              "ORDER-1": "pending"
+            }
+          },
+          "expected_error": "sqlite3.Error",
+          "observed_error": {
+            "type": "ProgrammingError",
+            "message": "Cannot operate on a closed database."
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "DB-submit",
+          "result": "PASS",
+          "states": {
+            "before_close": {
+              "ORDER-1": "pending"
+            },
+            "reopened": {
+              "ORDER-1": "pending"
+            }
+          },
+          "expected_error": "sqlite3.Error",
+          "observed_error": {
+            "type": "ProgrammingError",
+            "message": "Cannot operate on a closed database."
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "DB-cancel",
+          "result": "PASS",
+          "states": {
+            "before_close": {
+              "ORDER-1": "pending"
+            },
+            "reopened": {
+              "ORDER-1": "pending"
+            }
+          },
+          "expected_error": "sqlite3.Error",
+          "observed_error": {
+            "type": "ProgrammingError",
+            "message": "Cannot operate on a closed database."
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "DB-set_status",
+          "result": "PASS",
+          "states": {
+            "before_close": {
+              "ORDER-1": "pending"
+            },
+            "reopened": {
+              "ORDER-1": "pending"
+            }
+          },
+          "expected_error": "sqlite3.Error",
+          "observed_error": {
+            "type": "ProgrammingError",
+            "message": "Cannot operate on a closed database."
+          },
+          "error_matches": true
+        },
+        {
+          "scenario": "DB-mark_paid",
+          "result": "PASS",
+          "states": {
+            "before_close": {
+              "ORDER-1": "pending"
+            },
+            "reopened": {
+              "ORDER-1": "pending"
+            }
+          },
+          "expected_error": "sqlite3.Error",
+          "observed_error": {
+            "type": "ProgrammingError",
+            "message": "Cannot operate on a closed database."
+          },
+          "error_matches": true
+        }
+      ]
+    }
+  ]
+}

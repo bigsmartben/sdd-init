@@ -1,0 +1,11 @@
+The `sdd-doc-consistency` role completed the review at commit `d4783f41815e09bfb5b4768febe5c485f9e7e5e2`. Its receipt follows, translated from Chinese. **No edits were applied:** the role and filesystem session are read-only.
+
+1. **Conflicting v2 timing.** The authoritative [Spec](specs/retry/spec.md:3) requires a 12-second wait after an online client’s first 503; the [Plan](docs/current-plan.md:3) says 5 seconds for the same conditions. Verify whether an approved product decision supports the Plan. Without one, replace its policy definition with a Spec reference. Actual runtime timing remains unverified.
+
+2. **Redundant live policy.** [Current policy copy](docs/current-duplicate.md:3) repeats the Spec while claiming to be a policy maintenance location. Replace it with a short Spec link, preserving its entry point. Whole-file deletion is another candidate, but external references and earlier history remain unverified; update the [index](docs/index.md:5) if deleting it.
+
+3. **Broken operator reference.** The [operator guide](docs/operator-guide.md:3) links to nonexistent `#old-retry-policy`. Preserve its approximately twelve-second operator summary and change the link to `../specs/retry/spec.md`. Whether the summary needs more precise operating conditions remains unverified.
+
+4. **Unsupported v2 PASS.** The [v2 report](docs/retry-report.md:3) claims AC-401 integration PASS but cites a [historical v1 report](docs/retry-v1.md:3) covering a 5-second wait in the 2026-10-01 environment. That evidence cannot establish v2’s 12-second wait or offline behavior. Mark v2 verification pending until applicable version, environment, coverage, and results are available. Preserve the v1 report.
+
+**Decision and handoff:** Main must establish whether an approved decision changed v2 timing and obtain applicable v2 verification evidence. Runtime prompts were excluded under the registered role’s scope; implementation consistency was not assessed. Document review is complete; proposed corrections await a writable execution context, with the timing conflict dependent on that decision.

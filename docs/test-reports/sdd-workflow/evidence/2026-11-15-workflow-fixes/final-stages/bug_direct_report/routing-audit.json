@@ -1,0 +1,135 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daeb-fba4-79a2-8273-72344d16dfdd",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/bugfix": {
+      "id": "01a1daec-bf42-7290-a6eb-0e51618c1a38",
+      "parent_id": "01a1daeb-fba4-79a2-8273-72344d16dfdd",
+      "role": null,
+      "parent": "/root"
+    },
+    "/root/bugfix/coder": {
+      "id": "01a1daed-ab6a-7620-a95b-83020ab6ce88",
+      "parent_id": "01a1daec-bf42-7290-a6eb-0e51618c1a38",
+      "role": "sdd-coder",
+      "parent": "/root/bugfix"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:38:42.969Z",
+      "actor": "/root",
+      "target": "/root/bugfix",
+      "original_target": "bugfix",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_5527ddd623b0431cb1476f548ae5c2de",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-37-43-01a1daeb-fba4-79a2-8273-72344d16dfdd.jsonl",
+      "line": 10
+    },
+    {
+      "time": "2026-11-14T16:38:57.710Z",
+      "actor": "/root/bugfix",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_b4a2087688904e1f8db6edee00029917",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-38-30-01a1daec-bf42-7290-a6eb-0e51618c1a38.jsonl",
+      "line": 11
+    },
+    {
+      "time": "2026-11-14T16:39:55.116Z",
+      "actor": "/root/bugfix",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_67d78383e5f240c2be88ce5a6eacab1e",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-38-30-01a1daec-bf42-7290-a6eb-0e51618c1a38.jsonl",
+      "line": 25
+    },
+    {
+      "time": "2026-11-14T16:40:40.596Z",
+      "actor": "/root/bugfix/coder",
+      "target": "/root/bugfix",
+      "original_target": "/root/bugfix",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_edc4f0bc4cc046c4b177a0825c62a079",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-39-31-01a1daed-ab6a-7620-a95b-83020ab6ce88.jsonl",
+      "line": 14
+    },
+    {
+      "time": "2026-11-14T16:40:58.974Z",
+      "actor": "/root/bugfix",
+      "target": "/root/bugfix/coder",
+      "original_target": "coder",
+      "tool": "followup_task",
+      "relation": "to_direct_report",
+      "call_id": "call_bb0412b172384eb99edb788d444f78f2",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-38-30-01a1daec-bf42-7290-a6eb-0e51618c1a38.jsonl",
+      "line": 39
+    },
+    {
+      "time": "2026-11-14T16:41:06.092Z",
+      "actor": "/root",
+      "target": "/root/bugfix",
+      "original_target": "bugfix",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_ac984d5be3b546fface47a519932fb9a",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-37-43-01a1daeb-fba4-79a2-8273-72344d16dfdd.jsonl",
+      "line": 21
+    },
+    {
+      "time": "2026-11-14T16:41:23.744Z",
+      "actor": "/root/bugfix/coder",
+      "target": "/root/bugfix",
+      "original_target": "/root/bugfix",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_192362c08c3d4638953bba381b2f30b8",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-39-31-01a1daed-ab6a-7620-a95b-83020ab6ce88.jsonl",
+      "line": 25
+    },
+    {
+      "time": "2026-11-14T16:41:27.073Z",
+      "actor": "/root/bugfix",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_0a1a6a3e88bb4192afab299bb14864c4",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-38-30-01a1daec-bf42-7290-a6eb-0e51618c1a38.jsonl",
+      "line": 43
+    },
+    {
+      "time": "2026-11-14T16:41:32.878Z",
+      "actor": "/root/bugfix",
+      "target": "/root/bugfix/coder",
+      "original_target": "coder",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_f0124a459eee4ad3942db5a258f9fb4c",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-38-30-01a1daec-bf42-7290-a6eb-0e51618c1a38.jsonl",
+      "line": 45
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

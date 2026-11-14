@@ -1,0 +1,11 @@
+{
+  "candidate_id": "sha256:7d4083da88ed6593bc2039b890b0026681f522ac7b53d7aa8c8dcde4cb269fea",
+  "computed_candidate_id": "sha256:7d4083da88ed6593bc2039b890b0026681f522ac7b53d7aa8c8dcde4cb269fea",
+  "files_match": true,
+  "candidate_matches": true,
+  "test_assets": {
+    "tests/architecture_probe.py": "d3167d61d357abbca3d533d0600860cf568877439e123de54e4c7e1c1111a6a8",
+    "tests/test_order.py": "a438c19810b3a10ad713090330d14496ea11bd7fd43a0c79d953fb695c4d631e",
+    "tests/test_order_integration.py": "90b380239e3f3fa7834db7a63901af454800f077267c6563842729fb80e922a2"
+  }
+}

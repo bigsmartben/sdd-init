@@ -8,21 +8,21 @@
 
 ## Requirements Acceptance
 
-Link the corresponding Test Report and Quickstart scenarios or ACs. Record current progress and relevant conclusions. The report holds the actual versions, environment, data, scenario results, evidence, retests, and human feedback. Preserve original records and their version associations. Record automated verification and human confirmation separately. In the table below, Evidence links to the relevant report entry. Keep historical records and retain the Snapshot column's historical meaning. This table preserves the historical format. Quickstart execution and acceptance use their own criteria. The retired governance commands are unavailable. Leave fingerprints out of new records.
+Link the current candidate and relevant scenario or AC results in the actual Test Report or task evidence. Reference the Quickstart for integration regression. Record automated verification and human confirmation separately. Preserve historical records and their original version associations.
 
-| ID | Result | Evidence | Snapshot |
-| --- | --- | --- | --- |
+| ID | Result | Evidence |
+| --- | --- | --- |
 {ROWS}
 
 ## Architecture Constraint Verification
 
-| ID | Result | Evidence | Snapshot |
-| --- | --- | --- | --- |
+| ID | Result | Evidence |
+| --- | --- | --- |
 {ARC_ROWS}
 
 ## Review and Test Gates
 
-Update Review Gate from the Architecture Review Record and Test Gate from the scoped user-facing integration Test Report. Record local verification in Execution Records.
+Update Review Gate from the Architecture Review Record and Test Gate from the integration Test Report for the candidate version. In Execution Records, link the implementer's local verification from the Plan and the refactoring behavior-preservation acceptance from the Architecture Review Record. After a refactor, link the readiness of the runnable candidate separately from review, integration results and formal release requirements.
 
 - Review Gate: UNVERIFIED
 - Review Evidence: -
@@ -43,4 +43,4 @@ Update Review Gate from the Architecture Review Record and Test Gate from the sc
 
 ## Resumption
 
-- <Minimum information needed to resume. Leave blank if work has not started.>
+- <Use the existing progress record. Follow the [resumption rules](../references/sdd-repository-governance.md#运行状态与接续) and link evidence in its original location. Leave blank if work has not started.>

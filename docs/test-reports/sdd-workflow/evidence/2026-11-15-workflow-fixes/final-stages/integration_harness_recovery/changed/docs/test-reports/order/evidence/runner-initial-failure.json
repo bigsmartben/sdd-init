@@ -1,0 +1,9 @@
+{
+  "executor": "/root/integration_test/test_tools (sdd-coder)",
+  "version": "67e0283f880b4995f5df4d58f2c2b6a3ca8b2003",
+  "command": "python -B checks/integration_runner.py",
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/sdd-review-execution-7kzokfoo/integration_harness_recovery-llla0st9/prepared/project/checks/integration_runner.py\", line 5, in <module>\n    raise SystemExit(run_acceptence())\n                     ^^^^^^^^^^^^^^\nNameError: name 'run_acceptence' is not defined. Did you mean: 'run_acceptance'?\n",
+  "source": "Original execution receipt from assigned test-tool coder; corrected entry independently rerun twice by integration executor."
+}

@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+    "-B",
+    "checks/acceptance.py",
+    "--scenario",
+    "AC-2"
+  ],
+  "exit_code": 1,
+  "stdout": "[\n  {\n    \"scenario\": \"AC-2\",\n    \"result\": \"FAIL\",\n    \"accepted\": true,\n    \"persisted_status\": \"submitted\",\n    \"expected_accepted\": false,\n    \"expected_status\": \"cancelled\"\n  }\n]\n",
+  "stderr": ""
+}

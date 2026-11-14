@@ -16,20 +16,20 @@
 
 | 对象 | 读取依据与结构参考 | 写后判断点 |
 |---|---|---|
-| Spec | 项目索引、权威实体、[Spec](../assets/spec_template.md) | 承接适用高位用例与验收维度；详细行为、条件、异常及 AC 完整；不复制蓝图同层级正文，不把实现缺陷写成需求变化 |
+| Spec | 项目索引、权威实体、[Spec](../assets/spec_template.md) | 承接适用高位用例与验收维度，或引用足以明确本次行为与判据的已确认工单或其他权威依据；详细行为、条件、异常及 AC 完整；不复制蓝图同层级正文，不把实现缺陷写成需求变化 |
 | Blueprint | [Blueprint](../assets/blueprint_template.md#architecture-modeling-and-assessment) | 保持产品高位抽象，细节引用 Spec；准确承接已确认职责、权威状态、权限、依赖、运行与失败边界、取舍；不加载架构规范，不补入其条款或映射，架构符合性归 Review |
 | Technical Research and Selection Report | [Technical Research and Selection Report](../assets/research_template.md)、适用的需求与设计约束、实际调研材料及证据 | 按需归并调研问题、比较标准、候选方案、依据和取舍，核对证据适用条件及确认来源；建议待确认时标明待决问题，已确认的架构决定归 Blueprint 或项目已有 ADR，实测结果引用对应报告 |
 | Interface Contract | Architecture Modeling and Assessment、适用 Blueprint／ARC、[Interface Contract](../assets/contract_template.md) | I/O、调用双方、状态与副作用归属、受理／完成及异常语义承接确认内容 |
 | Scenario Sequence | Architecture Modeling and Assessment、需求与契约、[Scenario Sequence](../assets/sequence_template.md) | 参与者、请求／回执、先后／并发、取消／迟到、未知／恢复承接契约；箭头不暗示未确认成功或同步等待；结果和进度引用报告及 Status／任务 |
 | Prototype Reference | [原型规则](prototype.md)、[Prototype Reference](../assets/prototype_reference_template.md) | 核对入口、固定版本、模拟边界及确认来源，按适用规则保留历史版本 |
-| Test Report | [Test Report](../assets/test_report_template.md)、实际执行证据。需核对验收边界时读[测试范围约束](sdd-repository-governance.md#测试范围约束) | 核对必备内容、统计、未执行项和批次归属。Bug 归因、修复自验、定向复验、需求验收及集成回归分别引用对应版本的事实，集成 Test Gate 关联实际目标版本、环境、完整覆盖及未通过原因，人工待验与执行结果分别记录，反馈取自用户 |
+| Test Report | [Test Report](../assets/test_report_template.md)、实际执行证据。需核对验收边界时读[测试范围约束](sdd-repository-governance.md#测试范围约束) | 核对适用字段、未执行项和批次归属；集成测试另核对完整报告结构和统计，简单工单可在原记录保留足够证据。Bug 归因、修复自验、定向复验、需求验收及集成回归分别引用对应版本的事实，集成 Test Gate 关联实际目标版本、环境、完整覆盖及未通过原因，人工待验与执行结果分别记录，反馈取自用户 |
 | Issue | [Issue](../assets/issue_template.md)、原工单和实际执行证据 | 核对稳定编号、处理历史、验收计划与方案、修复及报告／Task 引用。按本轮写入授权更新状态。产品缺陷关单须核对原 Issue 判据、实际修复版本及必要回归，必要人工反馈取自用户。平台议题按授权单独处理 |
-| Architecture Review Record | [Architecture Review Record](../assets/review_template.md)、原检查项和实际执行证据 | 在原检查项下维护依据、验收计划与方案、历次证据、状态与 Task 引用。引用已确认行为判据、实际基线及保持证据，整轮 Review Gate 关联复核版本，实施方案归原 Task |
+| Architecture Review Record | [Architecture Review Record](../assets/review_template.md)、原检查项和实际执行证据 | 在原检查项下维护工单与 Task 引用、验收计划与方案及历次结果。分别关联架构复核与业务行为保持验收的判据、整改版本和证据。Review Gate 依据适用架构检查，实施方案与局部自验归原 Task |
 | Delivery Record | 已授权的交付或运维终点、项目运行指南、实测回执及适用证据，首次建档用 [Delivery Record](../assets/delivery_record_template.md) | 核对实际版本、环境、目标对象、步骤回执、运行验证与恢复效果。未完成项保留影响及恢复条件，适用的架构或集成结论引用原证据 |
 | Prompt Review Record | [Prompt Review Record](../assets/prompt_review_template.md)、确认依据、实际加载路径及有效运行证据 | 核对规则与来源、场景依赖、授权边界及前后映射，分别记录静态与运行覆盖、实际副作用、未验证项和恢复条件 |
 | Plan | [Plan](../assets/plan_template.md)、实施执行者的方案、任务与证据 | 保留同一计划及编号，核对上游验收计划与方案的引用、依赖、Task 完成条件、局部证据覆盖与仍待验的判据。Bug Task 引用原 Issue 和归因检查证据，方案、拆分与任务完成判断取自实施执行者 |
 | Quickstart | [测试范围约束](sdd-repository-governance.md#测试范围约束)、[Quickstart](../assets/quickstart_template.md) | 核对验收产品范围内已确认功能点与场景／AC 的覆盖关系，以及版本、环境、入口、数据、步骤、观察点、通过判据和必要复位。实际结果归 Test Report，报告引用本轮指南 |
-| Status / Current Task | Test Report、执行者状态；新建时用[Status](../assets/status_template.md) | 报告引用、版本、覆盖及状态对应；只引用逐项结果、Gate 和人工反馈 |
+| Status / Current Task | Test Report、执行者状态；新建时用[Status](../assets/status_template.md) | 按[运行状态与接续](sdd-repository-governance.md#运行状态与接续)更新进度；版本、覆盖及状态与证据对应，逐项结果、Gate 和人工反馈使用引用 |
 | README / Project Index | 项目权威正文、工程资产规则 | 只定位导航，已有正文不继续指向模板；同步直接受影响入口 |
 
 ## Code Review Rules

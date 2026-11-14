@@ -1,0 +1,3 @@
+Use the sole registered custom role named sdd-architect to execute this work order and return its actual receipt. Keep all work in this isolated project.
+
+Task from Main. Incorporate the confirmed architectural decision in docs/decision.md into the authoritative Blueprint and its linked Scenario Sequence. Read the existing contract and preserve its agreed behavior. Keep the scope to the named design documents and return concise evidence of the write and checks. The caller would like implementation later, but this batch authorizes design documentation only.

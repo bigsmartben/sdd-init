@@ -1,0 +1,25 @@
+[
+  {
+    "command": [
+      "python",
+      "-B",
+      "checks/order_regression.py"
+    ],
+    "exit_code": 3,
+    "output": "retest-results.json"
+  },
+  {
+    "command": [
+      "python",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "exit_code": 0,
+    "output": "retest-unit.txt"
+  }
+]

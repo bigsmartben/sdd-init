@@ -1,0 +1,23 @@
+C:\Users\24598\AppData\Local\Programs\Python\Python314\python.exe -B -X utf8 source/project/.agents/sdd/scripts/doc_check.py --root . --strict source/initializer/assets/agents-fragment.md source/project/.agents/sdd/assets/prototype_reference_template.md source/project/.agents/sdd/assets/review_template.md source/project/.agents/sdd/assets/spec_template.md source/project/.agents/sdd/assets/status_template.md source/project/.agents/sdd/assets/test_report_template.md source/project/.agents/sdd/references/delegation.md source/project/.agents/sdd/references/delivery.md source/project/.agents/sdd/references/deployment.md source/project/.agents/sdd/references/document-writing.md source/project/.agents/sdd/references/prototype.md source/project/.agents/sdd/references/sdd-repository-governance.md source/project/.agents/sdd/references/task-receipt.md source/project/.agents/skills/sdd-bugfix/SKILL.md source/project/.agents/skills/sdd-develop/SKILL.md source/project/.agents/skills/sdd-refactor/SKILL.md source/project/.agents/skills/sdd-test-loop/SKILL.md tests/fixtures/skill-behavior/README.md source/project/docs/index.md .agents/skills/sdd-workflow-review specs/platform-independent-sdd/spec.md docs/sdd-workflow-whitepaper.md
+.agents/skills/sdd-workflow-review/SKILL.md:16: error DOC007: Local target does not exist: ../../../docs/test-reports/sdd-workflow/
+docs/sdd-workflow-whitepaper.md:76: error DOC007: Local target does not exist: test-reports/sdd-workflow/
+docs/sdd-workflow-whitepaper.md:80: error DOC007: Local target does not exist: test-reports/sdd-workflow/2026-11-14-whitepaper-assessment-archive.md
+source/initializer/assets/agents-fragment.md:6: error DOC007: Local target does not exist: .agents/skills/sdd-workflow/sdd/references/sdd-repository-governance.md
+source/initializer/assets/agents-fragment.md:6: error DOC007: Local target does not exist: .agents/skills/sdd-workflow/sdd/references/delegation.md#技能-agent-的启动与接续
+source/initializer/assets/agents-fragment.md:12: error DOC007: Local target does not exist: .agents/skills/sdd-workflow/skills/sdd-develop/SKILL.md
+source/initializer/assets/agents-fragment.md:13: error DOC007: Local target does not exist: .agents/skills/sdd-workflow/skills/sdd-architecture/SKILL.md
+source/initializer/assets/agents-fragment.md:14: error DOC007: Local target does not exist: .agents/skills/sdd-workflow/skills/sdd-bugfix/SKILL.md
+source/initializer/assets/agents-fragment.md:15: error DOC007: Local target does not exist: .agents/skills/sdd-workflow/skills/sdd-test-loop/SKILL.md
+source/initializer/assets/agents-fragment.md:16: error DOC007: Local target does not exist: .agents/skills/sdd-workflow/skills/sdd-refactor/SKILL.md
+source/initializer/assets/agents-fragment.md:17: error DOC007: Local target does not exist: .agents/skills/sdd-workflow/skills/sdd-deliver/SKILL.md
+source/initializer/assets/agents-fragment.md:21: error DOC007: Local target does not exist: .agents/skills/sdd-workflow/sdd/references/delegation.md
+source/initializer/assets/agents-fragment.md:21: error DOC007: Local target does not exist: .agents/skills/sdd-workflow/sdd/references/delegation.md#实施交接
+source/initializer/assets/agents-fragment.md:25: error DOC007: Local target does not exist: .agents/skills/sdd-workflow/sdd/references/document-writing.md
+specs/platform-independent-sdd/spec.md:7: error DOC007: Local target does not exist: ../../docs/workflow-evidence.md
+specs/platform-independent-sdd/spec.md:30: error DOC007: Local target does not exist: ../../docs/installation.md#用户级安装恢复
+specs/platform-independent-sdd/spec.md:34: error DOC007: Local target does not exist: ../../docs/installation.md
+specs/platform-independent-sdd/spec.md:35: error DOC007: Local target does not exist: ../../docs/installation.md#更新与冲突
+specs/platform-independent-sdd/spec.md:86: error DOC007: Local target does not exist: ../../docs/workflow-evidence.md#2026-11-04-全仓指令精简复核
+specs/platform-independent-sdd/spec.md:87: error DOC007: Local target does not exist: ../../docs/workflow-evidence.md#2026-11-04-压缩规范复核与安装验证
+tests/fixtures/skill-behavior/README.md:64: error DOC007: Local target does not exist: ../../../docs/workflow-evidence.md#2026-11-14-提示词审查与行为验证技能
+Checked 26 Markdown files: 21 errors, 0 warnings (mechanical only)

@@ -18,7 +18,13 @@ python -B tests/prepare_skill_behavior.py --case collaboration_workflow --case c
 
 共同机制按场景检查：复杂 imp 的实际委派与同一 Plan 持续推进；Bug 经评估归因和 imp 修复后，doc 据满足原 Issue 判据的局部或集成证据更新原 Issue；review 以检查项承载审查、Task 交接及原审查者复核。核对阻塞隔离、缺失验证代码和证据补查分流、增量交接与有效证据复用。简单局部、只验收、只评估、只审不修和能力受限作为边界例，不要求每例全角色轮转。实际评测结果和候选快照引用归报告；夹具定义保持可重复使用，不能覆盖历史失败。
 
+核对跨阶段路径时，从实际会话标识和调用目标重建 Main、技能 Agent 与角色的关系。对照 Bugfix 回 Main、Main 把新版本和证据交给原测试 Agent、原测试 Agent 实际复验的先后。检查是否存在同层直传或续派，保留异常调用和未能识别的目标。重复运行使用独立夹具，同一次执行的多处日志只算一个样本。
+
 需求交付案例 `develop_delivery` 由评估者按 `evaluation_setup` 在同一会话分轮提供两次真实测试反馈，核对 A 前的权威 Spec 与 B 前的产品文件快照。B 后核对同一 Plan、公开入口逐 AC 验收、定向回归与集成准备条件。`develop_resume` 核对复用两次确认及未完 Plan，`develop_spec_only` 与 `develop_discussion` 核对各自的停止条件。`imp` 继续核对已就绪独立工单的实施交接。
+
+`develop_refactor_dependency` 实证状态权威只能读到当前状态，区分独立重构依赖和可先完成的订单号校验。`architecture_assumption_counterevidence` 用同一运行前提核对架构评估如何在实测反证后更新候选方案。`develop_spec_without_blueprint` 对照直接引用已确认工单的单独规格更新。
+
+`develop_user_acceptance_feedback` 与 `refactor_user_acceptance_feedback` 按各自的 `evaluation_setup` 分轮运行。检查 Main 可回答状态、反馈前保持待验、反馈后在实际候选的原判据或检查项收证。评估者的操作及回传只证明合成反馈路径。`report_lightweight_evidence` 核对按当下证据记录局部改动及新 Status，保留旧状态字节与独立待验。
 
 Bug 定向案例可用同一命令准备：`bug_direct_report` 验证直接报告的缺陷能以原场景及必要回归的局部证据关闭原 Issue；`bug_assess_only` 检查归因结果与授权边界；`bug_diagnosis_missing_evidence` 检查已授权修复但归因缺证时是否停在取证；`bug_attribution_counterevidence` 检查当前版本反驳旧归因时是否先回退再接续；`bug_retest_missing_evidence` 检查外部原场景无法复验时是否保留原 Issue 和恢复条件。集成发现和只验收分别由 `collaboration_workflow` 和 `collaboration_test_only` 覆盖。只验收例还检查缺少可执行指南时能否生成验收文档。核对实际操作、阶段交接、文件差异及报告中的版本和覆盖。夹具中的旧观察是任务输入，仅本轮实际运行可作为本轮证据。
 

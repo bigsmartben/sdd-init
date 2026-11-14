@@ -1,0 +1,65 @@
+import hashlib, json, sqlite3, subprocess, sys, tempfile
+from pathlib import Path
+from src import order_service as s, storage, ui
+root=Path.cwd()
+paths=sorted(Path('src').glob('*.py'))+[Path('checks/order_integration.py'),Path('tests/test_order.py'),Path('runtime.json')]
+hashes=lambda:{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
+before=hashes()
+assert before['src/order_service.py']=='3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb'
+assert before['src/ui.py']=='4a03e8d39ef106a5037404562a931aad9009a1bb579304daa15f820983de6909'
+assert before['checks/order_integration.py']=='496fa99f09e2c5d0796678ac580ffa49553e155f266a68673b68e58e93e1bc99'
+initial=json.loads(Path('docs/test-reports/order/review-initial.json').read_text())
+for p in ['src/storage.py','src/__init__.py']: assert before[p]==initial['sources'][p]['sha256']
+rows=[]
+def check(case,actual,expected):
+ rows.append(dict(case=case,actual=actual,expected=expected,result='PASS' if actual==expected else 'FAIL'))
+class Observe:
+ def __init__(self,c,fault=None):self.c=c;self.fault=fault;self.writes=0;self.commits=0
+ def execute(self,sql,args=()):
+  if sql.startswith(('INSERT','UPDATE')):
+   self.writes+=1
+   if self.fault=='execute':raise sqlite3.OperationalError('review injected write error')
+  return self.c.execute(sql,args)
+ def commit(self):
+  self.commits+=1
+  if self.fault=='commit':raise sqlite3.OperationalError('review injected commit error')
+  return self.c.commit()
+with tempfile.TemporaryDirectory(dir=root) as directory:
+ p=Path(directory)/'review.sqlite';c=storage.connect(p)
+ def persisted(key='O'):
+  other=sqlite3.connect(p)
+  try:return other.execute('SELECT status FROM orders WHERE order_id=?',(key,)).fetchone()
+  finally:other.close()
+ for name,fn,expected in [('create',lambda:s.create_order(c,'O'),'pending'),('submit',lambda:s.submit_order(c,'O'),'submitted'),('cancel',lambda:s.cancel_order(c,'O'),'cancelled')]:
+  result=fn();check(name,{'persisted':persisted()[0],'result':result},{'persisted':expected,'result':True if name=='submit' else None})
+ obs=Observe(c);trace=[];c.set_trace_callback(trace.append)
+ result=s.submit_order(obs,'O');c.set_trace_callback(None)
+ check('cancelled_submit_no_write',{'result':result,'persisted':persisted()[0],'writes':obs.writes,'commits':obs.commits},{'result':False,'persisted':'cancelled','writes':0,'commits':0})
+ cancel_trace=trace
+ ui.mark_paid(c,'O');check('paid_second_connection',persisted()[0],'paid')
+ c.close();c=storage.connect(p);check('paid_reopen',s.read_status(c,'O'),'paid')
+ for state in ['paid','submitted','pending']:
+  s.set_status(c,'O',state);result=s.submit_order(c,'O');check('non_cancelled_submit_'+state,[result,persisted()[0]],[True,'submitted'])
+ operations={'read':lambda x:s.read_status(x,'MISSING'),'set_status':lambda x:s.set_status(x,'MISSING','paid'),'cancel':lambda x:s.cancel_order(x,'MISSING'),'submit':lambda x:s.submit_order(x,'MISSING'),'mark_paid':lambda x:ui.mark_paid(x,'MISSING')}
+ for name,fn in operations.items():
+  obs=Observe(c)
+  try:fn(obs);actual='no exception'
+  except Exception as e:actual=type(e).__name__
+  check('missing_'+name,[actual,obs.writes,obs.commits],['ValueError',0,0])
+ for point in ['execute','commit']:
+  for name,fn in [('create',lambda x:s.create_order(x,'NEW')),('set_status',lambda x:s.set_status(x,'O','paid')),('cancel',lambda x:s.cancel_order(x,'O')),('submit',lambda x:s.submit_order(x,'O')),('mark_paid',lambda x:ui.mark_paid(x,'O'))]:
+   s.set_status(c,'O','pending');obs=Observe(c,point)
+   try:fn(obs);actual='no exception'
+   except Exception as e:actual=type(e).__name__
+   check(point+'_failure_'+name,[actual,persisted()[0],persisted('NEW')],['OperationalError','pending',None]);c.rollback()
+ s.create_order(c,'OTHER');ui.mark_paid(c,'O');check('other_order_unchanged',persisted('OTHER')[0],'pending')
+ c.close()
+ for name,fn in [('read',lambda:s.read_status(c,'O')),('create',lambda:s.create_order(c,'NEW')),('cancel',lambda:s.cancel_order(c,'O')),('submit',lambda:s.submit_order(c,'O')),('set_status',lambda:s.set_status(c,'O','paid')),('mark_paid',lambda:ui.mark_paid(c,'O'))]:
+  try:fn();actual='no exception'
+  except Exception as e:actual=type(e).__name__
+  check('closed_'+name,actual,'ProgrammingError')
+check('cleanup',Path(directory).exists(),False)
+after=hashes();check('source_stability',after,before)
+record=dict(batch='fixed',head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),source_sha256=before,source_sha256_after=after,python=sys.version,sqlite=sqlite3.sqlite_version,runtime=json.loads(Path('runtime.json').read_text()),sources={str(p):p.read_text() for p in Path('src').glob('*.py')},cancelled_submit_sql_trace=cancel_trace,checks=rows,summary={k:sum(row['result']==k for row in rows) for k in ['PASS','FAIL']},method='Independent public calls on real file SQLite; separate connection and reopen; write/commit failure injection only in reviewer wrapper; no network')
+Path('docs/test-reports/order/review-fixed.json').write_text(json.dumps(record,ensure_ascii=False,indent=2)+'\n')
+print(json.dumps(record['summary']))

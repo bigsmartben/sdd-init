@@ -1,0 +1,57 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daec-0d61-75e1-9c9f-d5f123be04e5",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/product_manager": {
+      "id": "01a1daec-6834-7db0-af08-bce474ab2b75",
+      "parent_id": "01a1daec-0d61-75e1-9c9f-d5f123be04e5",
+      "role": "sdd-product-manager",
+      "parent": "/root"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:38:41.902Z",
+      "actor": "/root",
+      "target": "/root/product_manager",
+      "original_target": "product_manager",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_c97d714394974c8e8ded19d02444f9fb",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-37-47-01a1daec-0d61-75e1-9c9f-d5f123be04e5.jsonl",
+      "line": 10
+    },
+    {
+      "time": "2026-11-14T16:39:17.798Z",
+      "actor": "/root/product_manager",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_cf5969080ca34bf6a839ded1f206cdd9",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-38-08-01a1daec-6834-7db0-af08-bce474ab2b75.jsonl",
+      "line": 18
+    },
+    {
+      "time": "2026-11-14T16:39:48.106Z",
+      "actor": "/root/product_manager",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_c048a9e11a52459fbb9d2a7ce80a1327",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-38-08-01a1daec-6834-7db0-af08-bce474ab2b75.jsonl",
+      "line": 22
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

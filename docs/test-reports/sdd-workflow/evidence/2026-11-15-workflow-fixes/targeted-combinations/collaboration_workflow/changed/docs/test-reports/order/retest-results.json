@@ -1,0 +1,194 @@
+[
+  {
+    "scenario": "CREATE",
+    "result": "PASS",
+    "observations": [
+      {
+        "persisted_status": "pending",
+        "expected": "pending"
+      }
+    ]
+  },
+  {
+    "scenario": "AC-1",
+    "result": "PASS",
+    "accepted": true,
+    "persisted_status": "submitted",
+    "expected_accepted": true,
+    "expected_status": "submitted"
+  },
+  {
+    "scenario": "CANCEL",
+    "result": "PASS",
+    "observations": [
+      {
+        "persisted_status": "cancelled",
+        "expected": "cancelled"
+      }
+    ]
+  },
+  {
+    "scenario": "AC-2",
+    "result": "PASS",
+    "accepted": false,
+    "cancelled_status_before_submit": "cancelled",
+    "persisted_status": "cancelled",
+    "expected_accepted": false,
+    "expected_status": "cancelled",
+    "submit_total_changes": 0,
+    "expected_submit_total_changes": 0,
+    "submit_sql": [
+      "SELECT status FROM orders WHERE order_id = 'ORDER-1'"
+    ],
+    "submit_reads_only": true
+  },
+  {
+    "scenario": "PAID-PENDING",
+    "result": "PASS",
+    "observations": [
+      {
+        "initial_status": "pending",
+        "expected": "pending"
+      },
+      {
+        "persisted_status": "paid",
+        "expected": "paid"
+      }
+    ]
+  },
+  {
+    "scenario": "PAID-CANCELLED",
+    "result": "PASS",
+    "observations": [
+      {
+        "initial_status": "cancelled",
+        "expected": "cancelled"
+      },
+      {
+        "persisted_status": "paid",
+        "expected": "paid"
+      }
+    ]
+  },
+  {
+    "scenario": "PAID-SUBMITTED",
+    "result": "PASS",
+    "observations": [
+      {
+        "initial_status": "submitted",
+        "expected": "submitted"
+      },
+      {
+        "persisted_status": "paid",
+        "expected": "paid"
+      }
+    ]
+  },
+  {
+    "scenario": "SET-STATUS",
+    "result": "PASS",
+    "observations": [
+      {
+        "persisted_status": "paid",
+        "expected": "paid"
+      }
+    ]
+  },
+  {
+    "scenario": "INVALID-ID",
+    "result": "PASS",
+    "observations": [
+      {
+        "input": "",
+        "exception": "ValueError",
+        "expected": "ValueError"
+      },
+      {
+        "input": null,
+        "exception": "ValueError",
+        "expected": "ValueError"
+      },
+      {
+        "input": 0,
+        "exception": "ValueError",
+        "expected": "ValueError"
+      },
+      {
+        "row_count": 0,
+        "expected": 0
+      }
+    ]
+  },
+  {
+    "scenario": "MISSING",
+    "result": "PASS",
+    "observations": [
+      {
+        "operation": "cancel_order",
+        "exception": "ValueError",
+        "expected": "ValueError"
+      },
+      {
+        "operation": "submit_order",
+        "exception": "ValueError",
+        "expected": "ValueError"
+      },
+      {
+        "operation": "set_status",
+        "exception": "ValueError",
+        "expected": "ValueError"
+      },
+      {
+        "operation": "mark_paid",
+        "exception": "ValueError",
+        "expected": "ValueError"
+      }
+    ]
+  },
+  {
+    "scenario": "DB-ERROR",
+    "result": "PASS",
+    "observations": [
+      {
+        "operation": "create_order",
+        "exception": "OperationalError",
+        "expected": "OperationalError"
+      },
+      {
+        "operation": "cancel_order",
+        "exception": "OperationalError",
+        "expected": "OperationalError"
+      },
+      {
+        "operation": "submit_order",
+        "exception": "OperationalError",
+        "expected": "OperationalError"
+      },
+      {
+        "operation": "set_status",
+        "exception": "OperationalError",
+        "expected": "OperationalError"
+      },
+      {
+        "operation": "mark_paid",
+        "exception": "OperationalError",
+        "expected": "OperationalError"
+      },
+      {
+        "persisted_status": "pending",
+        "expected": "pending"
+      },
+      {
+        "row_count": 1,
+        "expected": 1
+      }
+    ]
+  },
+  {
+    "scenario": "AC-3",
+    "result": "BLOCKED",
+    "reason": "No external call is performed by this fixture; authorized endpoint and permission are required",
+    "endpoint_configured": false,
+    "authorized": false
+  }
+]

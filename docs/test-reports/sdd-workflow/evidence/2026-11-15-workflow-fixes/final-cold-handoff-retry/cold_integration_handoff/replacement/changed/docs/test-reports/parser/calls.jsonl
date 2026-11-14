@@ -1,0 +1,2 @@
+{"scenario": "AC-1", "actual": [], "expected": [], "result": "PASS"}
+{"scenario": "AC-2", "actual": ["red", "blue"], "expected": ["red", "blue"], "result": "PASS"}

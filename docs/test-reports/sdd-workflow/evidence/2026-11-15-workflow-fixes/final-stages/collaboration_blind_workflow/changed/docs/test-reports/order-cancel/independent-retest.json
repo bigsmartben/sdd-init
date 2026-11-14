@@ -1,0 +1,65 @@
+{
+  "timestamp_utc": "2026-11-14T16:41:46.682364+00:00",
+  "actor": "/root/bugfix",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "sqlite": "3.45.1",
+  "source_sha256_before": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b"
+  },
+  "source_sha256_after": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b"
+  },
+  "commands": [
+    {
+      "command": [
+        "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+        "-B",
+        "checks/acceptance.py",
+        "--scenario",
+        "AC-1"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"result\": \"PASS\",\n    \"accepted\": true,\n    \"persisted_status\": \"submitted\",\n    \"expected_accepted\": true,\n    \"expected_status\": \"submitted\"\n  }\n]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+        "-B",
+        "checks/acceptance.py",
+        "--scenario",
+        "AC-2"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-2\",\n    \"result\": \"PASS\",\n    \"accepted\": false,\n    \"persisted_status\": \"cancelled\",\n    \"expected_accepted\": false,\n    \"expected_status\": \"cancelled\"\n  }\n]\n",
+      "stderr": ""
+    }
+  ],
+  "public_api_observations": {
+    "cancelled": {
+      "accepted": false,
+      "total_changes_delta": 0,
+      "sql_trace": [
+        "SELECT status FROM orders WHERE order_id = 'CANCEL'"
+      ],
+      "reopened_status": "cancelled"
+    },
+    "paid_reopened_status": "paid",
+    "missing_exception": "ValueError",
+    "commit_failure": {
+      "exception": "OperationalError",
+      "message": "database is locked",
+      "writer_uncommitted": "submitted",
+      "reader_status": "pending",
+      "reopened_after_rollback": "pending"
+    }
+  },
+  "result": "PASS",
+  "scope": "BUG-001 independent targeted retest, not integration Test Gate or architecture Review Gate"
+}

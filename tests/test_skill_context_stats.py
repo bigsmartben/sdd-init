@@ -28,6 +28,9 @@ class ContextStatsTests(unittest.TestCase):
 
     def test_projected_initializer_references_resolve(self):
         result = stats.report(ROOT)
-        self.assertEqual(len(result["skills"]), 7)
+        workflow_entries = (ROOT / "source/project/.agents/skills").glob("*/SKILL.md")
+        expected_entries = ["source/initializer/SKILL.md"]
+        expected_entries.extend(path.relative_to(ROOT).as_posix() for path in workflow_entries)
+        self.assertCountEqual([skill["entry"] for skill in result["skills"]], expected_entries)
         for skill in result["skills"]:
             self.assertTrue(all(not ref["missing"] for ref in skill["direct_references"].values()), skill)

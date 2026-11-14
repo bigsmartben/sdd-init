@@ -1,0 +1,16 @@
+{
+  "time_utc": "2026-11-14T16:17:35.123060+00:00",
+  "command": [
+    "/tmp/sdd-review-execution-7z3ofaey/program/tools/python",
+    "-B",
+    ".agents/skills/sdd-workflow/sdd/scripts/doc_check.py",
+    "--root",
+    ".",
+    "--format",
+    "json",
+    "docs/plans/order-bugfix.md"
+  ],
+  "exit_code": 0,
+  "stdout": "{\n  \"schema_version\": 1,\n  \"scope\": \"mechanical_only\",\n  \"files\": [\n    \"docs/plans/order-bugfix.md\"\n  ],\n  \"diagnostics\": [],\n  \"errors\": 0,\n  \"warnings\": 0\n}\n",
+  "stderr": ""
+}

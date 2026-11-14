@@ -1,0 +1,18 @@
+{
+  "name": "regression",
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_order.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "test_cancelled_order_cannot_be_submitted (test_order.OrderTests.test_cancelled_order_cannot_be_submitted) ... ok\ntest_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\ntest_submit_missing_order_raises (test_order.OrderTests.test_submit_missing_order_raises) ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.078s\n\nOK\n"
+}

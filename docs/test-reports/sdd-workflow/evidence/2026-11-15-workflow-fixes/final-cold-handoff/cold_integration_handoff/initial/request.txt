@@ -1,0 +1,2 @@
+本地 Python CLI 的全部已确认范围是 AC-1 和 AC-2。目标是当前 HEAD，两个判据见 Spec，入口是 `python -B checks/acceptance.py AC-1` 或 `AC-2`。可更新复跑指南及验收报告，源码、脚本和环境配置只读。只在当前隔离项目工作。使用 $sdd-test-loop，保存实际版本、逐项证据及 Test Gate。
+本轮 AC-1 已就绪。AC-2 的已确认数据尚未提供，先完成可执行场景，按实际情况保留待验和接续条件。

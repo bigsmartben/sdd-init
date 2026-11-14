@@ -1,0 +1,1 @@
+{"env": "production-sim", "workload": "orders", "stable": "sha256:1111111111111111111111111111111111111111111111111111111111111111", "stable_ready": true, "canary": null, "canary_ready": false, "canary_percent": 0, "schema": 7, "checkout_errors": 0, "log": "ops/calls.jsonl"}

@@ -1,0 +1,45 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daef-1b49-76d1-a556-5ce4ffbc1d32",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/order_review": {
+      "id": "01a1daef-8559-7723-ab8a-822c3adb88ec",
+      "parent_id": "01a1daef-1b49-76d1-a556-5ce4ffbc1d32",
+      "role": "sdd-architect",
+      "parent": "/root"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:41:44.815Z",
+      "actor": "/root",
+      "target": "/root/order_review",
+      "original_target": "order_review",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_e798b0a14e374184a534a066d1bbc769",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-41-06-01a1daef-1b49-76d1-a556-5ce4ffbc1d32.jsonl",
+      "line": 15
+    },
+    {
+      "time": "2026-11-14T16:42:26.645Z",
+      "actor": "/root",
+      "target": "/root/order_review",
+      "original_target": "order_review",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_69b1bb7d788a4a30a3a93f2246f5ec39",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-41-06-01a1daef-1b49-76d1-a556-5ce4ffbc1d32.jsonl",
+      "line": 23
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

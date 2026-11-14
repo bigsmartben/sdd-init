@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "src/__init__.py": true,
+    "src/order_service.py": true,
+    "src/storage.py": true,
+    "src/ui.py": true,
+    "runtime.json": true,
+    "docs/issues/ISS-001.md": true,
+    "docs/test-reports/order/evidence/b1.json": true,
+    "historical_report_preserved": true,
+    "head_unchanged": true
+  },
+  "doc_check": {
+    "command": "python -B .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root . docs/test-reports/order/b1.md docs/issues/ISS-001.md",
+    "exit": 0,
+    "stdout": "Checked 2 Markdown files: 0 errors, 0 warnings (mechanical only)\n",
+    "stderr": ""
+  },
+  "worktree": " M docs/test-reports/order/b1.md\n?? docs/test-reports/order/evidence/b1-retest.json\n?? docs/test-reports/order/evidence/b1-retest.py\n"
+}

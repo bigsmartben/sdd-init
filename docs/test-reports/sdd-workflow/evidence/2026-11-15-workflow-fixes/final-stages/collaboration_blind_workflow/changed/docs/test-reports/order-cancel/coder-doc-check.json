@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+    "-B",
+    ".agents/skills/sdd-workflow/sdd/scripts/doc_check.py",
+    "--root",
+    ".",
+    "docs/plans/order-cancel-fix.md",
+    "docs/issues/BUG-001.md"
+  ],
+  "exit_code": 0,
+  "stdout": "Checked 2 Markdown files: 0 errors, 0 warnings (mechanical only)\n",
+  "stderr": ""
+}

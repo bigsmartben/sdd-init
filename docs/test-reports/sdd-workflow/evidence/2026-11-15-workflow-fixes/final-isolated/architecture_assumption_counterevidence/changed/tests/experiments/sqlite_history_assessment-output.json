@@ -1,0 +1,528 @@
+{
+  "source_head": "43fea83f3e356c1f0bf91578bd0341c87ea7d8b7",
+  "python_version": "3.12.3",
+  "sqlite_version": "3.45.1",
+  "command": "python -B tests/experiments/sqlite_history_assessment.py",
+  "task_scope": [
+    "H1 current implementation counterexample",
+    "H2 isolated candidate comparison"
+  ],
+  "history_query": "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+  "limitations": [
+    "Sequential single-process experiments; concurrency, load and crash recovery not tested.",
+    "Candidate A helpers exist only in this experiment; production service commits are unchanged.",
+    "Triggers cover tested INSERT and status UPDATE paths, not deletion, REPLACE or schema bypass.",
+    "Sequence numbers order surviving inserted events; no global time or gap-free guarantee.",
+    "Creation event is distinguishable from changes; no historical backfill is inferred.",
+    "Logical equality compares schema and row values, not SQLite file bytes.",
+    "SQL trace is executed SQL observation; trigger execution may repeat outer SQL text."
+  ],
+  "journal_mode": "delete",
+  "baseline": [
+    {
+      "path_label": "via_paid",
+      "observed_before_close": [
+        "pending",
+        "submitted",
+        "paid",
+        "cancelled"
+      ],
+      "after_reconnect": {
+        "schema": [
+          [
+            "index",
+            "sqlite_autoindex_orders_1",
+            "orders",
+            null
+          ],
+          [
+            "table",
+            "orders",
+            "orders",
+            "CREATE TABLE orders (order_id TEXT PRIMARY KEY, status TEXT NOT NULL)"
+          ]
+        ],
+        "orders": [
+          [
+            "order-1",
+            "cancelled"
+          ]
+        ]
+      },
+      "sql_trace": [
+        "BEGIN ",
+        "INSERT INTO orders VALUES ('order-1', 'pending')",
+        "COMMIT",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = 'submitted' WHERE order_id = 'order-1'",
+        "COMMIT",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = 'paid' WHERE order_id = 'order-1'",
+        "COMMIT",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = 'cancelled' WHERE order_id = 'order-1'",
+        "COMMIT",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT type, name, tbl_name, sql FROM sqlite_master ORDER BY type, name",
+        "SELECT order_id, status FROM orders ORDER BY order_id"
+      ]
+    },
+    {
+      "path_label": "without_paid",
+      "observed_before_close": [
+        "pending",
+        "submitted",
+        "cancelled"
+      ],
+      "after_reconnect": {
+        "schema": [
+          [
+            "index",
+            "sqlite_autoindex_orders_1",
+            "orders",
+            null
+          ],
+          [
+            "table",
+            "orders",
+            "orders",
+            "CREATE TABLE orders (order_id TEXT PRIMARY KEY, status TEXT NOT NULL)"
+          ]
+        ],
+        "orders": [
+          [
+            "order-1",
+            "cancelled"
+          ]
+        ]
+      },
+      "sql_trace": [
+        "BEGIN ",
+        "INSERT INTO orders VALUES ('order-1', 'pending')",
+        "COMMIT",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = 'submitted' WHERE order_id = 'order-1'",
+        "COMMIT",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = 'cancelled' WHERE order_id = 'order-1'",
+        "COMMIT",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT type, name, tbl_name, sql FROM sqlite_master ORDER BY type, name",
+        "SELECT order_id, status FROM orders ORDER BY order_id"
+      ]
+    }
+  ],
+  "candidates": {
+    "explicit_service_history": {
+      "candidate_status": "experimental, not confirmed design",
+      "journal_mode": "delete",
+      "recovered_before_bypass": [
+        [
+          1,
+          "order-1",
+          null,
+          "pending"
+        ],
+        [
+          2,
+          "order-1",
+          "pending",
+          "submitted"
+        ],
+        [
+          3,
+          "order-1",
+          "submitted",
+          "paid"
+        ],
+        [
+          4,
+          "order-1",
+          "paid",
+          "cancelled"
+        ]
+      ],
+      "after_actual_ui_write": [
+        [
+          1,
+          "order-1",
+          null,
+          "pending"
+        ],
+        [
+          2,
+          "order-1",
+          "pending",
+          "submitted"
+        ],
+        [
+          3,
+          "order-1",
+          "submitted",
+          "paid"
+        ],
+        [
+          4,
+          "order-1",
+          "paid",
+          "cancelled"
+        ]
+      ],
+      "final_orders": [
+        [
+          "order-1",
+          "paid"
+        ]
+      ],
+      "injected_failure": "injected history failure",
+      "transaction_open_after_failure": false,
+      "sql_trace": [
+        "CREATE TABLE history (\n    seq INTEGER PRIMARY KEY,\n    order_id TEXT NOT NULL,\n    old_status TEXT,\n    new_status TEXT NOT NULL\n)",
+        "BEGIN ",
+        "INSERT INTO orders VALUES ('order-1', 'pending')",
+        "INSERT INTO history(order_id, old_status, new_status) VALUES ('order-1', NULL, 'pending')",
+        "COMMIT",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = 'submitted' WHERE order_id = 'order-1'",
+        "INSERT INTO history(order_id, old_status, new_status) VALUES ('order-1', 'pending', 'submitted')",
+        "COMMIT",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = 'paid' WHERE order_id = 'order-1'",
+        "INSERT INTO history(order_id, old_status, new_status) VALUES ('order-1', 'submitted', 'paid')",
+        "COMMIT",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = 'cancelled' WHERE order_id = 'order-1'",
+        "INSERT INTO history(order_id, old_status, new_status) VALUES ('order-1', 'paid', 'cancelled')",
+        "COMMIT",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = status WHERE order_id = 'order-1'",
+        "COMMIT",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "CREATE TRIGGER reject_history BEFORE INSERT ON history\n        WHEN NEW.new_status = 'blocked' BEGIN SELECT RAISE(ABORT, 'injected history failure'); END",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = 'blocked' WHERE order_id = 'order-1'",
+        "INSERT INTO history(order_id, old_status, new_status) VALUES ('order-1', 'cancelled', 'blocked')",
+        "INSERT INTO history(order_id, old_status, new_status) VALUES ('order-1', 'cancelled', 'blocked')",
+        "INSERT INTO history(order_id, old_status, new_status) VALUES ('order-1', 'cancelled', 'blocked')",
+        "ROLLBACK",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = 'rollback-status' WHERE order_id = 'order-1'",
+        "INSERT INTO history(order_id, old_status, new_status) VALUES ('order-1', 'cancelled', 'rollback-status')",
+        "INSERT INTO history(order_id, old_status, new_status) VALUES ('order-1', 'cancelled', 'rollback-status')",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "ROLLBACK",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "BEGIN ",
+        "UPDATE orders SET status = 'paid' WHERE order_id = 'order-1'",
+        "COMMIT",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "PRAGMA journal_mode",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "SELECT * FROM orders"
+      ]
+    },
+    "database_triggers": {
+      "candidate_status": "experimental, not confirmed design",
+      "journal_mode": "delete",
+      "recovered_before_bypass": [
+        [
+          1,
+          "order-1",
+          null,
+          "pending"
+        ],
+        [
+          2,
+          "order-1",
+          "pending",
+          "submitted"
+        ],
+        [
+          3,
+          "order-1",
+          "submitted",
+          "paid"
+        ],
+        [
+          4,
+          "order-1",
+          "paid",
+          "cancelled"
+        ]
+      ],
+      "after_actual_ui_write": [
+        [
+          1,
+          "order-1",
+          null,
+          "pending"
+        ],
+        [
+          2,
+          "order-1",
+          "pending",
+          "submitted"
+        ],
+        [
+          3,
+          "order-1",
+          "submitted",
+          "paid"
+        ],
+        [
+          4,
+          "order-1",
+          "paid",
+          "cancelled"
+        ],
+        [
+          5,
+          "order-1",
+          "cancelled",
+          "paid"
+        ]
+      ],
+      "final_orders": [
+        [
+          "order-1",
+          "paid"
+        ]
+      ],
+      "injected_failure": "injected history failure",
+      "transaction_open_after_failure": true,
+      "sql_trace": [
+        "CREATE TABLE history (\n    seq INTEGER PRIMARY KEY,\n    order_id TEXT NOT NULL,\n    old_status TEXT,\n    new_status TEXT NOT NULL\n)",
+        "\n        CREATE TRIGGER record_creation AFTER INSERT ON orders BEGIN\n          INSERT INTO history(order_id, old_status, new_status)\n          VALUES (NEW.order_id, NULL, NEW.status);\n        END;",
+        "\n        CREATE TRIGGER record_transition AFTER UPDATE OF status ON orders\n        WHEN OLD.status IS NOT NEW.status BEGIN\n          INSERT INTO history(order_id, old_status, new_status)\n          VALUES (NEW.order_id, OLD.status, NEW.status);\n        END;",
+        "BEGIN ",
+        "INSERT INTO orders VALUES ('order-1', 'pending')",
+        "INSERT INTO orders VALUES ('order-1', 'pending')",
+        "INSERT INTO orders VALUES ('order-1', 'pending')",
+        "COMMIT",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = 'submitted' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'submitted' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'submitted' WHERE order_id = 'order-1'",
+        "COMMIT",
+        "BEGIN ",
+        "UPDATE orders SET status = 'paid' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'paid' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'paid' WHERE order_id = 'order-1'",
+        "COMMIT",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = 'cancelled' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'cancelled' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'cancelled' WHERE order_id = 'order-1'",
+        "COMMIT",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = 'cancelled' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'cancelled' WHERE order_id = 'order-1'",
+        "COMMIT",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "CREATE TRIGGER reject_history BEFORE INSERT ON history\n        WHEN NEW.new_status = 'blocked' BEGIN SELECT RAISE(ABORT, 'injected history failure'); END",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "BEGIN ",
+        "UPDATE orders SET status = 'blocked' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'blocked' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'blocked' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'blocked' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'blocked' WHERE order_id = 'order-1'",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "ROLLBACK",
+        "BEGIN ",
+        "UPDATE orders SET status = 'rollback-status' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'rollback-status' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'rollback-status' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'rollback-status' WHERE order_id = 'order-1'",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "ROLLBACK",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "BEGIN ",
+        "UPDATE orders SET status = 'paid' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'paid' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'paid' WHERE order_id = 'order-1'",
+        "UPDATE orders SET status = 'paid' WHERE order_id = 'order-1'",
+        "COMMIT",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "SELECT status FROM orders WHERE order_id = 'order-1'",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "PRAGMA journal_mode",
+        "SELECT seq, order_id, old_status, new_status FROM history ORDER BY seq",
+        "SELECT * FROM orders"
+      ]
+    }
+  },
+  "temporary_databases_removed": true,
+  "assertions": [
+    {
+      "name": "source HEAD matches assigned version",
+      "passed": true
+    },
+    {
+      "name": "via_paid: reconnect retains only cancelled",
+      "passed": true
+    },
+    {
+      "name": "via_paid: no history table",
+      "passed": true
+    },
+    {
+      "name": "without_paid: reconnect retains only cancelled",
+      "passed": true
+    },
+    {
+      "name": "without_paid: no history table",
+      "passed": true
+    },
+    {
+      "name": "different transition paths produce identical logical database",
+      "passed": true
+    },
+    {
+      "name": "baseline uses actual pending/submitted/paid/cancelled product path",
+      "passed": true
+    },
+    {
+      "name": "explicit_service_history: reconnect ordered creation and three transitions",
+      "passed": true
+    },
+    {
+      "name": "explicit_service_history: creation is distinguishable from changes",
+      "passed": true
+    },
+    {
+      "name": "explicit_service_history: same-value update adds no change",
+      "passed": true
+    },
+    {
+      "name": "explicit_service_history: injected history failure observed",
+      "passed": true
+    },
+    {
+      "name": "explicit_service_history: failure leaves status unchanged",
+      "passed": true
+    },
+    {
+      "name": "explicit_service_history: failure leaves history unchanged",
+      "passed": true
+    },
+    {
+      "name": "explicit_service_history: event visible inside transaction",
+      "passed": true
+    },
+    {
+      "name": "explicit_service_history: explicit rollback restores status",
+      "passed": true
+    },
+    {
+      "name": "explicit_service_history: explicit rollback removes event",
+      "passed": true
+    },
+    {
+      "name": "explicit_service_history: actual UI bypass omitted",
+      "passed": true
+    },
+    {
+      "name": "explicit_service_history: actual UI changes current row",
+      "passed": true
+    },
+    {
+      "name": "explicit_service_history: rollback/failure absent after reconnect",
+      "passed": true
+    },
+    {
+      "name": "explicit_service_history: final history survives reconnect",
+      "passed": true
+    },
+    {
+      "name": "database_triggers: reconnect ordered creation and three transitions",
+      "passed": true
+    },
+    {
+      "name": "database_triggers: creation is distinguishable from changes",
+      "passed": true
+    },
+    {
+      "name": "database_triggers: same-value update adds no change",
+      "passed": true
+    },
+    {
+      "name": "database_triggers: injected history failure observed",
+      "passed": true
+    },
+    {
+      "name": "database_triggers: failure leaves status unchanged",
+      "passed": true
+    },
+    {
+      "name": "database_triggers: failure leaves history unchanged",
+      "passed": true
+    },
+    {
+      "name": "database_triggers: event visible inside transaction",
+      "passed": true
+    },
+    {
+      "name": "database_triggers: explicit rollback restores status",
+      "passed": true
+    },
+    {
+      "name": "database_triggers: explicit rollback removes event",
+      "passed": true
+    },
+    {
+      "name": "database_triggers: actual UI bypass captured",
+      "passed": true
+    },
+    {
+      "name": "database_triggers: actual UI changes current row",
+      "passed": true
+    },
+    {
+      "name": "database_triggers: rollback/failure absent after reconnect",
+      "passed": true
+    },
+    {
+      "name": "database_triggers: final history survives reconnect",
+      "passed": true
+    },
+    {
+      "name": "temporary database directory cleaned",
+      "passed": true
+    }
+  ],
+  "assertion_count": 34,
+  "result": "passed"
+}

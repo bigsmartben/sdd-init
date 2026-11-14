@@ -1,0 +1,18 @@
+{
+  "name": "integration",
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_order_integration.py",
+    "-v"
+  ],
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "test_I01_create_pending (test_order_integration.OrderIntegrationTests.test_I01_create_pending) ... ok\ntest_I02_submit_and_reopen_AC1 (test_order_integration.OrderIntegrationTests.test_I02_submit_and_reopen_AC1) ... ok\ntest_I03_cancel_repeated_submit_and_reopen_AC2 (test_order_integration.OrderIntegrationTests.test_I03_cancel_repeated_submit_and_reopen_AC2) ... ok\ntest_I04_set_status_and_mark_paid (test_order_integration.OrderIntegrationTests.test_I04_set_status_and_mark_paid) ... ok\ntest_I05_missing_order_errors (test_order_integration.OrderIntegrationTests.test_I05_missing_order_errors) ... \n  test_I05_missing_order_errors (test_order_integration.OrderIntegrationTests.test_I05_missing_order_errors) (operation='mark_paid') ... FAIL\ntest_I06_invalid_creation_ids (test_order_integration.OrderIntegrationTests.test_I06_invalid_creation_ids) ... ok\ntest_I07_database_errors_propagate (test_order_integration.OrderIntegrationTests.test_I07_database_errors_propagate) ... ok\ntest_I08_multi_order_isolation (test_order_integration.OrderIntegrationTests.test_I08_multi_order_isolation) ... ok\n\n======================================================================\nFAIL: test_I05_missing_order_errors (test_order_integration.OrderIntegrationTests.test_I05_missing_order_errors) (operation='mark_paid')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/sdd-review-execution-pmn5ndse/collaboration_blind_workflow-04iex1ok/prepared/project/tests/test_order_integration.py\", line 66, in test_I05_missing_order_errors\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n\n----------------------------------------------------------------------\nRan 8 tests in 0.131s\n\nFAILED (failures=1)\n"
+}

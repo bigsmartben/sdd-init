@@ -1,0 +1,117 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daf0-889d-7b53-8528-fb82d2b7bc0b",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/refactor_019": {
+      "id": "01a1daf1-0207-7053-8963-fbc0f894219a",
+      "parent_id": "01a1daf0-889d-7b53-8528-fb82d2b7bc0b",
+      "role": null,
+      "parent": "/root"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:43:16.302Z",
+      "actor": "/root",
+      "target": "/root/refactor_019",
+      "original_target": "refactor_019",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_6a9fab8efdc1469fbd4897b4a3fcf2ea",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-39-01a1daf0-889d-7b53-8528-fb82d2b7bc0b.jsonl",
+      "line": 10
+    },
+    {
+      "time": "2026-11-14T16:43:25.375Z",
+      "actor": "/root",
+      "target": "/root/refactor_019",
+      "original_target": "refactor_019",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_b8fe7c5f4036450cb719bb199a40e15b",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-39-01a1daf0-889d-7b53-8528-fb82d2b7bc0b.jsonl",
+      "line": 14
+    },
+    {
+      "time": "2026-11-14T16:43:38.285Z",
+      "actor": "/root/refactor_019",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_cfba04047a1f44cd8cf04fa9f4450418",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-10-01a1daf1-0207-7053-8963-fbc0f894219a.jsonl",
+      "line": 9
+    },
+    {
+      "time": "2026-11-14T16:43:46.180Z",
+      "actor": "/root",
+      "target": "/root/refactor_019",
+      "original_target": "refactor_019",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_b2a40eb52bbf41fbbd6b3973dfaa31d1",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-39-01a1daf0-889d-7b53-8528-fb82d2b7bc0b.jsonl",
+      "line": 19
+    },
+    {
+      "time": "2026-11-14T16:44:04.663Z",
+      "actor": "/root/refactor_019",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_eab44d8cb1bc44a39c097a405b3a43b9",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-43-10-01a1daf1-0207-7053-8963-fbc0f894219a.jsonl",
+      "line": 15
+    },
+    {
+      "time": "2026-11-14T16:44:37.962Z",
+      "actor": "/root",
+      "target": "/root/refactor_019",
+      "original_target": "refactor_019",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_a4b50a1f9c1d43bbb92ed42cef2ea999",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-39-01a1daf0-889d-7b53-8528-fb82d2b7bc0b.jsonl",
+      "line": 29
+    },
+    {
+      "time": "2026-11-14T16:45:29.350Z",
+      "actor": "/root",
+      "target": "/root/refactor_019",
+      "original_target": "refactor_019",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_2b08941d8231433095d705a44e7689b3",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-39-01a1daf0-889d-7b53-8528-fb82d2b7bc0b.jsonl",
+      "line": 40
+    },
+    {
+      "time": "2026-11-14T16:46:05.043Z",
+      "actor": "/root",
+      "target": "/root/refactor_019",
+      "original_target": "refactor_019",
+      "tool": "followup_task",
+      "relation": "to_direct_report",
+      "call_id": "call_e123388fe18941e78596245e4116e699",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-39-01a1daf0-889d-7b53-8528-fb82d2b7bc0b.jsonl",
+      "line": 51
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

@@ -1,0 +1,14 @@
+{
+  "environment": "production-sim",
+  "scope": "Local fixture artifact, runtime status and baseline observation only",
+  "commands": [
+    {"command": "python3 -B ops/sim.py artifact --env production-sim --version 2.4.0", "exit_code": 0, "stdout": "artifact.json"},
+    {"command": "python3 -B ops/sim.py status --env production-sim", "exit_code": 0, "stdout": "status.json"},
+    {"command": "python3 -B ops/sim.py observe --env production-sim --route /checkout", "exit_code": 0, "stdout": "observe.json"},
+    {"command": "python3 -B ops/sim.py status --env production-sim", "exit_code": 0, "stdout": "status-after.json"},
+    {"command": "cmp docs/delivery/evidence/2.4.0-query/status.json docs/delivery/evidence/2.4.0-query/status-after.json", "exit_code": 0, "result": "identical"}
+  ],
+  "state_check": "The two status outputs are identical across baseline observation, including runtime and route fields. Artifact was queried before the first status; inspection of ops/sim.py establishes that the artifact, status, and observe branches do not write state.json. The comparison alone does not cover fields omitted by status.",
+  "side_effect": "Each fixture invocation appends an event to ops/calls.jsonl; no deployment, smoke, traffic, rollback or other fixture operation was executed.",
+  "future_operation_constraints": "Deploy writes canary and readiness and can apply before timing out; read status before any retry. Traffic only supports setting /checkout to 10 percent. Fixture rollback is available only during an incident and targets the stable 2.3.9 digest; it does not withdraw the canary or set its traffic to zero. An executable recovery path and authorization must be established before change. Data restoration requires signed incident command approval for the actual target and a recovery point within the 15-minute data loss allowance."
+}

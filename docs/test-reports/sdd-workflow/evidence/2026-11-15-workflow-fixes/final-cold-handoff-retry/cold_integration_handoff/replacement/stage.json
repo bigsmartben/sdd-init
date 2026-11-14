@@ -1,0 +1,135 @@
+{
+  "start": "2026-11-15T01:23:56+08:00",
+  "end": "2026-11-15T01:26:13+08:00",
+  "seconds": 125.33,
+  "exit": 0,
+  "candidate": "final-v2",
+  "stage": "replacement",
+  "sessions": [
+    {
+      "identity": {
+        "id": "01a1db16-560f-71e0-b376-f327344e3930",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1db16-560f-71e0-b376-f327344e3930",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 476510,
+        "cached_input_tokens": 449920,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1521,
+        "reasoning_output_tokens": 138,
+        "total_tokens": 478031
+      },
+      "records": 32,
+      "trace": "sessions/rollout-2026-11-15T01-23-57-01a1db16-560f-71e0-b376-f327344e3930.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1db16-cfa0-76e2-85c0-2313249b7032",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1db16-560f-71e0-b376-f327344e3930",
+              "depth": 1,
+              "agent_path": "/root/test_loop_replacement",
+              "agent_nickname": "Russell",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Russell",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1db16-cfa0-76e2-85c0-2313249b7032",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1db16-560f-71e0-b376-f327344e3930",
+                "depth": 1,
+                "agent_path": "/root/test_loop_replacement",
+                "agent_nickname": "Russell",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Russell",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 317014,
+        "cached_input_tokens": 279552,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3648,
+        "reasoning_output_tokens": 280,
+        "total_tokens": 320662
+      },
+      "records": 21,
+      "trace": "sessions/rollout-2026-11-15T01-24-27-01a1db16-cfa0-76e2-85c0-2313249b7032.jsonl"
+    }
+  ],
+  "main_session": "01a1db16-560f-71e0-b376-f327344e3930",
+  "actual_call_log_snapshots": [
+    "{\"scenario\": \"AC-1\", \"actual\": [], \"expected\": [], \"result\": \"PASS\"}\n",
+    "{\"scenario\": \"AC-1\", \"actual\": [], \"expected\": [], \"result\": \"PASS\"}\n{\"scenario\": \"AC-2\", \"actual\": [\"red\", \"blue\"], \"expected\": [\"red\", \"blue\"], \"result\": \"PASS\"}\n"
+  ],
+  "head": "1c3106074c347409f96bbdddad35f5013e4096e4",
+  "before": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "e95d50cbf7776c1f251e4db8647a8404317f1e8aa7e45ee5e2b85671e97ddd94",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "635bc4acdbd7fef743cd5bcfd8903ee1d91f3db675fb1216b8fc37c2d85303da",
+    "README.md": "4e3263f292a22736cfea44f43cf270bce14634ca339805364193d94467f4d7c3",
+    "TASK.txt": "1325cdf56368888ca2a58e800b1a5530227217912e520f86d82e00a1fa51f7be",
+    "checks/acceptance.py": "d090ae60ad7a9a1f7a5208d1b111534952f57209fe3c03a3b4b7525a166d1edd",
+    "data/approved-batch.txt": "8fcc7fdf25ca55a58e73fdf64572ab225247b1e9928e37a3bc21fd853f1547ca",
+    "docs/index.md": "3df0454dd6c4473640967d56d30f20dc5580cddbcac869f03323f432953a7cb4",
+    "docs/quickstarts/parser.md": "2d5a638cfcdd41f78257b7c618e971436e2d1d5e6296b075b86451ebde47e223",
+    "docs/test-reports/parser/.keep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/test-reports/parser/2026-11-15-local.md": "3b5ab1daf3428a8188ad1a233f7e55b4ebf151d80137bb0c25e8de3d221de397",
+    "docs/test-reports/parser/calls.jsonl": "305c88ae9935196f80979600fce1873fe24a9a992b9a1e6771b992e71a019266",
+    "specs/parser/spec.md": "b01f9e25e0bc626a69e1afc99a4081c6d0427559cde5ae977fdc7e73f73c415a",
+    "src/cli.py": "f64dcec2ccf7f92dc16c0ab4cc02981cc236960e5edc03c9d029a3e46d45e070"
+  },
+  "after": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "e95d50cbf7776c1f251e4db8647a8404317f1e8aa7e45ee5e2b85671e97ddd94",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "635bc4acdbd7fef743cd5bcfd8903ee1d91f3db675fb1216b8fc37c2d85303da",
+    "README.md": "4e3263f292a22736cfea44f43cf270bce14634ca339805364193d94467f4d7c3",
+    "TASK.txt": "1325cdf56368888ca2a58e800b1a5530227217912e520f86d82e00a1fa51f7be",
+    "checks/acceptance.py": "d090ae60ad7a9a1f7a5208d1b111534952f57209fe3c03a3b4b7525a166d1edd",
+    "data/approved-batch.txt": "8fcc7fdf25ca55a58e73fdf64572ab225247b1e9928e37a3bc21fd853f1547ca",
+    "docs/index.md": "3df0454dd6c4473640967d56d30f20dc5580cddbcac869f03323f432953a7cb4",
+    "docs/quickstarts/parser.md": "8c13894584f3ae178cb581cf4c385a96e1ba59e6d03f3ee0191e861b6e8e916f",
+    "docs/test-reports/parser/.keep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/test-reports/parser/2026-11-15-local.md": "956a25b9e4f1c3565ef94726a4ed0cc1287682d64918252f735aec955ece18a7",
+    "docs/test-reports/parser/calls.jsonl": "5e367acd4660b131c94cb96767c0e576311bc67e82fd644caf6035aedf9d5e40",
+    "specs/parser/spec.md": "b01f9e25e0bc626a69e1afc99a4081c6d0427559cde5ae977fdc7e73f73c415a",
+    "src/cli.py": "f64dcec2ccf7f92dc16c0ab4cc02981cc236960e5edc03c9d029a3e46d45e070"
+  },
+  "changed": [
+    "docs/quickstarts/parser.md",
+    "docs/test-reports/parser/2026-11-15-local.md",
+    "docs/test-reports/parser/calls.jsonl"
+  ]
+}

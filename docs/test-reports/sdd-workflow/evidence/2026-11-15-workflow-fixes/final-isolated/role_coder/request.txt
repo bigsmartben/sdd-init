@@ -1,0 +1,3 @@
+Use the sole registered custom role named sdd-coder to execute this work order and return its actual receipt. Keep all work in this isolated project.
+
+Task from Main. Implement the approved local work order in docs/order-id-work.md. The work order includes authorized code, tests and a single Plan/Task. Run the targeted checks, fill in the actual evidence, and return the result and anything outstanding to me.

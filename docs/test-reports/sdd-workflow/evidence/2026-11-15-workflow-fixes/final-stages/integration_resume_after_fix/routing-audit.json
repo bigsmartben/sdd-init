@@ -1,0 +1,69 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daf0-6d73-7522-a7c9-9d5e4cccd6a7",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/b1_retest": {
+      "id": "01a1daf0-d649-75d3-90f6-eb243ab009fa",
+      "parent_id": "01a1daf0-6d73-7522-a7c9-9d5e4cccd6a7",
+      "role": null,
+      "parent": "/root"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:43:10.757Z",
+      "actor": "/root",
+      "target": "/root/b1_retest",
+      "original_target": "b1_retest",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_c4ab7e2f10e34153b6c092018f7159f7",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-33-01a1daf0-6d73-7522-a7c9-9d5e4cccd6a7.jsonl",
+      "line": 12
+    },
+    {
+      "time": "2026-11-14T16:44:15.176Z",
+      "actor": "/root/b1_retest",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_539f1ca545d24fde8dd73cf2a021f625",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-59-01a1daf0-d649-75d3-90f6-eb243ab009fa.jsonl",
+      "line": 15
+    },
+    {
+      "time": "2026-11-14T16:44:21.650Z",
+      "actor": "/root",
+      "target": "/root/b1_retest",
+      "original_target": "b1_retest",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_cd23c71395c94fb6b31112e771bd6f6b",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-33-01a1daf0-6d73-7522-a7c9-9d5e4cccd6a7.jsonl",
+      "line": 24
+    },
+    {
+      "time": "2026-11-14T16:45:53.137Z",
+      "actor": "/root/b1_retest",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_02beab59bf214ff6a13e68fbd2636432",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-59-01a1daf0-d649-75d3-90f6-eb243ab009fa.jsonl",
+      "line": 21
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

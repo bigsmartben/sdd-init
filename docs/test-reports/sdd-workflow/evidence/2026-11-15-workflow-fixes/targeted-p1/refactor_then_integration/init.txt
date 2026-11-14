@@ -1,0 +1,10 @@
+ADDED AGENTS.md
+ADDED .codex/config.toml
+ADDED .gitignore
+ADDED .sdd-init-state.json
+ADDED .agents/skills/sdd-workflow
+SDD WORKFLOW /tmp/sdd-review-execution-7z3ofaey/refactor_then_integration-rv6k1dkq/prepared/project/.agents/skills/sdd-workflow -> /tmp/sdd-review-execution-7z3ofaey/refactor_then_integration-rv6k1dkq/workflow-bundle/shared
+Shared version: sha256:1b8e93ddc5f581731fc804e1b8cc8c73b42f6d3cac61f495ac2e009c7e420695
+Project skills: sdd-architecture, sdd-bugfix, sdd-deliver, sdd-develop, sdd-refactor, sdd-test-loop
+Registered roles: sdd-architect, sdd-coder, sdd-devops, sdd-doc-consistency, sdd-product-manager
+VERIFIED project link, managed navigation, configuration and local metadata

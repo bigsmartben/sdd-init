@@ -1,0 +1,1 @@
+{"entry": "https://orders.production-sim.invalid/checkout", "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222", "passed": true, "checks": ["readiness", "checkout routing", "dependency ping"]}

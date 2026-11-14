@@ -1,0 +1,81 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1db14-12b6-70a1-9b43-141041ef4589",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/test_loop": {
+      "id": "01a1db14-62b9-7410-9993-5d009d494b71",
+      "parent_id": "01a1db14-12b6-70a1-9b43-141041ef4589",
+      "role": null,
+      "parent": "/root"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T17:22:04.601Z",
+      "actor": "/root",
+      "target": "/root/test_loop",
+      "original_target": "test_loop",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_9ea968e569f64a099351dc319fa27f31",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T01-21-29-01a1db14-12b6-70a1-9b43-141041ef4589.jsonl",
+      "line": 10
+    },
+    {
+      "time": "2026-11-14T17:22:18.045Z",
+      "actor": "/root/test_loop",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_102fee2cc91c408c8890c9538948f987",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T01-21-48-01a1db14-62b9-7410-9993-5d009d494b71.jsonl",
+      "line": 11
+    },
+    {
+      "time": "2026-11-14T17:22:53.202Z",
+      "actor": "/root",
+      "target": "/root/test_loop",
+      "original_target": "test_loop",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_fa518bebe501474faa4eb3af60536e6f",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T01-21-29-01a1db14-12b6-70a1-9b43-141041ef4589.jsonl",
+      "line": 19
+    },
+    {
+      "time": "2026-11-14T17:23:22.703Z",
+      "actor": "/root",
+      "target": "/root/test_loop",
+      "original_target": "test_loop",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_0c3e31e288014c7eac241968c53ca48b",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T01-21-29-01a1db14-12b6-70a1-9b43-141041ef4589.jsonl",
+      "line": 25
+    },
+    {
+      "time": "2026-11-14T17:23:28.290Z",
+      "actor": "/root/test_loop",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_26399790b72742e89e12bb9b7c29c4e5",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T01-21-48-01a1db14-62b9-7410-9993-5d009d494b71.jsonl",
+      "line": 17
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

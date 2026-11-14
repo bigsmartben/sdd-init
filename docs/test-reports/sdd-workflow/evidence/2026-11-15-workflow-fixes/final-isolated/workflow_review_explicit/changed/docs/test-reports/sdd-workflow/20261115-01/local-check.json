@@ -1,0 +1,12 @@
+{
+  "command": "python checks/load_guidance.py",
+  "start": "2026-11-14T16:40:21.293223+00:00",
+  "end": "2026-11-14T16:40:21.332779+00:00",
+  "elapsed_seconds": 0.039556,
+  "exit_code": 0,
+  "stdout": "# 主任务\n\n发给待办助手的工单应给出预期产物位置，要求回读后返回实际结果。\n\n# 待办助手\n\n回读工单指定的产物后报告完成。回读不可用时报告待验。\n\n",
+  "stderr": "",
+  "kind": "文本装配局部检查；没有模型调用、产物回读或失败恢复验证",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-6.6.114.1-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+}

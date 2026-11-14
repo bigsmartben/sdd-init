@@ -1,0 +1,9 @@
+{
+  "entry": "src.ui.mark_paid",
+  "order_id": "missing",
+  "returned": null,
+  "exception": null,
+  "persisted_row": null,
+  "expected_exception": "ValueError",
+  "result": "FAIL"
+}

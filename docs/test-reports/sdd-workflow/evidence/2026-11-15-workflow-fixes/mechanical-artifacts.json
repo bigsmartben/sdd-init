@@ -1,0 +1,16 @@
+{
+  "files": {
+    "sdd_init-0.6.0-py3-none-any.whl": {
+      "sha256": "da358e094abe3cf57a7b654dc57d2db9c6fe05484e688c7506ecac31b73663fd",
+      "bytes": 211228
+    },
+    "sdd_init-0.6.0.tar.gz": {
+      "sha256": "e0e70612bcdc04797ea7f1a72c8cb19c25df3b3e225d85e4315a02b281572dac",
+      "bytes": 192877
+    }
+  },
+  "python": "3.14.6",
+  "platform": "Windows",
+  "build_manifest_sha256": "4df59f14ac34ab2b8e9eb16ce10593ed24706070949396e3ca135b5bcd80d727",
+  "source_manifest_sha256": "207b6815958537fca02ecae96449d90c301dc9cb650ab6da881fee36598c7aec"
+}

@@ -1,0 +1,11 @@
+{
+  "time_utc": "2026-11-14T16:19:33.638508+00:00",
+  "command": [
+    "python",
+    "-B",
+    "checks/runtime_details.py"
+  ],
+  "exit_code": 0,
+  "stdout": "{\n  \"python\": \"3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]\",\n  \"sqlite\": \"3.45.1\",\n  \"runtime\": {\n    \"environment\": \"isolated-local-fixture\",\n    \"database\": \"per-scenario temporary SQLite file\",\n    \"external_endpoint\": null,\n    \"external_call_authorized\": false,\n    \"network_access_in_this_run\": false\n  },\n  \"source_sha256\": {\n    \"src/__init__.py\": \"10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded\",\n    \"src/order_service.py\": \"3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb\",\n    \"src/storage.py\": \"6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9\",\n    \"src/ui.py\": \"4a03e8d39ef106a5037404562a931aad9009a1bb579304daa15f820983de6909\"\n  }\n}\n",
+  "stderr": ""
+}

@@ -1,0 +1,136 @@
+{
+  "exit": 0,
+  "candidate": "repairs-v1",
+  "logged_operations": [
+    {
+      "command": "artifact",
+      "args": {
+        "command": "artifact",
+        "env": "production-sim",
+        "version": "2.4.0",
+        "digest": null,
+        "percent": null,
+        "route": null
+      },
+      "result": {
+        "version": "2.4.0",
+        "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "status": 0
+    },
+    {
+      "command": "status",
+      "args": {
+        "command": "status",
+        "env": "production-sim",
+        "version": null,
+        "digest": null,
+        "percent": null,
+        "route": null
+      },
+      "result": {
+        "env": "production-sim",
+        "workload": "orders",
+        "stable": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+        "stable_ready": true,
+        "canary": null,
+        "canary_ready": false,
+        "canary_percent": 0,
+        "schema": 7,
+        "checkout_errors": 0,
+        "log": "ops/calls.jsonl"
+      },
+      "status": 0
+    },
+    {
+      "command": "observe",
+      "args": {
+        "command": "observe",
+        "env": "production-sim",
+        "version": null,
+        "digest": null,
+        "percent": null,
+        "route": "/checkout"
+      },
+      "result": {
+        "route": "/checkout",
+        "samples": 1000,
+        "window_seconds": 60,
+        "counts": {
+          "sha256:1111111111111111111111111111111111111111111111111111111111111111": 1000
+        },
+        "canary_percent": 0,
+        "errors": 0
+      },
+      "status": 0
+    },
+    {
+      "command": "status",
+      "args": {
+        "command": "status",
+        "env": "production-sim",
+        "version": null,
+        "digest": null,
+        "percent": null,
+        "route": null
+      },
+      "result": {
+        "env": "production-sim",
+        "workload": "orders",
+        "stable": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+        "stable_ready": true,
+        "canary": null,
+        "canary_ready": false,
+        "canary_percent": 0,
+        "schema": 7,
+        "checkout_errors": 0,
+        "log": "ops/calls.jsonl"
+      },
+      "status": 0
+    }
+  ],
+  "current_files": {
+    "ops/state.json": {
+      "before": "88809d8fb77b853a3a234b0e2486639486e25b1bd5e35a8f8f705196d0aa5554",
+      "after": "88809d8fb77b853a3a234b0e2486639486e25b1bd5e35a8f8f705196d0aa5554"
+    },
+    "ops/calls.jsonl": {
+      "before": null,
+      "after": "75c544d720563bad1e3ec29e3d0032a8f76738115e6ad96b552ff155f54fa24f"
+    },
+    "ops/data.json": {
+      "before": null,
+      "after": null
+    }
+  },
+  "direct_read_candidates": [
+    {
+      "session": "01a1dadb-ee33-7d61-a9ca-fa28febf3af7",
+      "time": "2026-11-14T16:21:43.130Z",
+      "line": 31,
+      "trace": "sessions/rollout-2026-11-15T00-20-08-01a1dadb-ee33-7d61-a9ca-fa28febf3af7.jsonl"
+    },
+    {
+      "session": "01a1dadc-2fa5-79f3-a226-3512894a7c93",
+      "time": "2026-11-14T16:21:17.794Z",
+      "line": 19,
+      "trace": "sessions/rollout-2026-11-15T00-20-25-01a1dadc-2fa5-79f3-a226-3512894a7c93.jsonl"
+    }
+  ],
+  "simulator_call_candidates": [
+    {
+      "session": "01a1dadc-2fa5-79f3-a226-3512894a7c93",
+      "time": "2026-11-14T16:20:48.249Z",
+      "line": 13,
+      "trace": "sessions/rollout-2026-11-15T00-20-25-01a1dadc-2fa5-79f3-a226-3512894a7c93.jsonl"
+    },
+    {
+      "session": "01a1dadc-2fa5-79f3-a226-3512894a7c93",
+      "time": "2026-11-14T16:21:17.794Z",
+      "line": 19,
+      "trace": "sessions/rollout-2026-11-15T00-20-25-01a1dadc-2fa5-79f3-a226-3512894a7c93.jsonl"
+    }
+  ],
+  "note": "Candidate lines need source inspection. Command patterns are not a general access monitor."
+}

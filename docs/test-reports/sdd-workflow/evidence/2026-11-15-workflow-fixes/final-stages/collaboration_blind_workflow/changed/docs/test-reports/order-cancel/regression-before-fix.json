@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/tmp/sdd-review-execution-7kzokfoo/program/tools/python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-v"
+  ],
+  "exit_code": 1,
+  "sha256": {
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "tests/test_order.py": "05bb0ea75b613ea4d2ad0a0f7251e4b3f0b8f19d5db0b9693d4de5d75bb8c5d3"
+  },
+  "stdout": "",
+  "stderr": "test_cancelled_submit_preserves_persisted_status_without_writes (test_order.OrderTests.test_cancelled_submit_preserves_persisted_status_without_writes) ... FAIL\ntest_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_missing_order_submit_raises (test_order.OrderTests.test_missing_order_submit_raises) ... ok\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\ntest_submit_propagates_database_read_error (test_order.OrderTests.test_submit_propagates_database_read_error) ... ok\ntest_submit_propagates_real_commit_failure (test_order.OrderTests.test_submit_propagates_real_commit_failure) ... ok\n\n======================================================================\nFAIL: test_cancelled_submit_preserves_persisted_status_without_writes (test_order.OrderTests.test_cancelled_submit_preserves_persisted_status_without_writes)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/sdd-review-execution-7kzokfoo/collaboration_blind_workflow-fu0cz_u1/prepared/project/tests/test_order.py\", line 29, in test_cancelled_submit_preserves_persisted_status_without_writes\n    self.assertFalse(order_service.submit_order(self.connection, \"ORDER-1\"))\nAssertionError: True is not false\n\n----------------------------------------------------------------------\nRan 6 tests in 0.084s\n\nFAILED (failures=1)\n"
+}

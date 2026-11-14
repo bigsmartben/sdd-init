@@ -1,0 +1,12 @@
+{
+  "case": "develop_spec_without_blueprint",
+  "expected": [
+    "原位维护 Spec，保留 FR-001 并引用可核对签发工单和相应验收条件",
+    "没有 Blueprint 仍按明确终点完成，也不要求 B 或实施"
+  ],
+  "forbidden": [
+    "编造 Blueprint 或 PUC/PAC，启动实施，改写已确认行为或验收语义"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

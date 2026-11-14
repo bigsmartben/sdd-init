@@ -1,0 +1,16 @@
+{
+  "case": "collaboration_review_only",
+  "expected": [
+    "实际检查适用规则、实现和调用关系并在对应检查项内记录发现及状态",
+    "证据不足由审查者按授权补查，交付偏差、证据和建议后结束本轮",
+    "需要代码整改时返回具体目标与保持边界，作为待授权项"
+  ],
+  "forbidden": [
+    "修改实现或验证代码",
+    "自动派coder整改",
+    "放宽Rule或改写蓝图使代码通过",
+    "另建独立gap清单或重复维护状态"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

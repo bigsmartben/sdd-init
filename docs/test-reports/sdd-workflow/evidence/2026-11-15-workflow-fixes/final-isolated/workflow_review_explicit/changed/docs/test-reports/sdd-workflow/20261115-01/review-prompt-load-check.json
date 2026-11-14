@@ -1,0 +1,14 @@
+{
+  "executor": "/root/prompt_review; agent_type=review-prompt",
+  "command": [
+    "python",
+    "checks/load_guidance.py"
+  ],
+  "started_at": "2026-11-14T16:40:24.605494+00:00",
+  "ended_at": "2026-11-14T16:40:27.574317+00:00",
+  "elapsed_seconds": 2.968823,
+  "exit_code": 0,
+  "stdout": "# 主任务\n\n发给待办助手的工单应给出预期产物位置，要求回读后返回实际结果。\n\n# 待办助手\n\n回读工单指定的产物后报告完成。回读不可用时报告待验。\n\n",
+  "stderr": "",
+  "classification": "文本读取/装配局部检查；未执行待办助手模型行为"
+}

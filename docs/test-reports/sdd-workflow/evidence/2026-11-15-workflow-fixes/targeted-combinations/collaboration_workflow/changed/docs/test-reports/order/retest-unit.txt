@@ -1,0 +1,11 @@
+test_cancelled_submit_has_no_write_or_commit (test_order.OrderTests.test_cancelled_submit_has_no_write_or_commit) ... ok
+test_commit_errors_propagate_without_persisted_success (test_order.OrderTests.test_commit_errors_propagate_without_persisted_success) ... ok
+test_mark_paid_from_all_existing_states (test_order.OrderTests.test_mark_paid_from_all_existing_states) ... ok
+test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok
+test_mark_paid_missing_raises (test_order.OrderTests.test_mark_paid_missing_raises) ... ok
+test_normal_submit (test_order.OrderTests.test_normal_submit) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.084s
+
+OK

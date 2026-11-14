@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scope": "mechanical_only",
+  "files": [
+    "docs/test-reports/order/retest.md",
+    "specs/order/quickstart.md"
+  ],
+  "diagnostics": [],
+  "errors": 0,
+  "warnings": 0
+}

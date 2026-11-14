@@ -1,0 +1,4 @@
+interface:
+  display_name: "sdd-architecture"
+policy:
+  allow_implicit_invocation: true

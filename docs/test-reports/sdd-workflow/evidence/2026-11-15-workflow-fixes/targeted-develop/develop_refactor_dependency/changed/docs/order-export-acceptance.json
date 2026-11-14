@@ -1,0 +1,80 @@
+{
+  "purpose": "WO-ORDER-017 point-to-point acceptance; no integration Gate",
+  "executor": "/root/develop_order_017",
+  "utc": "2026-11-14T16:22:12.041360+00:00",
+  "commit": "162bdaf0aff7bebeb747ca1f3cdffea7ef8674e1",
+  "version": "HEAD plus uncommitted create_order whitespace validation and direct tests",
+  "environment": {
+    "python": "3.12.3",
+    "sqlite": "3.45.1",
+    "database": "real per-scenario temporary SQLite file; no mocks or external services"
+  },
+  "sha256": {
+    "src/order_service.py": "22dfe4f33d3a018f3d50ca8518202367e3206fd68a098d4edbb6570a651d6f3b",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "checks/order_export_acceptance.py": "f759a427eb7169bddc08ca5694acb838ab543cff597a35db1228ae40e6b8ad72",
+    "tests/test_order_validation.py": "dd19542ad768316753a3f6f1c43ac65b25e516ebb3159de670efa106ac237582"
+  },
+  "runs": [
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/order_export_acceptance.py"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"scenario\": \"AC-4\",\n  \"result\": \"PASS\",\n  \"cases\": [\n    {\n      \"input\": \"''\",\n      \"error\": \"order_id is required\",\n      \"rows\": 0,\n      \"no_writes\": true,\n      \"result\": \"PASS\"\n    },\n    {\n      \"input\": \"' '\",\n      \"error\": \"order_id is required\",\n      \"rows\": 0,\n      \"no_writes\": true,\n      \"result\": \"PASS\"\n    },\n    {\n      \"input\": \"'\\\\t\\\\n\\\\r'\",\n      \"error\": \"order_id is required\",\n      \"rows\": 0,\n      \"no_writes\": true,\n      \"result\": \"PASS\"\n    },\n    {\n      \"input\": \"'\\\\u3000\\\\xa0'\",\n      \"error\": \"order_id is required\",\n      \"rows\": 0,\n      \"no_writes\": true,\n      \"result\": \"PASS\"\n    },\n    {\n      \"input\": \"None\",\n      \"error\": \"order_id is required\",\n      \"rows\": 0,\n      \"no_writes\": true,\n      \"result\": \"PASS\"\n    },\n    {\n      \"input\": \"17\",\n      \"error\": \"order_id is required\",\n      \"rows\": 0,\n      \"no_writes\": true,\n      \"result\": \"PASS\"\n    },\n    {\n      \"input\": \"'ORDER-4'\",\n      \"persisted_status\": \"pending\",\n      \"result\": \"PASS\"\n    },\n    {\n      \"input\": \"'  ORDER-4  '\",\n      \"persisted_status\": \"pending\",\n      \"result\": \"PASS\"\n    },\n    {\n      \"input\": \"'订单-4'\",\n      \"persisted_status\": \"pending\",\n      \"result\": \"PASS\"\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/acceptance.py",
+        "--scenario",
+        "AC-1"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"result\": \"PASS\",\n    \"accepted\": true,\n    \"persisted_status\": \"submitted\",\n    \"expected_accepted\": true,\n    \"expected_status\": \"submitted\"\n  }\n]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\ntest_invalid_ids_do_not_access_connection (test_order_validation.CreateOrderValidationTests.test_invalid_ids_do_not_access_connection) ... ok\ntest_invalid_ids_leave_file_database_unchanged (test_order_validation.CreateOrderValidationTests.test_invalid_ids_leave_file_database_unchanged) ... ok\ntest_valid_ids_are_committed_without_normalization (test_order_validation.CreateOrderValidationTests.test_valid_ids_are_committed_without_normalization) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.069s\n\nOK\n"
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "checks/acceptance.py",
+        "--scenario",
+        "AC-2"
+      ],
+      "exit_code": 1,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-2\",\n    \"result\": \"FAIL\",\n    \"accepted\": true,\n    \"persisted_status\": \"submitted\",\n    \"expected_accepted\": false,\n    \"expected_status\": \"cancelled\"\n  }\n]\n",
+      "stderr": ""
+    }
+  ],
+  "baseline_ac2": {
+    "source": "git show HEAD:src/order_service.py",
+    "accepted": true,
+    "persisted_status": "submitted",
+    "result": "FAIL"
+  },
+  "ac5": {
+    "result": "BLOCKED",
+    "reason": "No existing authoritative persistent event history; schema and other write-path changes prohibited by WO"
+  }
+}

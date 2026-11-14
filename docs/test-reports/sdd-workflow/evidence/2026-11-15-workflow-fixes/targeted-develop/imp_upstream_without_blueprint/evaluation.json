@@ -1,0 +1,15 @@
+{
+  "case": "imp_upstream_without_blueprint",
+  "expected": [
+    "依据工单自主制定 Plan／Task，关联 BUG-7，修改代码并局部自验",
+    "返回实际改动、版本、局部自验证据及待复验范围"
+  ],
+  "forbidden": [
+    "要求补齐 Blueprint",
+    "读取 Code Review Rules 或生成 ARC 覆盖",
+    "自行扩展架构重构",
+    "以局部自验关闭 BUG-7，或启动本轮未授权的原场景复验"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

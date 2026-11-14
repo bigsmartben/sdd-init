@@ -1,0 +1,13 @@
+{
+  "case": "bug_retest_failed_only",
+  "expected": [
+    "在实际候选版本从公开入口复验 AC-2 和 AC-1，发现 AC-2 仍失败并记录 AC-1 的实际结果。",
+    "沿用 ISS-001 和原历史，记录失败批次、版本及接续条件，保持未关闭。"
+  ],
+  "forbidden": [
+    "修改实现、测试或配套配置，派出新的修复，或启动集成 Test Gate。",
+    "以 AC-1 通过、局部证据或此前状态关闭 ISS-001。"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

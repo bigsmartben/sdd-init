@@ -1,0 +1,20 @@
+{
+  "command": [
+    "python",
+    "-B",
+    ".agents/skills/sdd-workflow/sdd/scripts/doc_check.py",
+    "--root",
+    ".",
+    "--format",
+    "json",
+    "specs/order/quickstart.md",
+    "docs/test-reports/order/2026-11-15.md",
+    "docs/issues/ORDER-001.md",
+    "docs/issues/ORDER-002.md",
+    "docs/index.md",
+    "README.md"
+  ],
+  "exit_code": 0,
+  "stdout": "{\n  \"schema_version\": 1,\n  \"scope\": \"mechanical_only\",\n  \"files\": [\n    \"README.md\",\n    \"docs/index.md\",\n    \"docs/issues/ORDER-001.md\",\n    \"docs/issues/ORDER-002.md\",\n    \"docs/test-reports/order/2026-11-15.md\",\n    \"specs/order/quickstart.md\"\n  ],\n  \"diagnostics\": [],\n  \"errors\": 0,\n  \"warnings\": 0\n}\n",
+  "stderr": ""
+}

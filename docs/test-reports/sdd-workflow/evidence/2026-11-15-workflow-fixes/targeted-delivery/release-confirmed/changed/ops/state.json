@@ -1,0 +1,35 @@
+{
+  "artifacts": {
+    "2.4.0": {
+      "version": "2.4.0",
+      "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    "2.3.9": {
+      "version": "2.3.9",
+      "source_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    }
+  },
+  "incident": null,
+  "runtime": {
+    "env": "production-sim",
+    "workload": "orders",
+    "stable": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+    "stable_ready": true,
+    "canary": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+    "canary_ready": true,
+    "canary_percent": 10,
+    "schema": 7,
+    "checkout_errors": 0,
+    "log": "ops/calls.jsonl"
+  },
+  "backup_catalog": [
+    {
+      "name": "b-201",
+      "age_at_incident_minutes": 90,
+      "integrity": "verified",
+      "schema": 7
+    }
+  ]
+}

@@ -61,7 +61,7 @@ class GovernanceTests(unittest.TestCase):
         self.assertFalse((GOV.parent.parent / "assets/repo-payload.zip").exists())
         self.run_cmd("init")
         self.assertEqual({p.parent.name for p in (self.root / WORKFLOW / "skills").glob("*/SKILL.md")},
-                         {"sdd-develop", "sdd-bugfix", "sdd-test-loop", "sdd-review-code",
+                         {"sdd-develop", "sdd-bugfix", "sdd-test-loop", "sdd-architecture", "sdd-refactor",
                           "sdd-review-prompt", "sdd-deliver"})
         self.assertFalse((self.root / ".agents/skills/sdd-init").exists())
         result = subprocess.run([sys.executable, str(self.root / WORKFLOW / "sdd/scripts/govern.py"),
@@ -250,7 +250,7 @@ class GovernanceTests(unittest.TestCase):
 
     def test_workflows_allow_natural_language_selection(self):
         self.run_cmd("init")
-        for name in ("sdd-develop", "sdd-bugfix", "sdd-test-loop", "sdd-review-code",
+        for name in ("sdd-develop", "sdd-bugfix", "sdd-test-loop", "sdd-architecture", "sdd-refactor",
                      "sdd-review-prompt", "sdd-deliver"):
             metadata = (self.root / WORKFLOW / f"skills/{name}/agents/openai.yaml").read_text(encoding="utf-8")
             self.assertIn("allow_implicit_invocation: true", metadata)

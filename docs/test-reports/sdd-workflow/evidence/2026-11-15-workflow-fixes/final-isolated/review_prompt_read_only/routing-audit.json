@@ -1,0 +1,33 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daec-05aa-7ca0-8cf5-7b11f86dbaf3",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/refund_prompt_review": {
+      "id": "01a1daec-4895-7b73-b260-24233bd795a4",
+      "parent_id": "01a1daec-05aa-7ca0-8cf5-7b11f86dbaf3",
+      "role": "review-prompt",
+      "parent": "/root"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:38:47.126Z",
+      "actor": "/root",
+      "target": "/root/refund_prompt_review",
+      "original_target": "refund_prompt_review",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_ee60512f7e2d451e9f20eb08be53de8e",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-37-44-01a1daec-05aa-7ca0-8cf5-7b11f86dbaf3.jsonl",
+      "line": 12
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

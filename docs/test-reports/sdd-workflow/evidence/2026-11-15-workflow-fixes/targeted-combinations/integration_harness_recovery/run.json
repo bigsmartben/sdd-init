@@ -1,0 +1,219 @@
+{
+  "start": "2026-11-15T00:19:55+08:00",
+  "end": "2026-11-15T00:26:17+08:00",
+  "seconds": 352.526,
+  "exit": 0,
+  "case": "integration_harness_recovery",
+  "permission_profile": "fixture-write",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "before": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "f8360e5f6d0f96c9a2192cfa29e4c39fc2cf93d244e427556cad4ca99262667f",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "635bc4acdbd7fef743cd5bcfd8903ee1d91f3db675fb1216b8fc37c2d85303da",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "2bfffbdba71706991d0682c57bfab5329748ccbcd0ff9966d5b7ea6d2bd93089",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/integration_runner.py": "21b5eb47f1ebb873e68cf7242cd21858aafb869c2a957242c9a042314637dd85",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/index.md": "a07c6ddac82ca52876aeb32c5bb089ddafb08aff80a2dc7a513079995777ee05",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "specs/order/quickstart.md": "d4e6342af3d53e5478025bf5949c49c9d47ec9ae8b44c48263a524a1020643b7",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311"
+  },
+  "after": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "f8360e5f6d0f96c9a2192cfa29e4c39fc2cf93d244e427556cad4ca99262667f",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "635bc4acdbd7fef743cd5bcfd8903ee1d91f3db675fb1216b8fc37c2d85303da",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "2bfffbdba71706991d0682c57bfab5329748ccbcd0ff9966d5b7ea6d2bd93089",
+    "checks/acceptance.py": "59927dc624e8bad631373cdd438f9ff49675270b09f1f6188aedfb599f7697a3",
+    "checks/integration_runner.py": "3ac7b06e8641554828000d46b36f7d87c61e651b5dbcec6d3ee848c707d68c81",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/index.md": "429902977501523ea156433d2956637bc03f70f9660fcd78c42acd647bb71f77",
+    "docs/issues/ORD-001.md": "ddd47adeb454e9d6d8795526a6bbc2cc0b7d94a36c22003f33a13bad7b8761f1",
+    "docs/issues/ORD-002.md": "4e5d78124959defade3ea81958a6b014de6f1faeac7985baef58fe760731f8fd",
+    "docs/status.md": "6722b899527e6e82a348366a792393757df778dc9a71aea02f6b9e4738fd163a",
+    "docs/test-reports/order/evidence/baseline.json": "164053a29a125adebc3ed666e532850e7e0c05d2ce4467bdae88f8f8838af35e",
+    "docs/test-reports/order/evidence/delivery-check.json": "283b62f8ec65bae04098f1bc83e7e3c4b73d0154e038c3079bad877f9b846b1b",
+    "docs/test-reports/order/evidence/document-check.json": "a97be4e199580932c8df5409d8a53ffc0eb349d6b1992adc60c06c3d8667a433",
+    "docs/test-reports/order/evidence/final.json": "d411896f6aa017fee166af2fa4ca933aa83e498b4ea8f11f7066a62e5cf91b97",
+    "docs/test-reports/order/integration-2026-11-15.md": "24e00f9322696eee91c476cb024c0b442fcad4ed0d95f1568bd31d76063ceb15",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "specs/order/quickstart.md": "5f6a7910e9ea529de40f26b7df8dc03fd7099f5b8d0d79c2d75db46e0a1e7eaf",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "tests/test_integration_harness.py": "3338b7bfcc962c0e9da70f60a75913199fcf40ea8cd92d7068da4fc75cb91850",
+    "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311"
+  },
+  "changed": [
+    "checks/acceptance.py",
+    "checks/integration_runner.py",
+    "docs/index.md",
+    "docs/issues/ORD-001.md",
+    "docs/issues/ORD-002.md",
+    "docs/status.md",
+    "docs/test-reports/order/evidence/baseline.json",
+    "docs/test-reports/order/evidence/delivery-check.json",
+    "docs/test-reports/order/evidence/document-check.json",
+    "docs/test-reports/order/evidence/final.json",
+    "docs/test-reports/order/integration-2026-11-15.md",
+    "specs/order/quickstart.md",
+    "tests/test_integration_harness.py"
+  ],
+  "base_commit": "1c6b8ab84d68d21144d549aa4eb717903896a828",
+  "head_after": "1c6b8ab84d68d21144d549aa4eb717903896a828",
+  "commit_paths": [],
+  "git_before": "",
+  "git_after": "M checks/acceptance.py\n M checks/integration_runner.py\n M docs/index.md\n M specs/order/quickstart.md\n?? docs/issues/\n?? docs/status.md\n?? docs/test-reports/\n?? tests/test_integration_harness.py",
+  "sessions": [
+    {
+      "identity": {
+        "id": "01a1dadb-bae8-76c1-b6d2-3121bd7048c5",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dadb-bae8-76c1-b6d2-3121bd7048c5",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 832028,
+        "cached_input_tokens": 798336,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2385,
+        "reasoning_output_tokens": 205,
+        "total_tokens": 834413
+      },
+      "records": 59,
+      "trace": "sessions/rollout-2026-11-15T00-19-56-01a1dadb-bae8-76c1-b6d2-3121bd7048c5.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dadc-412f-71f0-a239-9ca8803fd5f2",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dadb-bae8-76c1-b6d2-3121bd7048c5",
+              "depth": 1,
+              "agent_path": "/root/integration",
+              "agent_nickname": "Herschel",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Herschel",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dadc-412f-71f0-a239-9ca8803fd5f2",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dadb-bae8-76c1-b6d2-3121bd7048c5",
+                "depth": 1,
+                "agent_path": "/root/integration",
+                "agent_nickname": "Herschel",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Herschel",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 1161400,
+        "cached_input_tokens": 1081088,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 12166,
+        "reasoning_output_tokens": 1190,
+        "total_tokens": 1173566
+      },
+      "records": 59,
+      "trace": "sessions/rollout-2026-11-15T00-20-30-01a1dadc-412f-71f0-a239-9ca8803fd5f2.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1dadc-e611-7661-8c77-5cdebfa1e8fb",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1dadc-412f-71f0-a239-9ca8803fd5f2",
+              "depth": 2,
+              "agent_path": "/root/integration/harness",
+              "agent_nickname": "Euclid",
+              "agent_role": "sdd-coder"
+            }
+          }
+        },
+        "agent_role": "sdd-coder",
+        "agent_nickname": "Euclid",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1dadc-e611-7661-8c77-5cdebfa1e8fb",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dadc-412f-71f0-a239-9ca8803fd5f2",
+                "depth": 2,
+                "agent_path": "/root/integration/harness",
+                "agent_nickname": "Euclid",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "agent_role": "sdd-coder",
+          "agent_nickname": "Euclid",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 286118,
+        "cached_input_tokens": 239744,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 6172,
+        "reasoning_output_tokens": 467,
+        "total_tokens": 292290
+      },
+      "records": 23,
+      "trace": "sessions/rollout-2026-11-15T00-21-12-01a1dadc-e611-7661-8c77-5cdebfa1e8fb.jsonl"
+    }
+  ],
+  "candidate": "repairs-v1",
+  "candidate_manifest_sha256": "73ee31b0f296ea211fe2f300021eff1ddedae1e978517b5217d067a90c4b1ca7"
+}

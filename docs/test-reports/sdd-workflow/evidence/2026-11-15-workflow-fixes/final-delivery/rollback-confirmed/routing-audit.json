@@ -1,0 +1,105 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daee-8bbb-74c2-8852-144fa7bf86dd",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/inc619_delivery": {
+      "id": "01a1daee-fbe7-75c2-aff9-486da123cf32",
+      "parent_id": "01a1daee-8bbb-74c2-8852-144fa7bf86dd",
+      "role": "default",
+      "parent": "/root"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:41:08.533Z",
+      "actor": "/root",
+      "target": "/root/inc619_delivery",
+      "original_target": "inc619_delivery",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_b29d32dec11b4516b25dd86b41d52620",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-29-01a1daee-8bbb-74c2-8852-144fa7bf86dd.jsonl",
+      "line": 12
+    },
+    {
+      "time": "2026-11-14T16:41:13.531Z",
+      "actor": "/root/inc619_delivery",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_d4c564f5d5b040f995e0ebe99e1dd7d8",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-57-01a1daee-fbe7-75c2-aff9-486da123cf32.jsonl",
+      "line": 7
+    },
+    {
+      "time": "2026-11-14T16:41:18.264Z",
+      "actor": "/root",
+      "target": "/root/inc619_delivery",
+      "original_target": "inc619_delivery",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_fab996c2e3714eff98bdcc7fa9e321a2",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-29-01a1daee-8bbb-74c2-8852-144fa7bf86dd.jsonl",
+      "line": 17
+    },
+    {
+      "time": "2026-11-14T16:41:41.178Z",
+      "actor": "/root/inc619_delivery",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_4e4c0159426541afb9aa2b6cd87ef6f8",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-57-01a1daee-fbe7-75c2-aff9-486da123cf32.jsonl",
+      "line": 17
+    },
+    {
+      "time": "2026-11-14T16:41:47.806Z",
+      "actor": "/root",
+      "target": "/root/inc619_delivery",
+      "original_target": "inc619_delivery",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_f0176c1f11ef47088f01aa8ed1a1389e",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-29-01a1daee-8bbb-74c2-8852-144fa7bf86dd.jsonl",
+      "line": 24
+    },
+    {
+      "time": "2026-11-14T16:42:34.157Z",
+      "actor": "/root",
+      "target": "/root/inc619_delivery",
+      "original_target": "inc619_delivery",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_9048adb864cd4392b34d5d59fed08059",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-29-01a1daee-8bbb-74c2-8852-144fa7bf86dd.jsonl",
+      "line": 34
+    },
+    {
+      "time": "2026-11-14T16:42:54.471Z",
+      "actor": "/root/inc619_delivery",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_8a350c9c0ef44bf6a1db1b7da501fe2e",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-40-57-01a1daee-fbe7-75c2-aff9-486da123cf32.jsonl",
+      "line": 23
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

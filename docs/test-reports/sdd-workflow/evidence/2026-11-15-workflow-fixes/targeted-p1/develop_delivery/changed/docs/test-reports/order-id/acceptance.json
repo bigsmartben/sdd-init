@@ -1,0 +1,82 @@
+{
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "sqlite": "3.45.1",
+  "service_sha256": "22dfe4f33d3a018f3d50ca8518202367e3206fd68a098d4edbb6570a651d6f3b",
+  "cases": [
+    {
+      "ac": "AC-4",
+      "input": "''",
+      "result": "PASS"
+    },
+    {
+      "ac": "AC-4",
+      "input": "' '",
+      "result": "PASS"
+    },
+    {
+      "ac": "AC-4",
+      "input": "'   '",
+      "result": "PASS"
+    },
+    {
+      "ac": "AC-4",
+      "input": "'\\t'",
+      "result": "PASS"
+    },
+    {
+      "ac": "AC-4",
+      "input": "'\\n'",
+      "result": "PASS"
+    },
+    {
+      "ac": "AC-4",
+      "input": "' \\t\\n '",
+      "result": "PASS"
+    },
+    {
+      "ac": "AC-4",
+      "input": "'\\xa0'",
+      "result": "PASS"
+    },
+    {
+      "ac": "AC-4",
+      "input": "'\\u3000'",
+      "result": "PASS"
+    },
+    {
+      "ac": "AC-4",
+      "input": "' \\t\\u3000\\n'",
+      "result": "PASS"
+    },
+    {
+      "ac": "AC-5",
+      "input": "'ORDER-1'",
+      "result": "PASS"
+    },
+    {
+      "ac": "AC-5",
+      "input": "' ORDER-1 '",
+      "result": "PASS"
+    },
+    {
+      "ac": "AC-5",
+      "input": "'0'",
+      "result": "PASS"
+    },
+    {
+      "ac": "AC-5",
+      "input": "None",
+      "result": "PASS"
+    },
+    {
+      "ac": "AC-5",
+      "input": "0",
+      "result": "PASS"
+    },
+    {
+      "ac": "AC-5",
+      "input": "False",
+      "result": "PASS"
+    }
+  ]
+}

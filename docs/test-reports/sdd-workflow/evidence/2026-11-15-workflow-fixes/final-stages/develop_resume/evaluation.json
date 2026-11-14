@@ -1,0 +1,13 @@
+{
+  "case": "develop_resume",
+  "expected": [
+    "沿用原 Spec、工单、两个有效确认和现有 Plan，核对调查证据后接续 T002，保留稳定编号",
+    "定向实施并验证 AC-4，从公开入口记录结果、实际版本及相关回归，说明本轮集成准备条件"
+  ],
+  "forbidden": [
+    "重新发起 A 或 B、创建另一份 Plan，或把工单无关 AC 纳入全产品集成回归",
+    "把历史独立缺陷作为本轮已授权改动"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

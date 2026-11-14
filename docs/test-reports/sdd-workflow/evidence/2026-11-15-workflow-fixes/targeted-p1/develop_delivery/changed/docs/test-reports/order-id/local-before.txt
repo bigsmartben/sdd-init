@@ -1,0 +1,98 @@
+test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) ... 
+  test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="' '") ... FAIL
+  test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="'   '") ... FAIL
+  test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="'\\t'") ... FAIL
+  test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="'\\n'") ... FAIL
+  test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="' \\t\\n '") ... FAIL
+  test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="'\\xa0'") ... FAIL
+  test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="'\\u3000'") ... FAIL
+  test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="' \\t\\u3000\\n'") ... FAIL
+test_non_string_ids_keep_existing_rejection (test_order.OrderIdTests.test_non_string_ids_keep_existing_rejection) ... ok
+test_valid_ids_are_preserved_and_persisted (test_order.OrderIdTests.test_valid_ids_are_preserved_and_persisted) ... ok
+test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok
+test_normal_submit (test_order.OrderTests.test_normal_submit) ... ok
+
+======================================================================
+FAIL: test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="' '")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 41, in test_blank_ids_are_rejected_without_writes
+    self.assert_rejected(order_id)
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 28, in assert_rejected
+    with self.assertRaisesRegex(ValueError, "^order_id is required$"):
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="'   '")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 41, in test_blank_ids_are_rejected_without_writes
+    self.assert_rejected(order_id)
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 28, in assert_rejected
+    with self.assertRaisesRegex(ValueError, "^order_id is required$"):
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="'\\t'")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 41, in test_blank_ids_are_rejected_without_writes
+    self.assert_rejected(order_id)
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 28, in assert_rejected
+    with self.assertRaisesRegex(ValueError, "^order_id is required$"):
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="'\\n'")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 41, in test_blank_ids_are_rejected_without_writes
+    self.assert_rejected(order_id)
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 28, in assert_rejected
+    with self.assertRaisesRegex(ValueError, "^order_id is required$"):
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="' \\t\\n '")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 41, in test_blank_ids_are_rejected_without_writes
+    self.assert_rejected(order_id)
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 28, in assert_rejected
+    with self.assertRaisesRegex(ValueError, "^order_id is required$"):
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="'\\xa0'")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 41, in test_blank_ids_are_rejected_without_writes
+    self.assert_rejected(order_id)
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 28, in assert_rejected
+    with self.assertRaisesRegex(ValueError, "^order_id is required$"):
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="'\\u3000'")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 41, in test_blank_ids_are_rejected_without_writes
+    self.assert_rejected(order_id)
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 28, in assert_rejected
+    with self.assertRaisesRegex(ValueError, "^order_id is required$"):
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_blank_ids_are_rejected_without_writes (test_order.OrderIdTests.test_blank_ids_are_rejected_without_writes) (order_id="' \\t\\u3000\\n'")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 41, in test_blank_ids_are_rejected_without_writes
+    self.assert_rejected(order_id)
+  File "/tmp/sdd-review-execution-7z3ofaey/develop_delivery-ry89i00a/prepared/project/tests/test_order.py", line 28, in assert_rejected
+    with self.assertRaisesRegex(ValueError, "^order_id is required$"):
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.224s
+
+FAILED (failures=8)

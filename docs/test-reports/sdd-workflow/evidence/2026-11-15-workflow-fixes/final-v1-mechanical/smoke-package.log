@@ -1,0 +1,61 @@
+C:\Users\24598\AppData\Local\Programs\Python\Python314\python.exe -B -X utf8 scripts/smoke_package.py --from C:\Users\24598\Documents\github\sdd-init\.build\current-review-fix-20261115\final-v1-dist\sdd_init-0.6.0-py3-none-any.whl
+Installed: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\skills\sdd-init
+Installed: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\skills-sdd-init-shared
+User skill: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\skills\sdd-init
+Shared workflow: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\skills-sdd-init-shared
+User role: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\codex\agents\review-prompt.toml
+Impact: every project linked to the shared directory uses its contents
+Distribution: sdd-init 0.6.0 (C:\Users\24598\AppData\Local\uv\cache\archive-v0\OraSSxQjkLQiWNQ2\Lib\site-packages\sdd_init\resources)
+Candidate release: sha256:6053363979c03ffaf28904d777756d0fa8c88005c0d72755a380ead2a6607e5f
+Candidate shared version: sha256:005cdb288fad1eb191750d0e8c06a05b1eaf0ad5ccf249dab66e8f4a53e6edc1
+Installed release: sha256:6053363979c03ffaf28904d777756d0fa8c88005c0d72755a380ead2a6607e5f
+Installed shared version: sha256:005cdb288fad1eb191750d0e8c06a05b1eaf0ad5ccf249dab66e8f4a53e6edc1
+Status: current
+Open a new Codex session to use review-prompt. Select sdd-init in a target repository to connect or refresh its workflow.
+Already current: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\skills\sdd-init
+Already current: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\skills-sdd-init-shared
+User skill: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\skills\sdd-init
+Shared workflow: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\skills-sdd-init-shared
+User role: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\codex\agents\review-prompt.toml
+Impact: every project linked to the shared directory uses its contents
+Distribution: sdd-init 0.6.0 (C:\Users\24598\AppData\Local\uv\cache\archive-v0\OraSSxQjkLQiWNQ2\Lib\site-packages\sdd_init\resources)
+Candidate release: sha256:6053363979c03ffaf28904d777756d0fa8c88005c0d72755a380ead2a6607e5f
+Candidate shared version: sha256:005cdb288fad1eb191750d0e8c06a05b1eaf0ad5ccf249dab66e8f4a53e6edc1
+Installed release: sha256:6053363979c03ffaf28904d777756d0fa8c88005c0d72755a380ead2a6607e5f
+Installed shared version: sha256:005cdb288fad1eb191750d0e8c06a05b1eaf0ad5ccf249dab66e8f4a53e6edc1
+Status: current
+Open a new Codex session to use review-prompt. Select sdd-init in a target repository to connect or refresh its workflow.
+ADDED AGENTS.md
+ADDED .codex/config.toml
+ADDED .gitignore
+ADDED .sdd-init-state.json
+ADDED .agents/skills/sdd-workflow
+SDD WORKFLOW C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\project\.agents\skills\sdd-workflow -> C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\skills-sdd-init-shared
+Shared version: sha256:005cdb288fad1eb191750d0e8c06a05b1eaf0ad5ccf249dab66e8f4a53e6edc1
+Project skills: sdd-architecture, sdd-bugfix, sdd-deliver, sdd-develop, sdd-refactor, sdd-test-loop
+Registered roles: sdd-architect, sdd-coder, sdd-devops, sdd-doc-consistency, sdd-product-manager
+VERIFIED project link, managed navigation, configuration and local metadata
+Already current: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\skills\sdd-init
+Already current: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\skills-sdd-init-shared
+User skill: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\skills\sdd-init
+Shared workflow: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\skills-sdd-init-shared
+User role: C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\codex\agents\review-prompt.toml
+Impact: every project linked to the shared directory uses its contents
+Distribution: sdd-init 0.6.0 (C:\Users\24598\AppData\Local\uv\cache\archive-v0\OraSSxQjkLQiWNQ2\Lib\site-packages\sdd_init\resources)
+Candidate release: sha256:6053363979c03ffaf28904d777756d0fa8c88005c0d72755a380ead2a6607e5f
+Candidate shared version: sha256:005cdb288fad1eb191750d0e8c06a05b1eaf0ad5ccf249dab66e8f4a53e6edc1
+Installed release: sha256:6053363979c03ffaf28904d777756d0fa8c88005c0d72755a380ead2a6607e5f
+Installed shared version: sha256:005cdb288fad1eb191750d0e8c06a05b1eaf0ad5ccf249dab66e8f4a53e6edc1
+Status: current
+Open a new Codex session to use review-prompt. Select sdd-init in a target repository to connect or refresh its workflow.
+PRESERVED AGENTS.md
+PRESERVED .codex/config.toml
+PRESERVED .gitignore
+PRESERVED .sdd-init-state.json
+PRESERVED .agents/skills/sdd-workflow
+SDD WORKFLOW C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\project\.agents\skills\sdd-workflow -> C:\Users\24598\AppData\Local\Temp\sdd-package-jebn62n1\skills-sdd-init-shared
+Shared version: sha256:005cdb288fad1eb191750d0e8c06a05b1eaf0ad5ccf249dab66e8f4a53e6edc1
+Project skills: sdd-architecture, sdd-bugfix, sdd-deliver, sdd-develop, sdd-refactor, sdd-test-loop
+Registered roles: sdd-architect, sdd-coder, sdd-devops, sdd-doc-consistency, sdd-product-manager
+VERIFIED project link, managed navigation, configuration and local metadata
+Package smoke test passed; temporary user and project directories removed.

@@ -1,0 +1,40 @@
+{
+  "candidate": "final-v2",
+  "start": "2026-11-15T01:21:28+08:00",
+  "end": "2026-11-15T01:26:13+08:00",
+  "first_profile_destroyed": true,
+  "old_sessions": [
+    "01a1db14-12b6-70a1-9b43-141041ef4589",
+    "01a1db14-62b9-7410-9993-5d009d494b71"
+  ],
+  "new_sessions": [
+    "01a1db16-560f-71e0-b376-f327344e3930",
+    "01a1db16-cfa0-76e2-85c0-2313249b7032"
+  ],
+  "same_product_commit": true,
+  "initial_reports": [
+    "docs/test-reports/parser/2026-11-15-local.md"
+  ],
+  "calls": [
+    {
+      "scenario": "AC-1",
+      "actual": [],
+      "expected": [],
+      "result": "PASS"
+    },
+    {
+      "scenario": "AC-2",
+      "actual": [
+        "red",
+        "blue"
+      ],
+      "expected": [
+        "red",
+        "blue"
+      ],
+      "result": "PASS"
+    }
+  ],
+  "replacement_exit": 0,
+  "unchanged_product_and_check": true
+}

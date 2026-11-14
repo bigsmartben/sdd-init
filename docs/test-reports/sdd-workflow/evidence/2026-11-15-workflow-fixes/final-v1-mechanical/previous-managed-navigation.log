@@ -1,0 +1,12 @@
+C:\Users\24598\AppData\Local\Programs\Python\Python314\python.exe -B -X utf8 release/scripts/govern.py --root C:\Users\24598\AppData\Local\Temp\sdd-managed-block-upgrade-r8kc1bfq init
+UPDATED AGENTS.md
+ADDED .codex/config.toml
+ADDED .gitignore
+ADDED .sdd-init-state.json
+ADDED .agents/skills/sdd-workflow
+SDD WORKFLOW C:\Users\24598\AppData\Local\Temp\sdd-managed-block-upgrade-r8kc1bfq\.agents\skills\sdd-workflow -> C:\Users\24598\Documents\github\sdd-init\.build\current-review-fix-20261115\snapshots\final-v1\release\shared
+Shared version: sha256:005cdb288fad1eb191750d0e8c06a05b1eaf0ad5ccf249dab66e8f4a53e6edc1
+Project skills: sdd-architecture, sdd-bugfix, sdd-deliver, sdd-develop, sdd-refactor, sdd-test-loop
+Registered roles: sdd-architect, sdd-coder, sdd-devops, sdd-doc-consistency, sdd-product-manager
+VERIFIED project link, managed navigation, configuration and local metadata
+Upgraded the exact previous block, preserved project-owned content, and maintained one block.

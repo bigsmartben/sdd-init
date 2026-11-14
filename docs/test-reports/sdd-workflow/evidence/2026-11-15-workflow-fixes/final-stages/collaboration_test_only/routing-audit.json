@@ -1,0 +1,93 @@
+{
+  "agents": {
+    "/root": {
+      "id": "01a1daf0-4e9d-7732-958c-fd53c57ebb10",
+      "parent_id": null,
+      "role": null,
+      "parent": null
+    },
+    "/root/order_integration": {
+      "id": "01a1daf0-b42f-7e61-9738-ca4861c89bce",
+      "parent_id": "01a1daf0-4e9d-7732-958c-fd53c57ebb10",
+      "role": null,
+      "parent": "/root"
+    }
+  },
+  "calls": [
+    {
+      "time": "2026-11-14T16:43:00.644Z",
+      "actor": "/root",
+      "target": "/root/order_integration",
+      "original_target": "order_integration",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_aa2b996ae0194eb98d7e91b028c4584c",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-25-01a1daf0-4e9d-7732-958c-fd53c57ebb10.jsonl",
+      "line": 12
+    },
+    {
+      "time": "2026-11-14T16:43:14.982Z",
+      "actor": "/root/order_integration",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_1be702693b694bc69676874af78ffd0f",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-50-01a1daf0-b42f-7e61-9738-ca4861c89bce.jsonl",
+      "line": 9
+    },
+    {
+      "time": "2026-11-14T16:43:48.012Z",
+      "actor": "/root/order_integration",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_87ce1e168ced4511a48e735db082616d",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-50-01a1daf0-b42f-7e61-9738-ca4861c89bce.jsonl",
+      "line": 15
+    },
+    {
+      "time": "2026-11-14T16:43:52.298Z",
+      "actor": "/root",
+      "target": "/root/order_integration",
+      "original_target": "order_integration",
+      "tool": "send_message",
+      "relation": "to_direct_report",
+      "call_id": "call_fb323b5f703b47b2b500aebe73908f69",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-25-01a1daf0-4e9d-7732-958c-fd53c57ebb10.jsonl",
+      "line": 25
+    },
+    {
+      "time": "2026-11-14T16:44:48.937Z",
+      "actor": "/root/order_integration",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_c1096b190e304c13b7dc93ebcf4ef7bc",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-50-01a1daf0-b42f-7e61-9738-ca4861c89bce.jsonl",
+      "line": 19
+    },
+    {
+      "time": "2026-11-14T16:46:42.860Z",
+      "actor": "/root/order_integration",
+      "target": "/root",
+      "original_target": "/root",
+      "tool": "send_message",
+      "relation": "to_caller",
+      "call_id": "call_936c2ccf64614502afa686d51e3f82f9",
+      "tool_result_recorded": true,
+      "trace": "sessions/rollout-2026-11-15T00-42-50-01a1daf0-b42f-7e61-9738-ca4861c89bce.jsonl",
+      "line": 27
+    }
+  ],
+  "bypasses_caller": [],
+  "unresolved_targets": [],
+  "note": "Call metadata establishes routing, not encrypted message body or delivered outcome."
+}

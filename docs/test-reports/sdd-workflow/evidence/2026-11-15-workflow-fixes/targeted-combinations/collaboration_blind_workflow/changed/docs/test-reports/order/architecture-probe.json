@@ -1,0 +1,72 @@
+{
+  "candidate_id": "sha256:7d4083da88ed6593bc2039b890b0026681f522ac7b53d7aa8c8dcde4cb269fea",
+  "manifest_matches": true,
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "sqlite": "3.45.1",
+  "before_sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "tests/test_order.py": "a438c19810b3a10ad713090330d14496ea11bd7fd43a0c79d953fb695c4d631e",
+    "tests/architecture_probe.py": "d3167d61d357abbca3d533d0600860cf568877439e123de54e4c7e1c1111a6a8"
+  },
+  "after_sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "tests/test_order.py": "a438c19810b3a10ad713090330d14496ea11bd7fd43a0c79d953fb695c4d631e",
+    "tests/architecture_probe.py": "d3167d61d357abbca3d533d0600860cf568877439e123de54e4c7e1c1111a6a8"
+  },
+  "snapshot_unchanged": true,
+  "temporary_data_cleaned": true,
+  "observations": [
+    {
+      "check": "CHK-002",
+      "case": "second_connection_commit",
+      "accepted": true,
+      "status": "submitted",
+      "pass": true
+    },
+    {
+      "check": "CHK-005",
+      "case": "cancelled_no_write_reopened",
+      "accepted": false,
+      "status": "cancelled",
+      "sql": [
+        "SELECT status FROM orders WHERE order_id = 'cancelled'"
+      ],
+      "writes": [],
+      "pass": true
+    },
+    {
+      "check": "CHK-001",
+      "case": "paid_behavior_only",
+      "status": "paid",
+      "pass": true,
+      "limit": "Behavior result does not prove compliant write ownership"
+    },
+    {
+      "check": "CHK-002",
+      "case": "readonly_write_failure",
+      "pass": true,
+      "exception": "OperationalError",
+      "message": "attempt to write a readonly database"
+    },
+    {
+      "check": "CHK-002",
+      "case": "controlled_commit_failure",
+      "pass": true,
+      "exception": "OperationalError",
+      "message": "controlled commit failure",
+      "limit": "Controlled connection proxy; not a physical disk failure experiment"
+    }
+  ]
+}

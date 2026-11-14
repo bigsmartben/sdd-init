@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "scope": "mechanical_only",
+  "files": [
+    "docs/issues/ORDER-001.md",
+    "docs/issues/ORDER-002.md",
+    "docs/test-reports/order/bugfix.md",
+    "specs/order/plan.md"
+  ],
+  "diagnostics": [],
+  "errors": 0,
+  "warnings": 0
+}
