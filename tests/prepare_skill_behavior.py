@@ -52,6 +52,18 @@ def prepare_case(case, output, *, candidate=ROOT / "source/project", corpus=CORP
         if parent.is_symlink():
             raise ValueError(f"Linked output parent: {parent}")
     payload = tree_files(candidate)
+    selected_role = case.get("role")
+    if selected_role is not None:
+        role_file = f".codex/agents/{relative_path(selected_role)}.toml"
+        if role_file not in payload or "/" in selected_role:
+            raise ValueError(f"Unknown role: {selected_role}")
+        shared_prefix = ".agents/sdd/"
+        installed_prefix = ".agents/skills/sdd-workflow/sdd/"
+        payload = {
+            installed_prefix + name.removeprefix(shared_prefix) if name.startswith(shared_prefix) else name: content
+            for name, content in payload.items()
+            if not name.startswith((".agents/skills/", ".codex/")) or name == role_file
+        }
     rules = dict(payload)
     if "fixture" in case:
         fixture = corpus / str(relative_path(case["fixture"]))
@@ -69,28 +81,44 @@ def prepare_case(case, output, *, candidate=ROOT / "source/project", corpus=CORP
         relative_path(name)
         if any(parent.as_posix() in payload for parent in PurePosixPath(name).parents if str(parent) != "."):
             raise ValueError(f"Fixture file shadows a parent directory: {name}")
-    if case.get("fixture") and any(payload.get(name) != content for name, content in rules.items() if name.startswith((".agents/", ".codex/"))):
-        raise ValueError("Fixture must not override candidate rules")
+    if case.get("fixture") or selected_role is not None:
+        for name, content in payload.items():
+            if name.startswith((".agents/", ".codex/")) and rules.get(name) != content:
+                raise ValueError("Fixture must not override candidate rules")
     project = output / "project"
     project.mkdir(parents=True)
     for name, content in payload.items():
         path = project / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(content)
-    (project / "AGENTS.md").write_text(
-        "# 隔离评测项目\n\n本目录是评测测试资产。先读 README.md 和 docs/index.md；"
-        "共享治理见 [.agents/sdd/references/sdd-repository-governance.md](.agents/sdd/references/sdd-repository-governance.md)，"
-        "执行协作见 [.agents/sdd/references/delegation.md](.agents/sdd/references/delegation.md)。"
-        "Skill 与角色以本目录候选快照为准。仅在本目录内执行当前用户任务，不修改维护仓库的安装副本或外部项目。\n",
-        encoding="utf-8")
+    shared = ".agents/sdd"
+    if selected_role is not None:
+        shared = ".agents/skills/sdd-workflow/sdd"
+        (project / ".codex/config.toml").write_text(
+            f'[agents]\nmax_threads = 1\nmax_depth = 1\n\n[agents.{selected_role}]\n'
+            f'config_file = "agents/{selected_role}.toml"\n', encoding="utf-8")
+    guidance = (f"# 隔离评测项目\n\n先读 README.md 和 docs/index.md。共享资源位于 `{shared}/`。"
+                f"按需读[仓库治理]({shared}/references/sdd-repository-governance.md)和"
+                f"[执行协作]({shared}/references/delegation.md)。")
+    if selected_role is None:
+        guidance += (f"实施按[实施交接]({shared}/references/delegation.md#实施交接)定位共享实施规则。"
+                     "Skill 与角色以本目录候选快照为准。")
+    (project / "AGENTS.md").write_text(guidance + "仅在本目录内执行当前任务。\n", encoding="utf-8")
     (project / "TASK.txt").write_text(case["input"] + "\n", encoding="utf-8")
+    # List candidate files whose bytes were actually retained in the project.
     manifest = {
         "case": case["id"],
         "candidate_source": str(candidate.resolve()),
-        "files": {name: hashlib.sha256(content).hexdigest() for name, content in sorted(rules.items())},
+        "files": {
+            name: hashlib.sha256(content).hexdigest()
+            for name, content in sorted(rules.items())
+            if (project / name).read_bytes() == content
+        },
         "preparation_only": True,
         "model_execution": "UNVERIFIED",
     }
+    if selected_role is not None:
+        manifest["role"] = selected_role
     (output / "candidate-manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (output / "evaluation.json").write_text(json.dumps({
         "case": case["id"], "expected": case["expected"], "forbidden": case["forbidden"],

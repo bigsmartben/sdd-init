@@ -59,13 +59,14 @@ PROJECT_SKILLS = {
     'sdd-review-prompt', 'sdd-deliver',
 }
 PROJECT_ROLE_MODELS = {
-    'sdd-designer': 'gpt-6-astra',
+    'sdd-architect': 'gpt-6-astra',
+    'sdd-product-manager': 'gpt-6-astra',
     'sdd-coder': 'gpt-6.1-sol',
-    'sdd-documenter': 'gpt-6.1-terra',
-    'sdd-validator': 'gpt-6.1-terra',
-    'sdd-delivery': 'gpt-6.1-terra',
+    'sdd-devops': 'gpt-6.1-terra',
+    'sdd-doc-consistency': 'gpt-6.1-terra',
 }
 PROJECT_ROLES = set(PROJECT_ROLE_MODELS)
+RETIRED_ROLES = {"sdd-delivery", "sdd-designer", "sdd-documenter", "sdd-validator"}
 
 
 def validate_role(data: bytes, name: str) -> None:
@@ -118,14 +119,14 @@ def shared_bundle() -> Path:
     roles = {name for name in actual if name.startswith("agents/") and name.endswith(".toml")}
     required = {
         "sdd/scripts/govern.py", "sdd/scripts/doc_check.py",
-        *(f"skills/sdd-deliver/references/{name}.md" for name in ("git-delivery", "git-remote", "deployment")),
         *(f"sdd/references/{name}.md" for name in (
             "doc-check", "architecture-rules", "visual-confirmation", "document-writing", "delegation",
             "sdd-repository-governance", "observability-baseline", "scenarios", "prototype", "implementation",
+            "task-receipt", "release-evidence", "delivery", "deployment", "git-delivery", "git-remote", "recovery", "traffic",
         )),
         *(f"sdd/assets/{name}_template.md" for name in (
             "status", "spec", "blueprint", "code-review-rules", "prototype_reference", "quickstart",
-            "plan", "test_report", "issue", "review", "prompt_review", "sequence", "contract", "research",
+            "plan", "test_report", "issue", "review", "prompt_review", "sequence", "contract", "research", "delivery_record",
         )),
         *(f"skills/{name}/agents/openai.yaml" for name in PROJECT_SKILLS),
     }
@@ -201,12 +202,15 @@ def cmd_init(root: Path, _: argparse.Namespace) -> int:
         return initialize(root)
 
 
+def role_reference(name: str) -> str:
+    return f"../{transaction.WORKFLOW_LINK}/agents/{name}.toml"
+
+
 def prepare_config(original: str) -> str:
     begin = "# sdd-init roles:start"
     end = "# sdd-init roles:end"
     newline = "\r\n" if "\r\n" in original else "\n"
-    references = {name: {"config_file": f"../{transaction.WORKFLOW_LINK}/agents/{name}.toml"}
-                  for name in sorted(PROJECT_ROLES)}
+    references = {name: {"config_file": role_reference(name)} for name in sorted(PROJECT_ROLES)}
     lines = [begin]
     for name, role in references.items():
         lines.extend((
@@ -220,7 +224,20 @@ def prepare_config(original: str) -> str:
         if len(markers) != 2 or markers[0][0].rstrip("\r") != begin:
             fail(".codex/config.toml 的 SDD 角色引用块不完整、重复或顺序错误")
         first, last = markers[0].start(), markers[1].start() + len(end)
-        same_block = original[first:last].replace("\r\n", "\n") == block.replace("\r\n", "\n")
+        old_block = original[first:last]
+        same_block = old_block.replace("\r\n", "\n") == block.replace("\r\n", "\n")
+        old_lines = old_block.splitlines()[1:-1]
+        if not old_lines or len(old_lines) % 2:
+            fail(".codex/config.toml 的 SDD 角色引用块含定制；请保留并核对后重试")
+        for header, setting in zip(old_lines[::2], old_lines[1::2]):
+            name = header.removeprefix("[agents.").removesuffix("]")
+            known = {f'config_file = "{role_reference(name)}"'}
+            # The old project-local form is recognized after its role file
+            # has been moved out of discovery (checked during preflight).
+            if name in PROJECT_ROLES:
+                known.add(f'config_file = "agents/{name}.toml"')
+            if name not in PROJECT_ROLES | RETIRED_ROLES or header != f"[agents.{name}]" or setting not in known:
+                fail(f".codex/config.toml 的 SDD 角色引用块含定制 ({header})；请保留并核对后重试")
         remaining = original[:first] + original[last:]
         candidate = original if same_block else original[:first] + block + original[last:]
     else:
@@ -241,6 +258,17 @@ def prepare_config(original: str) -> str:
             fail(f".codex/config.toml 的 SDD 角色引用不可用: {name}")
         previous.get("agents", {}).pop(name, None)
         merged["agents"].pop(name, None)
+    retired_paths = {role_reference(name) for name in RETIRED_ROLES}
+    for name, role in unmanaged.get("agents", {}).items():
+        reference = role.get("config_file") if isinstance(role, dict) else None
+        if isinstance(reference, str) and reference.replace("\\", "/") in retired_paths:
+            fail(f".codex/config.toml 的项目角色 {name} 引用已退役的共享角色；请保留并迁移引用")
+    # Migrate only exact legacy references generated inside our managed block.
+    previous_roles = previous.get("agents", {})
+    for legacy_role in RETIRED_ROLES:
+        legacy_reference = {"config_file": role_reference(legacy_role)}
+        if legacy_role not in unmanaged.get("agents", {}) and previous_roles.get(legacy_role) == legacy_reference:
+            previous_roles.pop(legacy_role)
     for config in (previous, merged):
         if config.get("agents") == {}:
             config.pop("agents")

@@ -1,14 +1,14 @@
 # Git 与平台交付
 
-按 [sdd-deliver](../SKILL.md) 选定的交付终点处理本地 Git 与平台协作。输入为改动或议题范围、源／目标及已有授权。
+按[交付与运行规则](delivery.md)确定的终点处理本地 Git 与平台协作。输入为改动或议题范围、源／目标及已有授权。
 
-按锚点读取共享规则。纯 Issue 从项目根目录运行：
+按锚点读取共享规则。已定位为 GitHub 或 GitLab 的纯 Issue 操作，可从项目根目录读取对应条款：
 
 ```powershell
-python -B -X utf8 .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root .agents/skills/sdd-workflow --read 'sdd/references/sdd-repository-governance.md#交付' 'skills/sdd-deliver/references/git-remote.md#选择平台与执行通道:仓库定位,Issue 查重／读写' 'skills/sdd-deliver/references/git-remote.md#平台议题与请求'
+python -B -X utf8 .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root .agents/skills/sdd-workflow --read 'sdd/references/delivery.md#场景输入与终点:分支、提交、推送、Issue、创建或合并 PR／MR' 'sdd/references/git-remote.md#选择平台与执行通道:仓库定位,Issue 查重／读写' 'sdd/references/git-remote.md#平台议题与请求'
 ```
 
-将命令输出作为本轮规则。合并可独立完成的查询，按本轮命令核对参数。仅在失败或结果不明时另取 `#失败恢复`。
+按所选平台读取适用条款。合并可独立完成的查询，按本轮命令核对参数。仅在失败或结果不明时另取 `#失败恢复`。
 
 1. 从用户意图和既有任务约定确定交付终点、范围及源／目标。涉及平台时按[平台与通道](git-remote.md#选择平台与执行通道)定位实例、仓库及可用工具，只读取本轮操作对应的条款和表格行；先自行查询，仅澄清无法消歧或获取的必要输入。
 2. 涉及本地代码交付时读取工作区、暂存区、分支和相关提交，明确归属；保留无关修改及预暂存内容，不将其混入本次提交。归属不明时澄清，不用整仓 add、reset、clean 或 stash 掩盖问题。核对本次交付要求的有效证据，准备提交分组和信息，不自动追加架构 Review 或完整验收。只做 Issue 或处理指定既有 PR／MR 时无需先提交代码，不附带工作区变更。
@@ -27,9 +27,9 @@ python -B -X utf8 .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root .a
 [branch]: git-remote.md#分支准备
 [objects]: git-remote.md#平台议题与请求
 
-按终点授权整段必要操作，不为分支命名、提交信息、push 或平台按钮逐项确认。需要新增外部操作授权时，先准备可审阅的仓库、范围、源／目标及拟执行结果，按[意图对齐](../../../sdd/references/visual-confirmation.md#意图对齐)聚焦该缺口。等待或工具的自动确认参数不是授权。amend/rebase、强推、删除、绕过保护、创建远端仓库或修改权限不包含在普通交付授权中。当前分支不适合承载改动时先解决分支归属；合并冲突需改代码时交 sdd-imp。
+按已授权终点组织必要操作，自主决定分支命名、提交信息及工具参数。推送、合并等步骤会触发部署或生产操作时，先按[执行前确认与部署评估](delivery.md#执行前确认与部署评估)落实适用的前置条件。缺少外部操作授权时，在回执中列出可审阅的仓库、范围、源／目标及拟执行结果。等待或工具的自动确认参数不是授权。amend/rebase、强推、删除、绕过保护、创建远端仓库或修改权限不包含在普通交付授权中。当前分支不适合承载改动时先解决分支归属。涉及跨职责的冲突，在回执中列出受影响位置、版本、证据与恢复条件。
 
-远端 Issue 与 PR／MR 只承载协作摘要、关联及交付事实，需求正文仍归 Spec、验证事实归报告、问题处理事实归独立 Issue；只按用户要求或项目既有约定建 Issue，不为每次提交额外创建。独立问题记录中的缺陷 Issue 不自动等同平台 Issue；需要同步时关联独立记录、原编号与报告，关闭依据原 Issue 的验证结论及任务授权。需要角色交接时读取[执行协作](../../../sdd/references/delegation.md)。代码整改交给 sdd-imp，正式文档或 Status 更新交给 sdd-documenter。
+远端 Issue 与 PR／MR 只承载协作摘要、关联及交付事实，需求正文仍归 Spec、验证事实归报告、问题处理事实归独立 Issue。只按用户要求或项目既有约定建 Issue。平台 Issue 同步时关联独立记录、原编号与报告，关闭依据原 Issue 的验证结论及任务授权。
 
 输出：实际达到的终点、平台对象链接、SHA／分支、检查或审批状态及阻塞；区分已推送、请求已创建、等待检查／审批、排队／自动合并及已合并。
 

@@ -15,8 +15,8 @@
 
 - **怎样审查提示词或检查改版后的行为？** 查[适用场景、流程、输入输出、交接与确认点](blueprint.md#提示词审查的使用与交接)。执行入口为 [sdd-review-prompt](../source/project/.agents/skills/sdd-review-prompt/SKILL.md)，本仓验证见[实施证据](workflow-evidence.md#2026-11-14-提示词审查与行为验证技能)。
 
-- **本轮改什么、按什么顺序执行？** 查[设计变更提醒与任务交接 Plan](plans/workflow-continuation.md)；既有工作见[专职 Agent 协作 Plan](plans/agent-collaboration.md)、[安装恢复与旧命令退役 Plan](plans/install-recovery.md)及[对应验证报告](test-reports/install-recovery/2026-11-04.md)。输出结构见 [Plan](../source/project/.agents/sdd/assets/plan_template.md)，生成与执行规则见 [实施与局部自验](../source/project/.agents/sdd/references/implementation.md)。
+- **本轮改什么、按什么顺序执行？** 查[4+1 角色独立性整改 Plan](plans/role-independence.md)。既有工作查[设计变更提醒与任务交接 Plan](plans/workflow-continuation.md)；既有工作见[专职 Agent 协作 Plan](plans/agent-collaboration.md)、[安装恢复与旧命令退役 Plan](plans/install-recovery.md)及[对应验证报告](test-reports/install-recovery/2026-11-04.md)。输出结构见 [Plan](../source/project/.agents/sdd/assets/plan_template.md)，生成与执行规则见 [实施与局部自验](../source/project/.agents/sdd/references/implementation.md)。
 
 - **如何提交、推送或部署？** 使用 [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md)。启动或重启服务时，从项目运行指南与环境配置定位实际入口。
 
-- **文档写后如何检查？** 使用[文档校验 CLI](../source/project/.agents/sdd/references/doc-check.md)检查选定范围的机械问题，语义核对由 sdd-documenter 完成。
+- **文档写后如何检查？** 写入者按[共享规则](../source/project/.agents/sdd/references/document-writing.md)做语义和机械检查。角色配置及调度见[执行协作](../source/project/.agents/sdd/references/delegation.md)。

@@ -9,7 +9,7 @@
 
 - **发现了哪些 Bug，修复后是否已复验关闭？** 沿用 [Issue](../.agents/sdd/assets/issue_template.md) 及编号。指定缺陷的诊断、修复及定向复验使用 [sdd-bugfix](../.agents/skills/sdd-bugfix/SKILL.md)。修复方案查关联的 Plan／Task，关单依据及恢复条件查原 Issue。
 
-- **项目的 Code Review Rules 在哪里？** 用户决定维护时机，通过 [sdd-documenter](../.agents/sdd/references/delegation.md#文档交接) 按[Code Review Rules](../.agents/sdd/assets/code-review-rules_template.md)生成或更新；首次生成后将此处指向项目规则正文。
+- **项目的 Code Review Rules 在哪里？** 用户决定维护时机，获授权的执行者按[写入规则](../.agents/sdd/references/document-writing.md#code-review-rules)维护。首次建立后将此处指向规则正文。
 
 - **Code Review Rules 是否落实，检查项偏差是否修复并复核？** 查 Architecture Review Record；初次落盘使用 [Architecture Review Record](../.agents/sdd/assets/review_template.md)，修复方案引用 实施的 Plan／Task。
 
@@ -17,6 +17,6 @@
 
 - **本轮改什么、按什么顺序执行？** 查当前 Plan（Task 清单）；输出结构见 [Plan](../.agents/sdd/assets/plan_template.md)，生成与执行规则见 [实施与局部自验](../.agents/sdd/references/implementation.md)。
 
-- **如何提交、推送或部署？** 使用 [sdd-deliver](../.agents/skills/sdd-deliver/SKILL.md)。启动或重启服务时，从项目运行指南与环境配置定位实际入口。
+- **如何操作仓库、流水线、发布、环境、流量、备份恢复或退役？** 使用 [sdd-deliver](../.agents/skills/sdd-deliver/SKILL.md)。从项目运行指南与平台配置定位实际入口，正式发布查[适用依据](../.agents/sdd/references/sdd-repository-governance.md#正式发布依据)，首次建运维记录用 [Delivery Record](../.agents/sdd/assets/delivery_record_template.md)。
 
-- **文档写后如何检查？** 使用[文档校验 CLI](../.agents/sdd/references/doc-check.md)检查选定范围的机械问题，语义核对由 sdd-documenter 完成。
+- **文档写后如何检查？** 写入者按[共享规则](../.agents/sdd/references/document-writing.md)做语义和机械检查。单独核对正文冲突、冗余或引用时，Main 按[文档交接](../.agents/sdd/references/delegation.md#文档交接)安排只读审查，再按授权和正文归属安排修复。

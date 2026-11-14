@@ -74,11 +74,11 @@ class GovernanceTests(unittest.TestCase):
         config = self.root / ".codex/config.toml"
         roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
         expected_models = {
-            "sdd-designer": "gpt-6-astra",
+            "sdd-architect": "gpt-6-astra",
             "sdd-coder": "gpt-6.1-sol",
-            "sdd-documenter": "gpt-6.1-terra",
-            "sdd-validator": "gpt-6.1-terra",
-            "sdd-delivery": "gpt-6.1-terra",
+            "sdd-doc-consistency": "gpt-6.1-terra",
+            "sdd-product-manager": "gpt-6-astra",
+            "sdd-devops": "gpt-6.1-terra",
         }
         self.assertEqual(set(roles), set(expected_models))
         for name, model in expected_models.items():

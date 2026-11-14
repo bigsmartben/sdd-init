@@ -1,13 +1,13 @@
 # Plan — <Implementation goal>
 
-> This template defines the implementation output. sdd-coder governs preparation, adjustment, and execution. Use the Task list as the Plan, maintaining one copy in the current Task record or the existing planning document.
+> This template defines the implementation output. Follow the [implementation rules](../references/implementation.md) to prepare, adjust, and execute the Plan. Use the Task list as the Plan, maintaining one copy in the current Task record or the existing planning document.
 
 A simple change may require one Task. Keep the required sections and fields, write only facts relevant to this change, and link existing material precisely. Lead with completed results, key changes, verification outcomes, and remaining work, then link the detailed Task list. Before execution, summarize the goal, change scope, and completion criteria. The full template is optional when presenting work for execution or confirmation.
 
 ## 1. Goal and Basis
 
 - **Goal and scope** — <Behavior to change, affected scope, and explicit exclusions>
-- **Upstream work** — <Work order goal, scope, pass criteria, and link to the upstream acceptance plan. Reference the confirmed requirement, AC, Interface Contract, architecture decision, original Bug Issue, or original Review check as applicable.>
+- **Upstream work** — <Work order goal, scope, pass criteria, and links to the upstream acceptance plan and procedure. Reference the confirmed requirement, AC, Interface Contract, architecture decision, original Bug Issue, or original Review check as applicable.>
 - **Current implementation** — <Code facts and entry points directly related to the change>
 
 ## 2. Task List
@@ -42,4 +42,4 @@ For a Plan with multiple Tasks, show the execution order as a compact DAG derive
 
 - **Goal coverage and completion** — <Link completed and unfinished Tasks. Compare the actual changes and verification coverage with the upstream goal, applicable constraints, and current Plan.>
 - **Blockers and next actions** — <Specific problem, affected Tasks, and resumption conditions, or None>
-- **Coverage gaps and applicable follow-up** — <Work order criteria still awaiting verification and their executors. For each user acceptance or architecture recheck in scope, link its upstream plan and provide the applicable entry points, known setup, and available evidence.>
+- **Coverage gaps and applicable follow-up** — <Work order criteria still awaiting verification and their executors. For each requirements acceptance, defect retest, or architecture recheck in scope, link its upstream acceptance plan and procedure and provide the applicable entry points, known setup, and available evidence.>

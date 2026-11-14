@@ -134,7 +134,7 @@ class BuildTests(unittest.TestCase):
             {"spec_template.md", "blueprint_template.md", "status_template.md",
              "plan_template.md", "quickstart_template.md", "prototype_reference_template.md",
              "test_report_template.md", "issue_template.md", "review_template.md", "sequence_template.md", "contract_template.md",
-             "architecture-rule-catalog.md", "code-review-rules_template.md", "research_template.md", "prompt_review_template.md"})
+             "architecture-rule-catalog.md", "code-review-rules_template.md", "research_template.md", "prompt_review_template.md", "delivery_record_template.md"})
         checker = target / WORKFLOW / "sdd/scripts/doc_check.py"
         checked = subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(checker), "--root", str(target),
@@ -308,7 +308,7 @@ class BuildTests(unittest.TestCase):
         files = {
             ".agents/sdd/assets/test-plan.md": b"# Project notes\n",
             ".agents/skills/sdd-accept/SKILL.md": b"# Existing workflow notes\n",
-            ".codex/agents/sdd-architect.toml": b'name = "sdd-architect"\n',
+            ".codex/agents/project-role.toml": b'name = "project-role"\n',
         }
         for relative, content in files.items():
             entry = target / relative
@@ -360,8 +360,10 @@ class BuildTests(unittest.TestCase):
         skill = builder.build(self.folder / "skill")
         for index, relative in enumerate((
             "skills/sdd-deliver/SKILL.md", "skills/sdd-deliver/agents/openai.yaml",
-            "skills/sdd-deliver/references/git-delivery.md", "skills/sdd-deliver/references/git-remote.md",
-            "skills/sdd-deliver/references/deployment.md",
+            "sdd/references/git-delivery.md", "sdd/references/git-remote.md",
+            "sdd/references/deployment.md", "sdd/references/delivery.md", "sdd/references/recovery.md",
+            "sdd/references/traffic.md", "sdd/references/release-evidence.md", "sdd/references/task-receipt.md",
+            "sdd/assets/delivery_record_template.md",
             "skills/sdd-review-prompt/SKILL.md", "skills/sdd-review-prompt/agents/openai.yaml",
             "sdd/assets/prompt_review_template.md",
             "skills/sdd-bugfix/SKILL.md", "skills/sdd-bugfix/agents/openai.yaml",

@@ -70,14 +70,14 @@ class UserInstallTests(unittest.TestCase):
         self.assertEqual((worktree / ".codex/config.toml").read_bytes(), refs)
         repos.append(worktree)
         before = [{p.relative_to(repo): p.read_bytes() for p in project_files(repo)} for repo in repos]
-        role_path = "agents/sdd-documenter.toml"
+        role_path = "agents/sdd-doc-consistency.toml"
         role = self.resources / "shared" / role_path
         role.write_text(role.read_text(encoding="utf-8") + "\n# new workflow version\n", encoding="utf-8")
         self.change_release()
         self.assertEqual(install(self.resources, self.skills), "Updated")
         for repo, expected in zip(repos, before):
             config = repo / ".codex/config.toml"
-            ref = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]["sdd-documenter"]["config_file"]
+            ref = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]["sdd-doc-consistency"]["config_file"]
             self.assertTrue((config.parent / ref).samefile(shared / role_path))
             self.assertEqual((config.parent / ref).read_bytes(), role.read_bytes())
             self.assertEqual({p.relative_to(repo): p.read_bytes() for p in project_files(repo)}, expected)

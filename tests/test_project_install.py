@@ -130,7 +130,10 @@ gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["init"]))
     def test_upgrade_rollback_preserves_customizations_and_history(self):
         self.assertEqual(self.run_init().returncode, 0)
         customized = self.root / ".codex/config.toml"
-        customized.write_bytes(customized.read_bytes().replace(b"../.agents/skills/", b"../old/"))
+        customized.write_bytes(b'model = "project-choice"\r\n' + customized.read_bytes().replace(
+            b'config_file = "../.agents/skills/sdd-workflow/agents/sdd-coder.toml"',
+            b'config_file = "agents/sdd-coder.toml"',
+        ))
         history = self.root / "specs/old/status.md"
         history.parent.mkdir(parents=True)
         history.write_bytes(b"historical evidence")
@@ -170,7 +173,7 @@ tx.replace_file = stop
         self.assertEqual(self.run_init().returncode, 0)
 
     def test_crash_after_link_creation_rolls_back_without_touching_shared_files(self):
-        shared = self.skill / "shared/agents/sdd-documenter.toml"
+        shared = self.skill / "shared/agents/sdd-doc-consistency.toml"
         original = shared.read_bytes()
         self.crash("""
 original = tx.create_workflow_link
@@ -179,7 +182,7 @@ def stop(path, target):
     os._exit(79)
 tx.create_workflow_link = stop
 """)
-        self.assertTrue((self.root / WORKFLOW / "agents/sdd-documenter.toml").samefile(shared))
+        self.assertTrue((self.root / WORKFLOW / "agents/sdd-doc-consistency.toml").samefile(shared))
         (self.root / "AGENTS.override.md").write_bytes(b"block next install")
         result = self.run_init()
         self.assertNotEqual(result.returncode, 0)

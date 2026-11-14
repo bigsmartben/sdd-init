@@ -13,7 +13,7 @@ Use the location specified in [Repository Governance](../references/sdd-reposito
 - **Environment, permissions, dependencies, and data** — <Name the environment and the setup steps or commands. Provide example inputs and how to obtain or recreate the required starting state. For routine data, boundary values, and execution order, state what the executor derived from the Spec, ACs, or Task and what it covers. Preserve the agreed scope and criteria. Omit credentials.>
 - **Launch command or access point** — <Runnable command or usable entry point>
 
-For a user-facing work order, the upstream workflow provides the guide or an accessible link before implementation. Record the known entry point and setup at handoff. For integration testing, sdd-test-loop reuses the guide and fills in the runnable version and environment under the [Testing Scope Constraints](../references/sdd-repository-governance.md#testing-scope-constraints). For testing requested without a work order, reuse an existing guide or prepare one from the confirmed criteria. sdd-documenter consolidates the guide when a formal project record is needed.
+For a user-facing work order, reuse the provided acceptance steps or prepare them from confirmed criteria. Record the known entry point and setup. For integration testing, fill in the runnable version and environment under the [Testing Scope Constraints](../references/sdd-repository-governance.md#testing-scope-constraints). Update the existing authoritative guide when authorized to maintain a formal project record.
 
 ## 3. Scenario Verification
 

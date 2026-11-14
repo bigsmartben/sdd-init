@@ -1,17 +1,18 @@
 # Architecture Review Record — <Subject and batch>
 
-> sdd-documenter records the initial review, sdd-coder handoff, and recheck results from their respective executors. Use this record to assess architecture conformance and application of Code Review Rules. sdd-coder develops and maintains the fix approach in the Plan. Link the Task from this record.
+> Record architecture conformance, remediation handoffs and rechecks. Link implementation Tasks and their Plan for the approach and local verification evidence.
 
 Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). Follow the project index for an existing record and maintain one record per review round. Link it from Status or Plan. This record serves as the report for architecture checks.
 
 ## 1. Scope and Context
 
 - **Goal and scope** — <Engineering structure, modules, interfaces, dependencies, configuration, runtime assembly, and cross-module relationships. State exclusions and reasons.>
-- **Architecture basis** — <Project Code Review Rules path and rule IDs, Blueprint or ARC, and relevant Interface Contract or Scenario Sequence clauses and versions>
+- **Architecture basis** — <Applicable project Code Review Rules and IDs, confirmed Blueprint or ARC, and relevant Interface Contract or Scenario Sequence clauses and versions. For an explicitly scoped technical debt item, include its technical target and the design constraints.>
 - **Rule validity and maintenance notice** — <Validity and mapping for the affected design, with reasons for reusing prior checks. For missing or outdated rules, list the design clauses, rule IDs, scope still to check, and the need to create or update rules. The user decides when to maintain the rules.>
 - **Implementation snapshot** — <Git commit, relevant uncommitted changes, and artifact version>
 - **Environment and reviewer** — <Environment, dependencies, data conditions, time, and reviewer. Cite the basis for any independence requirement.>
 - **Remediation boundaries** — <Business logic and confirmed architecture to preserve, files or modules in scope, and authorized actions>
+- **Behavior baseline for remediation** — <Confirmed criteria and their sources. Separately record pre-change version, environment, entry points, actual behavior, evidence and any differences. Link relevant conditions and thresholds for confirmed quality metrics.>
 
 ## 2. Review Checks and Follow-up
 
@@ -24,20 +25,22 @@ Select checks based on the impact of the change and each rule's applicability. C
 ### CHK-001: <Subject and constraint>
 
 - **Basis and subject** — <Applicable rule IDs and design clauses, implementation locations, and cross-module paths>
-- **Check method and expectations** — <Before dispatch, sdd-review-code defines the developer-facing acceptance plan: constraint, subject and paths to inspect, conditions, reproducible inspection or execution method, evidence to collect, and pass criteria.>
+- **Acceptance plan** — <Checks, verification responsibilities, timing or preconditions, and any applicable independence requirement. Record the actual verifier if already designated.>
+- **Acceptance procedure** — <Record the applicable constraint, subject and paths, preconditions, reproducible inspection or execution steps, observations and evidence to collect, and pass criteria.>
 - **Initial review facts** — <Not run, or time, reviewer, snapshot, actual result, evidence, deviations, and impact. Use PASS / FAIL / UNVERIFIED / BLOCKED / Not applicable for the conclusion of a completed check.>
-- **Remediation handoff** — <Use this check ID as the work order reference. Cite the rule and deviation evidence above. Record the remediation target, scope and implementation locations, expected outcome, behavior to preserve, recheck plan in this check, and assignee. Record dispatch time or status. Use Not applicable if no fix is required or only more investigation is needed.>
-- **User acceptance, when applicable** — <Before dispatch, link the user-facing plan and criteria separately from the architecture recheck and identify the executor. Keep the result pending until evidence is available, then link it here.>
+- **Remediation handoff** — <Use this check ID as the work order reference. Cite the rule and deviation evidence above, the remediation target and scope, affected locations, expected outcome, behavior to preserve, and this check's acceptance plan and procedure. Include actual assignment or status if known. Use Not applicable if no fix is required or only more investigation is needed.>
+- **Behavior preservation** — <Link affected baseline criteria and targeted checks separately from the architecture recheck. Include the designated verifier if known. Cite any applicable user-facing verification procedure and link actual results once available.>
 - **Implementation Tasks** — <Links to one or more Tasks in the Plan. A Task may address several checks. Recheck each check separately and keep the fix approach in the Plan.>
-- **Current status and conclusion** — <Pending check / Conforming / Unfixed / Fix in progress / Fixed, awaiting recheck / Closed after recheck / Blocked. Use Not run while pending. Otherwise use PASS / FAIL / UNVERIFIED / BLOCKED / Not applicable. For a blocker, identify the specific problem, assignee, and resumption conditions.>
+- **Current status and conclusion** — <Pending check / Conforming / Unfixed / Fix in progress / Fixed, awaiting recheck / Closed after recheck / Blocked. Use Not run while pending. Otherwise use PASS / FAIL / UNVERIFIED / BLOCKED / Not applicable. For a blocker, identify the specific problem, resumption conditions, and current assignee if known.>
 
 | Batch / Time / Reviewer | Action or recheck scope and method | Snapshot, actual results, and evidence | Check conclusion and status |
 |---|---|---|---|
-| <Batch> | <Further investigation or recheck. Include the original deviation, affected rules, and cross-module relationships.> | <Version, recheck evidence, and evidence that business behavior is preserved. Link the Task and any integration evidence needed by the check.> | <Check conclusion. Continue remediation if the recheck fails.> |
+| <Batch> | <Further investigation or recheck. Include the original deviation, affected rules, and cross-module relationships.> | <Version, recheck evidence, and applicable behavior-preservation results. Link the Task and supporting evidence.> | <Check conclusion and any remaining deviation.> |
 
-Repeat this block for each check. Preserve the initial review and subsequent results. For investigation-only updates, record the investigation. The original reviewer applies the check plan to the remediation snapshot and closes the check after a passing recheck. If the recheck fails, send it back to the corresponding Task under the original check ID. Reuse unaffected evidence when the impact analysis explains why it applies to the current snapshot.
+Repeat this block for each check. Preserve the initial review and subsequent results. For investigation-only updates, record the findings and recommendations. Recheck on the remediation snapshot using the original acceptance plan and procedure. Close only after a passing recheck. Report a failed recheck under the original check ID and link any corresponding Task. Reuse unaffected evidence when the impact analysis explains why it applies to the current snapshot.
 
 ## 3. Gate and Remaining Work
 
-- **Review Gate** — <Summary, scope, and snapshot provided by the reviewer under sdd-review-code criteria>
-- **Remaining work and next actions** — <Check IDs, assignees, specific problems, and resumption conditions, or None>
+- **Review Gate** — <Summary, scope, and snapshot supported by the review criteria and evidence>
+- **Remaining work and next actions** — <Check IDs, specific problems, resumption conditions, and current assignees if known, or None>
+- **Integration readiness after refactoring** — <Deliverable version, affected paths, local behavior-preservation evidence, setup, entry points and any unmet prerequisites. The integration Test Report records its own Test Gate.>

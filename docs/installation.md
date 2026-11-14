@@ -14,7 +14,7 @@ uvx --from git+https://github.com/bigsmartben/sdd-init.git sdd-init install
 
 在需要的仓库中打开 Codex，选择 sdd-init（支持该快捷入口的客户端可输入 `/sdd-init`）。CLI／IDE 可输入 `$sdd-init` 或通过 `/skills` 选择；也可明确要求“使用 sdd-init 初始化当前仓库”。未发现新 Skill 时重启 Codex。安装器不修改客户端命令注册或用户配置。[Codex 官方 Skill 文档](https://learn.chatgpt.com/docs/build-skills)
 
-初始化在项目内创建 `.agents/skills/sdd-workflow` 目录链接。Windows 使用 junction，其他平台使用目录符号链接。安装器合并 `AGENTS.md` 导航与 `.codex/config.toml` 中的角色引用，并在 `.gitignore` 排除本机链接和安装元数据。角色的项目配置在 Codex 信任该仓库后加载。需要文档归并时，可直接要求 Codex 委派 `sdd-documenter`。换机、克隆或新建 worktree 后重新运行 sdd-init 以接上本机共享目录。
+初始化在项目内创建 `.agents/skills/sdd-workflow` 目录链接。Windows 使用 junction，其他平台使用目录符号链接。安装器合并 `AGENTS.md` 导航与 `.codex/config.toml` 中的角色引用，并在 `.gitignore` 排除本机链接和安装元数据。角色的项目配置在 Codex 信任该仓库后加载。正式文档由获授权的本职执行者按[文档写入规则](../source/project/.agents/sdd/references/document-writing.md)原位归并。换机、克隆或新建 worktree 后重新运行 sdd-init 以接上本机共享目录。
 
 ## 更新与冲突
 
@@ -28,7 +28,7 @@ uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固�
 
 目标项目自行处理遗留文件。清理后，在目标仓库调用一次 `sdd-init` 即可接入共享模式。脚本统一使用 `init`，同步 `AGENTS.md` 和 `.codex/config.toml` 中的 SDD 托管块，保留项目正文、主模型、MCP 和其他配置。安装器报告与当前工作流的同名冲突。项目自有文档及其中的链接由项目维护。
 
-共享包更新将原受管 `sdd-spec` 替换为 `sdd-develop`。旧受管 `sdd-imp` 的实施规则归入[共享实施规则](../source/project/.agents/sdd/references/implementation.md)。共享包同时移除旧受管技能 `sdd-doc`、`sdd-commit` 和 `sdd-deploy`。文档归并使用 [sdd-documenter](../source/project/.codex/agents/sdd-documenter.toml)，交付使用 [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md)。在已接入的项目中运行一次 `sdd-init` 刷新托管导航，再重新加载项目。
+共享包更新将原受管 `sdd-spec` 替换为 `sdd-develop`。旧受管 `sdd-imp` 的实施规则归入[共享实施规则](../source/project/.agents/sdd/references/implementation.md)。共享包同时移除旧受管技能 `sdd-doc`、`sdd-commit` 和 `sdd-deploy`。升级时刷新旧托管角色引用。项目自有角色及配置按冲突保护处理。在已接入的项目中运行一次 `sdd-init` 刷新托管导航，再重新加载项目。
 
 安装先暂存并验证入口及共享目录，再分别发布。替换失败时恢复旧目录。进程异常中断后，检查 Skill 搜索目录中的 `.sdd-init-install.lock` 及其父目录中的 `.sdd-init-backup-*`，确认安装进程已退出、旧文件已保全，再人工恢复。哈希用于完整性和定制检查。
 

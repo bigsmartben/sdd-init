@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 import tempfile
+import tomllib
 import unittest
 
 import prepare_skill_behavior as prepare
@@ -87,6 +88,32 @@ class PreparationTests(unittest.TestCase):
         self.assertEqual((project / "src/order_service.py").read_bytes(), before["src/order_service.py"])
         self.assertEqual(prepare.tree_files(fixture), before)
         self.assertEqual(json.loads((output / "evaluation.json").read_text(encoding="utf-8"))["model_execution"], "UNVERIFIED")
+
+    def test_role_fixture_registers_only_the_selected_role_without_workflow_skills(self):
+        cases = prepare.load_cases()
+        case_ids = ("role_product_manager", "role_architect", "role_coder", "role_devops", "role_doc_consistency")
+        for case_id in case_ids:
+            with self.subTest(case=case_id):
+                case = cases[case_id]
+                output = self.folder / case_id
+                project = prepare.prepare_case(case, output)
+                role = case["role"]
+                config = tomllib.loads((project / ".codex/config.toml").read_text(encoding="utf-8"))
+                self.assertEqual(config["agents"][role], {"config_file": f"agents/{role}.toml"})
+                self.assertEqual(set(config["agents"]) - {"max_depth", "max_threads"}, {role})
+                self.assertEqual([p.stem for p in (project / ".codex/agents").glob("*.toml")], [role])
+                self.assertEqual(list((project / ".agents/skills").rglob("SKILL.md")), [])
+                shared = project / ".agents/skills/sdd-workflow/sdd"
+                self.assertTrue((shared / "references/sdd-repository-governance.md").is_file())
+                self.assertTrue((shared / "references/document-writing.md").is_file())
+                manifest = json.loads((output / "candidate-manifest.json").read_text(encoding="utf-8"))
+                self.assertNotIn("docs/index.md", manifest["files"])
+                for path, checksum in manifest["files"].items():
+                    self.assertEqual(hashlib.sha256((project / path).read_bytes()).hexdigest(), checksum)
+                self.assertFalse((project / "evaluation.json").exists())
+        invalid = dict(cases["role_doc_consistency"], files={".agents/skills/extra/SKILL.md": "extra"})
+        with self.assertRaisesRegex(ValueError, "override candidate rules"):
+            prepare.prepare_case(invalid, self.folder / "contaminated-role-fixture")
 
 
 if __name__ == "__main__":

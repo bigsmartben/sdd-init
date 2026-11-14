@@ -1,6 +1,6 @@
 # 文档校验 CLI
 
-统一入口为项目内 `.agents/skills/sdd-workflow/sdd/scripts/doc_check.py`，Python 3.11+，仅依赖标准库，只读、不访问网络、不更新状态或 Gate。sdd-documenter 写后执行机械检查，并独立完成语义判断。
+统一入口为项目内 `.agents/skills/sdd-workflow/sdd/scripts/doc_check.py`，Python 3.11+，仅依赖标准库，只读、不访问网络、不更新状态或 Gate。写入者执行机械检查并完成语义核对。
 
 ## 使用
 

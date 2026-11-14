@@ -128,9 +128,8 @@ flowchart TD
   Main --> Roles[按任务调用专职角色]
   Skills --> Shared[共享规则、模板和检查工具]
   Skills --> Roles
-  Roles --> Doc[sdd-documenter]
-  Doc --> Shared
-  Doc --> Check[doc_check.py 只读检查]
+  Roles --> Shared
+  Roles --> Check[doc_check.py 只读检查]
 ```
 
 图中是逻辑依赖，不预设固定角色轮转或进程划分。具体角色及调用条件沿用[执行协作](../source/project/.agents/sdd/references/delegation.md)。
@@ -140,7 +139,10 @@ flowchart TD
 | 资源构建器 | 读取两组分发源，输出确定性安装树与清单；拒绝已有输出目录，不写用户安装 | [build_release.py](../scripts/build_release.py)、[setup.py](../setup.py) |
 | CLI 与用户级安装器 | 解析 install 和目标 Skills 目录，验证资源与旧安装，暂存替换；不初始化项目 | [cli.py](../src/sdd_init/cli.py)、[installer.py](../src/sdd_init/installer.py) |
 | 项目初始化器 | inspect 盘点；init 校验允许路径、必要资源、角色与入口冲突，合并托管导航、角色引用与忽略规则，创建本地链接；安装互斥、恢复记录及回滚由内部 project_install 模块承担，遵循[已确认边界](#项目安装的互斥与恢复边界) | [初始化 Skill](../source/initializer/SKILL.md)、[govern.py](../source/initializer/scripts/govern.py)、[project_install.py](../source/initializer/scripts/project_install.py) |
-| sdd-documenter | 从确认内容与执行证据归并正式文档，维护关联并执行写后检查；模板不授予设计权 | [角色](../source/project/.codex/agents/sdd-documenter.toml) |
+| sdd-product-manager | 产品调研、需求和验收规格、中保真原型 | [角色](../source/project/.codex/agents/sdd-product-manager.toml) |
+| sdd-architect | 架构风险、方案取舍、顶层设计与架构遵循检查 | [角色](../source/project/.codex/agents/sdd-architect.toml) |
+| sdd-devops | 仓库、流水线、发布、环境、流量及恢复操作的可选执行者，回读实际版本、运行及恢复状态 | [角色](../source/project/.codex/agents/sdd-devops.toml)、[共享运维规则](../source/project/.agents/sdd/references/delivery.md) |
+| sdd-doc-consistency | 只读核对项目权威文档，向任务调用者返回冲突、冗余及引用问题的证据与建议 | [角色](../source/project/.codex/agents/sdd-doc-consistency.toml) |
 | sdd-coder | 交付明确的上游任务，生成并执行同一 Plan／Task 清单，修改代码并完成局部自验 | [实施交接](../source/project/.agents/sdd/references/delegation.md#实施交接) |
 | sdd-develop | 推进单个需求的规格、实施及点对点验收，交付可集成的实际版本和证据 | [Skill](../source/project/.agents/skills/sdd-develop/SKILL.md) |
 | sdd-bugfix | 恢复指定行为，完成归因、修复、定向复验和原 Issue 关闭 | [Skill](../source/project/.agents/skills/sdd-bugfix/SKILL.md) |
@@ -188,7 +190,7 @@ flowchart TD
 |---|---|
 | 构建与用户级安装 | [安装说明](installation.md)：构建资源 → 随包携带 → install 校验 → 暂存替换 → 返回安装状态 |
 | 项目初始化／升级 | [初始化入口](../source/initializer/SKILL.md)：inspect → init 写前校验 → 合并导航及安装资源 → 核对结果 |
-| 实施与问题闭环 | [sdd-develop](../source/project/.agents/skills/sdd-develop/SKILL.md)、[实施交接](../source/project/.agents/sdd/references/delegation.md#实施交接)、[bugfix](../source/project/.agents/skills/sdd-bugfix/SKILL.md)、[test](../source/project/.agents/skills/sdd-test-loop/SKILL.md)、[Review](../source/project/.agents/skills/sdd-review-code/SKILL.md) 各自定义执行、交接及完成条件，文档由 sdd-documenter 归并 |
+| 实施与问题闭环 | [sdd-develop](../source/project/.agents/skills/sdd-develop/SKILL.md)、[实施交接](../source/project/.agents/sdd/references/delegation.md#实施交接)、[bugfix](../source/project/.agents/skills/sdd-bugfix/SKILL.md)、[test](../source/project/.agents/skills/sdd-test-loop/SKILL.md)、[Review](../source/project/.agents/skills/sdd-review-code/SKILL.md) 各自定义执行、交接及完成条件，文档由获授权的本职执行者归并 |
 | 提示词审查与行为验证 | [提示词审查的使用与交接](#提示词审查的使用与交接)汇总适用场景、输入输出和确认点 |
 | 部署与 Git 交付 | [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md) 按请求进入 |
 
