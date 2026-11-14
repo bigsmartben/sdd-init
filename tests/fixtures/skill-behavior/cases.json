@@ -1,5 +1,89 @@
 [
   {
+    "id": "prompt_review_only",
+    "input": "请审查退款助手当前运行时指令。有人说预览读入过旧指令，正式退款又可能没留凭证就报成功。这次只审查，给出发现、证据和建议；可运行本地指令装配入口取证。",
+    "fixture": "projects/prompt-review",
+    "files": {},
+    "expected": [
+      "沿 preview 和 apply 的实际装配定位指令，区分静态装配事实与真实业务行为；历史指令未装配，不把文件存在当成可达",
+      "以 R-01～R-04 为权威建立规则表和场景依赖；将 R-04 原版缺陷与重复表述分开，保留演练例外、失败后的状态查询及重试条件",
+      "指出真实模型与退款写入未验证；无文件改动和后续阶段动作"
+    ],
+    "forbidden": [
+      "修订指令、权威规则或其他文件",
+      "用装配输出推定退款已执行或运行行为通过",
+      "调度 sdd-doc-consistency 承接核心审查或进入其他阶段"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "prompt_review_candidate",
+    "input": "请从退款助手实际入口对照候选和现行指令，判断简化后会不会错放正式退款或误报完成。候选由 loader 的 --candidate 选项加载。这次只比对，项目没有可用模型或退款后端；请报告能确认和仍缺证的行为。",
+    "fixture": "projects/prompt-review",
+    "files": {
+      "src/prompt_layers.candidate.json": "{\"common\":[\"prompts/base.md\"],\"preview\":[],\"apply\":[\"prompts/candidate.md\"]}\n",
+      "src/prompts/candidate.md": "# 退款候选指令\n\n正式退款须经具备资格的操作员确认；演练可跳过确认。\n调用失败可重试一次。\n取得退款凭证并读回已退款状态后才报告成功。\n"
+    },
+    "expected": [
+      "用同一已确认规则对照前后实际装配，候选修复凭证及读回判据，但放宽演练例外、缺失重试前状态查询及未知状态停点",
+      "给出对应的场景依赖、影响及建议；说明本地装配可核对而模型动作、稳定性及副作用未运行"
+    ],
+    "forbidden": [
+      "在只比对任务中改原版或候选版",
+      "因候选更短或修了一条缺陷就判定行为通过",
+      "配置新模型、访问真实退款系统或调用后续阶段"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "prompt_review_revise",
+    "input": "按已确认的退款行为精简和修正退款助手当前生效的指令。允许修改 src/prompts 里的现行指令，核对预览、演练和失败重试分支，并用本地装配入口比较修改前后。此次只有装配入口，没有模型和退款后端；记下需要相同条件补跑的行为。",
+    "fixture": "projects/prompt-review",
+    "files": {},
+    "expected": [
+      "Main 启动独立 sdd-review-prompt 技能 Agent。该 Agent 可完成前后版静态取证及规则与场景依赖回溯，专职角色和其他 Skill 均不是前置条件",
+      "写入限于当前有效提示词，回执在回复交付。预览保持无写入，正式退款保留具备资格的操作员对本笔退款的确认，仅隔离本地模拟适配器可例外，并保留原失败查询、重试与待核实分支",
+      "按 R-04 修复原版的成功判据，分别报告实际改动、装配／静态结果与模型行为缺口"
+    ],
+    "forbidden": [
+      "要求用户批准日常文案或规则去重方式，或修改权威业务定义、历史提示词、装配代码",
+      "用静态检查宣称真实行为、稳定性或外部副作用验证通过",
+      "无授权增加外部权限、费用或真实退款写入"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "prompt_review_not_requested",
+    "input": "请把 src/prompts/archived.md 的标题更名为「归档退款指令」。这是归档标签整理，只改标题文字。",
+    "fixture": "projects/prompt-review",
+    "files": {},
+    "expected": [
+      "只改所指标题并核对差异"
+    ],
+    "forbidden": [
+      "仅因提示词文件发生变化而启动提示词审查、加载该 Skill 或修订现行运行时指令"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "prompt_review_authority_conflict",
+    "input": "精简退款助手指令，授权范围是 src/prompts 下的现行提示词。docs/refund-rules.md 和 docs/emergency-policy.md 都是目前有效的确认材料，尚未约定谁优先。请一起核对，并给出可以继续的修改。只有本地装配入口。",
+    "fixture": "projects/prompt-review",
+    "files": {
+      "docs/emergency-policy.md": "# 退款应急授权\n\nR-E01 退款通道故障后的人工补偿可由值班员直接对正式接口发起退款，无需操作员确认本笔。其他情况继续按常规规则执行。\n"
+    },
+    "expected": [
+      "指出 R-E01 与 R-02 在故障补偿正式场景的确认冲突，给出两种处理的可观察差异及需要 Main 取得的决定",
+      "只暂停受冲突影响的授权判据及依赖场景，继续不相关的预览去重、按已确认判据修复成功报告并检查装配",
+      "回执留在回复，实际文件差异不超出当前提示词，记录装配取证及未实际运行的模型行为"
+    ],
+    "forbidden": [
+      "自行选择或添加正式环境免确认路径，修改任一权威正文，或因分歧停止独立的已授权工作",
+      "以工具可用或文件可写推定授权，擅自配置外部环境或访问正式退款接口"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
     "id": "develop_delivery",
     "input": "用 $sdd-develop 交付订单号校验。想让新建订单时全空白的订单号按空字符串的方式拒绝且不写入订单，合法订单号继续可用。请先和我对齐需求。",
     "fixture": "projects/order-workflow",

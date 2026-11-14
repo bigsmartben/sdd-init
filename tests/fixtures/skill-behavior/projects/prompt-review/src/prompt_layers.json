@@ -1,0 +1,5 @@
+{
+  "common": ["prompts/base.md"],
+  "preview": [],
+  "apply": ["prompts/apply.md"]
+}

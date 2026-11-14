@@ -13,6 +13,8 @@
 
 - **Code Review Rules 是否落实，检查项偏差是否修复并复核？** 查 Architecture Review Record；初次落盘使用 [Architecture Review Record](../.agents/sdd/assets/review_template.md)，修复方案引用 实施的 Plan／Task。
 
+- **怎样审查提示词或验证候选改版？** 使用 [sdd-review-prompt](../.agents/skills/sdd-review-prompt/SKILL.md)。查本轮规则映射、场景依赖、发现和验证证据；初次落盘使用 [Prompt Review Record](../.agents/sdd/assets/prompt_review_template.md)。
+
 - **本轮改什么、按什么顺序执行？** 查当前 Plan（Task 清单）；输出结构见 [Plan](../.agents/sdd/assets/plan_template.md)，生成与执行规则见 [实施与局部自验](../.agents/sdd/references/implementation.md)。
 
 - **如何提交、推送或部署？** 使用 [sdd-deliver](../.agents/skills/sdd-deliver/SKILL.md)。启动或重启服务时，从项目运行指南与环境配置定位实际入口。

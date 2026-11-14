@@ -134,7 +134,7 @@ class BuildTests(unittest.TestCase):
             {"spec_template.md", "blueprint_template.md", "status_template.md",
              "plan_template.md", "quickstart_template.md", "prototype_reference_template.md",
              "test_report_template.md", "issue_template.md", "review_template.md", "sequence_template.md", "contract_template.md",
-             "architecture-rule-catalog.md", "code-review-rules_template.md", "research_template.md"})
+             "architecture-rule-catalog.md", "code-review-rules_template.md", "research_template.md", "prompt_review_template.md"})
         checker = target / WORKFLOW / "sdd/scripts/doc_check.py"
         checked = subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(checker), "--root", str(target),
@@ -363,6 +363,7 @@ class BuildTests(unittest.TestCase):
             "skills/sdd-deliver/references/git-delivery.md", "skills/sdd-deliver/references/git-remote.md",
             "skills/sdd-deliver/references/deployment.md",
             "skills/sdd-review-prompt/SKILL.md", "skills/sdd-review-prompt/agents/openai.yaml",
+            "sdd/assets/prompt_review_template.md",
             "skills/sdd-bugfix/SKILL.md", "skills/sdd-bugfix/agents/openai.yaml",
             "skills/sdd-develop/SKILL.md", "skills/sdd-develop/agents/openai.yaml",
             "sdd/references/implementation.md",

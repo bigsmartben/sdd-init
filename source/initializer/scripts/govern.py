@@ -125,7 +125,7 @@ def shared_bundle() -> Path:
         )),
         *(f"sdd/assets/{name}_template.md" for name in (
             "status", "spec", "blueprint", "code-review-rules", "prototype_reference", "quickstart",
-            "plan", "test_report", "issue", "review", "sequence", "contract", "research",
+            "plan", "test_report", "issue", "review", "prompt_review", "sequence", "contract", "research",
         )),
         *(f"skills/{name}/agents/openai.yaml" for name in PROJECT_SKILLS),
     }

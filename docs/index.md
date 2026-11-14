@@ -13,6 +13,8 @@
 
 - **Code Review Rules 是否匹配蓝图，检查项偏差是否修复并复核？** 查[目标规则生成、更新及整改验收](test-reports/code-review-rules/2026-11-05.md)、[Review 检查项闭环复核](test-reports/agent-collaboration/2026-11-05-review-items.md)及[专职 Agent 协作 Review](test-reports/agent-collaboration/2026-11-05-review.md)；初次落盘使用 [Architecture Review Record](../source/project/.agents/sdd/assets/review_template.md)，修复方案引用 实施的 Plan／Task。
 
+- **怎样审查提示词或检查改版后的行为？** 查[适用场景、流程、输入输出、交接与确认点](blueprint.md#提示词审查的使用与交接)。执行入口为 [sdd-review-prompt](../source/project/.agents/skills/sdd-review-prompt/SKILL.md)，本仓验证见[实施证据](workflow-evidence.md#2026-11-14-提示词审查与行为验证技能)。
+
 - **本轮改什么、按什么顺序执行？** 查[设计变更提醒与任务交接 Plan](plans/workflow-continuation.md)；既有工作见[专职 Agent 协作 Plan](plans/agent-collaboration.md)、[安装恢复与旧命令退役 Plan](plans/install-recovery.md)及[对应验证报告](test-reports/install-recovery/2026-11-04.md)。输出结构见 [Plan](../source/project/.agents/sdd/assets/plan_template.md)，生成与执行规则见 [实施与局部自验](../source/project/.agents/sdd/references/implementation.md)。
 
 - **如何提交、推送或部署？** 使用 [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md)。启动或重启服务时，从项目运行指南与环境配置定位实际入口。

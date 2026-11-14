@@ -32,6 +32,8 @@ commit 平台场景的 `evidence/*.json` 描述评测所需的仓库／平台状
 
 验证分三类：机械测试验证安装、打包及工具不变量；维护者语义核对检查指令与场景的职责对应；真实模型评测必须保存实际执行轨迹及结果。cases.json 中的 UNVERIFIED 是案例准备时的默认状态。已运行批次按实际轨迹在实施证据中记录通过项、失败和未验证项。机械测试通过不得视为行为评测通过。
 
+`prompt_review_only`、`prompt_review_candidate`、`prompt_review_revise`、`prompt_review_not_requested` 和 `prompt_review_authority_conflict` 共用本地退款指令夹具。用同一准备器生成独立项目，给执行者普通请求，核对 Skill 的读取、装配命令、文件差异和回执。前后 Skill 版本对跑时重置到相同的夹具字节，保持模型配置、权限及工具一致。夹具的 loader 只呈现实际指令装配，本身不执行退款模型；是否选择并执行审查 Skill，与退款助手的真实业务行为分开判定。
+
 远端同步场景使用状态中的 graph 准备对应提交关系；`commit_first_push_stale_main` 保留过期 tracking，只有实际 fetch 才刷新；`commit_remote_diverged_dirty` 准备双方分叉及无关暂存／未暂存修改；`commit_remote_refresh_race` 按查询阶段推进远端 SHA，并模拟非快进拒绝和获取失败；`commit_pinned_release_base` 以维护分支而非 main 作为已确认目标。判定读取了哪些实际引用、两组比较及同步是否在 push 前完成，不以输出了 fetch／pull 字样代替行为证明。
 
 交付组合场景用隔离 Git 仓库和平台、部署测试替身记录变更顺序与版本。提交场景准备基线及题设差异；`deliver_merge_then_deploy` 按查询阶段返回排队和已合并状态，部署替身记录实际版本。仅配置本轮所需状态，真实平台与运行环境不参与这些案例。

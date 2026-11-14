@@ -47,7 +47,7 @@ flowchart LR
 | PUC-01 | 维护一次资源正文，生成可追溯分发包 | PENV-01；Spec FR-002、FR-004、FR-007，AC-002、AC-007 |
 | PUC-02 | 安装或更新用户级入口与共享工作流 | PENV-02；[安装说明](installation.md#更新与冲突)，Spec AC-002 |
 | PUC-03 | 将工作流引入目标仓库，升级时保护项目正文与配置 | PENV-03；[初始化入口](../source/initializer/SKILL.md)，Spec FR-002、FR-027，AC-002、AC-027 |
-| PUC-04 | 依照用户任务选择需求规格、文档、实施、缺陷评估、集成测试、Review、部署或交付职责 | PENV-03；Spec FR-001、FR-003、FR-005—FR-012、FR-020—FR-022、FR-029 |
+| PUC-04 | 依照用户任务选择需求规格、文档、实施、缺陷评估、集成测试、Review、提示词审查、部署或交付职责 | PENV-03；Spec FR-001、FR-003、FR-005—FR-012、FR-020—FR-022、FR-028—FR-029 |
 
 ## 4. 高位验收场景与维度
 
@@ -64,6 +64,7 @@ flowchart LR
 | PAC-07 | PUC-04 | 已确认目标与已有授权 | 实施并验证任务 | Plan 承载执行，局部自验、用户功能集成测试及架构复核各自归属；AC-004、AC-008、AC-012、AC-029 |
 | PAC-08 | PUC-04 | 测试缺陷或架构检查项偏差已发现 | 修复后复验／复核 | 问题记录及历史批次可追溯，Issue 按实际证据关闭，Review 整改按原检查项复核；AC-020、AC-021 |
 | PAC-09 | PUC-04 | 用户请求 Git 交付或部署 | 执行 sdd-deliver | 在实际授权与环境中报告交付／运行状态；AC-003、AC-022 |
+| PAC-10 | PUC-04 | 用户指定待审指令及目标 | 请求审查、比较候选版或修订复验 | 按授权终点交付可追溯的发现与证据，核对关键行为及写入边界，说明未验证范围。依据 Spec AC-028 |
 
 ## 5. 部署与运行边界
 
@@ -145,7 +146,7 @@ flowchart TD
 | sdd-bugfix | 评估疑似缺陷、验证归因并安排已就绪工单的实施 | [Skill](../source/project/.agents/skills/sdd-bugfix/SKILL.md) |
 | sdd-test-loop | 复用验收文档，在本轮范围内验证用户功能的真实组件协同 | [Skill](../source/project/.agents/skills/sdd-test-loop/SKILL.md) |
 | sdd-review-code | 按检查项检查架构落地与规则执行，明确整改目标，返回检查和复核事实，判定 Review Gate | [Skill](../source/project/.agents/skills/sdd-review-code/SKILL.md) |
-| sdd-review-prompt | 审查提示词，返回规则表、任务 DAG、发现和行为验证结论 | [Skill](../source/project/.agents/skills/sdd-review-prompt/SKILL.md) |
+| sdd-review-prompt | 审查运行时指令并按授权修订，以同一回执维护规则、任务 DAG、发现和行为验证证据 | [Skill](../source/project/.agents/skills/sdd-review-prompt/SKILL.md)、Spec FR-028 |
 | sdd-deliver | 识别 Git 终点与部署目标，调用对应指引；组合请求通过已核验版本衔接两步 | [Skill](../source/project/.agents/skills/sdd-deliver/SKILL.md) |
 | 文档校验器 | 只读检查所选 Markdown 的编码、结构、编号及本地引用，输出诊断与退出码；不判定语义或 Gate | [工具说明](../source/project/.agents/sdd/references/doc-check.md) |
 
@@ -188,6 +189,7 @@ flowchart TD
 | 构建与用户级安装 | [安装说明](installation.md)：构建资源 → 随包携带 → install 校验 → 暂存替换 → 返回安装状态 |
 | 项目初始化／升级 | [初始化入口](../source/initializer/SKILL.md)：inspect → init 写前校验 → 合并导航及安装资源 → 核对结果 |
 | 实施与问题闭环 | [sdd-develop](../source/project/.agents/skills/sdd-develop/SKILL.md)、[实施交接](../source/project/.agents/sdd/references/delegation.md#实施交接)、[bugfix](../source/project/.agents/skills/sdd-bugfix/SKILL.md)、[test](../source/project/.agents/skills/sdd-test-loop/SKILL.md)、[Review](../source/project/.agents/skills/sdd-review-code/SKILL.md) 各自定义执行、交接及完成条件，文档由 sdd-documenter 归并 |
+| 提示词审查与行为验证 | [提示词审查的使用与交接](#提示词审查的使用与交接)汇总适用场景、输入输出和确认点 |
 | 部署与 Git 交付 | [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md) 按请求进入 |
 
 `sdd-coder` 的 [Plan 模板](../source/project/.agents/sdd/assets/plan_template.md) 合并了技术实施上下文与可执行 Task 清单，分别对照 Spec Kit 的 [Plan 模板](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/plan-template.md) 和 [Tasks 模板](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/tasks-template.md)。本仓库的 [Quickstart 模板](../source/project/.agents/sdd/assets/quickstart_template.md) 对照上游 [Plan 指令中的 Quickstart 生成规则](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/plan.md#L135)。任务拆分与执行分别对照上游 [Tasks 指令](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/tasks.md) 和 [Implement 指令](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/implement.md)。目标项目运行时按本地 Skill 读取分发模板。
@@ -197,3 +199,28 @@ Bug 工作流对照 Spec Kit 的 [Assess](https://github.com/github/spec-kit/blo
 现有 Skill、角色和安装说明承担公开操作契约，本轮不另建重复契约或时序正文。测试代码可帮助定位行为覆盖，例如[构建测试](../tests/test_build.py)、[用户安装测试](../tests/test_user_install.py)、[角色测试](../tests/test_roles.py)及[文档检查测试](../tests/test_doc_check.py)；测试文件存在不代表本轮已执行。
 
 三项边界均已确认，无剩余待决项：项目安装采用[单项目互斥与失败可恢复](#项目安装的互斥与恢复边界)，旧治理命令按[退役边界](#旧治理命令退役边界)处理，环境声明遵循[使用终端与运行条件](#2-使用终端与运行条件)。实施状态见[Plan](plans/install-recovery.md)，验证范围、结果与限制见[本轮报告](test-reports/install-recovery/2026-11-04.md)。
+
+### 提示词审查的使用与交接
+
+用户明确请求核对 Skill、角色指令、AGENTS.md、共享指令或业务运行时提示词时，Main 按交付目标选择本阶段。指令变更或其他阶段完成后，仍以用户发起审查为启动条件。[sdd-review-prompt 启动与授权](../source/project/.agents/skills/sdd-review-prompt/SKILL.md#启动与授权)
+
+| 落地场景 | 优先提供的输入 | 要得到的结论 |
+|---|---|---|
+| 指令过长、重复或职责混杂 | 生效的指令版本、适用场景与已确认约束 | 哪些内容可以归并或按需读取，哪些独有条件与例外须保留 |
+| Agent 漏执行、误判或越界 | 可复现的请求、版本、实际入口和可用运行记录 | 指令是否影响了实际决策，依据和可观察后果是什么 |
+| Skill、角色或共享指令调整后请求核查 | 受影响的指令版本、职责及授权依据、相关场景 | 触发、职责、授权、交接和完成判据能否在实际路径中一致执行 |
+| 对比已有候选版 | 原版、候选版、已确认的预期与可复用证据 | 关键读取、决定、动作、结果和副作用有何变化 |
+
+1. Main 将目标、范围、版本、授权终点及完成条件交给 Skill。Skill 沿实际加载路径核对确认依据与运行证据，建立规则表和场景任务 DAG，据此标出原版偏差、风险及证据缺口。
+2. 只审查或只比对时交付发现、证据和建议。获授权修订时，按同一规则映射检查改动并复验。前后实跑对比使用相同输入、权限、工具、模型配置和等价初始状态。复验失败时在授权内修订并重跑。[审查、修订与复验](../source/project/.agents/skills/sdd-review-prompt/SKILL.md#审查修订与复验)
+3. 阶段回执给出实际版本及改动、覆盖的静态检查与运行结果、证据缺口及恢复条件。约定的关键行为经实跑满足确认依据且证据齐备时，才报告行为验证通过。报告和证据需要落盘时沿用本轮写入授权。[回执模板](../source/project/.agents/sdd/assets/prompt_review_template.md)
+
+Skill 按目标、授权、写入边界、必要输入和完成条件安排专业任务，按需取得业务判据、评测工具的运行入口及自验结果、隔离环境配置和场景实跑证据。角色把实际产物、版本、证据和缺口交还 Skill。Skill 核对回执，组织阶段内补查、修订或复验，将阶段结果交给 Main。需要独立复验时，Skill 按约定选择独立执行者。[阶段内执行安排](../source/project/.agents/skills/sdd-review-prompt/SKILL.md#阶段内执行安排) · [最小交接](../source/project/.agents/sdd/references/delegation.md#最小交接)
+
+| 确认时点 | 由人决定的内容 |
+|---|---|
+| 启动或范围发生变化 | 明确对象、待解决问题和本轮终点。已有有效确认直接沿用。未明确授权修订时按只审查处理 |
+| 出现权威冲突或实质变化 | 涉及职责、授权、跨阶段推进、业务行为、整体架构或完成标准时，Skill 将依据、可观察变化和影响交由 Main 协调用户决定 |
+| 需要新增外部权限、费用或真实环境写入 | 由 Main 核对并取得必要授权，优先使用已授权的隔离环境 |
+
+待用户决定或补授权时，只暂停受影响项及其依赖。表达、结构、规则归并及评测方法由 Agent 在授权内决定。交付时由 Skill 核对本阶段完成条件，Main 根据阶段回执及用户已有授权协调接续。[阶段授权与推进](../source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)

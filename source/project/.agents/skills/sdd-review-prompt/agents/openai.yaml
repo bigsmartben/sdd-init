@@ -1,4 +1,5 @@
 interface:
   display_name: "sdd-review-prompt"
+  short_description: "按请求审查提示词与运行时指令，定位歧义和越界，获授权后修订并复验"
 policy:
   allow_implicit_invocation: true

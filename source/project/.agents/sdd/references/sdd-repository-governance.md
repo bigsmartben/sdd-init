@@ -66,6 +66,7 @@ Main 根据用户明确授权和实际就绪条件组织跨阶段工作。同一
 | Test Report | `docs/test-reports/<主题>/<批次>.md`，简单任务可在当前任务记录 |
 | Issue | `docs/issues/<问题编号>.md` |
 | Architecture Review Record | `docs/test-reports/<主题>/<批次>-review.md` |
+| Prompt Review Record | 当前任务记录，需独立落盘时用 `docs/test-reports/<主题>/<批次>-prompt-review.md` |
 | Blueprint / Scenario Sequence / Interface Contract | `docs/blueprint.md`、`docs/sequences/<场景>.md`、`docs/contracts/<接口或协议>.md` |
 | Technical Research and Selection Report | `docs/research/<主题>.md`，按需建立 |
 | 运维手册、其他文档 | `docs/runbooks/`，其他文档在 `docs/` 按用途归类 |
@@ -88,6 +89,7 @@ Main 根据用户明确授权和实际就绪条件组织跨阶段工作。同一
 | Scenario Sequence / Interface Contract | 设计中的协作顺序、接口语义与异常约定。运行事实归对应 Test Report。 |
 | Quickstart | 可复跑的操作、条件与预期。由上游工单提供；集成测试按 sdd-test-loop 复用并补齐本轮运行信息。正式落盘由 sdd-documenter 按需归并。 |
 | Test Report / Architecture Review Record | 分别维护实际验证的批次事实和架构检查项的历次证据。 |
+| Prompt Review Record | 维护本轮提示词规则映射、场景依赖、审查发现和验证证据。已确认职责及预期行为引用各自权威正文。 |
 | Issue | 独立问题事实、Bug 工单及处理状态。修复方案引用 Plan／Task。 |
 | Plan／Task、Status | 分别维护实施方案与任务、进度与恢复点。验证结果引用对应报告和版本。 |
 
@@ -106,7 +108,7 @@ Main 根据用户明确授权和实际就绪条件组织跨阶段工作。同一
 | [sdd-bugfix](../../skills/sdd-bugfix/SKILL.md) | 缺陷评估、归因证据和关联 Issue 的 Bug 工单 |
 | [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md) | 用户功能集成测试的验收文档及 Test Report |
 | [sdd-review-code](../../skills/sdd-review-code/SKILL.md) | Architecture Review Record |
-| [sdd-review-prompt](../../skills/sdd-review-prompt/SKILL.md) | 提示词审查回执 |
+| [提示词审查](../../skills/sdd-review-prompt/SKILL.md)，输入待审指令版本和实际加载依据 | [Prompt Review Record](../assets/prompt_review_template.md)，记录规则、发现和适用的复验结果 |
 | [sdd-deliver](../../skills/sdd-deliver/SKILL.md) | Git 与平台交付回执、目标环境的服务状态和运行回执 |
 
 <a id="testing-scope-constraints"></a>
