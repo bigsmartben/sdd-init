@@ -28,7 +28,7 @@ uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固�
 
 目标项目自行处理遗留文件。清理后，在目标仓库调用一次 `sdd-init` 即可接入共享模式。脚本统一使用 `init`，同步 `AGENTS.md` 和 `.codex/config.toml` 中的 SDD 托管块，保留项目正文、主模型、MCP 和其他配置。安装器报告与当前工作流的同名冲突。项目自有文档及其中的链接由项目维护。
 
-共享包更新后会移除旧受管技能 `sdd-doc`、`sdd-commit` 和 `sdd-deploy`。文档归并使用 [sdd-documenter](../source/project/.codex/agents/sdd-documenter.toml)，交付使用 [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md)。在已接入的项目中运行一次 `sdd-init` 刷新托管导航，再重新加载项目。
+共享包更新将原受管 `sdd-spec` 替换为 `sdd-develop`。旧受管 `sdd-imp` 的实施规则归入[共享实施规则](../source/project/.agents/sdd/references/implementation.md)。共享包同时移除旧受管技能 `sdd-doc`、`sdd-commit` 和 `sdd-deploy`。文档归并使用 [sdd-documenter](../source/project/.codex/agents/sdd-documenter.toml)，交付使用 [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md)。在已接入的项目中运行一次 `sdd-init` 刷新托管导航，再重新加载项目。
 
 安装先暂存并验证入口及共享目录，再分别发布。替换失败时恢复旧目录。进程异常中断后，检查 Skill 搜索目录中的 `.sdd-init-install.lock` 及其父目录中的 `.sdd-init-backup-*`，确认安装进程已退出、旧文件已保全，再人工恢复。哈希用于完整性和定制检查。
 

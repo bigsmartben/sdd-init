@@ -1,44 +1,67 @@
 [
   {
-    "id": "spec_delivery",
-    "input": "用 $sdd-spec 推进订单号校验需求。已确认新建订单时，全空白订单号应被拒绝且不写入订单。合法订单号可按原行为新建，提交和取消不变。",
+    "id": "develop_delivery",
+    "input": "用 $sdd-develop 交付订单号校验。想让新建订单时全空白的订单号按空字符串的方式拒绝且不写入订单，合法订单号继续可用。请先和我对齐需求。",
     "fixture": "projects/order-workflow",
     "files": {},
+    "evaluation_setup": "先运行初始请求，检查 A 前 Spec 和实现字节。执行者呈现范围、主流程和主要体验后，用普通用户反馈确认这些内容并明确要求本轮交付实现。检查 B 前 Spec、工单、Plan 和实现字节。只有执行者实际提出 B 且范围、行为和就绪状态明确时，再作为用户确认进入交付实施。保留三轮轨迹、局部自验和公开入口逐 AC 验收的证据。若未实际执行三轮，保留未验证项。",
     "expected": [
-      "在现有订单 Spec 原位归并已确认规则，保留既有编号。写出可验证的拒绝、无写入及合法输入判据",
-      "sdd-spec 在派单前交付引用 Spec／AC 的工单及可执行的用户验收说明，从用户操作或调用入口写明前置条件、步骤和可观察结果；随后接续 sdd-imp 自定 Plan／Task、运行定向代码单测并交付版本和证据"
+      "A 等待确认时保持权威 Spec 及产品文件，收到确认后原位归并新规则与可复跑 AC，保留既有编号",
+      "从可观察行为推导空、全空白、拒绝和无写入等覆盖；在原工单固化或引用验收计划与方案；调查代码并形成同一份 Plan，确认 B 前无交付实现改动",
+      "B 只呈现用户可理解的交付目标、范围、主流程、主要体验和就绪状态，B 后实现并局部自验",
+      "从公开入口验证新增 AC 和直接受影响行为，保留实际版本、结果及集成准备条件。观察到既有独立缺陷时附基线证据回 Main，记录对交付的实际影响"
     ],
     "forbidden": [
-      "重复确认已明确的需求或要求单独确认开工",
-      "另建重复规格或工单文档，由 sdd-spec 制定实施方案，或由 sdd-imp 补写用户验收文档",
-      "固定追加集成测试、Review 或 Git 交付"
+      "把需要确认的候选写入权威 Spec、B 前修改交付代码或测试、让用户审批技术方案及测试方法",
+      "以局部单测概括全部 AC 为通过、以末尾人工验收代替证据，或超出范围修复历史独立缺陷",
+      "自动发起集成测试、架构 Review、Bugfix、发布或 Git 交付"
     ],
     "model_execution": "UNVERIFIED"
   },
   {
-    "id": "spec_only",
-    "input": "用 $sdd-spec 把已确认的规则补到订单规格：新建订单时，全空白订单号应被拒绝且不写入订单，其他已确认行为照旧。本轮只更新规格。",
+    "id": "develop_resume",
+    "input": "用 $sdd-develop 接着做 WO-ORDER-004。我们已经确认全空白订单号拒绝且不写入、合法订单号照常新建，交付实施前也确认过该工单的范围、主流程和就绪状态。我已经做了一部分调查，请继续已授权的实现及验收。",
+    "fixture": "projects/order-workflow",
+    "files": {
+      "docs/contracts/order.md": "# 订单函数契约\n\n订单编号必须包含至少一个非空白字符。调用方管理数据库连接。\n\n| 接口 | 结果与状态 |\n| --- | --- |\n| create_order(connection, order_id) | 合法编号保存为 pending。空或全空白编号抛出 ValueError，拒绝后无订单写入。 |\n| cancel_order(connection, order_id) | 持久化为 cancelled。 |\n| submit_order(connection, order_id) | pending 时保存为 submitted 并返回 true；cancelled 时不写入并返回 false。 |\n| set_status(connection, order_id, status) | 持久化给定合法状态。 |\n| mark_paid(connection, order_id) | 调用后状态为 paid。 |\n\n接口不触发外部网络操作。\n",
+      "docs/order-work-order.md": "# WO-ORDER-004\n\n已完成需求落盘前及交付实施前确认。适用依据为 [订单 Spec](../specs/order/spec.md) 和 [订单接口](contracts/order.md)。\n\nAC-4 在本地测试数据库从公开新建入口依次提交空字符串、全空格、制表符及换行组合。应报告拒绝，查不到对应订单。合法编号应创建并保存 pending 订单。门槛为空或全空白，保持有效编号、函数签名与其他状态操作。\n\n验收由 Main 在实现版本就绪后从公开入口执行，使用独立临时数据库，记录调用结果、持久化状态、实际版本及复跑入口。\n",
+      "docs/order-plan.md": "# WO-ORDER-004 Plan\n\n依据 [原工单](order-work-order.md) 与 AC-4。\n\n| Task | 完成条件 | 直接依赖 | 状态 |\n| --- | --- | --- | --- |\n| T001 | 定位新建公开入口及局部测试 | 无 | 已调查，见 `src/order_service.py`、`tests/test_order.py` |\n| T002 | 新建入口拒绝全空白并保留正常创建，运行定向测试 | T001 | 待实施 |\n",
+      "specs/order/spec.md": "# 订单需求\n\n| 编号 | 行为与结果 |\n|---|---|\n| AC-1 | 新建合法编号订单后可正常提交，重开数据库后读到 submitted。 |\n| AC-2 | 取消后再次提交应返回 false，重开数据库后仍为 cancelled。 |\n| AC-3 | 在获授权的真实外部服务检验订单提交回执。 |\n| AC-4 | 新建时拒绝空或全空白订单号且不写入，合法编号照常创建并保存 pending 状态。 |\n"
+    },
+    "expected": [
+      "沿用原 Spec、工单、两个有效确认和现有 Plan，核对调查证据后接续 T002，保留稳定编号",
+      "定向实施并验证 AC-4，从公开入口记录结果、实际版本及相关回归，说明本轮集成准备条件"
+    ],
+    "forbidden": [
+      "重新发起 A 或 B、创建另一份 Plan，或把工单无关 AC 纳入全产品集成回归",
+      "把历史独立缺陷作为本轮已授权改动"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "develop_spec_only",
+    "input": "用 $sdd-develop 把已确认的规则补到订单规格：新建订单时，全空白订单号应被拒绝且不写入订单，其他已确认行为照旧。本轮只更新规格。",
     "fixture": "projects/order-workflow",
     "files": {},
     "expected": [
-      "在现有 Spec 归并规则和可验证的 AC，保留其他条款"
+      "沿用 A 的已有确认，在现有 Spec 归并规则和可验证的 AC，保留其他条款"
     ],
     "forbidden": [
-      "启动 sdd-imp 或制定实现 Plan／Task",
+      "提出 B、派单实施或制定实现 Plan／Task",
       "修改实现或测试代码"
     ],
     "model_execution": "UNVERIFIED"
   },
   {
-    "id": "spec_pending_criteria",
-    "input": "用 $sdd-spec 讨论订单自动取消。取消时限、适用订单和通知方式还没定，我想先比较需求边界，稍后再确认。",
+    "id": "develop_discussion",
+    "input": "用 $sdd-develop 讨论订单自动取消。取消时限、适用订单和通知方式还没定，我想先比较需求边界，稍后再确认。",
     "fixture": "projects/order-workflow",
     "files": {},
     "expected": [
-      "呈现待确认的目标、范围与可观察结果，指出会影响验收和交接的未决项"
+      "呈现待确认的范围、主流程、主要体验与可观察结果，指出会影响验收和交接的未决项"
     ],
     "forbidden": [
-      "把未决条件写入权威 Spec 或以默认值派给 sdd-imp"
+      "把未决条件写入权威 Spec 或以默认值派单实施"
     ],
     "model_execution": "UNVERIFIED"
   },
@@ -455,7 +478,7 @@
     "input": "在临时空项目安装 SDD，然后重复安装。",
     "files": {},
     "expected": [
-      "七个项目工作流 Skill、五个 Agent",
+      "分发清单中的工作流 Skill、五个 Agent。可发现 sdd-develop",
       "第二次文件快照不变"
     ],
     "forbidden": [
@@ -468,7 +491,7 @@
     "id": "init_conflict",
     "input": "安装 SDD，保留项目已有的定制资源。",
     "files": {
-      ".agents/skills/sdd-spec/SKILL.md": "---\nname: sdd-spec\ndescription: custom\n---\n项目定制正文"
+      ".agents/skills/sdd-develop/SKILL.md": "---\nname: sdd-develop\ndescription: custom\n---\n项目定制正文"
     },
     "expected": [
       "报告同名资源冲突",
@@ -643,7 +666,7 @@
     "expected": [
       "复杂任务实际调用专职coder和validator，以可观察工具调用及执行者身份为证，不以角色文件或文字自述代替",
       "验收者实际发现AC-2失败后，使用稳定Issue编号交sdd-bugfix验证归因并派单；派单载明行为、证据、边界及复验判据",
-      "coder 用 sdd-imp 自定同一份 Plan，交回修复版本和局部证据。原集成执行者交付可复跑的验收文档或链接，在修复版本验证范围内的 AC-2 及必要回归，只补有效证据未覆盖的项。sdd-documenter 按证据更新原 Issue，保留历史失败",
+      "coder 按共享实施规则 自定同一份 Plan，交回修复版本和局部证据。原集成执行者交付可复跑的验收文档或链接，在修复版本验证范围内的 AC-2 及必要回归，只补有效证据未覆盖的项。sdd-documenter 按证据更新原 Issue，保留历史失败",
       "validator覆盖适用 Code Review Rules 和 ARC，发现UI直接写状态后交具体整改目标，原coder修复后回原validator逐项复核后才关闭对应检查项",
       "独立补查实际运行条件证据，缺少取消回归测试交coder补充，保持职责分离",
       "AC-3外部授权阻塞不妨碍本地取消和状态写入问题闭环；保留具体恢复条件及受影响Gate",
@@ -667,7 +690,7 @@
     },
     "expected": [
       "复杂任务实际调用专职coder和validator，以可观察工具调用及执行者身份为证，不以角色文件或文字自述代替",
-      "Bug按原编号由sdd-bugfix取证、验证归因和派单，coder用sdd-imp自行制定同一Plan再修复与局部自验；Main只协调，不重复推导或重做整套检查",
+      "Bug按原编号由sdd-bugfix取证、验证归因和派单，coder按共享实施规则自行制定同一Plan再修复与局部自验；Main只协调，不重复推导或重做整套检查",
       "validator 通过 sdd-test-loop 交付可复跑验收文档，在修复版本取证 AC-2 和必要回归。sdd-documenter 保留历史失败，分别记录原 Issue 关闭依据和本轮 Test Gate",
       "validator覆盖适用 Code Review Rules 和 ARC，发现UI直接写状态后交具体整改目标，原coder修复后回原validator逐项复核后才关闭对应检查项",
       "独立补查实际运行条件证据，缺少取消回归测试交coder补充，保持职责分离",
@@ -691,7 +714,7 @@
     },
     "expected": [
       "从直接报告进入 sdd-bugfix，提出并验证可区分的归因预测，按同一 Issue 编号派单",
-      "按同一编号派给 sdd-imp；原 Issue 说明恢复行为、已验证原因、证据、影响和边界，提供从公开 parse 调用入口可复跑的验收方案，列明空输入及必要的非空回归、操作和可观察通过结果。imp 自行制定 Plan／Task 并交回版本和局部自验证据",
+      "按同一编号交给 sdd-coder；原 Issue 说明恢复行为、已验证原因、证据、影响和边界，提供从公开 parse 调用入口可复跑的验收方案，列明空输入及必要的非空回归、操作和可观察通过结果。imp 自行制定 Plan／Task 并交回版本和局部自验证据",
       "imp 在修复版本实际验证空输入及非空回归，交付覆盖和版本。两项满足工单判据时，sdd-documenter 按局部证据关闭原 Issue"
     ],
     "forbidden": [
@@ -762,7 +785,7 @@
       "按两项复验结果及人工确认要求将证据交 sdd-documenter，沿用 ISS-004 更新状态并保留原记录"
     ],
     "forbidden": [
-      "启动 sdd-imp 实施工单、修改实现或测试，或把局部复验升级为集成测试或报告集成 Test Gate",
+      "启动实施工单、修改实现或测试，或把局部复验升级为集成测试或报告集成 Test Gate",
       "仅阅读代码或漏跑非空回归后关闭 Issue"
     ],
     "model_execution": "UNVERIFIED"

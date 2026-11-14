@@ -11,8 +11,8 @@
 | 工作 | 入口 |
 | --- | --- |
 | 固化确认内容与原型文档 | [sdd-documenter](.agents/skills/sdd-workflow/sdd/references/delegation.md#文档交接) |
-| 需求规格、验收判据与实施交接 | [sdd-spec](.agents/skills/sdd-workflow/skills/sdd-spec/SKILL.md) |
-| 实施需求、缺陷或架构工单并局部自验 | [sdd-imp](.agents/skills/sdd-workflow/skills/sdd-imp/SKILL.md) |
+| 单个需求的规格、实施及点对点验收 | [sdd-develop](.agents/skills/sdd-workflow/skills/sdd-develop/SKILL.md) |
+| 实施已就绪工单并局部自验 | [sdd-coder](.agents/skills/sdd-workflow/sdd/references/delegation.md#实施交接) |
 | Bug 评估、归因与派单 | [sdd-bugfix](.agents/skills/sdd-workflow/skills/sdd-bugfix/SKILL.md) |
 | 用户功能集成测试与本轮验收文档 | [sdd-test-loop](.agents/skills/sdd-workflow/skills/sdd-test-loop/SKILL.md) |
 | 蓝图与实现一致性检查及整改后复核 | [sdd-review-code](.agents/skills/sdd-workflow/skills/sdd-review-code/SKILL.md) |

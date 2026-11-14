@@ -18,7 +18,7 @@ python -B tests/prepare_skill_behavior.py --case collaboration_workflow --case c
 
 共同机制按场景检查：复杂 imp 的实际委派与同一 Plan 持续推进；Bug 经评估归因和 imp 修复后，doc 据满足原 Issue 判据的局部或集成证据更新原 Issue；review 以检查项承载审查、Task 交接及原审查者复核。核对阻塞隔离、缺失验证代码和证据补查分流、增量交接与有效证据复用。简单局部、只验收、只评估、只审不修和能力受限作为边界例，不要求每例全角色轮转。实际评测结果和候选快照引用归报告；夹具定义保持可重复使用，不能覆盖历史失败。
 
-需求交付案例 `spec_delivery` 核对确认后的 Spec／AC 能否直接接续实施。`spec_only` 和 `spec_pending_criteria` 分别核对只写规格与需求尚待确认时的停止条件。
+需求交付案例 `develop_delivery` 由评估者按 `evaluation_setup` 在同一会话分轮提供两次真实测试反馈，核对 A 前的权威 Spec 与 B 前的产品文件快照。B 后核对同一 Plan、公开入口逐 AC 验收、定向回归与集成准备条件。`develop_resume` 核对复用两次确认及未完 Plan，`develop_spec_only` 与 `develop_discussion` 核对各自的停止条件。`imp` 继续核对已就绪独立工单的实施交接。
 
 Bug 定向案例可用同一命令准备：`bug_direct_report` 验证直接报告的缺陷能以原场景及必要回归的局部证据关闭原 Issue；`bug_assess_only` 检查归因结果与授权边界；`bug_diagnosis_missing_evidence` 检查已授权修复但归因缺证时是否停在取证；`bug_attribution_counterevidence` 检查当前版本反驳旧归因时是否先回退再接续；`bug_retest_missing_evidence` 检查外部原场景无法复验时是否保留原 Issue 和恢复条件。集成发现和只验收分别由 `collaboration_workflow` 和 `collaboration_test_only` 覆盖。只验收例还检查缺少可执行指南时能否生成验收文档。核对实际操作、阶段交接、文件差异及报告中的版本和覆盖。夹具中的旧观察是任务输入，仅本轮实际运行可作为本轮证据。
 

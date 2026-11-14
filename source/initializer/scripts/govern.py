@@ -55,7 +55,7 @@ def git(root: Path, *args: str) -> bytes | None:
 
 
 PROJECT_SKILLS = {
-    'sdd-spec', 'sdd-imp', 'sdd-bugfix', 'sdd-test-loop', 'sdd-review-code',
+    'sdd-develop', 'sdd-bugfix', 'sdd-test-loop', 'sdd-review-code',
     'sdd-review-prompt', 'sdd-deliver',
 }
 PROJECT_ROLE_MODELS = {
@@ -121,7 +121,7 @@ def shared_bundle() -> Path:
         *(f"skills/sdd-deliver/references/{name}.md" for name in ("git-delivery", "git-remote", "deployment")),
         *(f"sdd/references/{name}.md" for name in (
             "doc-check", "architecture-rules", "visual-confirmation", "document-writing", "delegation",
-            "sdd-repository-governance", "observability-baseline", "scenarios", "prototype",
+            "sdd-repository-governance", "observability-baseline", "scenarios", "prototype", "implementation",
         )),
         *(f"sdd/assets/{name}_template.md" for name in (
             "status", "spec", "blueprint", "code-review-rules", "prototype_reference", "quickstart",

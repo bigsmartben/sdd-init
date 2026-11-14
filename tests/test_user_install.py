@@ -82,24 +82,28 @@ class UserInstallTests(unittest.TestCase):
             self.assertEqual((config.parent / ref).read_bytes(), role.read_bytes())
             self.assertEqual({p.relative_to(repo): p.read_bytes() for p in project_files(repo)}, expected)
 
-    def test_upgrade_retires_managed_document_skill_and_refreshes_navigation(self):
+    def test_upgrade_replaces_managed_development_skills_and_refreshes_navigation(self):
         old_release = self.root / "old-release"
         shutil.copytree(self.resources, old_release)
-        retired = Path("skills/sdd-doc/SKILL.md")
-        old_skill = old_release / "shared" / retired
-        old_skill.parent.mkdir(parents=True)
-        old_skill.write_text("---\nname: sdd-doc\ndescription: Retired document workflow.\n---\n", encoding="utf-8")
-        old_metadata = old_skill.parent / "agents/openai.yaml"
-        old_metadata.parent.mkdir()
-        old_metadata.write_text('interface:\n  display_name: "sdd-doc"\n', encoding="utf-8")
+        retired = ("sdd-doc", "sdd-spec", "sdd-imp")
+        skill_files = ("SKILL.md", "agents/openai.yaml")
+        for relative in skill_files:
+            (old_release / "shared/skills/sdd-develop" / relative).unlink()
+        for name in retired:
+            old_skill = old_release / "shared/skills" / name
+            metadata = old_skill / "agents/openai.yaml"
+            metadata.parent.mkdir(parents=True)
+            (old_skill / "SKILL.md").write_text(
+                f"---\nname: {name}\ndescription: Earlier workflow.\n---\n", encoding="utf-8")
+            metadata.write_text(f'interface:\n  display_name: "{name}"\n', encoding="utf-8")
         old_govern = old_release / "scripts/govern.py"
         old_govern.write_text(old_govern.read_text(encoding="utf-8").replace(
-            "PROJECT_SKILLS = {", "PROJECT_SKILLS = {\n    'sdd-doc',", 1), encoding="utf-8")
+            "'sdd-develop',", "'sdd-doc', 'sdd-spec', 'sdd-imp',", 1), encoding="utf-8")
         old_fragment = old_release / "assets/agents-fragment.md"
+        old_links = "".join(f"[{name}]({WORKFLOW}/skills/{name}/SKILL.md)\n" for name in retired)
         old_fragment.write_text(
-            f"<!-- sdd-contract-governance:start -->\n[sdd-doc]({WORKFLOW}/{retired.as_posix()})\n"
-            "<!-- sdd-contract-governance:end -->\n", encoding="utf-8",
-        )
+            "<!-- sdd-contract-governance:start -->\n" + old_links +
+            "<!-- sdd-contract-governance:end -->\n", encoding="utf-8")
         refresh_manifest(old_release)
         self.assertEqual(install(old_release, self.skills), "Installed")
 
@@ -111,20 +115,29 @@ class UserInstallTests(unittest.TestCase):
         local_text = "# Project guidance\n"
         agents = project / "AGENTS.md"
         agents.write_text(local_text, encoding="utf-8")
-        result = subprocess.run(init, capture_output=True, text=True, encoding="utf-8")
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        subprocess.run(init, check=True, capture_output=True)
         workflow = project / WORKFLOW
-        self.assertTrue((workflow / retired).samefile(shared / retired))
-        self.assertIn("[sdd-doc]", agents.read_text(encoding="utf-8"))
+        self.assertFalse((workflow / "skills/sdd-develop/SKILL.md").exists())
+        for name in retired:
+            path = Path("skills") / name / "SKILL.md"
+            self.assertTrue((workflow / path).samefile(shared / path))
+            self.assertIn(f"[{name}]", agents.read_text(encoding="utf-8"))
 
         self.assertEqual(install(self.resources, self.skills), "Updated")
-        self.assertFalse((workflow / retired).exists())
-        result = subprocess.run(init, capture_output=True, text=True, encoding="utf-8")
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertTrue(workflow.samefile(shared))
+        for name in retired:
+            self.assertFalse((workflow / "skills" / name).exists())
+        subprocess.run(init, check=True, capture_output=True)
         guidance = agents.read_text(encoding="utf-8")
         self.assertIn(local_text, guidance)
-        self.assertIn("[sdd-documenter]", guidance)
-        self.assertNotIn("[sdd-doc]", guidance)
+        self.assertIn(f"[sdd-develop]({WORKFLOW}/skills/sdd-develop/SKILL.md)", guidance)
+        for relative in skill_files:
+            path = Path("skills/sdd-develop") / relative
+            self.assertTrue((workflow / path).samefile(shared / path))
+        for name in retired:
+            self.assertNotIn(f"[{name}]", guidance)
+        subprocess.run(init, check=True, capture_output=True)
+        self.assertEqual(agents.read_text(encoding="utf-8"), guidance)
 
     def test_generated_bytecode_does_not_block_reinstall_or_upgrade(self):
         self.assertEqual(install(self.resources, self.skills), "Installed")

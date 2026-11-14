@@ -1,6 +1,6 @@
 # Plan — <Implementation goal>
 
-> This template defines the implementation output. sdd-imp governs preparation, adjustment, and execution. Use the Task list as the Plan, maintaining one copy in the current Task record or the existing planning document.
+> This template defines the implementation output. sdd-coder governs preparation, adjustment, and execution. Use the Task list as the Plan, maintaining one copy in the current Task record or the existing planning document.
 
 A simple change may require one Task. Keep the required sections and fields, write only facts relevant to this change, and link existing material precisely. Lead with completed results, key changes, verification outcomes, and remaining work, then link the detailed Task list. Before execution, summarize the goal, change scope, and completion criteria. The full template is optional when presenting work for execution or confirmation.
 
@@ -24,7 +24,7 @@ A simple change may require one Task. Keep the required sections and fields, wri
 - **Status** — <Pending / In progress / Failed / Blocked / Complete. Failed means an attempted action or check was unsuccessful. Blocked means a prerequisite or decision prevents progress. Keep the failure evidence if work later becomes blocked or resumes.>
 - **Results and evidence** — <Not run, or the version or working-tree details, check outcomes, evidence links, and upstream criteria covered or still awaiting verification. A simple Task may use a Test Report in the current Task record.>
 
-For a Bug Task, link the original Issue and the diagnosis evidence that supports the handed-off cause. Use the Implementation field for the approach chosen by sdd-imp. If new evidence contradicts the diagnosis, record it and return the affected work to sdd-bugfix under the same Issue ID. In Results and evidence, record the fix version, link the evidence that proves the original or an equivalent scenario and any required regression checks, and identify any work order criteria still awaiting verification.
+For a Bug Task, link the original Issue and the diagnosis evidence that supports the handed-off cause. Use the Implementation field for the approach chosen by sdd-coder. If new evidence contradicts the diagnosis, record it and return the affected work to sdd-bugfix under the same Issue ID. In Results and evidence, record the fix version, link the evidence that proves the original or an equivalent scenario and any required regression checks, and identify any work order criteria still awaiting verification.
 
 ### Delivery Batches (when independently verifiable)
 

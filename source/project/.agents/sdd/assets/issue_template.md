@@ -19,11 +19,11 @@ Link the pre-fix diagnosis evidence in the Test Report separately from the accep
 ## 2. Current Status
 
 - **Assignee** — <Current assignee or Unassigned>
-- **Fix Task** — <sdd-imp Plan or Task link. Use Not applicable for non-code work without a Task. The Plan holds the fix approach.>
+- **Fix Task** — <sdd-coder Plan or Task link. Use Not applicable for non-code work without a Task. The Plan holds the fix approach.>
 - **Status** — <Pending / In progress / Fixed, awaiting retest / Closed after retest / Closed after verification / Blocked / Awaiting confirmation>
 - **Blockers and resumption conditions** — <None or specific conditions>
 
-Use [sdd-bugfix](../../skills/sdd-bugfix/SKILL.md) for assessment, diagnosis, and handoff. Use [sdd-imp](../../skills/sdd-imp/SKILL.md) for the fix and its local checks. Route a separately requested local retest using [Responsibilities and Handoffs](../references/sdd-repository-governance.md#职责与交接). Link [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md) evidence when the relevant original failure or regression is in the confirmed integration scope. Authorization for fixes, checks, and platform actions comes from the task.
+Use [sdd-bugfix](../../skills/sdd-bugfix/SKILL.md) for assessment, diagnosis, and handoff. Use [sdd-coder](../references/delegation.md#实施交接) for the fix and its local checks. Route a separately requested local retest using [Responsibilities and Handoffs](../references/sdd-repository-governance.md#职责与交接). Link [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md) evidence when the relevant original failure or regression is in the confirmed integration scope. Authorization for fixes, checks, and platform actions comes from the task.
 
 ## 3. Handling and Retest History
 

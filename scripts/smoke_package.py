@@ -30,7 +30,7 @@ def main():
         subprocess.run(command, check=True)
         assert before == {p.relative_to(project): p.read_bytes() for p in project.rglob("*") if p.is_file()}
         assert {p.parent.name for p in (workflow / "skills").glob("*/SKILL.md")} == {
-            "sdd-spec", "sdd-imp", "sdd-bugfix", "sdd-test-loop", "sdd-review-code",
+            "sdd-develop", "sdd-bugfix", "sdd-test-loop", "sdd-review-code",
             "sdd-review-prompt", "sdd-deliver",
         }
         config = project / ".codex/config.toml"

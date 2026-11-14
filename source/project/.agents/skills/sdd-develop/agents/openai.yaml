@@ -1,4 +1,4 @@
 interface:
-  display_name: "sdd-imp"
+  display_name: "sdd-develop"
 policy:
   allow_implicit_invocation: true

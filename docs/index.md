@@ -7,13 +7,13 @@
 - **比较了哪些技术，为什么选这一项？** 查 Technical Research and Selection Report；按需使用[Technical Research and Selection Report](../source/project/.agents/sdd/assets/research_template.md)。实测结果和复现入口查关联 Test Report，初次记录使用[Test Report](../source/project/.agents/sdd/assets/test_report_template.md)。
 - **怎样复跑本轮用户功能集成验收？** 查 sdd-test-loop 交付的本轮验收文档或链接。已落盘的指南查能力 Spec 和相邻的 `quickstart.md`，其结构见[Quickstart](../source/project/.agents/sdd/assets/quickstart_template.md)。本轮结果见[专职 Agent 协作测试报告](test-reports/agent-collaboration/2026-11-05.md)；实际版本、逐场景结果、证据及人工确认查对应测试报告；初次记录使用[Test Report](../source/project/.agents/sdd/assets/test_report_template.md)，Status／Plan 引用报告并记录进度。
 
-- **怎样把需求推进到交付？** 使用 [sdd-spec](../source/project/.agents/skills/sdd-spec/SKILL.md) 对齐规格与判据，实施计划和局部证据查关联 Plan／Task。
+- **怎样把需求推进到交付？** 使用 [sdd-develop](../source/project/.agents/skills/sdd-develop/SKILL.md) 推进需求规格、实施及点对点验收。工单提供验收方案，实施计划和局部证据查关联 Plan／Task。
 
-- **发现了哪些问题，修复后是否已复验关闭？** 查独立 Issue 及关联报告；初次记录使用 [Issue](../source/project/.agents/sdd/assets/issue_template.md)。评估归因和派单见 [sdd-bugfix](../source/project/.agents/skills/sdd-bugfix/SKILL.md)，修复方案查关联的 imp Plan／Task，关单依据查原 Issue 引用的局部或集成验证证据。
+- **发现了哪些问题，修复后是否已复验关闭？** 查独立 Issue 及关联报告；初次记录使用 [Issue](../source/project/.agents/sdd/assets/issue_template.md)。评估归因和派单见 [sdd-bugfix](../source/project/.agents/skills/sdd-bugfix/SKILL.md)，修复方案查关联的 Plan／Task，关单依据查原 Issue 引用的局部或集成验证证据。
 
-- **Code Review Rules 是否匹配蓝图，检查项偏差是否修复并复核？** 查[目标规则生成、更新及整改验收](test-reports/code-review-rules/2026-11-05.md)、[Review 检查项闭环复核](test-reports/agent-collaboration/2026-11-05-review-items.md)及[专职 Agent 协作 Review](test-reports/agent-collaboration/2026-11-05-review.md)；初次落盘使用 [Architecture Review Record](../source/project/.agents/sdd/assets/review_template.md)，修复方案引用 imp 的 Plan／Task。
+- **Code Review Rules 是否匹配蓝图，检查项偏差是否修复并复核？** 查[目标规则生成、更新及整改验收](test-reports/code-review-rules/2026-11-05.md)、[Review 检查项闭环复核](test-reports/agent-collaboration/2026-11-05-review-items.md)及[专职 Agent 协作 Review](test-reports/agent-collaboration/2026-11-05-review.md)；初次落盘使用 [Architecture Review Record](../source/project/.agents/sdd/assets/review_template.md)，修复方案引用 实施的 Plan／Task。
 
-- **本轮改什么、按什么顺序执行？** 查[设计变更提醒与任务交接 Plan](plans/workflow-continuation.md)；既有工作见[专职 Agent 协作 Plan](plans/agent-collaboration.md)、[安装恢复与旧命令退役 Plan](plans/install-recovery.md)及[对应验证报告](test-reports/install-recovery/2026-11-04.md)。输出结构见 [Plan](../source/project/.agents/sdd/assets/plan_template.md)，生成与执行规则见 [sdd-imp](../source/project/.agents/skills/sdd-imp/SKILL.md)。
+- **本轮改什么、按什么顺序执行？** 查[设计变更提醒与任务交接 Plan](plans/workflow-continuation.md)；既有工作见[专职 Agent 协作 Plan](plans/agent-collaboration.md)、[安装恢复与旧命令退役 Plan](plans/install-recovery.md)及[对应验证报告](test-reports/install-recovery/2026-11-04.md)。输出结构见 [Plan](../source/project/.agents/sdd/assets/plan_template.md)，生成与执行规则见 [实施与局部自验](../source/project/.agents/sdd/references/implementation.md)。
 
 - **如何提交、推送或部署？** 使用 [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md)。启动或重启服务时，从项目运行指南与环境配置定位实际入口。
 

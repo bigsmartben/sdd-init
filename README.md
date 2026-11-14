@@ -4,9 +4,7 @@
 
 `sdd-init` 借鉴 GitHub Spec Kit 的规格驱动开发思路，帮助项目以更少的文档负担和流程切换，从已确认的需求推进到实现与验证。[GitHub Spec Kit](https://github.com/github/spec-kit)
 
-文档按任务需要产出，减少单独的文档审核环节。计划、任务拆分和实施统一由 `sdd-imp` 推进，用同一份可执行清单安排工作并记录完成证据。
-
-按本轮目标选择需求、缺陷或架构工单的交付入口。需要验证真实组件协同时，按明确范围开展用户功能集成测试。
+按本轮目标选择需求到实现、缺陷、架构审查、集成测试或交付入口。单个需求的规格、实施及点对点验收使用 `sdd-develop`。
 
 本仓库维护通用流程、资源和安装工具；目标项目维护自己的业务需求、架构决定、产品实现及真实验收证据。具体需求以 [Spec](specs/platform-independent-sdd/spec.md) 为唯一正文，README 只提供定位与导航。
 
@@ -25,9 +23,9 @@
 | --- | --- |
 | [sdd-init](source/initializer/SKILL.md) | 初始化或升级项目中的 SDD 资源 |
 | [sdd-documenter](source/project/.codex/agents/sdd-documenter.toml) | 整理和维护需求、设计、计划及验证记录 |
-| [sdd-spec](source/project/.agents/skills/sdd-spec/SKILL.md) | 对齐需求与验收判据，提供含验收说明的工单并接续实施 |
-| [sdd-imp](source/project/.agents/skills/sdd-imp/SKILL.md) | 接收明确工单，维护 Plan／Task，实施并交付局部证据 |
-| [sdd-bugfix](source/project/.agents/skills/sdd-bugfix/SKILL.md) | 评估疑似缺陷、验证归因并向 imp 派单 |
+| [sdd-develop](source/project/.agents/skills/sdd-develop/SKILL.md) | 单个需求的规格、实施及点对点验收 |
+| [sdd-coder](source/project/.agents/sdd/references/delegation.md#实施交接) | 接收明确工单，维护 Plan／Task，实施并交付局部证据 |
+| [sdd-bugfix](source/project/.agents/skills/sdd-bugfix/SKILL.md) | 评估疑似缺陷、验证归因并按工单安排实施 |
 | [sdd-test-loop](source/project/.agents/skills/sdd-test-loop/SKILL.md) | 按验收文档验证明确范围内的真实组件协同 |
 | [sdd-review-code](source/project/.agents/skills/sdd-review-code/SKILL.md) | 检查架构落地一致性，按原检查项派单与复核 |
 | [sdd-review-prompt](source/project/.agents/skills/sdd-review-prompt/SKILL.md) | 审查提示词，检查精简前后的关键行为 |

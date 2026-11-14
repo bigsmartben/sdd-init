@@ -121,7 +121,7 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(
             {p.parent.name for p in (target / WORKFLOW / "skills").glob("*/SKILL.md")},
-            {"sdd-spec", "sdd-imp", "sdd-bugfix", "sdd-test-loop", "sdd-review-code",
+            {"sdd-develop", "sdd-bugfix", "sdd-test-loop", "sdd-review-code",
              "sdd-review-prompt", "sdd-deliver"})
         for name in ("specs", "architecture", ".codex/agents", ".agents/sdd", "plan.md", "docs/index.md", "docs/code-review-rules.md"):
             self.assertFalse((target / name).exists(), name)
@@ -364,7 +364,8 @@ class BuildTests(unittest.TestCase):
             "skills/sdd-deliver/references/deployment.md",
             "skills/sdd-review-prompt/SKILL.md", "skills/sdd-review-prompt/agents/openai.yaml",
             "skills/sdd-bugfix/SKILL.md", "skills/sdd-bugfix/agents/openai.yaml",
-            "skills/sdd-spec/SKILL.md", "skills/sdd-spec/agents/openai.yaml",
+            "skills/sdd-develop/SKILL.md", "skills/sdd-develop/agents/openai.yaml",
+            "sdd/references/implementation.md",
             "sdd/scripts/govern.py", "sdd/scripts/doc_check.py", "sdd/references/doc-check.md",
             "sdd/assets/status_template.md", "sdd/assets/code-review-rules_template.md",
             "sdd/assets/spec_template.md", "sdd/assets/quickstart_template.md",

@@ -1,6 +1,6 @@
 ---
 name: sdd-bugfix
-description: 评估用户报告或验收发现的疑似缺陷，验证归因，并在获授权时向 sdd-imp 交接有证据的 Bug 工单。
+description: 评估用户报告或验收发现的疑似缺陷，验证归因，并在获授权时向 sdd-coder 交接有证据的 Bug 工单。
 ---
 
 # Bug 评估、归因与派单
@@ -10,6 +10,6 @@ description: 评估用户报告或验收发现的疑似缺陷，验证归因，�
 1. **评估。** 从已确认的需求、契约或行为确定预期，核对实际结果、触发条件、环境、版本、影响及复现证据，区分已证实缺陷、疑似缺陷待取证和非缺陷。属于预期行为或需求缺口时，返回依据并交相应流程。
 2. **验证归因。** 沿日志、调用链和复现证据提出候选原因，说明各自预测的可观察结果及排除条件。修复前运行能区分原因的定向检查，或核对可直接证明因果的代码路径。记录版本、操作或路径、适用条件、预测、实际观测和支持程度；反证出现时修订归因。证据不足时继续取证，无法补齐则记录缺项、承接者和恢复条件，不把假设派成确定的修复。
 3. **定义验收方案。** 派单前在原 Issue 写明要恢复的行为、修复范围和须保持的行为、通过判据及可执行的修复验收方案，或给出可访问且适用的方案引用。用户可感知的缺陷沿用原 Issue 的用户操作或调用入口，写明复现条件、步骤、可观察的预期结果及必要回归；使用等价场景时说明等价依据。涉及用户可感知的非功能指标时，引用已确认的测量条件、统计口径和阈值；缺项按[职责与交接](../../sdd/references/sdd-repository-governance.md#职责与交接)处理。注明需要真实组件协同的判据及执行所需条件。归因检查的实际结果单独记录。
-4. **派单。** 原因有证据支持、验收方案就绪且修复获授权后，沿用原 Issue 及编号交 [sdd-imp](../sdd-imp/SKILL.md)。交接包含 Issue 链接、已验证原因与证据、影响、恢复目标、修复边界、通过判据及验收方案或其引用。具体方案、文件、Plan／Task 和局部自验由 imp 决定。
+4. **派单。** 原因有证据支持、验收方案就绪且修复获授权后，沿用原 Issue 及编号交 [sdd-coder](../../sdd/references/delegation.md#实施交接)。交接包含 Issue 链接、已验证原因与证据、影响、恢复目标、修复边界、通过判据及验收方案或其引用。具体方案、文件、Plan／Task 和局部自验由 coder 决定。
 
-由 [sdd-documenter](../../sdd/references/delegation.md#文档交接) 归并 [Issue](../../sdd/assets/issue_template.md) 和归因检查的 [Test Report](../../sdd/assets/test_report_template.md)；需要跟踪且无现有 Issue 时才建新记录。必要时按[执行协作](../../sdd/references/delegation.md)交 validator 执行定向归因检查。本 Skill 到派单为止。实施及局部自验交 sdd-imp，关单依据和集成测试的分流见[职责与交接](../../sdd/references/sdd-repository-governance.md#职责与交接)。收到归因反证时沿用原编号重新验证。
+由 [sdd-documenter](../../sdd/references/delegation.md#文档交接) 归并 [Issue](../../sdd/assets/issue_template.md) 和归因检查的 [Test Report](../../sdd/assets/test_report_template.md)；需要跟踪且无现有 Issue 时才建新记录。必要时按[执行协作](../../sdd/references/delegation.md)交 validator 执行定向归因检查。本 Skill 到派单为止。实施及局部自验交 sdd-coder，关单依据和集成测试的分流见[职责与交接](../../sdd/references/sdd-repository-governance.md#职责与交接)。收到归因反证时沿用原编号重新验证。
