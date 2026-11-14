@@ -9,7 +9,7 @@
 
 - **怎样把需求推进到交付？** 使用 [sdd-develop](../source/project/.agents/skills/sdd-develop/SKILL.md) 推进需求规格、实施及点对点验收。工单提供验收方案，实施计划和局部证据查关联 Plan／Task。
 
-- **发现了哪些问题，修复后是否已复验关闭？** 查独立 Issue 及关联报告；初次记录使用 [Issue](../source/project/.agents/sdd/assets/issue_template.md)。评估归因和派单见 [sdd-bugfix](../source/project/.agents/skills/sdd-bugfix/SKILL.md)，修复方案查关联的 Plan／Task，关单依据查原 Issue 引用的局部或集成验证证据。
+- **发现了哪些问题，修复后是否已复验关闭？** 查独立 Issue 及关联报告；初次记录使用 [Issue](../source/project/.agents/sdd/assets/issue_template.md)。指定缺陷的诊断、修复及定向复验使用 [sdd-bugfix](../source/project/.agents/skills/sdd-bugfix/SKILL.md)。修复方案查关联的 Plan／Task，关单依据及恢复条件查原 Issue。
 
 - **Code Review Rules 是否匹配蓝图，检查项偏差是否修复并复核？** 查[目标规则生成、更新及整改验收](test-reports/code-review-rules/2026-11-05.md)、[Review 检查项闭环复核](test-reports/agent-collaboration/2026-11-05-review-items.md)及[专职 Agent 协作 Review](test-reports/agent-collaboration/2026-11-05-review.md)；初次落盘使用 [Architecture Review Record](../source/project/.agents/sdd/assets/review_template.md)，修复方案引用 实施的 Plan／Task。
 

@@ -23,7 +23,7 @@
 | Scenario Sequence | Architecture Modeling and Assessment、需求与契约、[Scenario Sequence](../assets/sequence_template.md) | 参与者、请求／回执、先后／并发、取消／迟到、未知／恢复承接契约；箭头不暗示未确认成功或同步等待；结果和进度引用报告及 Status／任务 |
 | Prototype Reference | [原型规则](prototype.md)、[Prototype Reference](../assets/prototype_reference_template.md) | 核对入口、固定版本、模拟边界及确认来源；沿用规则规定的版本保留、冲突及重新确认条件，原型代码归 coder |
 | Test Report | [Test Report](../assets/test_report_template.md)、实际执行证据。需核对验收边界时读[测试范围约束](sdd-repository-governance.md#测试范围约束) | 核对必备内容、统计、未执行项和批次归属。Bug 归因、修复自验及适用的集成复验分别引用对应版本的事实，Gate 与人工确认取自对应执行者或用户反馈 |
-| Issue | [Issue](../assets/issue_template.md)、发现报告及对应执行者结果 | 核对稳定编号、处理历史与报告／Task 引用。评估与派单取自 sdd-bugfix，修复取自 sdd-coder，关单依据取自满足原 Issue 判据的局部或集成证据，人工确认取自用户反馈。其他问题由验收执行者核验；不自动创建平台议题 |
+| Issue | [Issue](../assets/issue_template.md)、原工单和实际执行证据 | 核对稳定编号、处理历史、验收计划与方案、修复及报告／Task 引用。按本轮写入授权更新状态。产品缺陷关单须核对原 Issue 判据、实际修复版本及必要回归，必要人工反馈取自用户。平台议题按授权单独处理 |
 | Architecture Review Record | [Architecture Review Record](../assets/review_template.md)、sdd-review-code 与 coder 返回证据 | 在各检查项下落盘依据、Review 定义的验收方案、初审、Task 引用、状态和复核；保留初审和版本，修复状态取自 coder，实施方案仅引用其 Task，关闭与 Gate 取自复核执行者；不另建独立差异清单或重复维护通用报告 |
 | Prompt Review Record | [Prompt Review Record](../assets/prompt_review_template.md)、确认依据、实际加载路径及有效运行证据 | 核对规则与来源、场景依赖、授权边界及前后映射，分别记录静态与运行覆盖、实际副作用、未验证项和恢复条件 |
 | Plan | [Plan](../assets/plan_template.md)、sdd-coder 的方案、任务与证据 | 保留同一计划及编号，核对上游验收方案引用、依赖、Task 完成条件、局部证据覆盖与仍待验的判据。Bug Task 引用原 Issue 和归因检查证据，方案、拆分与任务完成判断取自 sdd-coder |

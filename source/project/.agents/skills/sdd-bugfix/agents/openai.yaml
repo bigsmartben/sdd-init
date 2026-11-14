@@ -1,4 +1,5 @@
 interface:
   display_name: "sdd-bugfix"
+  short_description: "按用户明确请求处理指定缺陷，验证归因、修复、定向复验并按证据更新原 Issue"
 policy:
   allow_implicit_invocation: true

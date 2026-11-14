@@ -7,7 +7,7 @@
 - **比较了哪些技术，为什么选这一项？** 查 Technical Research and Selection Report；按需使用[Technical Research and Selection Report](../.agents/sdd/assets/research_template.md)。实测结果和复现入口查关联 Test Report，初次记录使用[Test Report](../.agents/sdd/assets/test_report_template.md)。
 - **怎样复跑本轮用户功能集成验收？** 查 sdd-test-loop 交付的本轮验收文档或链接。已落盘的指南查能力 Spec 和相邻的 `quickstart.md`，其结构见[Quickstart](../.agents/sdd/assets/quickstart_template.md)。实际版本、逐场景结果、证据及人工确认查对应测试报告；初次记录使用[Test Report](../.agents/sdd/assets/test_report_template.md)，Status／Plan 引用报告并记录进度。
 
-- **发现了哪些 Bug，修复后是否已复验关闭？** 沿用 [Issue](../.agents/sdd/assets/issue_template.md) 及编号。评估、归因和派单见 [sdd-bugfix](../.agents/skills/sdd-bugfix/SKILL.md)，修复方案查 [实施与局部自验](../.agents/sdd/references/implementation.md) 的 Plan／Task，关单依据查原 Issue 引用的局部或集成验证证据。
+- **发现了哪些 Bug，修复后是否已复验关闭？** 沿用 [Issue](../.agents/sdd/assets/issue_template.md) 及编号。指定缺陷的诊断、修复及定向复验使用 [sdd-bugfix](../.agents/skills/sdd-bugfix/SKILL.md)。修复方案查关联的 Plan／Task，关单依据及恢复条件查原 Issue。
 
 - **项目的 Code Review Rules 在哪里？** 用户决定维护时机，通过 [sdd-documenter](../.agents/sdd/references/delegation.md#文档交接) 按[Code Review Rules](../.agents/sdd/assets/code-review-rules_template.md)生成或更新；首次生成后将此处指向项目规则正文。
 

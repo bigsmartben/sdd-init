@@ -1,6 +1,6 @@
 # Test Report — <Subject and batch>
 
-sdd-documenter completes this report from the confirmed goals, scope, and criteria, the executor's preparations based on them, and actual evidence. State the verification type: requirements acceptance, integration verification, local verification by the implementer, feasibility verification, Bug diagnosis, or retest. Use the [Architecture Review Record template](review_template.md) for architecture conformance.
+Complete this report from the confirmed goals, scope, and criteria, the executor's preparations based on them, and actual evidence. State the verification type: requirements acceptance, integration verification, local verification by the implementer, feasibility verification, Bug diagnosis, or retest. Use the [Architecture Review Record template](review_template.md) for architecture conformance.
 
 Use the location specified in [Repository Governance](../references/sdd-repository-governance.md#document-and-artifact-locations). Follow the existing project index. For a simple Task, use this structure in the current Task record. Preserve historical paths and versions.
 
@@ -47,7 +47,7 @@ List every case in scope, including cases that were Not run or Blocked, with rea
 
 Keep evidence of key intermediate steps for behaviors such as retry, cancellation, recovery, and concurrency. Record automated results and human feedback separately.
 
-For a Bug, link diagnosis checks, local fix checks, and post-fix retests to their actual versions and the original Issue. For diagnosis, record the candidate cause, predicted observation and evidence that would rule it out, actual observation, and conclusion. For a local or integration check used as closure evidence, identify the original case or explain equivalence, record actual execution and required regression results on the fixed version, and identify any unmet Issue criteria. Record Issue verification and the integration Test Gate against their respective scopes. Cite the version, environment, and coverage when reusing evidence.
+For a Bug, link diagnosis checks, local fix checks, and post-fix retests to their actual versions and the original Issue. For diagnosis, record the candidate cause, predicted observation and evidence that would rule it out, actual observation, and conclusion. For a targeted retest or a local or integration check used as closure evidence, identify the original case or explain equivalence, record actual execution and required regression results on the fixed version, and identify any unmet Issue criteria. Record Issue verification and the integration Test Gate against their respective scopes. Cite the version, environment, and coverage when reusing evidence.
 
 ## 7. Related Issues and Impact
 

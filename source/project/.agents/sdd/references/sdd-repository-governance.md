@@ -20,9 +20,7 @@ Main 与用户对齐意图，根据已确认的目标和预期结果选择对应
 
 上游在派单前定义交付目标、范围、通过判据及可执行的[验收计划与方案](#验收计划与方案)，可引用原载体。用户功能和用户可感知的非功能指标从用户操作或公开调用入口定义，Bug 沿用原 Issue。架构变更引用已确认决定，Review 按 [sdd-review-code](../../skills/sdd-review-code/SKILL.md) 从开发者视角在原检查项定义整改验收方案，由原审查者复核。工单同时涉及用户侧和架构判据时，分别引用对应的判据、执行者及证据。sdd-coder 根据局部自验证据判定 Task 完成，本轮仅要求实施和局部自验时可据此结束。约定的用户验收按上游方案实际取证，集成测试按本轮明确范围进入。Main 核对本轮剩余验收项。
 
-疑似缺陷由 sdd-bugfix 评估、验证归因并在授权内派单。sdd-coder 遇到归因反证时带原编号和新证据退回。修复版本上原场景或等价场景及必要回归的证据，加上所需人工确认，构成 Issue 关闭依据。局部证据满足关闭条件时，sdd-documenter 据此关闭原 Issue。需真实组件协同的判据按原工单范围定向取证或复用适用的集成证据，剩余缺口记入原 Issue。登记 Issue 不授予后续执行权限，只验收、只评估等限制随交接保留。
-
-单独请求复验已有修复且原 Issue 判据可由定向局部检查满足时，Main 交 sdd-validator 执行；简单检查可由 Main 执行，要求独立复验时按[委派与独立性](delegation.md#委派与独立性)处理。沿用原 Issue 的验收方案，在指定修复版本上运行原场景或可证明等价的场景及必要回归，记录版本、操作、实际结果和缺口，交 sdd-documenter 归并复验批次及原 Issue。只复验时不改实现或测试，不启动实施工单，也不报告集成 Test Gate。
+用户明确发起指定缺陷处理时，Main 选择 [sdd-bugfix](../../skills/sdd-bugfix/SKILL.md)。该阶段沿原 Issue 完成归因、修复和定向复验，按实际修复版本的证据和授权更新状态。只诊断或只复验按指定终点交付。集成测试中的缺陷发现交回 Main。获授权的集成批次可按原 Issue 判据和必要复验证据更新状态，整轮 Test Gate 独立判定。
 
 ### 阶段授权与推进
 
@@ -105,7 +103,7 @@ Main 根据用户明确授权和实际就绪条件组织跨阶段工作。同一
 | [sdd-documenter](delegation.md#文档交接) | 项目权威正文和写后诊断 |
 | [sdd-develop](../../skills/sdd-develop/SKILL.md) | Spec／AC、工单验收计划与方案、Plan／Task、点对点验收证据和集成准备条件 |
 | [实施交接](delegation.md#实施交接) | 接收含验收依据的上游工单，按 Plan／Task 实施，交付版本及代码单测等局部证据 |
-| [sdd-bugfix](../../skills/sdd-bugfix/SKILL.md) | 缺陷评估、归因证据和关联 Issue 的 Bug 工单 |
+| [缺陷修复](../../skills/sdd-bugfix/SKILL.md)，输入异常报告或原 Issue 及已确认行为依据 | 原 Issue、归因及历次复验证据、Plan／Task、修复版本、关闭依据或恢复条件 |
 | [sdd-test-loop](../../skills/sdd-test-loop/SKILL.md) | 用户功能集成测试的验收文档及 Test Report |
 | [sdd-review-code](../../skills/sdd-review-code/SKILL.md) | Architecture Review Record |
 | [提示词审查](../../skills/sdd-review-prompt/SKILL.md)，输入待审指令版本和实际加载依据 | [Prompt Review Record](../assets/prompt_review_template.md)，记录规则、发现和适用的复验结果 |

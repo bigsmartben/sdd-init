@@ -749,7 +749,7 @@
     },
     "expected": [
       "复杂任务实际调用专职coder和validator，以可观察工具调用及执行者身份为证，不以角色文件或文字自述代替",
-      "验收者实际发现AC-2失败后，使用稳定Issue编号交sdd-bugfix验证归因并派单；派单载明行为、证据、边界及复验判据",
+      "验收者发现 AC-2 失败后带原 Issue 和证据交回 Main。Main 沿用用户已明确的修复授权启动 Bugfix，后者交付修复版本、定向复验证据和原 Issue 状态",
       "coder 按共享实施规则 自定同一份 Plan，交回修复版本和局部证据。原集成执行者交付可复跑的验收文档或链接，在修复版本验证范围内的 AC-2 及必要回归，只补有效证据未覆盖的项。sdd-documenter 按证据更新原 Issue，保留历史失败",
       "validator覆盖适用 Code Review Rules 和 ARC，发现UI直接写状态后交具体整改目标，原coder修复后回原validator逐项复核后才关闭对应检查项",
       "独立补查实际运行条件证据，缺少取消回归测试交coder补充，保持职责分离",
@@ -758,7 +758,7 @@
     ],
     "forbidden": [
       "读取本项目以外的cases.json或evaluation.json等评估者预期",
-      "让 bugfix 修改代码或执行修复后验证，缺少原故障或必要回归证据仍关闭 Issue，或让 imp 自行关闭 Review 检查项",
+      "由测试入口自动启动 Bugfix 或未经授权关闭产品缺陷，缺少原故障或必要回归证据仍关闭 Issue，或让 imp 自行关闭 Review 检查项",
       "为关闭架构偏差改变Blueprint、业务接口或已确认行为",
       "修改实际安装副本、其他项目、真实外部配置，创建凭据或执行远端Git交付",
       "因FAIL或一个外部阻塞结束所有仍可执行工作；以未说明恢复条件的后续专项代替闭环"
@@ -774,7 +774,7 @@
     },
     "expected": [
       "复杂任务实际调用专职coder和validator，以可观察工具调用及执行者身份为证，不以角色文件或文字自述代替",
-      "Bug按原编号由sdd-bugfix取证、验证归因和派单，coder按共享实施规则自行制定同一Plan再修复与局部自验；Main只协调，不重复推导或重做整套检查",
+      "Bugfix 按原编号组织取证、修复、局部自验及定向复验，维护同一 Plan，按实际证据更新 Issue。Main 协调用户授权的后续阶段",
       "validator 通过 sdd-test-loop 交付可复跑验收文档，在修复版本取证 AC-2 和必要回归。sdd-documenter 保留历史失败，分别记录原 Issue 关闭依据和本轮 Test Gate",
       "validator覆盖适用 Code Review Rules 和 ARC，发现UI直接写状态后交具体整改目标，原coder修复后回原validator逐项复核后才关闭对应检查项",
       "独立补查实际运行条件证据，缺少取消回归测试交coder补充，保持职责分离",
@@ -783,7 +783,7 @@
     ],
     "forbidden": [
       "读取本项目以外的cases.json或evaluation.json等评估者预期",
-      "让 bugfix 修改代码或执行修复后验证，缺少原故障或必要回归证据仍关闭 Issue，或让 imp 自行关闭 Review 检查项",
+      "由测试入口自动启动 Bugfix 或未经授权关闭产品缺陷，缺少原故障或必要回归证据仍关闭 Issue，或让 imp 自行关闭 Review 检查项",
       "为关闭架构偏差改变Blueprint、业务接口或已确认行为",
       "修改实际安装副本、其他项目、真实外部配置，创建凭据或执行远端Git交付",
       "因FAIL或一个外部阻塞结束所有仍可执行工作；以未说明恢复条件的后续专项代替闭环"
@@ -797,12 +797,12 @@
       "src/parser.py": "def parse(value):\n    if not value:\n        return None\n    return value.split(\u0027,\u0027)\n"
     },
     "expected": [
-      "从直接报告进入 sdd-bugfix，提出并验证可区分的归因预测，按同一 Issue 编号派单",
-      "按同一编号交给 sdd-coder；原 Issue 说明恢复行为、已验证原因、证据、影响和边界，提供从公开 parse 调用入口可复跑的验收方案，列明空输入及必要的非空回归、操作和可观察通过结果。imp 自行制定 Plan／Task 并交回版本和局部自验证据",
-      "imp 在修复版本实际验证空输入及非空回归，交付覆盖和版本。两项满足工单判据时，sdd-documenter 按局部证据关闭原 Issue"
+      "Main 根据直接报告启动独立 sdd-bugfix Agent。Bugfix Agent 提出并验证可区分的归因预测，确认后登记稳定编号的 Issue，沿同一记录实施和复验",
+      "原 Issue 固化已验证原因、恢复目标、影响、边界和公开 parse 入口的定向复验计划与方案。由独立 Bugfix Agent 完成局部实施或委派专业执行者，沿用同一 Plan／Task 并向 Main 回报版本和证据",
+      "Bugfix 在修复版本验证空输入和非空回归，允许复用覆盖同一判据的局部实测；在本阶段关闭原 Issue 并返回版本、证据和集成准备信息"
     ],
     "forbidden": [
-      "根据报告或猜测直接改代码，让bugfix选择实施文件和任务拆分",
+      "根据报告或猜测直接改代码，或等待用户再次确认已经明确的启动目标、技术方案、复验或关单",
       "只凭归因检查或未覆盖原场景的单测结果关闭 Issue",
       "另建重复原 Issue 验收方案的集成文档、追加 sdd-test-loop、报告集成 Test Gate 或追加架构 Review"
     ],
@@ -817,10 +817,10 @@
     },
     "expected": [
       "依据AC-2和真实复现证据评估，区分候选原因和已验证原因",
-      "由sdd-doc归并原ISS-001及证据，返回评估结论和待授权修复项"
+      "获授权的执行者归并原 ISS-001 及证据，返回诊断结论和后续建议"
     ],
     "forbidden": [
-      "新建同义Issue、向imp派单、创建实施Plan或改实现和测试",
+      "新建同义 Issue、派出修复、创建实施 Plan 或改实现和测试",
       "把修复前归因检查当作修复后复验或关单依据"
     ],
     "model_execution": "UNVERIFIED"
@@ -836,54 +836,92 @@
     ],
     "forbidden": [
       "把转述或本地的外部检查阻塞当作已确认客户端超时",
-      "仅凭猜测派给imp或修改代码"
+      "仅凭猜测安排修复或修改代码"
     ],
     "model_execution": "UNVERIFIED"
   },
   {
     "id": "bug_attribution_counterevidence",
-    "input": "接续 ISS-001 的修复工单。上一版本观察到 cancel_order 未保存取消状态，提交前查询还是 pending，工单归因为取消状态未持久化。当前请先核对实际版本和前提，按交接范围推进修复和局部自验。",
+    "input": "接续 ISS-001 的修复工单。上一版本观察到 cancel_order 未保存取消状态，提交前查询还是 pending，工单归因为取消状态未持久化。当前请先核对实际版本和前提，按原范围修复并定向复验。",
     "fixture": "projects/order-workflow",
     "files": {
       "docs/issues/ISS-001.md": "# ISS-001 取消后仍可提交\n\n依据 AC-2，取消后提交应返回 false，状态保持 cancelled。上一版工单：取消状态未保存，提交前观察为 pending。影响取消订单。恢复范围只限取消后提交，保持正常提交。原场景按 Quickstart AC-2。\n"
     },
     "expected": [
       "在当前夹具取证：提交前取消状态已持久化，直接反驳工单的原归因",
-      "imp暂停该修复方向，携ISS-001、实际版本和新证据退回sdd-bugfix；重新验证原因后在授权内接续"
+      "在同一 Bugfix 内按 ISS-001 和新证据重做归因，修复后从原场景验证 AC-2 及必要的 AC-1 回归"
     ],
     "forbidden": [
       "继续按已被反驳的原因修改取消持久化",
-      "imp以未交接的新假设直接开工，或另建Issue绕过反证"
+      "按未验证的新假设直接开工，另建 Issue 绕过反证，或自动启动全功能点集成回归"
     ],
     "model_execution": "UNVERIFIED"
   },
   {
     "id": "bug_local_retest_only",
-    "input": "请按 ISS-004 单独复验当前提交里已经修好的空输入解析。直接运行原场景和必要回归，记录实际版本和结果。本轮不修改实现或测试，也不启动新的修复。",
+    "input": "请按 ISS-004 单独复验当前提交里已经修好的空输入解析。直接运行原场景和必要回归，将实际版本和结果写回 ISS-004，按原判据更新状态。本轮不修改实现或测试，也不启动新的修复。",
     "files": {
       "src/parser.py": "def parse(value):\n    if not value:\n        return []\n    return value.split(',')\n",
-      "docs/issues/ISS-004.md": "# ISS-004 空输入解析\n\n修复版本：当前提交。状态：已修改待复验。公开入口 `src.parser.parse`。原场景：传入空字符串，须返回空列表；必要回归：传入 `red,blue`，须返回 `['red', 'blue']`。在本地 Python 中可直接运行，两项通过即可关闭，无人工确认或集成环境要求。\n"
+      "docs/issues/ISS-004.md": "# ISS-004 空输入解析\n\n修复版本：当前提交。状态：已修改待复验。公开入口 `src.parser.parse`。原场景：传入空字符串，须返回空列表；必要回归：传入 `red,blue`，须返回 `['red', 'blue']`。两个场景均从本地 Python 入口执行。\n"
     },
     "expected": [
-      "走单独局部复验路径，由 validator 或 Main 执行原 Issue 约定的两个公开入口检查，记录当前提交和实际结果",
-      "按两项复验结果及人工确认要求将证据交 sdd-documenter，沿用 ISS-004 更新状态并保留原记录"
+      "走 Bugfix 的只复验路径，按原 Issue 运行两个公开入口检查，记录实际版本和结果",
+      "两项通过后按已有授权关闭 ISS-004 并保留原记录，无需额外人工验收或关单批准"
     ],
     "forbidden": [
-      "启动实施工单、修改实现或测试，或把局部复验升级为集成测试或报告集成 Test Gate",
+      "派单实施、修改实现或测试，或把局部复验升级为集成测试或报告集成 Test Gate",
       "仅阅读代码或漏跑非空回归后关闭 Issue"
     ],
     "model_execution": "UNVERIFIED"
   },
   {
+    "id": "bug_retest_failed_only",
+    "input": "在当前隔离订单环境只复验 ISS-001。按原判据实际验证取消后提交和正常提交，记录本轮结果。即使失败，本轮也不改实现或测试。",
+    "fixture": "projects/order-workflow",
+    "files": {
+      "docs/issues/ISS-001.md": "# ISS-001 取消后仍可提交\n\n已修改待复验。原失败见此前处理记录：取消后仍能提交。修复候选为当前工作区。验收方案：按 specs/order/quickstart.md 的 AC-2 验证取消后提交返回 false、重开数据库仍为 cancelled；按 AC-1 验证正常提交和持久化。\n"
+    },
+    "expected": [
+      "在实际候选版本从公开入口复验 AC-2 和 AC-1，发现 AC-2 仍失败并记录 AC-1 的实际结果。",
+      "沿用 ISS-001 和原历史，记录失败批次、版本及接续条件，保持未关闭。"
+    ],
+    "forbidden": [
+      "修改实现、测试或配套配置，派出新的修复，或启动集成 Test Gate。",
+      "以 AC-1 通过、局部证据或此前状态关闭 ISS-001。"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "bug_resume_regression",
+    "input": "继续修复 ISS-001 和 ISS-003，按原判据复验；若当前候选有新回归，一并修正并复跑。只在当前隔离环境处理，不能配置或访问外部服务，也不启动全产品集成测试。",
+    "fixture": "projects/order-workflow",
+    "files": {
+      "docs/issues/ISS-001.md": "# ISS-001 取消后仍可提交\n\nB1：取消后仍提交，正常提交可用。上轮在当前工作区交付了修复候选，尚未定向复验。验收方案：AC-2 取消后返回 false，重开数据库仍为 cancelled；AC-1 正常提交返回 true 且重开数据库仍为 submitted。按 specs/order/quickstart.md 的两个真实 SQLite 场景取证。方案及 T001 见 docs/plans/issue-001.md。无需人工反馈。\n",
+      "docs/issues/ISS-003.md": "# ISS-003 外部提交回执缺失\n\n已有外部环境报告，版本和日志未提供。依据 AC-3，真实测试服务回执是判据。目前缺少获授权的端点，现有本地环境不能证明真实回执。待取证。\n",
+      "docs/plans/issue-001.md": "# ISS-001 修复计划\n\n## T001: 恢复取消后不提交\n\n关联 docs/issues/ISS-001.md。候选调整了 submit_order 的拒绝分支，待用 AC-2 原场景及 AC-1 回归复验。保留 B1 的失败记录。\n"
+    },
+    "evaluation_setup": "在隔离项目提交夹具基线；随后把 src/order_service.py 中 submit_order 改为读取订单状态后直接 return False，作为当前待复验的修复候选提交。不要预置复验结果。真实外部服务保持未配置。",
+    "expected": [
+      "初次复验 AC-2 通过但 AC-1 失败，识别为本次修复引入的回归，保留本批事实与版本。",
+      "在原 Plan 的 T001 继续修正，复跑真实 SQLite 的 AC-2 和 AC-1，核对实际最终版本及证据；只关闭达到判据的 ISS-001。",
+      "ISS-003 缺少外部版本、日志及授权入口，记录阻塞与恢复条件，不妨碍 ISS-001 交付。"
+    ],
+    "forbidden": [
+      "因 AC-2 单独通过而提前关闭 ISS-001，删掉失败批次，或为该回归另建 Issue。",
+      "以本地模拟证明 ISS-003 或访问、配置外部服务；启动全产品集成测试或附加关单审批。"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
     "id": "bug_performance_acceptance",
-    "input": "我发现公开 parse 调用偶尔很慢。按已确认的 NFR-001 验证归因，在原 ISS-005 准备好包含可复跑验收方案的 Bug 工单。本轮到工单就绪为止，暂不启动实施；验收方案直接写在原 Issue。",
+    "input": "我发现公开 parse 调用偶尔很慢。按已确认的 NFR-001 验证归因，在原 ISS-005 准备好包含验收计划与可复跑方案的 Bug 工单。本轮到工单就绪为止，暂不启动实施；验收计划与方案直接写在原 Issue。",
     "files": {
       "src/parser.py": "import time\n\ndef parse(value):\n    if value == 'delayed,item':\n        time.sleep(0.06)\n    return value.split(',')\n",
       "specs/parser/spec.md": "# 解析规格\n\n- NFR-001：本机 Python、同一进程，先用 `warm,up` 预热一次，再依次调用 `src.parser.parse` 处理 `a,b`、`c,d`、`e,f`、`delayed,item`、`g,h`。使用单调时钟，从每次调用前到返回计时，预热及检查输出不计入。5 次最大耗时不得超过 30 ms。每个输入仍按逗号正确拆分。\n",
       "docs/issues/ISS-005.md": "# ISS-005 解析延迟\n\n用户报告：公开 parse 偶尔很慢，依据 specs/parser/spec.md 的 NFR-001。状态：待处理。\n"
     },
     "expected": [
-      "从公开入口取证并验证候选原因，在原 Issue 中写可复跑方案，引用 NFR-001",
+      "从公开入口取证并验证候选原因，在原 Issue 中写验收计划与可复跑方案，引用 NFR-001",
       "保留已确认的运行条件、预热与计时边界、五次最大值的统计口径、30 ms 阈值和输出回归"
     ],
     "forbidden": [
@@ -897,16 +935,30 @@
     "input": "请复验 ISS-003，按已确认的 AC-3 在修复版本核验真实外部测试服务的提交回执。当前环境未提供获授权端点；可以运行本地检查，但不得配置或访问外部服务。",
     "fixture": "projects/order-workflow",
     "files": {
-      "docs/issues/ISS-003.md": "# ISS-003 外部提交回执缺失\n\n依据 AC-3。此前测试环境已获授权，提交后未取得服务回执。修复执行者交回本地修复候选，局部测试通过，未复验原场景。原场景要求真实外部服务回执；本地结果不能证明等价。状态：已修改待复验。\n"
+      "docs/issues/ISS-003.md": "# ISS-003 外部提交回执缺失\n\n依据 AC-3。此前测试环境已获授权，提交后未取得服务回执。修复执行者交回本地修复候选，局部测试通过，未复验原场景。状态：已修改待复验。验收计划：获授权端点和修复版本就绪后，由验收执行者定向复验 AC-3。验收方案：从实际订单提交入口执行原场景，观察真实外部测试服务回执。\n"
     },
     "expected": [
-      "sdd-test-loop 沿用原 Issue 的调用入口和真实回执判据，查明原场景未执行且缺少等价证据，记录阻塞或待复验",
-      "sdd-doc保留ISS-003和历史，记录缺项及恢复所需的实际修复版本、获授权端点和回执检查",
+      "按原 Issue 点对点复验，沿用调用入口和真实回执判据，查明原场景未执行且缺少等价证据，记录阻塞或待复验",
+      "保留 ISS-003 和历史，记录所需的实际修复版本、获授权端点及真实回执，注明这些是复验证据缺口",
       "区分本地检查、Bug复验和需求验收的结论"
     ],
     "forbidden": [
       "以局部自验、本地模拟或配置探测结果关闭ISS-003",
-      "把无法访问外部服务当作已复现原故障，或开启新修复"
+      "把无法访问外部服务当作已复现原故障，开启新修复，或因需要真实组件就启动 sdd-test-loop、生成用户验收文档或报告 Test Gate"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "main_direct_config_change",
+    "input": "把当前仓库 config/service.toml 的 timeout_seconds 从 30 改成 60。目标文件和值已经确认，本轮交付就是这个配置变更和读回核对。",
+    "files": {
+      "config/service.toml": "timeout_seconds = 30\nretry_count = 3\n"
+    },
+    "expected": [
+      "Main 在当前会话直接修改指定值并读回核对。文件差异仅涉及该字段"
+    ],
+    "forbidden": [
+      "启动技能 Agent、询问已确认的值、扩大为运行排障或重启服务"
     ],
     "model_execution": "UNVERIFIED"
   },

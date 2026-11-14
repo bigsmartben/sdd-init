@@ -47,7 +47,7 @@ flowchart LR
 | PUC-01 | 维护一次资源正文，生成可追溯分发包 | PENV-01；Spec FR-002、FR-004、FR-007，AC-002、AC-007 |
 | PUC-02 | 安装或更新用户级入口与共享工作流 | PENV-02；[安装说明](installation.md#更新与冲突)，Spec AC-002 |
 | PUC-03 | 将工作流引入目标仓库，升级时保护项目正文与配置 | PENV-03；[初始化入口](../source/initializer/SKILL.md)，Spec FR-002、FR-027，AC-002、AC-027 |
-| PUC-04 | 依照用户任务选择需求规格、文档、实施、缺陷评估、集成测试、Review、提示词审查、部署或交付职责 | PENV-03；Spec FR-001、FR-003、FR-005—FR-012、FR-020—FR-022、FR-028—FR-029 |
+| PUC-04 | 依照用户任务选择需求规格、文档、实施、缺陷修复、集成测试、Review、提示词审查、部署或交付职责 | PENV-03；Spec FR-001、FR-003、FR-005—FR-012、FR-020—FR-022、FR-028—FR-029 |
 
 ## 4. 高位验收场景与维度
 
@@ -143,7 +143,7 @@ flowchart TD
 | sdd-documenter | 从确认内容与执行证据归并正式文档，维护关联并执行写后检查；模板不授予设计权 | [角色](../source/project/.codex/agents/sdd-documenter.toml) |
 | sdd-coder | 交付明确的上游任务，生成并执行同一 Plan／Task 清单，修改代码并完成局部自验 | [实施交接](../source/project/.agents/sdd/references/delegation.md#实施交接) |
 | sdd-develop | 推进单个需求的规格、实施及点对点验收，交付可集成的实际版本和证据 | [Skill](../source/project/.agents/skills/sdd-develop/SKILL.md) |
-| sdd-bugfix | 评估疑似缺陷、验证归因并安排已就绪工单的实施 | [Skill](../source/project/.agents/skills/sdd-bugfix/SKILL.md) |
+| sdd-bugfix | 恢复指定行为，完成归因、修复、定向复验和原 Issue 关闭 | [Skill](../source/project/.agents/skills/sdd-bugfix/SKILL.md) |
 | sdd-test-loop | 复用验收文档，在本轮范围内验证用户功能的真实组件协同 | [Skill](../source/project/.agents/skills/sdd-test-loop/SKILL.md) |
 | sdd-review-code | 按检查项检查架构落地与规则执行，明确整改目标，返回检查和复核事实，判定 Review Gate | [Skill](../source/project/.agents/skills/sdd-review-code/SKILL.md) |
 | sdd-review-prompt | 审查运行时指令并按授权修订，以同一回执维护规则、任务 DAG、发现和行为验证证据 | [Skill](../source/project/.agents/skills/sdd-review-prompt/SKILL.md)、Spec FR-028 |
@@ -175,7 +175,7 @@ flowchart TD
 | ARC-001 | 初始化器源、项目分发源、生成物及历史基线分离；共享资源只维护一份现行源 | [维护边界](../AGENTS.md#维护边界)、[README](../README.md#源码与维护入口) |
 | ARC-002 | 用户级安装更新共享目录；项目初始化通过链接接入，并在项目配置中声明相对路径角色引用 | [初始化入口](../source/initializer/SKILL.md)、Spec FR-002、FR-027 |
 | ARC-003 | 详细需求、高位架构、执行清单与验证事实各有唯一正文；引用不形成竞争权威 | Spec FR-001、FR-006、FR-007、FR-009、FR-021 |
-| ARC-004 | 缺陷归因、工单实施与局部自验、用户功能集成测试、架构 Review 各有职责。Issue 按适用验证证据关闭，Review 按原检查项复核整改 | Spec FR-008、FR-020、FR-021、FR-029 |
+| ARC-004 | 缺陷修复、用户功能集成测试与架构 Review 各自闭环。Bugfix 按原 Issue 取证关单，Review 按原检查项复核整改，实施角色交付改动及局部自验 | Spec FR-008、FR-020、FR-021、FR-029 |
 | ARC-005 | 机械检查只能证明其声明范围内的结构与引用性质，不能代替 Agent 语义判断 | Spec FR-013 |
 | ARC-006 | 工作流只沿用任务实际授权；文档与实现完成不隐含远端交付或部署授权 | Spec FR-003、FR-022 |
 | ARC-007 | 分发规则及样例不代替目标项目的业务需求、组件库或产品架构决定；历史导入实现不覆盖已确认目标 | [维护边界](../AGENTS.md#维护边界)、Spec FR-012、FR-014 |

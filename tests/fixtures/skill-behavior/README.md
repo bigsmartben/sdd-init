@@ -26,7 +26,7 @@ Bug 定向案例可用同一命令准备：`bug_direct_report` 验证直接报�
 
 `collaboration_mixed_acceptance` 复用订单夹具。评测输入给出同一整改的公开调用性能判据及架构规则，核对实际测量条件、结果与版本，以及原审查者对状态写入路径的复核。两类结果分别取证，同一个 Task 可以引用两者。
 
-`bug_local_retest_only` 在修复已提交的隔离仓库核对仅复验请求：检查原场景和必要回归、复验版本与原 Issue 关单依据。`bug_performance_acceptance` 核对 Bug 工单直接在原 Issue 编写验收方案时，是否保留已确认的计时条件、统计口径及阈值。两例先提交夹具基线，再将 `TASK.txt` 的内容交给执行者。
+`bug_local_retest_only` 与 `bug_retest_failed_only` 核对只复验时按原判据记录通过和失败，以及失败后不启动修复。`bug_resume_regression` 按案例设置准备待复验候选，核对首次发现回归后在同一 Plan 接续，保留历次结果及独立缺陷的阻塞。`bug_performance_acceptance` 核对原 Issue 方案是否保留已确认的计时条件、统计口径及阈值。先提交夹具基线，按各例设置准备候选，再将 `TASK.txt` 的内容交给执行者。
 
 commit 平台场景的 `evidence/*.json` 描述评测所需的仓库／平台状态，不是实际远端回执。执行评测时将这些状态配置到隔离的 Git 仓库及连接工具／CLI／API 测试替身，由替身返回查询与写入结果并记录调用；不得访问真实平台写入。`commit_github_pr` 需先暂存无关文档再施加订单修复；`commit_merge_head_change` 依次模拟 head 变化、检查 pending／通过、排队与最终合并，核对每一步动作及返回状态。只将 input 和所需原始输入交给执行者，预期与禁止项留给评估者；未配置替身或未实际运行时保持 UNVERIFIED。
 

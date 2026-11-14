@@ -25,7 +25,7 @@
 | [sdd-documenter](source/project/.codex/agents/sdd-documenter.toml) | 整理和维护需求、设计、计划及验证记录 |
 | [sdd-develop](source/project/.agents/skills/sdd-develop/SKILL.md) | 单个需求的规格、实施及点对点验收 |
 | [sdd-coder](source/project/.agents/sdd/references/delegation.md#实施交接) | 接收明确工单，维护 Plan／Task，实施并交付局部证据 |
-| [sdd-bugfix](source/project/.agents/skills/sdd-bugfix/SKILL.md) | 评估疑似缺陷、验证归因并按工单安排实施 |
+| [sdd-bugfix](source/project/.agents/skills/sdd-bugfix/SKILL.md) | 按请求恢复指定行为，验证归因、修复并定向复验 |
 | [sdd-test-loop](source/project/.agents/skills/sdd-test-loop/SKILL.md) | 按验收文档验证明确范围内的真实组件协同 |
 | [sdd-review-code](source/project/.agents/skills/sdd-review-code/SKILL.md) | 检查架构落地一致性，按原检查项派单与复核 |
 | [sdd-review-prompt](source/project/.agents/skills/sdd-review-prompt/SKILL.md) | 审查运行时指令及候选改版，按授权修订与复验 |

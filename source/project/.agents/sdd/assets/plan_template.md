@@ -24,7 +24,7 @@ A simple change may require one Task. Keep the required sections and fields, wri
 - **Status** — <Pending / In progress / Failed / Blocked / Complete. Failed means an attempted action or check was unsuccessful. Blocked means a prerequisite or decision prevents progress. Keep the failure evidence if work later becomes blocked or resumes.>
 - **Results and evidence** — <Not run, or the version or working-tree details, check outcomes, evidence links, and upstream criteria covered or still awaiting verification. A simple Task may use a Test Report in the current Task record.>
 
-For a Bug Task, link the original Issue and the diagnosis evidence that supports the handed-off cause. Use the Implementation field for the approach chosen by sdd-coder. If new evidence contradicts the diagnosis, record it and return the affected work to sdd-bugfix under the same Issue ID. In Results and evidence, record the fix version, link the evidence that proves the original or an equivalent scenario and any required regression checks, and identify any work order criteria still awaiting verification.
+For a Bug Task, link the original Issue and the diagnosis evidence that supports the reported cause. Use the Implementation field for the chosen approach. If new evidence contradicts the diagnosis or a retest exposes an unresolved failure caused by this change, preserve the prior results and report the affected work and evidence under the same Issue ID in the existing Plan. In Results and evidence, record the fix version, link the evidence for the original or an equivalent scenario and any required regression checks, and identify the criteria still awaiting verification.
 
 ### Delivery Batches (when independently verifiable)
 
