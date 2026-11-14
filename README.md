@@ -29,7 +29,7 @@
 | [sdd-test-loop](source/project/.agents/skills/sdd-test-loop/SKILL.md) | 按验收文档验证明确范围内的真实组件协同 |
 | [sdd-review-code](source/project/.agents/skills/sdd-review-code/SKILL.md) | 检查架构落地一致性，按原检查项派单与复核 |
 | [sdd-review-prompt](source/project/.agents/skills/sdd-review-prompt/SKILL.md) | 审查运行时指令及候选改版，按授权修订与复验 |
-| [sdd-deliver](source/project/.agents/skills/sdd-deliver/SKILL.md) | Git 与远端仓库交付，部署、启动或重启服务 |
+| [sdd-deliver](source/project/.agents/skills/sdd-deliver/SKILL.md) | 仓库交付、构建发布、运行排障、流量、备份恢复与退役 |
 
 协作规则见[仓库治理](source/project/.agents/sdd/references/sdd-repository-governance.md)，角色分工、默认模型与配置优先级见[执行协作](source/project/.agents/sdd/references/delegation.md)，项目文档入口可参考[索引示例](source/project/docs/index.md)。
 

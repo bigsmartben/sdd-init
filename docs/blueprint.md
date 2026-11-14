@@ -63,7 +63,7 @@ flowchart LR
 | PAC-06 | PUC-03 | 载荷缺失必要资源或入口存在冲突 | 初始化或升级 | 写入前拒绝已识别的冲突，报告路径；AC-013、AC-020—AC-022 |
 | PAC-07 | PUC-04 | 已确认目标与已有授权 | 实施并验证任务 | Plan 承载执行，局部自验、用户功能集成测试及架构复核各自归属；AC-004、AC-008、AC-012、AC-029 |
 | PAC-08 | PUC-04 | 测试缺陷或架构检查项偏差已发现 | 修复后复验／复核 | 问题记录及历史批次可追溯，Issue 按实际证据关闭，Review 整改按原检查项复核；AC-020、AC-021 |
-| PAC-09 | PUC-04 | 用户请求 Git 交付或部署 | 执行 sdd-deliver | 在实际授权与环境中报告交付／运行状态；AC-003、AC-022 |
+| PAC-09 | PUC-04 | 用户请求仓库交付、版本发布或运维 | 执行 sdd-deliver | 按本轮授权核验实际终点、版本、运行或恢复状态；AC-003、AC-022 |
 | PAC-10 | PUC-04 | 用户指定待审指令及目标 | 请求审查、比较候选版或修订复验 | 按授权终点交付可追溯的发现与证据，核对关键行为及写入边界，说明未验证范围。依据 Spec AC-028 |
 
 ## 5. 部署与运行边界
@@ -149,7 +149,7 @@ flowchart TD
 | sdd-test-loop | 复用验收文档，在本轮范围内验证用户功能的真实组件协同 | [Skill](../source/project/.agents/skills/sdd-test-loop/SKILL.md) |
 | sdd-review-code | 按检查项检查架构落地与规则执行，明确整改目标，返回检查和复核事实，判定 Review Gate | [Skill](../source/project/.agents/skills/sdd-review-code/SKILL.md) |
 | sdd-review-prompt | 审查运行时指令并按授权修订，以同一回执维护规则、任务 DAG、发现和行为验证证据 | [Skill](../source/project/.agents/skills/sdd-review-prompt/SKILL.md)、Spec FR-028 |
-| sdd-deliver | 识别 Git 终点与部署目标，调用对应指引；组合请求通过已核验版本衔接两步 | [Skill](../source/project/.agents/skills/sdd-deliver/SKILL.md) |
+| sdd-deliver | Main 用于仓库交付、发布与运维的阶段入口，回收实际结果与证据 | [Skill](../source/project/.agents/skills/sdd-deliver/SKILL.md) |
 | 文档校验器 | 只读检查所选 Markdown 的编码、结构、编号及本地引用，输出诊断与退出码；不判定语义或 Gate | [工具说明](../source/project/.agents/sdd/references/doc-check.md) |
 
 | 数据／资源 | 权威位置与生命周期 |
@@ -192,7 +192,7 @@ flowchart TD
 | 项目初始化／升级 | [初始化入口](../source/initializer/SKILL.md)：inspect → init 写前校验 → 合并导航及安装资源 → 核对结果 |
 | 实施与问题闭环 | [sdd-develop](../source/project/.agents/skills/sdd-develop/SKILL.md)、[实施交接](../source/project/.agents/sdd/references/delegation.md#实施交接)、[bugfix](../source/project/.agents/skills/sdd-bugfix/SKILL.md)、[test](../source/project/.agents/skills/sdd-test-loop/SKILL.md)、[Review](../source/project/.agents/skills/sdd-review-code/SKILL.md) 各自定义执行、交接及完成条件，文档由获授权的本职执行者归并 |
 | 提示词审查与行为验证 | [提示词审查的使用与交接](#提示词审查的使用与交接)汇总适用场景、输入输出和确认点 |
-| 部署与 Git 交付 | [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md) 按请求进入 |
+| 仓库交付、发布与运维 | [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md) 按请求进入，平台及运行状态以实际回执为准 |
 
 `sdd-coder` 的 [Plan 模板](../source/project/.agents/sdd/assets/plan_template.md) 合并了技术实施上下文与可执行 Task 清单，分别对照 Spec Kit 的 [Plan 模板](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/plan-template.md) 和 [Tasks 模板](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/tasks-template.md)。本仓库的 [Quickstart 模板](../source/project/.agents/sdd/assets/quickstart_template.md) 对照上游 [Plan 指令中的 Quickstart 生成规则](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/plan.md#L135)。任务拆分与执行分别对照上游 [Tasks 指令](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/tasks.md) 和 [Implement 指令](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/implement.md)。目标项目运行时按本地 Skill 读取分发模板。
 
