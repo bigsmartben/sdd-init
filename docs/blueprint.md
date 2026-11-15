@@ -160,7 +160,7 @@ flowchart TD
 | sdd-architecture | 为仓库级架构建立或演化 Blueprint，回收可行性证据、确认设计并核对归并结果 | [Skill](../source/project/.agents/skills/sdd-architecture/SKILL.md) |
 | sdd-bugfix | 恢复指定行为，完成归因、修复、定向复验和原 Issue 关闭 | [Skill](../source/project/.agents/skills/sdd-bugfix/SKILL.md) |
 | sdd-test-loop | 应用户请求开展全功能点集成回归，交付复跑指南、验证证据和 Test Gate | [Skill](../source/project/.agents/skills/sdd-test-loop/SKILL.md) |
-| sdd-refactor | 按已确认架构组织审查与纯技术重构，交付架构复核、业务行为保持验收和集成准备条件 | [Skill](../source/project/.agents/skills/sdd-refactor/SKILL.md)、Spec FR-020 |
+| sdd-refactor | 以已有蓝图为前提维护规范与独立 Review 矩阵，按确认范围初审、生成重构工单并组织技术重构及两类复核 | [Skill](../source/project/.agents/skills/sdd-refactor/SKILL.md)、Spec FR-014、FR-020 |
 | sdd-deliver | Main 用于仓库交付、发布与运维的阶段入口，回收实际结果与证据 | [Skill](../source/project/.agents/skills/sdd-deliver/SKILL.md) |
 | sdd-devops | 仓库、流水线、发布、环境、流量及恢复操作的可选执行者，回读实际版本、运行及恢复状态 | [角色](../source/project/.codex/agents/sdd-devops.toml)、[共享运维规则](../source/project/.agents/sdd/references/delivery.md) |
 | sdd-product-manager | 产品调研、需求和验收规格、中保真原型 | [角色](../source/project/.codex/agents/sdd-product-manager.toml) |
@@ -179,7 +179,7 @@ flowchart TD
 | 构建树、wheel、构建清单 | 从源生成；清单记录文件哈希；生成物不反向成为源正文 |
 | 用户级安装目录 | 安装器依据 manifest 保护，校验和冲突处理见[安装说明](installation.md#更新与冲突) |
 | 目标项目导航与治理 | AGENTS 托管导航引用共享规则；项目自有索引和治理正文由项目维护 |
-| Spec、Blueprint、Plan 与证据 | 由目标项目维护；Spec 管详细需求，Blueprint 管高位设计，Plan 管执行；测试报告、Issue、Review 分别拥有批次事实、问题生命周期、架构检查项及其复核事实；Status 引用其结果 |
+| Spec、Blueprint、Plan 与证据 | 由目标项目维护；Spec 管详细需求，Blueprint 管高位设计并链接独立 Review 矩阵，矩阵管长期对象与规则映射，Plan 管执行；测试报告、Issue、Review 分别拥有批次事实、问题生命周期、审查任务及重构工单的复核事实；Status 引用其结果 |
 | 历史导入与记录 | [baselines](../baselines/)及历史证据保留用于追溯；旧治理命令按下述退役边界处理，记录保留不意味着接口兼容 |
 
 ### 旧治理命令退役边界

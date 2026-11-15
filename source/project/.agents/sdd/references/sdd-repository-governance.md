@@ -14,7 +14,13 @@
 
 ### 目标仓库的 Code Review Rules
 
-用户决定生成或更新时机。收到明确要求后，由获授权的执行者按[文档写入规则](document-writing.md#code-review-rules)归并已确认的设计依据，并登记正文路径。安装、升级或写入 Blueprint 本身不触发规则维护。项目规则供架构 Review 使用，执行证据归该轮审查记录。
+项目规则依据已确认设计形成，供架构 Review 使用。重构初始化中，由 sdd-refactor 核对蓝图中的规范或引用，整理缺失、过时的规则及项目 Review 矩阵候选，向用户展示内容、差异和影响，确认后归并。单独生成或更新规则仍可由用户明确要求，获授权的执行者按[文档写入规则](document-writing.md#code-review-rules)维护并登记路径。
+
+Review 矩阵是独立的长期项目资产，由 sdd-refactor 生成和更新，在蓝图架构章节保留固定链接。按子系统、模块、组件及协作边界映射适用规则与取证判据；具体结构见 [Review Matrix](../assets/review-matrix_template.md)。矩阵承载覆盖依据，批次 Review Task、执行者、结果与整改事实归 Architecture Review Record，实施方案和局部自验归 Plan／Task。
+
+已初始化矩阵的项目中，子系统、模块、组件、职责、依赖、契约或适用规范变化时，写入者将变化和受影响矩阵范围交 Main，由 Main 按本维护约定组织 sdd-refactor 同步，并向用户展示、确认更新。技能之间不直接调用；同步任务止于已确认资产维护，不自动开始审查或代码整改。没有变化沿用确认。首次写入蓝图不强制初始化；安装与升级只分发知识和模板，不生成或覆盖项目规则与矩阵。
+
+本轮 Review Task 从有效矩阵按目标及影响范围派生，执行初审前确认任务范围、版本、排除项与终点，已有明确确认直接引用。初审后需整改的原检查项形成重构工单，按授权实施和复核。sdd-refactor 没有蓝图时直接结束，该前置不扩展为独立开发工单的门禁。
 
 ## 职责与交接
 
@@ -131,6 +137,7 @@
 | Technical Research and Selection Report | `docs/research/<主题>.md`，按需建立 |
 | 运维手册、其他文档 | `docs/runbooks/`，其他文档在 `docs/` 按用途归类 |
 | Code Review Rules | `docs/code-review-rules.md` |
+| Review Matrix | `docs/review-matrix.md`，在 Blueprint 中保留固定链接 |
 | Plan／Task | 当前任务或既有计划载体，同一份正文 |
 | Status | 沿用项目进度记录，首次可用当前任务，独立文档默认 `docs/status.md` |
 | 初始化运行资产 | 项目根目录 `.sdd-init.lock`、`.sdd-init-recovery/` 和 `.sdd-init-state.json`，由初始化器管理 |
@@ -144,6 +151,8 @@
 | 实体 | 权威内容 |
 |---|---|
 | Blueprint | 高位产品用例、终端、关键体验及验收维度，已确认架构职责、边界、不变量和 ARC。采用 ADR 的项目用其记录具体取舍。 |
+| Code Review Rules | 从已确认设计形成的项目可检查规则及 checklist 映射；沿用蓝图内已有规范或项目既有正文。 |
+| Review Matrix | 子系统、模块、组件及协作边界与适用项目规则的长期映射、检查方法及判据，由 sdd-refactor 维护。批次证据与进度不在此维护。 |
 | Technical Research and Selection Report | 调研问题、候选方案比较、证据引用、选型建议和确认记录。已确认的架构决定归 Blueprint 或项目已有 ADR，实际验证结果归对应 Test Report。 |
 | Spec | 具体需求、业务规则、条件、异常和 AC。引用适用 Blueprint 条款与原型。 |
 | Scenario Sequence / Interface Contract | 设计中的协作顺序、接口语义与异常约定。运行事实归对应 Test Report。 |
@@ -172,7 +181,7 @@ Main 从项目导航定位流程入口。下表按输入与产物导航，各入
 | [实施交接](delegation.md#实施交接) | Plan／Task、实际改动、版本及代码单测等局部证据，关联上游工单及待验判据 |
 | [缺陷修复](../../skills/sdd-bugfix/SKILL.md)，输入异常报告或原 Issue 及已确认行为依据 | 原 Issue、归因及历次复验证据、Plan／Task、修复版本、关闭依据或恢复条件 |
 | [集成测试](../../skills/sdd-test-loop/SKILL.md)，输入用户明确请求、已确认范围及目标版本和环境 | 可复跑的用户验收文档、含 Test Gate 的 Test Report、关联 Issue 及恢复条件 |
-| [架构对齐与重构](../../skills/sdd-refactor/SKILL.md)，输入已确认架构、适用规则、行为判据和目标版本 | Architecture Review Record 记录原检查项工单、架构复核、行为保持验收及 Review Gate，Plan／Task 记录实施和局部自验。交付集成准备条件。仅审查时交付偏差、证据和建议 |
+| [架构对齐与重构](../../skills/sdd-refactor/SKILL.md)，以已有蓝图为前提，初始化／更新规范与矩阵，再确认本轮审查范围 | 长期矩阵由蓝图固定链接；Architecture Review Record 记录矩阵快照、Review Task、初审、重构工单、两类复核及 Review Gate，Plan／Task 记录实施和局部自验。按授权终点交付资产、审查、工单或整改结果及集成准备条件 |
 | [交付与运行](../../skills/sdd-deliver/SKILL.md)，输入授权终点、目标版本、环境及适用依据 | 平台或运行回执，按需归并 Delivery Record，记录实际终点、版本、证据与恢复条件 |
 
 <a id="testing-scope-constraints"></a>
@@ -209,4 +218,4 @@ Main 从项目导航定位流程入口。下表按输入与产物导航，各入
 | L1 | 已确认边界内的契约扩展，同步生产者、消费者及异常语义。 |
 | L0 | 外部契约与架构语义均未改变的调整。 |
 
-提示词、目录及正文迁移按同一语义影响判断。架构设计任务交付已确认的设计与决策证据。判据无法覆盖时，在回执中列明待确认项与影响。架构审查执行者负责实现的遵循检查与取证，设计归并时发现规则可能过时，由用户决定维护时机。
+提示词、目录及正文迁移按同一语义影响判断。架构设计任务交付已确认的设计与决策证据，实现遵循由架构审查执行者取证。设计归并影响已初始化矩阵时，按[矩阵维护契约](#目标仓库的-code-review-rules)同步；其余规则可能过时的情况提示用户决定维护时机。判据无法覆盖时，回执列明缺项及影响。

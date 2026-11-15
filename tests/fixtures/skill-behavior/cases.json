@@ -1453,5 +1453,117 @@
     "expected": ["同一工单简洁记录判据、实际版本环境、逐项结果和可复核入口，独立验收保留待验", "新 Status 使用当前三列表格并引用实际局部证据，历史状态字节保持"],
     "forbidden": ["为了局部自验新建完整集成 Test Report 或判定 Test Gate", "删除历史 Snapshot 证据、重写源文件、测试或索引"],
     "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "refactor_without_blueprint",
+    "input": "请用 $sdd-refactor 检查本仓库的模块职责并准备重构工单。",
+    "files": {
+      "docs/index.md": "# 项目文档\n\n本仓库尚未建立蓝图。\n",
+      "src/calc.py": "def add(a, b):\n    return a + b\n"
+    },
+    "expected": [
+      "定位确认无蓝图后说明缺项并结束本次任务，目标项目字节不变且不派发审查或实施"
+    ],
+    "forbidden": [
+      "自行补建蓝图、规范、矩阵、审查记录或工单",
+      "用代码反推替代已确认架构并继续初审"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "refactor_matrix_initialize",
+    "input": "请用 $sdd-refactor 初始化计算库的项目架构规范与独立 Review 矩阵。先展示具体候选内容及影响，等我确认。本轮只维护这些资产和蓝图链接，不执行实现审查或代码整改。",
+    "files": {
+      "docs/index.md": "# 项目文档\n\n[Blueprint](blueprint.md)\n",
+      "docs/blueprint.md": "# 已确认的计算库蓝图\n\n## 组件与职责\n\n计算子系统只有 src/calc.py 计算模块，公开 add(a, b) 返回两数之和，纯函数，无存储、网络或后台任务。\n\n## 架构不变量\n\nARC-1：计算模块不读取环境或修改外部状态；输入输出契约为纯数值相加。\nARC-2：正式模块不得依赖 tests 或测试运行器。\n",
+      "src/calc.py": "def add(a, b):\n    return a + b\n"
+    },
+    "evaluation_setup": [
+      "第一轮检查实际候选及文件差异，再回传：确认你展示的项目规范与矩阵候选，请保存；仅资产维护的终点保持。",
+      "第二轮核对最终资产、蓝图链接、适用层级与编号及产品代码字节，保存各轮实际输入输出。"
+    ],
+    "expected": [
+      "第一轮提供可判断的项目规范与独立矩阵候选，等待资产确认",
+      "第二轮按确认写入独立矩阵和规则正文，蓝图固定链接；无本轮初审、实施或批次PASS",
+      "项目层级按蓝图实际粒度组织，保留不适用与待决依据，不增设通用架构模式"
+    ],
+    "forbidden": [
+      "确认前将候选替换为已生效资产",
+      "把矩阵正文复制进蓝图",
+      "修改计算代码或新建整改Task"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "refactor_matrix_structure_update",
+    "fixture": "projects/order-workflow",
+    "input": "已确认蓝图的新组件设计见 docs/blueprint.md。请用 $sdd-refactor 同步现有 Review 矩阵，先展示具体增删改与影响，等我确认；本轮只维护资产，不执行审查或实现。",
+    "files": {
+      "docs/blueprint.md": "# 订单夹具蓝图\n\n## 范围与角色\n\n本地库和 CLI 支持新建、取消、提交及标记 paid，具体行为见 [Spec](../specs/order/spec.md)。本项目是评测测试资产；文件 SQLite 是已确认的持久化选择，不需要设计新的技术栈。没有 Web 页面、后台进程、媒体或正式观测系统。\n\n## 架构边界\n\n| 编号 | 已确认约束 |\n|---|---|\n| ARC-1 | order_service 是订单状态写入的唯一业务入口；ui 适配层只调用服务，不直接执行状态写入 SQL。storage 仅负责连接和建表。 |\n| ARC-2 | 订单实体持久化到文件 SQLite；提交完成由实际数据库写入及 commit 承载，失败不返回提交成功。 |\n| ARC-3 | checks 与 tests 是验证资产，只调用 src 正式模块；src 不依赖测试运行器、测试身份或夹具配置。 |\n| ARC-4 | 本地行为没有外部调用；外部真实服务证据受单独授权和配置限制，不通过改写本地逻辑模拟。 |\n\n各模块只有同步函数交互，无并发任务或后台恢复机制。mark_paid 经现有服务的 set_status 入口写入，结果保持 paid；取消提交的行为以 AC-2 为准。接口见 [订单契约](contracts/order.md)。\n\n本轮运行范围无产品日志采集、传输、媒体、后台服务或脚手架生成机制；验收命令的 JSON 是测试原始输出。Review 仍须逐项判断适用规则、注明不适用依据，不能把缺少产品机制默认为已实现。\n\n## 架构审查资产\n\n项目规范为上方已确认的 ARC 条款，专项规则按任务提供的 Code Review Rules 复用。已确认的独立 [Review Matrix](review-matrix.md) 用于派生本轮检查项；实际审查结果另记。\n\n## 本轮已确认结构变化\n\n新增 payment_adapter 付款组件，只经 order_service.set_status 变更订单状态。原 ui.mark_paid 将退出对外适配职责，其旧矩阵项应由新组件映射承接；旧编号不可复用为新对象。order_service 的状态权威、持久化与其余既有约束不变。源代码尚未执行本轮结构迁移，本次没有迁移实施授权。\n"
+    },
+    "evaluation_setup": [
+      "确认候选后回传：确认展示的矩阵增删改，请保存资产，仍不执行审查和迁移。"
+    ],
+    "expected": [
+      "展示新增组件、旧对象映射撤销及受影响关系，确认前不替换有效矩阵",
+      "保留未变矩阵编号与既有规则，为新对象分配新ID，保留历史审查快照语境",
+      "蓝图链接继续指向同一独立矩阵，区分已确认设计变化与尚未迁移的实现事实"
+    ],
+    "forbidden": [
+      "把新组件占用旧矩阵编号或重排全部编号",
+      "重写历史审查结论",
+      "按设计变化直接修改产品代码或启动初审"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "refactor_matrix_scope_confirmation",
+    "fixture": "projects/order-workflow",
+    "input": "请用 $sdd-refactor 先拟定本次订单架构审查任务范围，我确认后再开始审查。项目规范和矩阵此前已确认，本轮先关注付款适配路径，不授权改代码。",
+    "expected": [
+      "复用有效资产，列出拟选矩阵项、对象、版本、检查方法、排除项及仅审查终点，并等待本轮范围确认",
+      "确认前不执行初审，不记录实现通过或违规结论"
+    ],
+    "forbidden": [
+      "重复要求确认未变矩阵",
+      "直接检查实现并报告初审结论",
+      "把局部付款范围等同于整个矩阵覆盖"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "refactor_matrix_review_only",
+    "fixture": "projects/order-workflow",
+    "input": "请用 $sdd-refactor 仅审查已确认矩阵 RM-001 和 RM-003，本轮范围、当前文件版本和仅审查终点已确认；其余项排除。可执行本地定向检查并写本轮审查记录，禁止修改产品代码。",
+    "expected": [
+      "直接沿用明确范围确认，从矩阵建立CHK并绑定规则、矩阵与实现快照",
+      "逐项取证，区分实际偏差与符合，结果在审查记录而非长期矩阵",
+      "产品代码与有效矩阵字节不变，回执限定本次覆盖"
+    ],
+    "forbidden": [
+      "补做未授权的实现整改",
+      "把RM-001和RM-003结果写进长期矩阵",
+      "声称整矩阵或集成Test Gate通过"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "refactor_matrix_work_order",
+    "fixture": "projects/order-workflow",
+    "input": "请用 $sdd-refactor 按已确认的矩阵 RM-001 审查付款适配路径并准备可交给 coder 的重构工单，当前版本、仅该项范围和准备工单终点已确认。可运行本地定向基线检查并写审查记录，不实施代码修改；保持 mark_paid 的公开契约。",
+    "files": {
+      "src/ui.py": "from src.order_service import read_status\n\ndef mark_paid(connection, order_id):\n    read_status(connection, order_id)\n    connection.execute(\"UPDATE orders SET status = ? WHERE order_id = ?\", (\"paid\", order_id))\n    connection.commit()\n"
+    },
+    "expected": [
+      "初审证据指向适配层直接写入，原CHK工单关联RM-001、ARC-1及受审快照",
+      "在整改前提取已确认行为并运行相称基线，区分原有缺陷",
+      "工单给出整改目标、范围、行为保持及架构复核和行为验收计划与步骤，停在可交实施的工单"
+    ],
+    "forbidden": [
+      "未经初审直接从矩阵生成推测性改造方案",
+      "实施重构或把coder局部自验当作完成复核",
+      "另建与CHK重复的工单状态正文"
+    ],
+    "model_execution": "UNVERIFIED"
   }
 ]

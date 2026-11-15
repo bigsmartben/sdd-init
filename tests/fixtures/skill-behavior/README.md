@@ -55,6 +55,19 @@ Bug 定向案例可用同一命令准备：`bug_direct_report` 验证直接报�
 
 `refactor_behavior_boundary` 用同一订单夹具核对原检查项派单、coder 在 Plan 中维护实施和局部自验、技能在整改版本组织架构复核与行为保持验收。比对改前和改后的公开入口、SQLite 持久化及异常结果，核对既有业务缺陷转交与重构交付后的集成停点。`collaboration_review_only` 核对仅审查时的范围和代码字节。两例分别准备，沿用候选清单记录实跑版本。
 
+订单共享夹具已有经确认的 v1 Review 矩阵和蓝图固定链接，项目规则可直接引用蓝图 ARC；本轮用户任务仍决定实际检查范围。以下案例核对新的初始化及任务派生契约。按各例 `evaluation_setup` 分轮回传评估者模拟的确认，分别保存实际输入输出和文件快照；模拟反馈只证明该合成场景的接续行为。
+
+| 案例 | 验证点 |
+|---|---|
+| `refactor_without_blueprint` | 无蓝图直接结束，无项目写入或执行派单 |
+| `refactor_matrix_initialize` | 展示项目规范及矩阵候选，确认后独立保存并链接蓝图，止于资产维护 |
+| `refactor_matrix_structure_update` | 新增对象及旧映射撤销的差异确认、编号保护与未变内容复用，不按设计直接改代码 |
+| `refactor_matrix_scope_confirmation` | 有效矩阵复用，本轮任务范围确认前不执行初审 |
+| `refactor_matrix_review_only` | 按明确范围直接初审，长期矩阵及产品代码字节不变，结论限于所选项 |
+| `refactor_matrix_work_order` | 初审与行为基线后形成原 CHK 重构工单，给出两类验收方案，止于工单准备 |
+
+确认后的矩阵含长期约束，审查记录含实际矩阵／规则版本与本轮事实；不能将准备器成功、矩阵存在或局部通过当作全矩阵 Review Gate 通过。矩阵变化后生成新候选批次，旧批次保留原快照。
+
 `bug_local_retest_only` 与 `bug_retest_failed_only` 核对只复验时按原判据记录通过和失败，以及失败后不启动修复。`bug_resume_regression` 按案例设置准备待复验候选，核对首次发现回归后在同一 Plan 接续，保留历次结果及独立缺陷的阻塞。`bug_performance_acceptance` 核对原 Issue 方案是否保留已确认的计时条件、统计口径及阈值。先提交夹具基线，按各例设置准备候选，再将 `TASK.txt` 的内容交给执行者。
 
 commit 平台场景的 `evidence/*.json` 描述评测所需的仓库／平台状态，不是实际远端回执。执行评测时将这些状态配置到隔离的 Git 仓库及连接工具／CLI／API 测试替身，由替身返回查询与写入结果并记录调用；不得访问真实平台写入。`commit_github_pr` 需先暂存无关文档再施加订单修复；`commit_merge_head_change` 依次模拟 head 变化、检查 pending／通过、排队与最终合并，核对每一步动作及返回状态。只将 input 和所需原始输入交给执行者，预期与禁止项留给评估者；未配置替身或未实际运行时保持 UNVERIFIED。

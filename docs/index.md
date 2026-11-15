@@ -16,7 +16,7 @@
 
 - **发现了哪些问题，修复后是否已复验关闭？** 查独立 Issue 及关联报告；初次记录使用 [Issue](../source/project/.agents/sdd/assets/issue_template.md)。指定缺陷的诊断、修复及定向复验使用 [sdd-bugfix](../source/project/.agents/skills/sdd-bugfix/SKILL.md)。修复方案查关联的 Plan／Task，关单依据及恢复条件查原 Issue。
 
-- **怎样审查架构落地或实施技术重构？** 使用 [sdd-refactor](../source/project/.agents/skills/sdd-refactor/SKILL.md)。原检查项、架构复核、行为保持验收和 Review Gate 查 Architecture Review Record，初次落盘使用[模板](../source/project/.agents/sdd/assets/review_template.md)。实施方案与局部自验查关联 Plan／Task。历史证据见[目标规则生成、更新及整改验收](test-reports/code-review-rules/2026-11-05.md)、[Review 检查项闭环复核](test-reports/agent-collaboration/2026-11-05-review-items.md)及[专职 Agent 协作 Review](test-reports/agent-collaboration/2026-11-05-review.md)。
+- **怎样审查架构落地或实施技术重构？** 使用 [sdd-refactor](../source/project/.agents/skills/sdd-refactor/SKILL.md)，先定位蓝图并初始化或核对项目规范与独立 [Review 矩阵](../source/project/.agents/sdd/assets/review-matrix_template.md)。按确认范围生成本轮任务；原检查项、重构工单、两类复核及 Review Gate 查 [Architecture Review Record](../source/project/.agents/sdd/assets/review_template.md)，实施方案和局部自验查关联 Plan／Task。本轮维护见[实施清单](plans/refactor-review-matrix.md)。历史证据见[目标规则生成、更新及整改验收](test-reports/code-review-rules/2026-11-05.md)、[Review 检查项闭环复核](test-reports/agent-collaboration/2026-11-05-review-items.md)及[专职 Agent 协作 Review](test-reports/agent-collaboration/2026-11-05-review.md)。
 
 - **怎样专项审查提示词或比较改版后的行为？** 将明确的工单交给用户级通用角色 [review-prompt](../source/initializer/assets/user-agents/review-prompt.toml)。角色随[用户级安装](installation.md#首次安装)提供，可在未接入 SDD 的仓库使用。
 - **怎样全面审查并回归本仓工作流？** 用户显式调用 [sdd-workflow-review](../.agents/skills/sdd-workflow-review/SKILL.md)，按固定版本的设计与判据，交付版本化覆盖、回归证据、获授权后的修复复验及质量成本报告。

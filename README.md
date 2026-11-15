@@ -32,7 +32,7 @@ sdd-workflow 的核心目标是让用户前置决定关键结果，Agent 基于�
 | [sdd-coder](source/project/.agents/sdd/references/delegation.md#实施交接) | 接收明确工单，维护 Plan／Task，实施并交付局部证据 |
 | [sdd-bugfix](source/project/.agents/skills/sdd-bugfix/SKILL.md) | 按请求恢复指定行为，验证归因、修复并定向复验 |
 | [sdd-test-loop](source/project/.agents/skills/sdd-test-loop/SKILL.md) | 按请求执行全功能点集成回归，交付复跑指南、逐项证据及 Test Gate |
-| [sdd-refactor](source/project/.agents/skills/sdd-refactor/SKILL.md) | 架构对齐、技术重构、架构复核与业务行为保持验收 |
+| [sdd-refactor](source/project/.agents/skills/sdd-refactor/SKILL.md) | 基于蓝图初始化与维护 Review 矩阵，按确认范围审查、生成重构工单及组织整改复核 |
 | [sdd-deliver](source/project/.agents/skills/sdd-deliver/SKILL.md) | 仓库交付、构建发布、运行排障、流量、备份恢复与退役 |
 
 共享契约见[仓库治理](source/project/.agents/sdd/references/sdd-repository-governance.md)，调度与角色入口见[执行协作](source/project/.agents/sdd/references/delegation.md)，项目文档入口可参考[索引示例](source/project/docs/index.md)。

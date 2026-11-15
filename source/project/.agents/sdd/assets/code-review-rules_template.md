@@ -5,6 +5,7 @@ Use the confirmed design and applicable [architecture guidance](../references/ar
 ## CRR-001 · <Fact or responsibility>
 
 - **Design basis** — <Specific Blueprint or Interface Contract link and clause identifier>
+- **Checklist mapping** — <Applicable stable AR checklist IDs and their source version; retain valid project-specific constraints without a shared counterpart.>
 - **Project constraint** — <Modules, authoritative entry points, and allowed interactions>
 - **Applicability and check timing** — <Applicable objects and conditions, direct changes or indirect effects that trigger a check, and local, CI, or review execution timing>
 - **Evidence path** — <Call entry point and read, write, recovery, or failure paths to inspect>
@@ -12,7 +13,7 @@ Use the confirmed design and applicable [architecture guidance](../references/ar
 - **Pass criteria** — <Observable outcomes and confirmed budgets or thresholds under the applicable conditions>
 - **Violation criteria** — <Observable implementation or behavior that violates the design>
 
-Reference existing code, configuration, tests, and review mechanisms; a rule does not require a new module or document. Keep execution evidence in the applicable review or test report. Missing or unexecuted evidence is not a pass.
+Reference existing code, configuration, tests, and review mechanisms; a rule does not require a new module or document. Link applicable project objects through the separate [Review Matrix](review-matrix_template.md). Keep batch tasks and execution evidence in the applicable review or test report. Missing or unexecuted evidence is not a pass.
 
 ## Open Questions
 

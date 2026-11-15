@@ -60,6 +60,10 @@ Add a compact data table when useful to explain sources, authority, permitted re
 
 Record project invariants the user has confirmed. Preserve stable identifiers, applicability conditions, and the strength of each constraint. Refer to section 6 for existing responsibility lists. List unconfirmed environments, frameworks, and strategies as open questions. Use the confirmed design and this template as the basis. Reading the architecture rules and adding rule mappings are outside this step.
 
+### Architecture Review Assets
+
+After sdd-refactor initializes the project review assets, keep a fixed link here to the effective project architecture rules and the independent Review Matrix. Retain the project's established paths; the default matrix location is `docs/review-matrix.md`. Do not copy matrix rows or batch conclusions into the Blueprint. Before initialization, state that the assets have not been initialized rather than creating a link to a missing file. For changes to an initialized project's subsystems, modules, components or their relationships, follow the [review asset maintenance contract](../references/sdd-repository-governance.md#目标仓库的-code-review-rules); sdd-refactor maintains the matrix through Main.
+
 ## 8. Key Interactions and Open Questions
 
 | Product scenario | Interface Contract / Scenario Sequence |

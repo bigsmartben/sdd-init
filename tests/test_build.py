@@ -134,10 +134,10 @@ class BuildTests(unittest.TestCase):
             {p.parent.name for p in (target / WORKFLOW / "skills").glob("*/SKILL.md")},
             {"sdd-develop", "sdd-architecture", "sdd-bugfix", "sdd-test-loop", "sdd-refactor",
              "sdd-deliver"})
-        for name in ("specs", "architecture", ".codex/agents", ".agents/sdd", "plan.md", "docs/index.md", "docs/code-review-rules.md"):
+        for name in ("specs", "architecture", ".codex/agents", ".agents/sdd", "plan.md", "docs/index.md", "docs/code-review-rules.md", "docs/review-matrix.md"):
             self.assertFalse((target / name).exists(), name)
         for name in ("spec_template.md", "blueprint_template.md", "plan_template.md", "quickstart_template.md", "prototype_reference_template.md",
-                     "test_report_template.md", "issue_template.md", "review_template.md", "sequence_template.md", "contract_template.md",
+                     "test_report_template.md", "issue_template.md", "review_template.md", "review-matrix_template.md", "sequence_template.md", "contract_template.md",
                      "delivery_record_template.md"):
             self.assertTrue((target / WORKFLOW / "sdd/assets" / name).is_file(), name)
         assets = target / WORKFLOW / "sdd/assets"
@@ -145,7 +145,7 @@ class BuildTests(unittest.TestCase):
             {p.name for p in assets.glob("*.md")},
             {"spec_template.md", "blueprint_template.md", "status_template.md",
              "plan_template.md", "quickstart_template.md", "prototype_reference_template.md",
-             "test_report_template.md", "issue_template.md", "review_template.md", "sequence_template.md", "contract_template.md",
+             "test_report_template.md", "issue_template.md", "review_template.md", "review-matrix_template.md", "sequence_template.md", "contract_template.md",
              "architecture-rule-catalog.md", "code-review-rules_template.md", "research_template.md",
              "delivery_record_template.md"})
         checker = target / WORKFLOW / "sdd/scripts/doc_check.py"
@@ -165,20 +165,33 @@ class BuildTests(unittest.TestCase):
         for retired in ("draft-pr.md", "test-plan.md", "acceptance.md", "module-design.md"):
             self.assertFalse((target / WORKFLOW / "sdd/assets" / retired).exists(), retired)
 
-    def test_project_code_review_rules_survive_install_and_upgrade(self):
+    def test_project_review_assets_survive_install_reinstall_and_upgrade(self):
         skill = builder.build(self.folder / "skill")
         target = self.folder / "project"
-        rules = target / "docs/code-review-rules.md"
-        rules.parent.mkdir(parents=True)
-        content = "# Code Review Rules\n\nCR-001 用户确认的项目规则。\n".encode("utf-8")
-        rules.write_bytes(content)
+        assets = {
+            "docs/code-review-rules.md": "# Code Review Rules\n\nCR-001 用户确认的项目规则。\n".encode("utf-8"),
+            "docs/review-matrix.md": "# Review Matrix\n\nRM-017 项目自有矩阵及有效例外。\n".encode("utf-8"),
+            "docs/blueprint.md": b"# Blueprint\r\n\r\n[Review Matrix](review-matrix.md)\r\n",
+        }
+        for name, content in assets.items():
+            path = target / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(content)
         command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
                    "--root", str(target), "init"]
-        for _ in range(2):
+        for version in range(3):
+            if version == 2:
+                # Upgrade shared knowledge while preserving the project's normative assets.
+                template = skill / "shared/sdd/assets/review-matrix_template.md"
+                template.write_bytes(template.read_bytes() + b"\n<!-- candidate revision -->\n")
+                refresh_manifest(skill)
             result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            self.assertEqual(rules.read_bytes(), content)
+            for name, content in assets.items():
+                self.assertEqual((target / name).read_bytes(), content, name)
             self.assertTrue((target / WORKFLOW / "sdd/assets/code-review-rules_template.md").is_file())
+            self.assertEqual((target / WORKFLOW / "sdd/assets/review-matrix_template.md").read_bytes(),
+                             (skill / "shared/sdd/assets/review-matrix_template.md").read_bytes())
 
     def test_communication_install_upgrade_and_repetition(self):
         skill = builder.build(self.folder / "skill")
@@ -386,7 +399,7 @@ class BuildTests(unittest.TestCase):
             "skills/sdd-test-loop/SKILL.md", "skills/sdd-test-loop/agents/openai.yaml",
             "skills/sdd-refactor/SKILL.md", "skills/sdd-refactor/agents/openai.yaml",
             "sdd/scripts/govern.py", "sdd/scripts/doc_check.py", "sdd/references/doc-check.md",
-            "sdd/assets/status_template.md", "sdd/assets/code-review-rules_template.md",
+            "sdd/assets/status_template.md", "sdd/assets/code-review-rules_template.md", "sdd/assets/review-matrix_template.md",
             "sdd/assets/spec_template.md", "sdd/assets/quickstart_template.md",
             "sdd/assets/plan_template.md", "sdd/assets/sequence_template.md",
             "sdd/assets/test_report_template.md", "sdd/assets/issue_template.md",

@@ -145,7 +145,7 @@ def shared_bundle(shared: Path) -> tuple[str, str, dict[str, str]]:
             "delivery", "release-evidence", "git-delivery", "git-remote", "deployment", "traffic", "recovery",
         )),
         *(f"sdd/assets/{name}_template.md" for name in (
-            "status", "spec", "blueprint", "code-review-rules", "prototype_reference", "quickstart",
+            "status", "spec", "blueprint", "code-review-rules", "review-matrix", "prototype_reference", "quickstart",
             "plan", "test_report", "issue", "review", "sequence", "contract", "research", "delivery_record",
         )),
         *(f"skills/{name}/agents/openai.yaml" for name in PROJECT_SKILLS),

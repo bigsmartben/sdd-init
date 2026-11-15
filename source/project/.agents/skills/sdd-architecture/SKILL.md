@@ -47,4 +47,4 @@ description: 用户要求建立、补齐或演化仓库级架构蓝图时使用�
 | 设计判断需要运行或环境证据 | 给定目标环境、版本、只读取证范围和观察点 | 可追溯的部署、依赖或运行事实及覆盖缺口 |
 | 需要独立核对正式文档的一致性 | 按[文档交接](../../sdd/references/delegation.md#文档交接)指定只读范围、权威条款与疑点 | 冲突或引用问题、证据和建议，由获授权的写入者处理 |
 
-业务需求定义、正式产品代码改造、实际架构遵循 Review、部署运行操作由 Main 按[阶段授权与推进](../../sdd/references/sdd-repository-governance.md#阶段授权与推进)安排。将相关问题、影响、依据和接续条件随回执交回 Main。
+业务需求定义、正式产品代码改造、实际架构遵循 Review、部署运行操作由 Main 按[阶段授权与推进](../../sdd/references/sdd-repository-governance.md#阶段授权与推进)安排。蓝图已链接 Review 矩阵时，本轮子系统、模块、组件及其职责、依赖、契约或适用规范变化，须在回执列明变化、受影响矩阵入口和依据，按[矩阵维护契约](../../sdd/references/sdd-repository-governance.md#目标仓库的-code-review-rules)交 Main 组织重构技能同步并确认。本 Skill 不直接调用同层技能或改写矩阵；回执分别说明设计交付与矩阵同步状态。其余相关问题、影响、依据和接续条件同样交回 Main。

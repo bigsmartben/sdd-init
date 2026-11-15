@@ -10,9 +10,9 @@
 
 - **发现了哪些 Bug，修复后是否已复验关闭？** 沿用 [Issue](../.agents/sdd/assets/issue_template.md) 及编号。指定缺陷的诊断、修复及定向复验使用 [sdd-bugfix](../.agents/skills/sdd-bugfix/SKILL.md)。修复方案查关联的 Plan／Task，关单依据及恢复条件查原 Issue。
 
-- **项目的 Code Review Rules 在哪里？** 用户决定维护时机，获授权的执行者按[写入规则](../.agents/sdd/references/document-writing.md#code-review-rules)维护。首次建立后将此处指向规则正文。
+- **项目的 Code Review Rules 和 Review 矩阵在哪里？** 按[维护契约](../.agents/sdd/references/sdd-repository-governance.md#目标仓库的-code-review-rules)定位项目规范，矩阵由重构技能生成和更新，蓝图保留固定链接。首次建立使用 [Review Matrix](../.agents/sdd/assets/review-matrix_template.md)，之后将此处指向实际正文。
 
-- **怎样审查架构落地或实施技术重构？** 使用 [sdd-refactor](../.agents/skills/sdd-refactor/SKILL.md)。原检查项、架构复核、行为保持验收和 Review Gate 查 Architecture Review Record，初次落盘使用[模板](../.agents/sdd/assets/review_template.md)。重构方案与局部自验查关联 Plan／Task。
+- **怎样审查架构落地或实施技术重构？** 使用 [sdd-refactor](../.agents/skills/sdd-refactor/SKILL.md)，以已有蓝图为前提，核对规范与独立矩阵，再确认本轮 Review Task 的范围和终点。初审、重构工单、架构复核、行为保持验收及 Review Gate 查 [Architecture Review Record](../.agents/sdd/assets/review_template.md)，重构方案与局部自验查关联 Plan／Task。
 
 - **本轮改什么、按什么顺序执行？** 查当前 Plan（Task 清单）；输出结构见 [Plan](../.agents/sdd/assets/plan_template.md)，安排执行见[实施交接](../.agents/sdd/references/delegation.md#实施交接)，制定与执行计划见[实施与局部自验](../.agents/sdd/references/implementation.md)。
 

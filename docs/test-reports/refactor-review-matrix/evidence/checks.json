@@ -1,0 +1,61 @@
+[
+  {
+    "command": [
+      "C:\\Users\\24598\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+      "-B",
+      "-X",
+      "utf8",
+      "source/project/.agents/sdd/scripts/doc_check.py",
+      "--root",
+      ".",
+      ".agents/skills/sdd-workflow-review/references/review-criteria.md",
+      "README.md",
+      "docs/blueprint.md",
+      "docs/index.md",
+      "docs/plans/refactor-review-matrix.md",
+      "docs/sdd-workflow-whitepaper.md",
+      "docs/test-reports/refactor-review-matrix/2026-11-15.md",
+      "source/project/.agents/sdd/assets/architecture-rule-catalog.md",
+      "source/project/.agents/sdd/assets/blueprint_template.md",
+      "source/project/.agents/sdd/assets/code-review-rules_template.md",
+      "source/project/.agents/sdd/assets/review-matrix_template.md",
+      "source/project/.agents/sdd/assets/review_template.md",
+      "source/project/.agents/sdd/references/architecture-rules.md",
+      "source/project/.agents/sdd/references/document-writing.md",
+      "source/project/.agents/sdd/references/sdd-repository-governance.md",
+      "source/project/.agents/skills/sdd-architecture/SKILL.md",
+      "source/project/.agents/skills/sdd-refactor/SKILL.md",
+      "source/project/docs/index.md",
+      "specs/platform-independent-sdd/spec.md",
+      "tests/fixtures/skill-behavior/README.md",
+      "tests/fixtures/skill-behavior/projects/order-workflow/docs/blueprint.md",
+      "tests/fixtures/skill-behavior/projects/order-workflow/docs/review-matrix.md"
+    ],
+    "exit_code": 0,
+    "stdout": "Checked 22 Markdown files: 0 errors, 0 warnings (mechanical only)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "C:\\Users\\24598\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+      "-B",
+      "-X",
+      "utf8",
+      "C:/Users/24598/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+      "source/project/.agents/skills/sdd-refactor"
+    ],
+    "exit_code": 0,
+    "stdout": "Skill is valid!\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]
