@@ -1,0 +1,12 @@
+test_cancelled_submit_does_not_write_or_commit (test_order.OrderTests.test_cancelled_submit_does_not_write_or_commit) ... ok
+test_cancelled_submit_preserves_other_order_and_transaction (test_order.OrderTests.test_cancelled_submit_preserves_other_order_and_transaction) ... ok
+test_database_failure_propagates_and_recovers (test_order.OrderTests.test_database_failure_propagates_and_recovers) ... ok
+test_mark_paid_from_all_existing_states (test_order.OrderTests.test_mark_paid_from_all_existing_states) ... ok
+test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok
+test_missing_order_raises_value_error (test_order.OrderTests.test_missing_order_raises_value_error) ... ok
+test_normal_submit (test_order.OrderTests.test_normal_submit) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.157s
+
+OK

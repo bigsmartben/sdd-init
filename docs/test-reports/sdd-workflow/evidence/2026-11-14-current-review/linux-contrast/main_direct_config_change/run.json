@@ -1,0 +1,68 @@
+{
+  "start": "2026-11-14T23:13:55+08:00",
+  "end": "2026-11-14T23:14:24+08:00",
+  "seconds": 25.962,
+  "exit": 0,
+  "case": "main_direct_config_change",
+  "permission_profile": "fixture-write",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "before": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "4f395f7951b52b1e186523f1294531658b72dd44fb94d8a9afcd7378df0da20e",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "518f83f1564923fa3df8cb47051e7b657ca22ba128a663e95cdc2374671f98ef",
+    "TASK.txt": "fc32b43fc950cc902b0b98009a92a36249f3805305cfb8e36d68fd0222f4a53b",
+    "config/service.toml": "88d0987b95d7e502281a123fc776c81c6acf03f1a871129d0a6b159ff82d445f",
+    "docs/index.md": "8e1ac58afa9811576be6b2af0bf4eb73fd8dee55dbbc3116873474fd13d7e083"
+  },
+  "after": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "4f395f7951b52b1e186523f1294531658b72dd44fb94d8a9afcd7378df0da20e",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "518f83f1564923fa3df8cb47051e7b657ca22ba128a663e95cdc2374671f98ef",
+    "TASK.txt": "fc32b43fc950cc902b0b98009a92a36249f3805305cfb8e36d68fd0222f4a53b",
+    "config/service.toml": "b085ad07a72efc9ab09525d9d54bf06f50293cb4068ff8ac8b5de587aa574163",
+    "docs/index.md": "8e1ac58afa9811576be6b2af0bf4eb73fd8dee55dbbc3116873474fd13d7e083"
+  },
+  "changed": [
+    "config/service.toml"
+  ],
+  "base_commit": "90672942d8796c39704a0813166b54bdecd1804b",
+  "head_after": "90672942d8796c39704a0813166b54bdecd1804b",
+  "commit_paths": [],
+  "git_before": "",
+  "git_after": "M config/service.toml",
+  "sessions": [
+    {
+      "identity": {
+        "id": "01a1da9f-5023-7251-8be6-ab6d8633e2ac",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1da9f-5023-7251-8be6-ab6d8633e2ac",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 61113,
+        "cached_input_tokens": 28928,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 266,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 61379
+      },
+      "records": 8,
+      "trace": "sessions/rollout-2026-11-14T23-13-57-01a1da9f-5023-7251-8be6-ab6d8633e2ac.jsonl"
+    }
+  ]
+}

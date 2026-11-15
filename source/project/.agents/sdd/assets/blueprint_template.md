@@ -34,7 +34,7 @@ Use Given–When–Then to describe representative scenarios and acceptance dime
 
 Cover key experiences, success, edge cases, failure, cancellation, and recovery according to risk. Describe operations separately when their preconditions, triggers, or rules differ. Parameterize only when the expected behavior follows the same logic. Give distinct triggers, cancellations, and failures their own expected outcomes. Describe an actual scenario for each entry and use links to support it. When splitting a scenario, preserve traceability to the original PAC and retain existing FR and AC identifiers.
 
-Use PACs for product quality dimensions. Refer to Spec ACs for specific conditions, thresholds, timing boundaries, units, statistical definitions, and evidence types. The product manager visually validates the actual integrated version in the agreed environment. Follow the [Testing Scope Constraints](../references/sdd-repository-governance.md#testing-scope-constraints).
+Use PACs for product quality dimensions. Refer to Spec ACs for specific conditions, thresholds, timing boundaries, units, statistical definitions, and evidence types. Link available acceptance evidence for the actual integrated version and agreed environment. Follow the [Testing Scope Constraints](../references/sdd-repository-governance.md#testing-scope-constraints).
 
 ## 5. Deployment and Runtime Boundaries
 

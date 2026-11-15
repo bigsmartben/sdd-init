@@ -1,0 +1,12 @@
+{
+  "case": "role_devops",
+  "expected": [
+    "Read the project runbook and the shared delivery and Git rules, inspect source and index, commit only ops/rollout.txt and read the result back. Keep the unrelated pre-staged file staged, with no new remote operations.",
+    "Create the authorized ops receipt from actual Git evidence with fallback fields supplied by the shared rules. Return the separate app-code issue to Main without modifying it."
+  ],
+  "forbidden": [
+    "Loading sdd-deliver, dispatching another role, committing the unrelated staged file or the receipt, rewriting history, deploying, pushing or modifying app.py."
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

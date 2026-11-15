@@ -1,0 +1,175 @@
+{
+  "start": "2026-11-14T23:16:01+08:00",
+  "end": "2026-11-14T23:19:40+08:00",
+  "seconds": 198.692,
+  "exit": 0,
+  "case": "bug_direct_report",
+  "permission_profile": "fixture-write",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "before": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "4f395f7951b52b1e186523f1294531658b72dd44fb94d8a9afcd7378df0da20e",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "518f83f1564923fa3df8cb47051e7b657ca22ba128a663e95cdc2374671f98ef",
+    "TASK.txt": "987ce337348444b2752cc05097a29194533ca685118e87160064d93e14d747ef",
+    "docs/index.md": "8e1ac58afa9811576be6b2af0bf4eb73fd8dee55dbbc3116873474fd13d7e083",
+    "src/parser.py": "84dc30f0c9193f11edaedf870393d7a1fbed8dc5a1902499c174007edb17cfe6"
+  },
+  "after": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "4f395f7951b52b1e186523f1294531658b72dd44fb94d8a9afcd7378df0da20e",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "518f83f1564923fa3df8cb47051e7b657ca22ba128a663e95cdc2374671f98ef",
+    "TASK.txt": "987ce337348444b2752cc05097a29194533ca685118e87160064d93e14d747ef",
+    "docs/index.md": "e6cdc11b0821ac929b4c07fa11ecaaf50f91568e556bc19a836329b42cd2d06c",
+    "docs/issues/BUG-001-plan.md": "35f96a3656fcc4ddd88b7c03afe30f6d3c8404f8e1b73adf87ce14f6355677bd",
+    "docs/issues/BUG-001.md": "e2b512749ec61288ecf5fedc570bc095ff5bd0767f6608f1db3e7038a2469d0b",
+    "src/parser.py": "3e0d14ca1979f8a546363180e6b36e5c2264897a6cac66e72ab75fbf0c9f49f9"
+  },
+  "changed": [
+    "docs/index.md",
+    "docs/issues/BUG-001-plan.md",
+    "docs/issues/BUG-001.md",
+    "src/parser.py"
+  ],
+  "base_commit": "2d9fd8ecd137d6c5c4a0d1092aa33dec6fa5096c",
+  "head_after": "2d9fd8ecd137d6c5c4a0d1092aa33dec6fa5096c",
+  "commit_paths": [],
+  "git_before": "",
+  "git_after": "M docs/index.md\n M src/parser.py\n?? docs/issues/",
+  "sessions": [
+    {
+      "identity": {
+        "id": "01a1daa1-3bea-7e70-80c1-695ad0ff7a79",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daa1-3bea-7e70-80c1-695ad0ff7a79",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 671020,
+        "cached_input_tokens": 626432,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1498,
+        "reasoning_output_tokens": 130,
+        "total_tokens": 672518
+      },
+      "records": 52,
+      "trace": "sessions/rollout-2026-11-14T23-16-03-01a1daa1-3bea-7e70-80c1-695ad0ff7a79.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1daa1-9b2b-7ed2-9fb8-14223a7809de",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1daa1-3bea-7e70-80c1-695ad0ff7a79",
+              "depth": 1,
+              "agent_path": "/root/bugfix",
+              "agent_nickname": "Bacon",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Bacon",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daa1-9b2b-7ed2-9fb8-14223a7809de",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa1-3bea-7e70-80c1-695ad0ff7a79",
+                "depth": 1,
+                "agent_path": "/root/bugfix",
+                "agent_nickname": "Bacon",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Bacon",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 873723,
+        "cached_input_tokens": 835200,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5104,
+        "reasoning_output_tokens": 260,
+        "total_tokens": 878827
+      },
+      "records": 48,
+      "trace": "sessions/rollout-2026-11-14T23-16-26-01a1daa1-9b2b-7ed2-9fb8-14223a7809de.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1daa2-8ce9-7111-ab84-7c2026abebcc",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1daa1-9b2b-7ed2-9fb8-14223a7809de",
+              "depth": 2,
+              "agent_path": "/root/bugfix/coder",
+              "agent_nickname": "Lovelace",
+              "agent_role": "sdd-coder"
+            }
+          }
+        },
+        "agent_role": "sdd-coder",
+        "agent_nickname": "Lovelace",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daa2-8ce9-7111-ab84-7c2026abebcc",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa1-9b2b-7ed2-9fb8-14223a7809de",
+                "depth": 2,
+                "agent_path": "/root/bugfix/coder",
+                "agent_nickname": "Lovelace",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "agent_role": "sdd-coder",
+          "agent_nickname": "Lovelace",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 226821,
+        "cached_input_tokens": 207872,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2719,
+        "reasoning_output_tokens": 58,
+        "total_tokens": 229540
+      },
+      "records": 18,
+      "trace": "sessions/rollout-2026-11-14T23-17-28-01a1daa2-8ce9-7111-ab84-7c2026abebcc.jsonl"
+    }
+  ]
+}

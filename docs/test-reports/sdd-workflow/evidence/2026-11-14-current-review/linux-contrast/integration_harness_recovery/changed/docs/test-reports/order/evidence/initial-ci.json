@@ -1,0 +1,11 @@
+{
+  "time_utc": "2026-11-14T15:17:03.582876+00:00",
+  "command": [
+    "/tmp/sdd-review-execution-6k7sr2xd/program/tools/python",
+    "-B",
+    "checks/integration_runner.py"
+  ],
+  "returncode": 1,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/sdd-review-execution-6k7sr2xd/integration_harness_recovery-57tq85t2/prepared/project/checks/integration_runner.py\", line 5, in <module>\n    raise SystemExit(run_acceptence())\n                     ^^^^^^^^^^^^^^\nNameError: name 'run_acceptence' is not defined. Did you mean: 'run_acceptance'?\n"
+}

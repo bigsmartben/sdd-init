@@ -61,8 +61,8 @@ class GovernanceTests(unittest.TestCase):
         self.assertFalse((GOV.parent.parent / "assets/repo-payload.zip").exists())
         self.run_cmd("init")
         self.assertEqual({p.parent.name for p in (self.root / WORKFLOW / "skills").glob("*/SKILL.md")},
-                         {"sdd-develop", "sdd-bugfix", "sdd-test-loop", "sdd-architecture", "sdd-refactor",
-                          "sdd-review-prompt", "sdd-deliver"})
+                         {"sdd-develop", "sdd-architecture", "sdd-bugfix", "sdd-test-loop", "sdd-refactor",
+                          "sdd-deliver"})
         self.assertFalse((self.root / ".agents/skills/sdd-init").exists())
         result = subprocess.run([sys.executable, str(self.root / WORKFLOW / "sdd/scripts/govern.py"),
                                  "--root", str(self.root), "inspect"], capture_output=True, text=True, encoding="utf-8")
@@ -75,16 +75,18 @@ class GovernanceTests(unittest.TestCase):
         roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
         expected_models = {
             "sdd-architect": "gpt-6-astra",
-            "sdd-coder": "gpt-6.1-sol",
-            "sdd-doc-consistency": "gpt-6.1-terra",
             "sdd-product-manager": "gpt-6-astra",
+            "sdd-coder": "gpt-6.1-sol",
             "sdd-devops": "gpt-6.1-terra",
+            "sdd-doc-consistency": "gpt-6.1-terra",
         }
         self.assertEqual(set(roles), set(expected_models))
         for name, model in expected_models.items():
             role = config.parent / roles[name]["config_file"]
             self.assertTrue(role.samefile(SHARED / "agents" / f"{name}.toml"))
-            self.assertEqual(tomllib.loads(role.read_text(encoding="utf-8"))["model"], model)
+            data = tomllib.loads(role.read_text(encoding="utf-8"))
+            self.assertEqual(data["model"], model)
+            self.assertNotIn("sandbox_mode", data)
         self.assertFalse((self.root / ".codex/agents").exists())
         self.assertFalse((self.root / "architecture").exists())
         self.assertFalse((self.root / "specs").exists())
@@ -133,14 +135,19 @@ class GovernanceTests(unittest.TestCase):
         self.assertNotIn("enabled", result["agents"])
 
     def test_init_protects_same_name_project_skill(self):
-        path = self.root / ".agents/skills/sdd-develop/SKILL.md"
-        path.parent.mkdir(parents=True)
-        path.write_text("local customization", encoding="utf-8")
-        denied = self.run_cmd("init", ok=False)
-        self.assertNotEqual(denied.returncode, 0)
-        self.assertIn("sdd-develop", denied.stderr)
-        self.assertEqual(path.read_text(encoding="utf-8"), "local customization")
-        self.assertFalse((self.root / WORKFLOW).exists())
+        for name in ("sdd-develop", "sdd-refactor", "sdd-review-code", "sdd-review-prompt"):
+            with self.subTest(name=name):
+                path = self.root / ".agents/skills" / name / "SKILL.md"
+                path.parent.mkdir(parents=True)
+                path.write_text("local customization", encoding="utf-8")
+                denied = self.run_cmd("init", ok=False)
+                self.assertNotEqual(denied.returncode, 0)
+                self.assertIn(name, denied.stderr)
+                self.assertEqual(path.read_text(encoding="utf-8"), "local customization")
+                self.assertFalse((self.root / "AGENTS.md").exists())
+                self.assertFalse((self.root / WORKFLOW).exists())
+                path.unlink()
+                path.parent.rmdir()
 
     def test_init_idempotent_and_add_singleton(self):
         self.bootstrap()
@@ -164,11 +171,13 @@ class GovernanceTests(unittest.TestCase):
         targets = re.findall(r"\]\(([^)]+)\)", agents)
         self.assertIn(f"{WORKFLOW}/sdd/references/sdd-repository-governance.md", targets)
         self.assertIn(f"{WORKFLOW}/sdd/references/delegation.md", targets)
+        self.assertIn(f"{WORKFLOW}/skills/sdd-refactor/SKILL.md", targets)
         for target in targets:
             self.assertTrue((self.root / target.split("#")[0]).is_file(), target)
         governance = (self.root / f"{WORKFLOW}/sdd/references/sdd-repository-governance.md").read_text(encoding="utf-8")
         self.assertIn("docs/blueprint.md", governance)
-        self.assertTrue((self.root / f"{WORKFLOW}/sdd/references/implementation.md").is_file())
+        self.assertIn(f"{WORKFLOW}/sdd/references/delegation.md#实施交接", targets)
+        self.assertTrue((self.root / WORKFLOW / "sdd/references/implementation.md").is_file())
         self.assertFalse((self.root / "sdd-repository-governance.md").exists())
         self.assertFalse((self.root / "specs").exists())
 
@@ -250,8 +259,8 @@ class GovernanceTests(unittest.TestCase):
 
     def test_workflows_allow_natural_language_selection(self):
         self.run_cmd("init")
-        for name in ("sdd-develop", "sdd-bugfix", "sdd-test-loop", "sdd-architecture", "sdd-refactor",
-                     "sdd-review-prompt", "sdd-deliver"):
+        for name in ("sdd-develop", "sdd-architecture", "sdd-bugfix", "sdd-test-loop", "sdd-refactor",
+                     "sdd-deliver"):
             metadata = (self.root / WORKFLOW / f"skills/{name}/agents/openai.yaml").read_text(encoding="utf-8")
             self.assertIn("allow_implicit_invocation: true", metadata)
         self.assertIn("allow_implicit_invocation: true", (GOV.parent.parent / "agents/openai.yaml").read_text(encoding="utf-8"))

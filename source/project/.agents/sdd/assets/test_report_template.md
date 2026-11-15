@@ -36,7 +36,7 @@ Use the full structure for integration regression. A simple or local task may us
 
 - **Planned and actual execution** — <Actual scope, time, and reasons for deviations>
 - **Case counts** — <Total in scope and counts for Pass, Fail, Not run, and Blocked. Count each case once per batch. The four counts sum to the total. Record retries separately as evidence.>
-- **Requirements coverage** — <Map each in-scope feature to its cases, scenarios, and ACs. Describe partial coverage, combinations of behaviors, and unverified items. When resuming or testing a changed version or environment, record what changed, why any earlier evidence still applies, and which cases were rerun.>
+- **Requirements coverage** — <Map each in-scope feature to its cases, scenarios, and ACs. Report requirements coverage separately from the case pass rate. Describe partial coverage, combinations of behaviors, and unverified items. When resuming or testing a changed version or environment, record what changed, why any earlier evidence still applies, and which cases were rerun.>
 
 ## 6. Test Details
 
@@ -63,6 +63,6 @@ Keep Issue references and their impact here. Use the [Issue template](issue_temp
 - **Overall conclusion** — <Whether this batch met its completion criteria, the basis, and where the conclusion applies>
 - **Remaining risks and unverified items** — <Related cases, Issues, and impact on acceptance>
 - **Human confirmation** — <Experience requiring user action or judgment, feedback source and time, or pending verification and its effect on the Gate. State when this does not apply.>
-- **Gate** — <For full integration regression, state the Test Gate, declared scope, actual version and environment, and supporting evidence. PASS requires every applicable feature and criterion in scope to be satisfied with the required evidence. Otherwise identify the gaps and resumption conditions. For other verification types, identify the applicable conclusion or mark this field not applicable.>
+- **Gate** — <For full integration regression, record the Test Gate, declared scope, actual version and environment, supporting evidence, and any gaps or resumption conditions. For other verification types, identify the applicable conclusion or mark this field not applicable.>
 
-Preserve the facts for this batch, including failures fixed later. Record a retest as a new batch, which may use a separate section in the same file. If correcting a recording error, explain the reason and evidence. The Issue holds its status and closure basis, with links to the relevant batches. Integration reports reference the original ID and actual evidence. Include both in the task receipt. Update the Issue status only within the task's authorization, using the original criteria and observed results. Link the report and Issues from Status or Plan.
+Preserve the facts for this batch, including failures fixed later. Record a retest as a new batch, which may use a separate section in the same file. If correcting a recording error, explain the reason and evidence. The Issue holds its status and closure basis, with links to the relevant batches. Integration reports reference the original ID and actual evidence. Include both in the task receipt. Apply the [Issue closure rules](../references/sdd-repository-governance.md#issue-关单) when updating an Issue. Link the report and Issues from Status or Plan.

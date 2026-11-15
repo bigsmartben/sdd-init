@@ -1,0 +1,17 @@
+[
+  {
+    "id": "01a1da8a-0d51-7aa0-8f15-81b0251f17fb",
+    "source": {
+      "subagent": {
+        "thread_spawn": {
+          "parent_thread_id": "01a1da89-d729-7c00-baf8-934e8622cb2e",
+          "depth": 1,
+          "agent_path": "/root/doc_consistency",
+          "agent_nickname": "Curie",
+          "agent_role": "sdd-doc-consistency"
+        }
+      }
+    },
+    "role": "sdd-doc-consistency"
+  }
+]

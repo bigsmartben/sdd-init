@@ -8,10 +8,12 @@
 
 ## 维护边界
 
-- 已确认的具体需求以对应 Spec 文件为唯一正文；README 只保留定位与导航，计划和状态引用需求并记录各自的方案或事实，不复制需求正文。Plan 与 Task 合并为同一份可执行清单；HTML、Blueprint 和交付记录的职责及引用关系按 Spec 中已确认约定执行。
+- 提示词专项工作可委派给 [review-prompt 角色](source/initializer/assets/user-agents/review-prompt.toml)，本仓源码作为受审对象。仅在用户显式请求本仓工作流全面评审时启动 [sdd-workflow-review](.agents/skills/sdd-workflow-review/SKILL.md)。
+
+- 已确认的具体需求以对应 Spec 文件为唯一正文。[本仓 Spec](specs/platform-independent-sdd/spec.md) 维护 sdd-init 的产品承诺及验收条件。阶段内闭环归各 Skill，本职执行归角色定义，共享契约按[仓库治理](source/project/.agents/sdd/references/sdd-repository-governance.md)定位唯一正文。README 提供定位和导航，Plan／Task 维护同一份执行清单，状态与验证记录引用适用依据。
 - 维护通用流程与资源时，沿用目标项目的已确认决定；业务需求、组件库选型和产品架构由目标项目确定。本仓库自身的维护任务以规则、文档和工具为检查对象。
 - `source/initializer/` 维护初始化器自身；`source/project/` 维护项目分发正文，共享模板、治理与观测资源只在 `source/project/.agents/sdd/` 下维护。生成的 `.build/` 和 ZIP 不是编辑入口；`baselines/` 仅供追溯。来源与历史差异见 [导入清单](baselines/import-manifest.json) 和 [来源盘点](docs/inventory.md)。
-- 本仓库维护 `sdd-init` 源码。Agent 在本仓库工作时不加载或修改已安装的 SDD 工作流。安装、升级和工作流接入验证使用隔离的 Skill 目录与临时目标项目，步骤见[开发验证](docs/installation.md#开发验证)。
+- 本仓库维护 `sdd-init` 源码。Agent 在本仓库工作时不加载或修改已安装的 SDD 工作流。安装、升级和工作流接入验证使用隔离的 Skill 目录、用户角色目录与临时目标项目，步骤见[开发验证](docs/installation.md#开发验证)。
 - 历史导入源码中的旧规则是待迁移实现，不覆盖已确认目标；导入目录、Skill 数量及现存角色引用不构成最终设计。未决方案以关联 Spec 中后续确认的结论为准，不把临时链接当作固定基线。
 - 不直接改用户级已安装 Skill、其他项目副本、产品代码或历史需求；安装、升级与迁移须在实际任务范围内单独处理。
 - 机械工具用于检查结构、编号、引用和证据时效，需求、架构或实现的语义判断由 Agent 完成。

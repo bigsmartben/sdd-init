@@ -1,0 +1,12 @@
+{
+  "head": "6d5e6b6737cc61d38206817f58876c7f65473a21",
+  "initial_worktree": "clean",
+  "acceptance_exit": 1,
+  "unittest_exit": 0,
+  "supplement_exit": 0,
+  "source_fingerprints_unchanged": true,
+  "implementation_tests_checks_runtime_task_readme_unchanged": true,
+  "final_git_status": " M docs/index.md\n M specs/order/quickstart.md\n?? docs/issues/\n?? docs/status.md\n?? docs/test-reports/\n",
+  "tracked_diff_stat": " docs/index.md             |  4 ++\n specs/order/quickstart.md | 95 ++++++++++++++++++++++++++++++++++++++++++++++-\n 2 files changed, 97 insertions(+), 2 deletions(-)\n",
+  "note": "No commit or push. Supplement business verdicts are in JSON, independent of command exit."
+}

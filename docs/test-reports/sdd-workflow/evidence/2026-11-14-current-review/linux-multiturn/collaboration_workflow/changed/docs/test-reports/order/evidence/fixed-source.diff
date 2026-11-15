@@ -1,0 +1,26 @@
+diff --git a/src/order_service.py b/src/order_service.py
+index c755580..89b08b2 100644
+--- a/src/order_service.py
++++ b/src/order_service.py
+@@ -26,6 +26,7 @@ def cancel_order(connection, order_id):
+ 
+ 
+ def submit_order(connection, order_id):
+-    read_status(connection, order_id)
++    if read_status(connection, order_id) == "cancelled":
++        return False
+     set_status(connection, order_id, "submitted")
+     return True
+diff --git a/src/ui.py b/src/ui.py
+index 6506458..e5dfa93 100644
+--- a/src/ui.py
++++ b/src/ui.py
+@@ -1,6 +1,6 @@
+ """UI adapter surface in the evaluation fixture (there is no graphical UI)."""
++from . import order_service
+ 
+ 
+ def mark_paid(connection, order_id):
+-    connection.execute("UPDATE orders SET status = ? WHERE order_id = ?", ("paid", order_id))
+-    connection.commit()
++    order_service.set_status(connection, order_id, "paid")

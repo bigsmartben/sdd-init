@@ -1,0 +1,19 @@
+{
+  ".agents/skills/sdd-workflow-review/SKILL.md": "d7e2c20f2ac93415db526e33fccdf8f62d9bd9c7a8349c2d2e85ba396dc1458c",
+  ".agents/skills/sdd-workflow-review/agents/openai.yaml": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+  ".agents/skills/sdd-workflow-review/assets/review-report-template.md": "233736f843a45207c89715d44248423fb471a16844cefc7cd3c1a930bbaaff7d",
+  ".agents/skills/sdd-workflow-review/assets/whitepaper-template.md": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+  ".agents/skills/sdd-workflow-review/references/evidence-and-cost.md": "fc7d2c15e6f665c6db8b3b2f459ae73ca5f4c2ac6614cc09bd3ef2270d7dd617",
+  ".agents/skills/sdd-workflow-review/references/review-criteria.md": "7a6d787a47ccca7f479a7198fd27a93e601efab2bc00d4e43719ad435480a15a",
+  "README.md": "576d022756328b32129ede97bb7da876d38e96d40fb1f6ec5b8e3a228a7a4ac4",
+  "docs/blueprint.md": "7356f6b8621454fab9fd56c9ee306a0aa103baaede3e69d9b11e19c589e20231",
+  "docs/index.md": "dac30b9aed1a839b7b47d0ea9a8add2c8d02a62d7a11ce81a457707fa8ae258b",
+  "docs/sdd-workflow-whitepaper.md": "651c5a147856cf6c6f618215317aceee2dd6f163000ad639e88d7a6fc100e6ea",
+  "docs/test-reports/sdd-workflow/2026-11-14-artifact-division-validation.md": "84711196f472f6a59e65413e95be34f991763b0bf975847f23d08ec34ee638a7",
+  "docs/test-reports/sdd-workflow/2026-11-14-whitepaper-assessment-archive.md": "ff07bc5f1e1758693892c86c33b31b4772cea7e7a4692a7458111dce47ab0369",
+  "specs/platform-independent-sdd/spec.md": "22f4ff868a3db084e996b1f2c87c29362ccaeba687a4f6c8738386aa16db235d",
+  "tests/fixtures/skill-behavior/README.md": "df26e7eff715faa81bdd8f3c8bccff3aba43a998816a9bdfab135a91ccd27a34",
+  "tests/fixtures/skill-behavior/cases.json": "3f7d98e55ea7ff5d7acdaf456cb1ad6b7a160c307348f1023b6a730bc7107842",
+  "tests/fixtures/skill-behavior/projects/workflow-review/docs/review-criteria.md": "57fe8a82754897ae792713423a63eb07a8016c3edb0488ce67be22d742f88d83",
+  "tests/fixtures/skill-behavior/projects/workflow-review/docs/sdd-workflow-whitepaper.md": "1bc4dfefc5879bda0468b0089d1d598ae5562be19c81164e334327de024cb808"
+}

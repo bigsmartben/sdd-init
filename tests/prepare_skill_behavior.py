@@ -11,6 +11,8 @@ import shutil
 
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "tests/fixtures/skill-behavior"
+REVIEW_ROLE = ROOT / "source/initializer/assets/user-agents/review-prompt.toml"
+REVIEW_SKILL = Path(".agents/skills/sdd-workflow-review")
 
 
 def relative_path(raw):
@@ -51,7 +53,18 @@ def prepare_case(case, output, *, candidate=ROOT / "source/project", corpus=CORP
     for parent in output.parents:
         if parent.is_symlink():
             raise ValueError(f"Linked output parent: {parent}")
-    payload = tree_files(candidate)
+    profile_files = {}
+    scope = case.get("candidate_scope", "project")
+    if scope == "project":
+        payload = tree_files(candidate)
+    elif scope == "review-role":
+        payload = {}
+        profile_files[".codex/agents/review-prompt.toml"] = REVIEW_ROLE.read_bytes()
+    elif scope == "workflow-review":
+        payload = {f"{REVIEW_SKILL.as_posix()}/{name}": content
+                   for name, content in tree_files(ROOT / REVIEW_SKILL).items()}
+    else:
+        raise ValueError(f"Unknown candidate scope: {scope}")
     selected_role = case.get("role")
     if selected_role is not None:
         role_file = f".codex/agents/{relative_path(selected_role)}.toml"
@@ -81,7 +94,7 @@ def prepare_case(case, output, *, candidate=ROOT / "source/project", corpus=CORP
         relative_path(name)
         if any(parent.as_posix() in payload for parent in PurePosixPath(name).parents if str(parent) != "."):
             raise ValueError(f"Fixture file shadows a parent directory: {name}")
-    if case.get("fixture") or selected_role is not None:
+    if case.get("fixture") or selected_role is not None or scope != "project":
         for name, content in payload.items():
             if name.startswith((".agents/", ".codex/")) and rules.get(name) != content:
                 raise ValueError("Fixture must not override candidate rules")
@@ -103,8 +116,13 @@ def prepare_case(case, output, *, candidate=ROOT / "source/project", corpus=CORP
     if selected_role is None:
         guidance += (f"实施按[实施交接]({shared}/references/delegation.md#实施交接)定位共享实施规则。"
                      "Skill 与角色以本目录候选快照为准。")
-    (project / "AGENTS.md").write_text(guidance + "仅在本目录内执行当前任务。\n", encoding="utf-8")
+    if scope == "project":
+        (project / "AGENTS.md").write_text(guidance + "仅在本目录内执行当前任务。\n", encoding="utf-8")
     (project / "TASK.txt").write_text(case["input"] + "\n", encoding="utf-8")
+    for name, content in profile_files.items():
+        path = output / "profile" / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
     # List candidate files whose bytes were actually retained in the project.
     manifest = {
         "case": case["id"],
@@ -119,6 +137,11 @@ def prepare_case(case, output, *, candidate=ROOT / "source/project", corpus=CORP
     }
     if selected_role is not None:
         manifest["role"] = selected_role
+    if scope != "project":
+        manifest["candidate_source"] = str(REVIEW_ROLE if profile_files else ROOT / REVIEW_SKILL)
+    if profile_files:
+        manifest["profile_files"] = {name: hashlib.sha256(content).hexdigest()
+                                     for name, content in profile_files.items()}
     (output / "candidate-manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (output / "evaluation.json").write_text(json.dumps({
         "case": case["id"], "expected": case["expected"], "forbidden": case["forbidden"],

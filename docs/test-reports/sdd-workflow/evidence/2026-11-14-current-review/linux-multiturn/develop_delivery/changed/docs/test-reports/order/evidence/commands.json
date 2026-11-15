@@ -1,0 +1,125 @@
+{
+  "AC-4": {
+    "command": [
+      "python",
+      "-B",
+      "checks/acceptance.py",
+      "--scenario",
+      "AC-4"
+    ],
+    "exit_code": 0,
+    "result": "PASS",
+    "inputs": [
+      {
+        "input": "''",
+        "result": "PASS"
+      },
+      {
+        "input": "' '",
+        "result": "PASS"
+      },
+      {
+        "input": "'   '",
+        "result": "PASS"
+      },
+      {
+        "input": "'\\t'",
+        "result": "PASS"
+      },
+      {
+        "input": "'\\n'",
+        "result": "PASS"
+      },
+      {
+        "input": "' \\t\\r\\n '",
+        "result": "PASS"
+      },
+      {
+        "input": "'\\u3000'",
+        "result": "PASS"
+      },
+      {
+        "input": "'\\xa0'",
+        "result": "PASS"
+      }
+    ]
+  },
+  "AC-5": {
+    "command": [
+      "python",
+      "-B",
+      "checks/acceptance.py",
+      "--scenario",
+      "AC-5"
+    ],
+    "exit_code": 0,
+    "result": "PASS",
+    "inputs": [
+      {
+        "input": "'ORDER-1'",
+        "result": "PASS"
+      },
+      {
+        "input": "' ORDER-1 '",
+        "result": "PASS"
+      },
+      {
+        "input": "'\\tORDER-1\\n'",
+        "result": "PASS"
+      },
+      {
+        "input": "None",
+        "result": "PASS"
+      },
+      {
+        "input": "0",
+        "result": "PASS"
+      },
+      {
+        "input": "False",
+        "result": "PASS"
+      },
+      {
+        "input": "[]",
+        "result": "PASS"
+      },
+      {
+        "input": "{}",
+        "result": "PASS"
+      }
+    ]
+  },
+  "AC-1": {
+    "command": [
+      "python",
+      "-B",
+      "checks/acceptance.py",
+      "--scenario",
+      "AC-1"
+    ],
+    "exit_code": 0,
+    "result": "PASS"
+  },
+  "unit": {
+    "command": [
+      "python",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "exit_code": 0,
+    "output": "test_empty_and_whitespace_ids_are_rejected_without_writes (test_order.CreateOrderValidationTests.test_empty_and_whitespace_ids_are_rejected_without_writes) ... ok\ntest_legal_ids_preserve_original_value (test_order.CreateOrderValidationTests.test_legal_ids_preserve_original_value) ... ok\ntest_non_string_ids_are_rejected_without_writes (test_order.CreateOrderValidationTests.test_non_string_ids_are_rejected_without_writes) ... ok\ntest_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.354s\n\nOK\n"
+  },
+  "runtime": {
+    "command": [
+      "python",
+      "-B",
+      "checks/runtime_details.py"
+    ],
+    "exit_code": 0
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "checks": {
+    "specs/order/spec.md": true,
+    "specs/order/quickstart.md": true,
+    "docs/contracts/order.md": true,
+    "docs/issues/ISS-001.md": true,
+    "docs/test-reports/order/evidence/b1.json": true,
+    "historical_report_prefix_preserved": true,
+    "script_hash_matches": true,
+    "counts_sum_to_11": true,
+    "all_derived_databases_removed": true,
+    "no_product_or_issue_diff": true,
+    "head_unchanged": true,
+    "document_check_pass": true
+  },
+  "all_pass": true,
+  "final_worktree_status": " M docs/test-reports/order/b1.md\n?? docs/test-reports/order/evidence/b1-retest-doc-check.json\n?? docs/test-reports/order/evidence/b1-retest-integrity.json\n?? docs/test-reports/order/evidence/b1-retest.json\n?? docs/test-reports/order/evidence/b1-retest.py\n",
+  "document_check": {
+    "errors": 0,
+    "warnings": 0,
+    "files": [
+      "docs/test-reports/order/b1.md"
+    ]
+  }
+}

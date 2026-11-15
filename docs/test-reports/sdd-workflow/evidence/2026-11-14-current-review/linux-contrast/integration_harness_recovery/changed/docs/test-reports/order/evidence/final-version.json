@@ -1,0 +1,22 @@
+{
+  "head": "2518bb5a4654cb1c606dd724bf0ad35ef1da643e",
+  "files_sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "checks/acceptance.py": "cabf4811e5deeac78b8fea0bc6d5b619283a32ea4af602a38614c22d1bcb5bfb",
+    "checks/integration_runner.py": "1e23d14a3c1dc619cb02ca3cd5ed3d51e49f7a8e85a219eade48cae8c8f6f37d",
+    "tests/test_check_tools.py": "eb166ded24f2a8b1c7166da9ea49b47e63e3c4258cb6bfd2d038967c87586c46"
+  },
+  "product_matches_head": {
+    "src/__init__.py": true,
+    "src/order_service.py": true,
+    "src/storage.py": true,
+    "src/ui.py": true,
+    "runtime.json": true
+  },
+  "two_runs_identical": true,
+  "runtime_unchanged": true
+}

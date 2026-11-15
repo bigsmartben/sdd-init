@@ -1,0 +1,17 @@
+{
+  "purpose": "supplemental snapshot at continuation; cannot establish earlier byte identity for previously unrecorded files",
+  "recorded_snapshot_unchanged": true,
+  "tracked_missing": [
+    "source/project/.agents/sdd/assets/prompt_review_template.md",
+    "source/project/.agents/skills/sdd-review-code/SKILL.md",
+    "source/project/.agents/skills/sdd-review-code/agents/openai.yaml",
+    "source/project/.agents/skills/sdd-review-prompt/SKILL.md",
+    "source/project/.agents/skills/sdd-review-prompt/agents/openai.yaml"
+  ],
+  "supplemental_files": {
+    "source/initializer/assets/agents-fragment.md": "6547cf0ff2f32d2b3dabc8c0b37416e2dee3d246d034227e74d46ea629e4972d",
+    "source/initializer/assets/communication-fragment.md": "df6577b9f1e583500f84ecde8c781d120c1d5d061e2479df47a9ae8dc3f0410a",
+    "tests/prepare_skill_behavior.py": "756f8cace9546fc095d1b2cc153238b188dcb07b7b93740cbc650acd4234e592"
+  },
+  "git_head": "f059378784e9833f7f4fd3363fa76516a35dc15c"
+}

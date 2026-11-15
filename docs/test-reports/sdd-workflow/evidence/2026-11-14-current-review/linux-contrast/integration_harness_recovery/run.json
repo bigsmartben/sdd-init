@@ -1,0 +1,229 @@
+{
+  "start": "2026-11-14T23:16:13+08:00",
+  "end": "2026-11-14T23:21:52+08:00",
+  "seconds": 312.893,
+  "exit": 0,
+  "case": "integration_harness_recovery",
+  "permission_profile": "fixture-write",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "before": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "4f395f7951b52b1e186523f1294531658b72dd44fb94d8a9afcd7378df0da20e",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "518f83f1564923fa3df8cb47051e7b657ca22ba128a663e95cdc2374671f98ef",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "2bfffbdba71706991d0682c57bfab5329748ccbcd0ff9966d5b7ea6d2bd93089",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/integration_runner.py": "21b5eb47f1ebb873e68cf7242cd21858aafb869c2a957242c9a042314637dd85",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/index.md": "a07c6ddac82ca52876aeb32c5bb089ddafb08aff80a2dc7a513079995777ee05",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "specs/order/quickstart.md": "d4e6342af3d53e5478025bf5949c49c9d47ec9ae8b44c48263a524a1020643b7",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311"
+  },
+  "after": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "4f395f7951b52b1e186523f1294531658b72dd44fb94d8a9afcd7378df0da20e",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "518f83f1564923fa3df8cb47051e7b657ca22ba128a663e95cdc2374671f98ef",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "2bfffbdba71706991d0682c57bfab5329748ccbcd0ff9966d5b7ea6d2bd93089",
+    "checks/acceptance.py": "cabf4811e5deeac78b8fea0bc6d5b619283a32ea4af602a38614c22d1bcb5bfb",
+    "checks/integration_runner.py": "1e23d14a3c1dc619cb02ca3cd5ed3d51e49f7a8e85a219eade48cae8c8f6f37d",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/index.md": "84e5cbf28b7fb262fc3ba83b33bceceb782e95fe8e44ab5f4c1b125b8fb13dd1",
+    "docs/issues/ORD-001.md": "1f2a487418250fb025ff2fceaacc9b48ccfe788b6bca49b7fabfb95e7c0b8a9e",
+    "docs/issues/ORD-002.md": "2db0f010eda24637217c6bded6d73c8cb348c66a9ed5138109e9f18f634f6342",
+    "docs/test-reports/order/2026-11-14-integration.md": "e041d446bc0960f01f339b7b460c9916de4e0952c4c5c91043b9dc2f85d8293c",
+    "docs/test-reports/order/evidence/doc-check.json": "57ac10b5fc7fc03c00d0fbd6058faf8abd7bb96673293057522dd561ea9ebe62",
+    "docs/test-reports/order/evidence/final-ci-1.json": "5233e3bb8cd5fefb632227c931f5e736e991d000cdd81ce32ac262e23645b450",
+    "docs/test-reports/order/evidence/final-ci-2.json": "8cb11ccc3b1891e36c70080d0e85e81eb888f4447ad4f38311257a2c1478f2a1",
+    "docs/test-reports/order/evidence/final-direct.json": "e229e0831545310bae8f3ea9abb7603617dc428bcb4532bae9b01f247fdf92da",
+    "docs/test-reports/order/evidence/final-runtime.json": "edf24dde9d7460282fe6181e3650670dceab2674e73aa9e0a0a3c836d8f1a595",
+    "docs/test-reports/order/evidence/final-unit.json": "71d52d76a4b76cc57c0afeb1fca26ae355c082a9e145d15f849d964398fa003e",
+    "docs/test-reports/order/evidence/final-version.json": "f666b406d173c0437341aa73ccbfb4c487c6cb0a242b3631dec18e6ba8fc9406",
+    "docs/test-reports/order/evidence/initial-acceptance.json": "0ef0edc5adaad5fd7015d711ab2dcd5d441731c29474381b34c3f721550b64eb",
+    "docs/test-reports/order/evidence/initial-ci.json": "b7b9777e9e226bb1a3f0361c7a79a49342c9fe08788cf1d2200d19dbc7e4df50",
+    "docs/test-reports/order/evidence/initial-runtime.json": "e96c4ea64163919cd65e2d916c0c540a4e8e70d430d7ada2e0be03521842151d",
+    "docs/test-reports/order/evidence/initial-unit.json": "291f4af31ee88f9ffb972dd94db8198ef67826501cb932cc45abde15410fe5ed",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "specs/order/quickstart.md": "43bafd0d875a8946342439fd286edf5ad80b8cb70efc642b3847a85213c5ebcf",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "tests/test_check_tools.py": "eb166ded24f2a8b1c7166da9ea49b47e63e3c4258cb6bfd2d038967c87586c46",
+    "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311"
+  },
+  "changed": [
+    "checks/acceptance.py",
+    "checks/integration_runner.py",
+    "docs/index.md",
+    "docs/issues/ORD-001.md",
+    "docs/issues/ORD-002.md",
+    "docs/test-reports/order/2026-11-14-integration.md",
+    "docs/test-reports/order/evidence/doc-check.json",
+    "docs/test-reports/order/evidence/final-ci-1.json",
+    "docs/test-reports/order/evidence/final-ci-2.json",
+    "docs/test-reports/order/evidence/final-direct.json",
+    "docs/test-reports/order/evidence/final-runtime.json",
+    "docs/test-reports/order/evidence/final-unit.json",
+    "docs/test-reports/order/evidence/final-version.json",
+    "docs/test-reports/order/evidence/initial-acceptance.json",
+    "docs/test-reports/order/evidence/initial-ci.json",
+    "docs/test-reports/order/evidence/initial-runtime.json",
+    "docs/test-reports/order/evidence/initial-unit.json",
+    "specs/order/quickstart.md",
+    "tests/test_check_tools.py"
+  ],
+  "base_commit": "2518bb5a4654cb1c606dd724bf0ad35ef1da643e",
+  "head_after": "2518bb5a4654cb1c606dd724bf0ad35ef1da643e",
+  "commit_paths": [],
+  "git_before": "",
+  "git_after": "M checks/acceptance.py\n M checks/integration_runner.py\n M docs/index.md\n M specs/order/quickstart.md\n?? docs/issues/\n?? docs/test-reports/\n?? tests/test_check_tools.py",
+  "sessions": [
+    {
+      "identity": {
+        "id": "01a1daa1-67c7-70e0-84ec-3259cb84b3fe",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daa1-67c7-70e0-84ec-3259cb84b3fe",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 808306,
+        "cached_input_tokens": 764416,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2562,
+        "reasoning_output_tokens": 271,
+        "total_tokens": 810868
+      },
+      "records": 55,
+      "trace": "sessions/rollout-2026-11-14T23-16-14-01a1daa1-67c7-70e0-84ec-3259cb84b3fe.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1daa1-cdbf-7e72-9ce4-c4ee22a9f198",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1daa1-67c7-70e0-84ec-3259cb84b3fe",
+              "depth": 1,
+              "agent_path": "/root/integration_test",
+              "agent_nickname": "Poincare",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Poincare",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daa1-cdbf-7e72-9ce4-c4ee22a9f198",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa1-67c7-70e0-84ec-3259cb84b3fe",
+                "depth": 1,
+                "agent_path": "/root/integration_test",
+                "agent_nickname": "Poincare",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Poincare",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 1508049,
+        "cached_input_tokens": 1447424,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10500,
+        "reasoning_output_tokens": 314,
+        "total_tokens": 1518549
+      },
+      "records": 65,
+      "trace": "sessions/rollout-2026-11-14T23-16-39-01a1daa1-cdbf-7e72-9ce4-c4ee22a9f198.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1daa2-65df-7eb3-a882-37fcd9b9683f",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1daa1-cdbf-7e72-9ce4-c4ee22a9f198",
+              "depth": 2,
+              "agent_path": "/root/integration_test/test_tools",
+              "agent_nickname": "Turing",
+              "agent_role": "sdd-coder"
+            }
+          }
+        },
+        "agent_role": "sdd-coder",
+        "agent_nickname": "Turing",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daa2-65df-7eb3-a882-37fcd9b9683f",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa1-cdbf-7e72-9ce4-c4ee22a9f198",
+                "depth": 2,
+                "agent_path": "/root/integration_test/test_tools",
+                "agent_nickname": "Turing",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "agent_role": "sdd-coder",
+          "agent_nickname": "Turing",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 574193,
+        "cached_input_tokens": 510208,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5752,
+        "reasoning_output_tokens": 346,
+        "total_tokens": 579945
+      },
+      "records": 35,
+      "trace": "sessions/rollout-2026-11-14T23-17-18-01a1daa2-65df-7eb3-a882-37fcd9b9683f.jsonl"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+registered_core=1
+package_family=OpenAI.Codex_2p2nqsd0c76g0
+codex-cli 0.169.0-alpha.11.1
+Default registered-Core command startup
+windows sandbox failed: registered Core process has no package identity
+exit=1
+Documented one-command MXC startup check
+MXC_OK
+exit=0
+MXC read-only, read fixture and attempt sentinel write
+fixture-readable
+�ܾ����ʡ�
+exit=1 sentinel_exists=False
+MXC workspace, read and write inside throwaway project
+fixture-readable
+exit=0 sentinel_exists=True

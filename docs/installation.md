@@ -10,11 +10,24 @@
 uvx --from git+https://github.com/bigsmartben/sdd-init.git sdd-init install
 ```
 
-默认在 `~/.agents/skills/sdd-init/` 安装初始化入口，在相邻的 `~/.agents/skills-sdd-init-shared/` 安装工作流 Skill、角色和通用资源。Windows 的 `~` 为用户主目录。只有 sdd-init 进入用户级 Skill 扫描范围。
+默认在 `~/.agents/skills/sdd-init/` 安装初始化入口，在相邻的 `~/.agents/skills-sdd-init-shared/` 安装项目工作流。通用 `review-prompt` 以独立 TOML 安装到 `$CODEX_HOME/agents/`，未设置 `CODEX_HOME` 时使用 `~/.codex/agents/`。Windows 的 `~` 为用户主目录。Codex 新会话可发现用户级角色，适用于未接入 SDD 的项目。[Codex 自定义角色](https://developers.openai.com/codex/subagents#custom-agents)
 
-在需要的仓库中打开 Codex，选择 sdd-init（支持该快捷入口的客户端可输入 `/sdd-init`）。CLI／IDE 可输入 `$sdd-init` 或通过 `/skills` 选择；也可明确要求“使用 sdd-init 初始化当前仓库”。未发现新 Skill 时重启 Codex。安装器不修改客户端命令注册或用户配置。[Codex 官方 Skill 文档](https://learn.chatgpt.com/docs/build-skills)
+在需要的仓库中打开 Codex，选择 sdd-init（支持该快捷入口的客户端可输入 `/sdd-init`）。CLI／IDE 可输入 `$sdd-init` 或通过 `/skills` 选择，也可明确要求“使用 sdd-init 初始化当前仓库”。未发现新 Skill 时重启 Codex。专项审查可请求“把这份提示词交给 review-prompt，只做审查”，附实际对象和预期依据。角色依赖客户端的用户级发现能力。用户 `config.toml` 由用户维护。[Codex Skill 文档](https://learn.chatgpt.com/docs/build-skills)
 
-初始化在项目内创建 `.agents/skills/sdd-workflow` 目录链接。Windows 使用 junction，其他平台使用目录符号链接。安装器合并 `AGENTS.md` 导航与 `.codex/config.toml` 中的角色引用，并在 `.gitignore` 排除本机链接和安装元数据。角色的项目配置在 Codex 信任该仓库后加载。正式文档由获授权的本职执行者按[文档写入规则](../source/project/.agents/sdd/references/document-writing.md)原位归并。换机、克隆或新建 worktree 后重新运行 sdd-init 以接上本机共享目录。
+初始化在项目内创建 `.agents/skills/sdd-workflow` 目录链接。Windows 使用 junction，其他平台使用目录符号链接。安装器合并 `AGENTS.md` 导航与 `.codex/config.toml` 中的角色引用，并在 `.gitignore` 排除本机链接和安装元数据。托管导航指向[主任务职责](../source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)和[阶段授权与推进](../source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)。角色的项目配置在 Codex 信任该仓库后加载。换机、克隆或新建 worktree 后重新运行 sdd-init 以接上本机共享目录。
+
+主任务启动技能 Agent，技能 Agent 可调用所需专业角色。项目限制 Codex 委派深度时，这条路径需要允许两级委派。安装器沿用项目已有设置。启动和能力不足时的处理见[技能 Agent 的启动与接续](../source/project/.agents/sdd/references/delegation.md#技能-agent-的启动与接续)。
+
+## 只读检查
+
+使用与预定安装相同的分发来源检查共享版本和影响范围。项目检查用实际安装的脚本，返回共享版本、项目登记版本、链接、角色注册、待写项及阻塞原因。
+
+```powershell
+uvx --from git+https://github.com/bigsmartben/sdd-init.git sdd-init inspect
+python -B "$env:USERPROFILE/.agents/skills/sdd-init/scripts/govern.py" --root . inspect
+```
+
+用户级 CLI 的 `inspect`、`install` 和 `recover` 均接受 `--skills-dir` 和 `--agents-dir`。隔离验证时同时指定两处临时目录，自定义安装的后续操作沿用原路径。项目检查可通过 `--root` 明确工作区。回执显示实际角色路径，两个 SHA-256 分别标识分发内容和项目共享内容。项目本机 `.sdd-init-state.json` 记录上次接入时的共享版本和已安装片段哈希。
 
 ## 更新与冲突
 
@@ -24,13 +37,19 @@ uvx --refresh --from git+https://github.com/bigsmartben/sdd-init.git sdd-init in
 
 uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固定版本时，将 Git URL 写成 `git+https://github.com/bigsmartben/sdd-init.git@<tag-or-commit>`。[uv 工具说明](https://docs.astral.sh/uv/guides/tools/)
 
-更新替换用户级入口和同一位置的共享资源。已链接项目重新加载后使用新版。相同内容重复执行不产生变更。安装器核对文件清单与哈希，校验已安装目录时跳过清单内 Python 源文件对应的未登记 `__pycache__` 字节码。发现定制、缺失、其他额外文件或无清单的旧版时停止，不提供自动强制覆盖。应先备份并审阅旧目录，再人工迁出冲突目录后重装。完整且与旧清单相符的用户级入口可直接更新。
+更新替换用户级入口和同一位置的共享资源。所有已有链接指向同一位置的项目都会使用新版。更新前核对影响范围；指定项目的托管导航和角色引用在该工作区运行 `init` 时刷新。相同内容重复执行保持文件内容稳定。安装器核对清单及哈希；已安装目录中由清单内 Python 源文件生成的字节码可保留。发现定制、缺失、额外文件或无清单时，保留原目录并报告冲突。完整且符合旧清单的安装可直接升级。
+
+用户角色以已安装清单的路径和哈希判定归属。存在同名自有角色，或受管角色缺失、被修改时，保留现有文件和配置，处理冲突后重试。项目 `init` 只维护项目受管角色。角色目录须支持同文件系统硬链接，安装器用它发布完整文件并在冲突时保护既有目标。
 
 目标项目自行处理遗留文件。清理后，在目标仓库调用一次 `sdd-init` 即可接入共享模式。脚本统一使用 `init`，同步 `AGENTS.md` 和 `.codex/config.toml` 中的 SDD 托管块，保留项目正文、主模型、MCP 和其他配置。安装器报告与当前工作流的同名冲突。项目自有文档及其中的链接由项目维护。
 
-共享包更新将原受管 `sdd-spec` 替换为 `sdd-develop`。旧受管 `sdd-imp` 的实施规则归入[共享实施规则](../source/project/.agents/sdd/references/implementation.md)。共享包同时移除旧受管技能 `sdd-doc`、`sdd-commit` 和 `sdd-deploy`。升级时刷新旧托管角色引用。项目自有角色及配置按冲突保护处理。在已接入的项目中运行一次 `sdd-init` 刷新托管导航，再重新加载项目。
+共享包更新将原受管 `sdd-spec` 替换为 `sdd-develop`，并移除旧受管技能 `sdd-doc`、`sdd-imp`、`sdd-commit` 和 `sdd-deploy`。已接入项目随后运行一次 `sdd-init` 并重新加载项目。初始化器用[现行五个角色](../source/project/.agents/sdd/references/delegation.md)刷新托管引用和导航，迁出标准旧托管角色 `sdd-delivery`、`sdd-designer`、`sdd-documenter` 和 `sdd-validator`。旧托管引用已定制，或项目自有角色与新版同名时，保留原配置并报告冲突。
 
-安装先暂存并验证入口及共享目录，再分别发布。替换失败时恢复旧目录。进程异常中断后，检查 Skill 搜索目录中的 `.sdd-init-install.lock` 及其父目录中的 `.sdd-init-backup-*`，确认安装进程已退出、旧文件已保全，再人工恢复。哈希用于完整性和定制检查。
+同一共享包更新也将原受管 `sdd-review-code` 替换为 [sdd-refactor](../source/project/.agents/skills/sdd-refactor/SKILL.md)。原共享链接直接指向更新后的资源，项目 `init` 刷新托管导航。若项目仍有独立的 `.agents/skills/sdd-review-code/SKILL.md`，`init` 会保留该文件并报告冲突。先将旧副本迁出 Skill 发现范围，再运行 `init`。历史记录及托管块外的项目文档仍由项目维护。
+
+共享包升级会移除原受管 `sdd-review-prompt` 和它的回执模板。已链接项目在运行新版 `init` 后移除托管导航中的旧入口，随后重新加载项目。升级共享包到刷新项目之间，旧导航链接会暂时失效。独立旧副本按上述冲突策略处理，托管块外的链接由项目自行核对。
+
+项目托管块按其内容及来源识别。标准片段和已知旧引用自动刷新。定制导航、定制角色引用、同名资源或来源不明时，保留路径及原内容，由用户选择保留、迁移或替换。托管块外可保存项目自有规则。重新执行 `inspect` 核对此前冲突和变更计划。
 
 ## 项目安装恢复与旧命令退役
 
@@ -40,13 +59,19 @@ uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固�
 
 普通写入失败自动恢复本次文件和链接；异常终止后，重新执行相同 init 命令会先处理恢复记录，再做新安装。恢复期间已恢复的文件可以重复检查；恢复成功只清理本次新建且仍为空的目录。安装及恢复都会比对文件内容，发现外部修改时保留文件并阻止覆盖。
 
-若提示 `Recovery blocked`，先保留错误中列出的文件和 `.sdd-init-recovery/`，根据 `journal.json` 的 path／before／after 核对受影响内容，保存外部编辑副本并解除文件占用、权限或内容冲突，再重试同一命令。记录损坏时保留恢复记录，并从可靠备份核对恢复。
+只恢复时运行 `govern.py --root <项目> recover`。若提示 `Recovery blocked`，保留错误中列出的文件和 `.sdd-init-recovery/`，根据 `journal.json` 的 path／before／after 核对受影响内容，保存外部编辑副本并解除文件占用、权限或内容冲突，再重试。记录损坏时保留恢复记录，并从可靠备份核对恢复。
 
-旧 start、record、attest、check、finish、commit 已移除，无兼容入口或自动迁移。初始化器保留 inspect／init，项目共享 govern.py 仅保留 inspect；文档检查使用 doc_check.py，Git 交付使用 sdd-deliver。已接入的项目通过用户级更新取得新版工具，历史 Spec、Status 和证据由项目维护。
+已接入的项目通过用户级更新取得新版工具。现行入口和历史记录的处理方式见[旧治理命令退役边界](blueprint.md#旧治理命令退役边界)。
+
+## 用户级安装恢复
+
+用户级安装分别锁定 Skill 和角色目录，锁文件为持久元数据。恢复日志在 Skill 目录相邻的 `.<Skill目录名>-sdd-init-install-recovery/`，角色暂存和备份在用户角色目录的 `.sdd-init-review-prompt-recovery-*`。两处数据属于同一事务。异常中断后使用原 Skill 和角色目录运行 `sdd-init recover`，或重跑安装。出现外部修改、损坏记录或 I/O 失败时保留记录、暂存和备份，按回执核对后重试。已有旧版未完成事务使用其原目录恢复。
+
+旧版可能留下空的 `.sdd-init-install.lock` 和父目录中的 `.sdd-init-backup-*`。确认旧进程退出并核对备份归属和内容，按旧版本的实际记录人工恢复，再使用现行安装器。
 
 ## 开发验证
 
-在本仓库根目录构建并运行回归检查。安装冒烟测试将当前构建的 wheel 安装到临时 Skill 目录，并在独立的临时项目中验证接入。
+在本仓库根目录构建并运行回归检查。安装冒烟测试将当前 wheel 安装到临时 Skill 和角色目录，并在独立的临时项目中验证接入。
 
 ```powershell
 uv build --out-dir .build/dist
@@ -54,4 +79,6 @@ python -B -m unittest discover -s tests -v
 python -B scripts/smoke_package.py --from .build/dist/sdd_init-0.6.0-py3-none-any.whl
 ```
 
-`src/sdd_init/cli.py` 定义命令入口，`installer.py` 负责用户级安装；`setup.py` 在构建时调用 `scripts/build_release.py`，从 `source/` 生成内置资源。源码包包含构建所需输入，wheel 不要求访问原仓库。不要编辑 wheel、build 或 `.build` 内的资源。测试通过 `--skills-dir` 隔离安装位置；自定义 Skill 目录只有位于客户端搜索范围时才可被发现，共享目录与该目录同级。
+`src/sdd_init/cli.py` 定义命令入口，`installer.py` 负责用户级安装。构建器汇集 `source/` 的分发资源，并将 `src/sdd_init/release.py` 投影为初始化器使用的清单校验模块。源码包包含构建所需输入，wheel 可独立安装。客户端发现验证使用隔离的用户配置路径和搜索根，角色目录采用该临时 Codex 配置下的 `agents`。
+
+本仓采用源码维护模式。五份角色定义统一维护在 [项目分发源码](../source/project/.codex/agents/)，角色注册与接入在隔离项目验证。独立角色的实际运行案例见[行为夹具](../tests/fixtures/skill-behavior/README.md)。

@@ -1,0 +1,21 @@
+{
+  "command": [
+    "python3",
+    "checks/load_guidance.py"
+  ],
+  "cwd": "/tmp/sdd-review-execution-i6atigzg/workflow_review_explicit-wijovo5h/prepared/project",
+  "python": "Python 3.12.3",
+  "executable": "/usr/bin/python3",
+  "start_utc": "2026-11-14T15:05:47.267540+00:00",
+  "end_utc": "2026-11-14T15:05:47.288420+00:00",
+  "elapsed_seconds": 0.02088,
+  "returncode": 0,
+  "stdout": "# 主任务\n\n发给待办助手的工单应给出预期产物位置，要求回读后返回实际结果。\n\n# 待办助手\n\n回读工单指定的产物后报告完成。回读不可用时报告待验。\n\n",
+  "stderr": "",
+  "previous_attempt": {
+    "command": "python --version",
+    "exit_code": 127,
+    "stderr": "/bin/bash: line 1: python: command not found"
+  },
+  "limit": "Prints two text layers in main,prompt order; no model or artifact readback executed."
+}

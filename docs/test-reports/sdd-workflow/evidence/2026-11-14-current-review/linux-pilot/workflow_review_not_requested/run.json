@@ -1,0 +1,73 @@
+{
+  "start": "2026-11-14T23:02:58+08:00",
+  "end": "2026-11-14T23:03:26+08:00",
+  "seconds": 24.692,
+  "exit": 0,
+  "case": "workflow_review_not_requested",
+  "permission_profile": "fixture-write",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "before": {
+    ".agents/skills/sdd-workflow-review/SKILL.md": "d7e2c20f2ac93415db526e33fccdf8f62d9bd9c7a8349c2d2e85ba396dc1458c",
+    ".agents/skills/sdd-workflow-review/agents/openai.yaml": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+    ".agents/skills/sdd-workflow-review/assets/review-report-template.md": "233736f843a45207c89715d44248423fb471a16844cefc7cd3c1a930bbaaff7d",
+    ".agents/skills/sdd-workflow-review/assets/whitepaper-template.md": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+    ".agents/skills/sdd-workflow-review/references/evidence-and-cost.md": "fc7d2c15e6f665c6db8b3b2f459ae73ca5f4c2ac6614cc09bd3ef2270d7dd617",
+    ".agents/skills/sdd-workflow-review/references/review-criteria.md": "7a6d787a47ccca7f479a7198fd27a93e601efab2bc00d4e43719ad435480a15a",
+    "TASK.txt": "01fbde2f3f38f5dceaf57a4c2abe9228f3527e546639d081b2000b73c7b7d9e5",
+    "checks/load_guidance.py": "c2f88b5260f95cfa8d5c127f8043ec62d0ed9138b84573ecdfe958d47a089471",
+    "config/service.toml": "634a7586e96c11fefd44a5eb65ca4eb682ad8817baea7fa56893f0817edd3f76",
+    "docs/review-criteria.md": "57fe8a82754897ae792713423a63eb07a8016c3edb0488ce67be22d742f88d83",
+    "docs/sdd-workflow-whitepaper.md": "1bc4dfefc5879bda0468b0089d1d598ae5562be19c81164e334327de024cb808",
+    "docs/test-reports/sdd-workflow/README.md": "1e7616fb45c417f047c6d63da1698734811334de4cdc2cb9fb7bc4bbc7d682df",
+    "guidance/main.md": "926eec4f95c7692645b2f1f0bff7ec2bef96a69aa365fa63210c508b98e51da6",
+    "guidance/prompt.md": "09a185885c0307cf4b3fcf14ff149ae64c846a3c6a21734832eb57647498f2cd",
+    "specs/platform-independent-sdd/spec.md": "292280e5641fa892cbd5b4d1a71130bffd86541e4c83ff36612f54559f71fa44"
+  },
+  "after": {
+    ".agents/skills/sdd-workflow-review/SKILL.md": "d7e2c20f2ac93415db526e33fccdf8f62d9bd9c7a8349c2d2e85ba396dc1458c",
+    ".agents/skills/sdd-workflow-review/agents/openai.yaml": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+    ".agents/skills/sdd-workflow-review/assets/review-report-template.md": "233736f843a45207c89715d44248423fb471a16844cefc7cd3c1a930bbaaff7d",
+    ".agents/skills/sdd-workflow-review/assets/whitepaper-template.md": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+    ".agents/skills/sdd-workflow-review/references/evidence-and-cost.md": "fc7d2c15e6f665c6db8b3b2f459ae73ca5f4c2ac6614cc09bd3ef2270d7dd617",
+    ".agents/skills/sdd-workflow-review/references/review-criteria.md": "7a6d787a47ccca7f479a7198fd27a93e601efab2bc00d4e43719ad435480a15a",
+    "TASK.txt": "01fbde2f3f38f5dceaf57a4c2abe9228f3527e546639d081b2000b73c7b7d9e5",
+    "checks/load_guidance.py": "c2f88b5260f95cfa8d5c127f8043ec62d0ed9138b84573ecdfe958d47a089471",
+    "config/service.toml": "1fcc6bc15ff8745ab6a6c59628cea5ea1fb51b2a7532585ab6dc1a2443d43724",
+    "docs/review-criteria.md": "57fe8a82754897ae792713423a63eb07a8016c3edb0488ce67be22d742f88d83",
+    "docs/sdd-workflow-whitepaper.md": "1bc4dfefc5879bda0468b0089d1d598ae5562be19c81164e334327de024cb808",
+    "docs/test-reports/sdd-workflow/README.md": "1e7616fb45c417f047c6d63da1698734811334de4cdc2cb9fb7bc4bbc7d682df",
+    "guidance/main.md": "926eec4f95c7692645b2f1f0bff7ec2bef96a69aa365fa63210c508b98e51da6",
+    "guidance/prompt.md": "09a185885c0307cf4b3fcf14ff149ae64c846a3c6a21734832eb57647498f2cd",
+    "specs/platform-independent-sdd/spec.md": "292280e5641fa892cbd5b4d1a71130bffd86541e4c83ff36612f54559f71fa44"
+  },
+  "changed": [
+    "config/service.toml"
+  ],
+  "base_commit": "81ef7dcfe660e5ee7080e161dad78306953806e2",
+  "head_after": "81ef7dcfe660e5ee7080e161dad78306953806e2",
+  "commit_paths": [],
+  "git_before": "",
+  "git_after": "M config/service.toml",
+  "sessions": [
+    {
+      "identity": {
+        "id": "01a1da95-478b-79d3-a171-22d65c19ee81",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 77446,
+        "cached_input_tokens": 73088,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 401,
+        "reasoning_output_tokens": 11,
+        "total_tokens": 77847
+      },
+      "records": 12,
+      "trace": "sessions/01a1da95-478b-79d3-a171-22d65c19ee81.jsonl"
+    }
+  ]
+}

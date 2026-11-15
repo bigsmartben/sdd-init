@@ -1,0 +1,453 @@
+{
+  "start": "2026-11-14T23:27:13+08:00",
+  "end": "2026-11-14T23:35:02+08:00",
+  "seconds": 386.34,
+  "exit": 0,
+  "turns": [
+    {
+      "turn": "initial",
+      "metrics": {
+        "start": "2026-11-14T23:27:13+08:00",
+        "end": "2026-11-14T23:34:13+08:00",
+        "seconds": 386.34,
+        "exit": 0
+      },
+      "files": {
+        ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+        ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+        ".sdd-init-state.json": "4f395f7951b52b1e186523f1294531658b72dd44fb94d8a9afcd7378df0da20e",
+        ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "AGENTS.md": "518f83f1564923fa3df8cb47051e7b657ca22ba128a663e95cdc2374671f98ef",
+        "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+        "TASK.txt": "8dcaca56daedf77b0a97411b1cacc154c8ac454f6e8a16ae019652c5455076ef",
+        "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+        "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+        "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+        "docs/code-review-rules.md": "4aa0493f16fa3c1ccfdfac11ed5dcd9d322d27adf8c2e46b5e7e1b85fcbe2511",
+        "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+        "docs/index.md": "1b89e2fa5b4bda826d63bd6bee4aedb8a369433aa4ad7866323a04fa2550b0e6",
+        "docs/issues/BUG-001.md": "20ac627e37ddaecd9cda2d8b8387589df5b808b9f8a9e6a7da821b45a9a6d3a4",
+        "docs/issues/BUG-002.md": "f7ec87185a1b1d70551d2a2c9e9f6005391ef75d4f7a93c52467db8af7e86d8a",
+        "docs/issues/evidence/bugfix-local-before.txt": "e3c2202699c09d51238d6ea8b746a32fdeced17b39acde17a210f5d8b73d5a41",
+        "docs/issues/evidence/bugfix-local.txt": "22e81082f578f2a47ac4bc388aab492e337cd11b70e1ca76a8d08425f860ddc3",
+        "docs/issues/evidence/bugfix-retest.json": "39e53932ae1c477035f04988789e52216cbb0ad69ebfff9d942f821554704547",
+        "docs/test-reports/order/2026-11-14-review.md": "96ee5dbeda5a7c469548e409680cfcfa4f5ff5be7afbcb02ba5fbba56106776a",
+        "docs/test-reports/order/evidence/fixed-acceptance.json": "8ebe7323448b0e9470aff0aef9825c7e198d244420b8495e2201a5bd9ed77787",
+        "docs/test-reports/order/evidence/fixed-integration.json": "f49089abf09b6276767d372da8be3fd285790a5a11d87549bd1974beb4529983",
+        "docs/test-reports/order/evidence/fixed-runtime.json": "97188a0bb3b7a7825d3c3f7818c7ee7b52f63cb8668cd6f190fa839e39334737",
+        "docs/test-reports/order/evidence/fixed-source.diff": "4f13377b05d5fc36c672c78c20c6cf58598a73c8a97bc82d776074b5488cc781",
+        "docs/test-reports/order/evidence/fixed-unit.txt": "98fb64f90a8ff63f8d0d2fe68eaa7af96c00cdb5ed46c915deda6e0dbc6b245c",
+        "docs/test-reports/order/evidence/fixed-worktree.txt": "0302e203788df61c622f2cc3afe13304d20107468738c5d687c3989e3c8f22e0",
+        "docs/test-reports/order/evidence/initial-acceptance.json": "3c2fa0aafac0662a0df0593578bb37f106fad2a38e47e8cfd0b5b8aef9e573d4",
+        "docs/test-reports/order/evidence/initial-integration.json": "6dd0bd0f5be304a2c54524b11bea59c943b4dbfb4ae7fa1e192accd042720a57",
+        "docs/test-reports/order/evidence/initial-runtime.json": "389a9665eb1f17a1181e2da68323b46ab5dd0cc3d949665990c39ba10a6ffcc4",
+        "docs/test-reports/order/evidence/initial-unit.txt": "7d6a36d686a6875972a38cbdb2ce02867261187d6f73887911dac260b05da6bf",
+        "docs/test-reports/order/fixed.md": "cd643217bf7324e46097250a37262d629ca3ec9d43d890c61efc5e065dbbb1fe",
+        "docs/test-reports/order/initial.md": "cffecc6d81622e0c10cdca6ececbca07cd4e9bc57bf7b92718e944abb9723ada",
+        "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+        "specs/order/plan.md": "949921710de2fbe717ea55dde01789fd22c261d06a07c79a39f1bf9c4e9d303a",
+        "specs/order/quickstart.md": "79091898ab6133b36c5c4577e4c816ff8f4b01b85f20dd5306b668d62f5dfbce",
+        "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+        "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+        "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+        "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+        "src/ui.py": "c4a9e5b0789129c89bb71387e2aaed619944d115aff5a53c7fb5320fcbff88ae",
+        "tests/bugfix_retest.py": "fca2a17c9a24f2be12d831554e2a2b3db722d0adf4dd316862344df1c21195ac",
+        "tests/integration_order.py": "9d0bd4e28ae5956270e8cb84a0ba0c2aeb6949ced979d6f474522f9f1ce2abc5",
+        "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311",
+        "tests/test_order_bugfix.py": "79d33268f77a6aaa3d5d8b056e9a6fa0e75f7f3876e5c07d162e0120a50f98ad"
+      }
+    },
+    {
+      "turn": "unchanged-evidence",
+      "metrics": {
+        "start": "2026-11-14T23:34:13+08:00",
+        "end": "2026-11-14T23:35:02+08:00",
+        "seconds": 43.136,
+        "exit": 0
+      },
+      "files": {
+        ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+        ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+        ".sdd-init-state.json": "4f395f7951b52b1e186523f1294531658b72dd44fb94d8a9afcd7378df0da20e",
+        ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "AGENTS.md": "518f83f1564923fa3df8cb47051e7b657ca22ba128a663e95cdc2374671f98ef",
+        "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+        "TASK.txt": "8dcaca56daedf77b0a97411b1cacc154c8ac454f6e8a16ae019652c5455076ef",
+        "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+        "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+        "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+        "docs/code-review-rules.md": "4aa0493f16fa3c1ccfdfac11ed5dcd9d322d27adf8c2e46b5e7e1b85fcbe2511",
+        "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+        "docs/index.md": "1b89e2fa5b4bda826d63bd6bee4aedb8a369433aa4ad7866323a04fa2550b0e6",
+        "docs/issues/BUG-001.md": "20ac627e37ddaecd9cda2d8b8387589df5b808b9f8a9e6a7da821b45a9a6d3a4",
+        "docs/issues/BUG-002.md": "f7ec87185a1b1d70551d2a2c9e9f6005391ef75d4f7a93c52467db8af7e86d8a",
+        "docs/issues/evidence/bugfix-local-before.txt": "e3c2202699c09d51238d6ea8b746a32fdeced17b39acde17a210f5d8b73d5a41",
+        "docs/issues/evidence/bugfix-local.txt": "22e81082f578f2a47ac4bc388aab492e337cd11b70e1ca76a8d08425f860ddc3",
+        "docs/issues/evidence/bugfix-retest.json": "39e53932ae1c477035f04988789e52216cbb0ad69ebfff9d942f821554704547",
+        "docs/test-reports/order/2026-11-14-review.md": "96ee5dbeda5a7c469548e409680cfcfa4f5ff5be7afbcb02ba5fbba56106776a",
+        "docs/test-reports/order/evidence/fixed-acceptance.json": "8ebe7323448b0e9470aff0aef9825c7e198d244420b8495e2201a5bd9ed77787",
+        "docs/test-reports/order/evidence/fixed-integration.json": "f49089abf09b6276767d372da8be3fd285790a5a11d87549bd1974beb4529983",
+        "docs/test-reports/order/evidence/fixed-runtime.json": "97188a0bb3b7a7825d3c3f7818c7ee7b52f63cb8668cd6f190fa839e39334737",
+        "docs/test-reports/order/evidence/fixed-source.diff": "4f13377b05d5fc36c672c78c20c6cf58598a73c8a97bc82d776074b5488cc781",
+        "docs/test-reports/order/evidence/fixed-unit.txt": "98fb64f90a8ff63f8d0d2fe68eaa7af96c00cdb5ed46c915deda6e0dbc6b245c",
+        "docs/test-reports/order/evidence/fixed-worktree.txt": "0302e203788df61c622f2cc3afe13304d20107468738c5d687c3989e3c8f22e0",
+        "docs/test-reports/order/evidence/initial-acceptance.json": "3c2fa0aafac0662a0df0593578bb37f106fad2a38e47e8cfd0b5b8aef9e573d4",
+        "docs/test-reports/order/evidence/initial-integration.json": "6dd0bd0f5be304a2c54524b11bea59c943b4dbfb4ae7fa1e192accd042720a57",
+        "docs/test-reports/order/evidence/initial-runtime.json": "389a9665eb1f17a1181e2da68323b46ab5dd0cc3d949665990c39ba10a6ffcc4",
+        "docs/test-reports/order/evidence/initial-unit.txt": "7d6a36d686a6875972a38cbdb2ce02867261187d6f73887911dac260b05da6bf",
+        "docs/test-reports/order/fixed.md": "aac99300ae469cbe04eb13530ca0baedb024c82967bb74b36b2d0916ede17df3",
+        "docs/test-reports/order/initial.md": "cffecc6d81622e0c10cdca6ececbca07cd4e9bc57bf7b92718e944abb9723ada",
+        "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+        "specs/order/plan.md": "949921710de2fbe717ea55dde01789fd22c261d06a07c79a39f1bf9c4e9d303a",
+        "specs/order/quickstart.md": "79091898ab6133b36c5c4577e4c816ff8f4b01b85f20dd5306b668d62f5dfbce",
+        "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+        "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+        "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+        "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+        "src/ui.py": "c4a9e5b0789129c89bb71387e2aaed619944d115aff5a53c7fb5320fcbff88ae",
+        "tests/bugfix_retest.py": "fca2a17c9a24f2be12d831554e2a2b3db722d0adf4dd316862344df1c21195ac",
+        "tests/integration_order.py": "9d0bd4e28ae5956270e8cb84a0ba0c2aeb6949ced979d6f474522f9f1ce2abc5",
+        "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311",
+        "tests/test_order_bugfix.py": "79d33268f77a6aaa3d5d8b056e9a6fa0e75f7f3876e5c07d162e0120a50f98ad"
+      }
+    }
+  ],
+  "case": "collaboration_workflow",
+  "permission_profile": "fixture-write",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "before": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "4f395f7951b52b1e186523f1294531658b72dd44fb94d8a9afcd7378df0da20e",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "518f83f1564923fa3df8cb47051e7b657ca22ba128a663e95cdc2374671f98ef",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "8dcaca56daedf77b0a97411b1cacc154c8ac454f6e8a16ae019652c5455076ef",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+    "docs/code-review-rules.md": "4aa0493f16fa3c1ccfdfac11ed5dcd9d322d27adf8c2e46b5e7e1b85fcbe2511",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/index.md": "a07c6ddac82ca52876aeb32c5bb089ddafb08aff80a2dc7a513079995777ee05",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "specs/order/quickstart.md": "d4e6342af3d53e5478025bf5949c49c9d47ec9ae8b44c48263a524a1020643b7",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311"
+  },
+  "after": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "4f395f7951b52b1e186523f1294531658b72dd44fb94d8a9afcd7378df0da20e",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "518f83f1564923fa3df8cb47051e7b657ca22ba128a663e95cdc2374671f98ef",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "8dcaca56daedf77b0a97411b1cacc154c8ac454f6e8a16ae019652c5455076ef",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+    "docs/code-review-rules.md": "4aa0493f16fa3c1ccfdfac11ed5dcd9d322d27adf8c2e46b5e7e1b85fcbe2511",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/index.md": "1b89e2fa5b4bda826d63bd6bee4aedb8a369433aa4ad7866323a04fa2550b0e6",
+    "docs/issues/BUG-001.md": "20ac627e37ddaecd9cda2d8b8387589df5b808b9f8a9e6a7da821b45a9a6d3a4",
+    "docs/issues/BUG-002.md": "f7ec87185a1b1d70551d2a2c9e9f6005391ef75d4f7a93c52467db8af7e86d8a",
+    "docs/issues/evidence/bugfix-local-before.txt": "e3c2202699c09d51238d6ea8b746a32fdeced17b39acde17a210f5d8b73d5a41",
+    "docs/issues/evidence/bugfix-local.txt": "22e81082f578f2a47ac4bc388aab492e337cd11b70e1ca76a8d08425f860ddc3",
+    "docs/issues/evidence/bugfix-retest.json": "39e53932ae1c477035f04988789e52216cbb0ad69ebfff9d942f821554704547",
+    "docs/test-reports/order/2026-11-14-review.md": "96ee5dbeda5a7c469548e409680cfcfa4f5ff5be7afbcb02ba5fbba56106776a",
+    "docs/test-reports/order/evidence/fixed-acceptance.json": "8ebe7323448b0e9470aff0aef9825c7e198d244420b8495e2201a5bd9ed77787",
+    "docs/test-reports/order/evidence/fixed-integration.json": "f49089abf09b6276767d372da8be3fd285790a5a11d87549bd1974beb4529983",
+    "docs/test-reports/order/evidence/fixed-runtime.json": "97188a0bb3b7a7825d3c3f7818c7ee7b52f63cb8668cd6f190fa839e39334737",
+    "docs/test-reports/order/evidence/fixed-source.diff": "4f13377b05d5fc36c672c78c20c6cf58598a73c8a97bc82d776074b5488cc781",
+    "docs/test-reports/order/evidence/fixed-unit.txt": "98fb64f90a8ff63f8d0d2fe68eaa7af96c00cdb5ed46c915deda6e0dbc6b245c",
+    "docs/test-reports/order/evidence/fixed-worktree.txt": "0302e203788df61c622f2cc3afe13304d20107468738c5d687c3989e3c8f22e0",
+    "docs/test-reports/order/evidence/initial-acceptance.json": "3c2fa0aafac0662a0df0593578bb37f106fad2a38e47e8cfd0b5b8aef9e573d4",
+    "docs/test-reports/order/evidence/initial-integration.json": "6dd0bd0f5be304a2c54524b11bea59c943b4dbfb4ae7fa1e192accd042720a57",
+    "docs/test-reports/order/evidence/initial-runtime.json": "389a9665eb1f17a1181e2da68323b46ab5dd0cc3d949665990c39ba10a6ffcc4",
+    "docs/test-reports/order/evidence/initial-unit.txt": "7d6a36d686a6875972a38cbdb2ce02867261187d6f73887911dac260b05da6bf",
+    "docs/test-reports/order/fixed.md": "aac99300ae469cbe04eb13530ca0baedb024c82967bb74b36b2d0916ede17df3",
+    "docs/test-reports/order/initial.md": "cffecc6d81622e0c10cdca6ececbca07cd4e9bc57bf7b92718e944abb9723ada",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "specs/order/plan.md": "949921710de2fbe717ea55dde01789fd22c261d06a07c79a39f1bf9c4e9d303a",
+    "specs/order/quickstart.md": "79091898ab6133b36c5c4577e4c816ff8f4b01b85f20dd5306b668d62f5dfbce",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "c4a9e5b0789129c89bb71387e2aaed619944d115aff5a53c7fb5320fcbff88ae",
+    "tests/bugfix_retest.py": "fca2a17c9a24f2be12d831554e2a2b3db722d0adf4dd316862344df1c21195ac",
+    "tests/integration_order.py": "9d0bd4e28ae5956270e8cb84a0ba0c2aeb6949ced979d6f474522f9f1ce2abc5",
+    "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311",
+    "tests/test_order_bugfix.py": "79d33268f77a6aaa3d5d8b056e9a6fa0e75f7f3876e5c07d162e0120a50f98ad"
+  },
+  "changed": [
+    "docs/index.md",
+    "docs/issues/BUG-001.md",
+    "docs/issues/BUG-002.md",
+    "docs/issues/evidence/bugfix-local-before.txt",
+    "docs/issues/evidence/bugfix-local.txt",
+    "docs/issues/evidence/bugfix-retest.json",
+    "docs/test-reports/order/2026-11-14-review.md",
+    "docs/test-reports/order/evidence/fixed-acceptance.json",
+    "docs/test-reports/order/evidence/fixed-integration.json",
+    "docs/test-reports/order/evidence/fixed-runtime.json",
+    "docs/test-reports/order/evidence/fixed-source.diff",
+    "docs/test-reports/order/evidence/fixed-unit.txt",
+    "docs/test-reports/order/evidence/fixed-worktree.txt",
+    "docs/test-reports/order/evidence/initial-acceptance.json",
+    "docs/test-reports/order/evidence/initial-integration.json",
+    "docs/test-reports/order/evidence/initial-runtime.json",
+    "docs/test-reports/order/evidence/initial-unit.txt",
+    "docs/test-reports/order/fixed.md",
+    "docs/test-reports/order/initial.md",
+    "specs/order/plan.md",
+    "specs/order/quickstart.md",
+    "src/order_service.py",
+    "src/ui.py",
+    "tests/bugfix_retest.py",
+    "tests/integration_order.py",
+    "tests/test_order_bugfix.py"
+  ],
+  "base_commit": "9701a4d79766e124c202c9b258ad18a458a26cd8",
+  "head_after": "9701a4d79766e124c202c9b258ad18a458a26cd8",
+  "commit_paths": [],
+  "git_before": "",
+  "git_after": "M docs/index.md\n M specs/order/quickstart.md\n M src/order_service.py\n M src/ui.py\n?? docs/issues/\n?? docs/test-reports/\n?? specs/order/plan.md\n?? tests/bugfix_retest.py\n?? tests/integration_order.py\n?? tests/test_order_bugfix.py",
+  "sessions": [
+    {
+      "identity": {
+        "id": "01a1daab-7abe-7492-9e87-95eb67573538",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daab-7abe-7492-9e87-95eb67573538",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 3196645,
+        "cached_input_tokens": 3122304,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 8361,
+        "reasoning_output_tokens": 1226,
+        "total_tokens": 3205006
+      },
+      "records": 117,
+      "trace": "sessions/rollout-2026-11-14T23-27-14-01a1daab-7abe-7492-9e87-95eb67573538.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1daab-fbf9-7e71-89f8-5b3efbe0776e",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1daab-7abe-7492-9e87-95eb67573538",
+              "depth": 1,
+              "agent_path": "/root/integration",
+              "agent_nickname": "Jason",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Jason",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daab-fbf9-7e71-89f8-5b3efbe0776e",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daab-7abe-7492-9e87-95eb67573538",
+                "depth": 1,
+                "agent_path": "/root/integration",
+                "agent_nickname": "Jason",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Jason",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 721967,
+        "cached_input_tokens": 694144,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 12292,
+        "reasoning_output_tokens": 359,
+        "total_tokens": 734259
+      },
+      "records": 41,
+      "trace": "sessions/rollout-2026-11-14T23-27-46-01a1daab-fbf9-7e71-89f8-5b3efbe0776e.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1daac-3a72-7f51-9279-20dc89c06861",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1daab-7abe-7492-9e87-95eb67573538",
+              "depth": 1,
+              "agent_path": "/root/architecture_review",
+              "agent_nickname": "Singer",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Singer",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daac-3a72-7f51-9279-20dc89c06861",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daab-7abe-7492-9e87-95eb67573538",
+                "depth": 1,
+                "agent_path": "/root/architecture_review",
+                "agent_nickname": "Singer",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Singer",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 831901,
+        "cached_input_tokens": 773248,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 8681,
+        "reasoning_output_tokens": 360,
+        "total_tokens": 840582
+      },
+      "records": 47,
+      "trace": "sessions/rollout-2026-11-14T23-28-02-01a1daac-3a72-7f51-9279-20dc89c06861.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1daad-b6f2-7052-aec7-a8f63dfeb6a9",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1daab-7abe-7492-9e87-95eb67573538",
+              "depth": 1,
+              "agent_path": "/root/bugfix",
+              "agent_nickname": "Hume",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Hume",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daad-b6f2-7052-aec7-a8f63dfeb6a9",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daab-7abe-7492-9e87-95eb67573538",
+                "depth": 1,
+                "agent_path": "/root/bugfix",
+                "agent_nickname": "Hume",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Hume",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 1217504,
+        "cached_input_tokens": 1174912,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 7568,
+        "reasoning_output_tokens": 553,
+        "total_tokens": 1225072
+      },
+      "records": 57,
+      "trace": "sessions/rollout-2026-11-14T23-29-40-01a1daad-b6f2-7052-aec7-a8f63dfeb6a9.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1daae-3c66-7683-9dc0-ee3f0d814376",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1daad-b6f2-7052-aec7-a8f63dfeb6a9",
+              "depth": 2,
+              "agent_path": "/root/bugfix/coder",
+              "agent_nickname": "Confucius",
+              "agent_role": "sdd-coder"
+            }
+          }
+        },
+        "agent_role": "sdd-coder",
+        "agent_nickname": "Confucius",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1daae-3c66-7683-9dc0-ee3f0d814376",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daad-b6f2-7052-aec7-a8f63dfeb6a9",
+                "depth": 2,
+                "agent_path": "/root/bugfix/coder",
+                "agent_nickname": "Confucius",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "agent_role": "sdd-coder",
+          "agent_nickname": "Confucius",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 267935,
+        "cached_input_tokens": 246272,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3044,
+        "reasoning_output_tokens": 201,
+        "total_tokens": 270979
+      },
+      "records": 21,
+      "trace": "sessions/rollout-2026-11-14T23-30-14-01a1daae-3c66-7683-9dc0-ee3f0d814376.jsonl"
+    }
+  ]
+}

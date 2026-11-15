@@ -1,0 +1,2942 @@
+{
+  "scope": "model fixture executions, including retries; no primary review total",
+  "usage_scope": "Last cumulative runtime usage per session. Cached input is part of input; reasoning is part of output. Tool execution seconds are per case, overlapping cases not added as a wall-clock batch total.",
+  "explicit_fixture_aggregation": "Two rollout streams (Main usage matched CLI final turn, child usage matched second rollup). Old exporter used the parent ID again for the child; child identity and actual handoff in retained combined trace.",
+  "cases": {
+    "linux-backup/role_devops_backup_gate": {
+      "exit": 0,
+      "start": "2026-11-14T23:33:47+08:00",
+      "end": "2026-11-14T23:35:03+08:00",
+      "process_seconds": 69.35,
+      "session_usage_by_actor": {
+        "01a1dab1-7f99-7ed3-a4cd-9025f8605331": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 142481,
+            "cached_input_tokens": 115200,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 620,
+            "reasoning_output_tokens": 43,
+            "total_tokens": 143101
+          },
+          "trace": "sessions/rollout-2026-11-14T23-33-49-01a1dab1-7f99-7ed3-a4cd-9025f8605331.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1dab1-aa5e-7b50-aeb4-855445056890": {
+          "role": "sdd-devops",
+          "model": "gpt-6.1-terra",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dab1-7f99-7ed3-a4cd-9025f8605331",
+                "depth": 1,
+                "agent_path": "/root/devops_receipt",
+                "agent_nickname": "Herschel",
+                "agent_role": "sdd-devops"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 313780,
+            "cached_input_tokens": 262528,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2088,
+            "reasoning_output_tokens": 90,
+            "total_tokens": 315868
+          },
+          "trace": "sessions/rollout-2026-11-14T23-33-59-01a1dab1-aa5e-7b50-aeb4-855445056890.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 2
+        }
+      },
+      "usage": {
+        "input_tokens": 456261,
+        "cached_input_tokens": 377728,
+        "output_tokens": 2708,
+        "reasoning_output_tokens": 133,
+        "total_tokens": 458969
+      },
+      "all_counted": true,
+      "fixture_start": "b5eb455c1315c3512bdbec07b956f2d56335dbfb",
+      "fixture_end": "b5eb455c1315c3512bdbec07b956f2d56335dbfb",
+      "changed": [
+        "docs/delivery/backup-and-release.md",
+        "ops/calls.jsonl",
+        "ops/legacy-backup.json"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-boundaries/develop_exception_decision": {
+      "exit": 0,
+      "start": "2026-11-14T23:19:53+08:00",
+      "end": "2026-11-14T23:21:25+08:00",
+      "process_seconds": 83.411,
+      "session_usage_by_actor": {
+        "01a1daa4-c57b-7c42-9f34-d44839d4068e": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 253336,
+            "cached_input_tokens": 206592,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1251,
+            "reasoning_output_tokens": 83,
+            "total_tokens": 254587
+          },
+          "trace": "sessions/rollout-2026-11-14T23-19-55-01a1daa4-c57b-7c42-9f34-d44839d4068e.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa5-354d-7df2-a5c3-a53fe60ec566": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa4-c57b-7c42-9f34-d44839d4068e",
+                "depth": 1,
+                "agent_path": "/root/develop_discussion",
+                "agent_nickname": "Ohm",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 140212,
+            "cached_input_tokens": 119040,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1179,
+            "reasoning_output_tokens": 31,
+            "total_tokens": 141391
+          },
+          "trace": "sessions/rollout-2026-11-14T23-20-22-01a1daa5-354d-7df2-a5c3-a53fe60ec566.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 393548,
+        "cached_input_tokens": 325632,
+        "output_tokens": 2430,
+        "reasoning_output_tokens": 114,
+        "total_tokens": 395978
+      },
+      "all_counted": true,
+      "fixture_start": "b2ebd83e56f37bd9c8a222967a8c7b5422322364",
+      "fixture_end": "b2ebd83e56f37bd9c8a222967a8c7b5422322364",
+      "changed": [],
+      "local_commit_paths": []
+    },
+    "linux-boundaries/integration_resume_after_fix": {
+      "exit": 0,
+      "start": "2026-11-14T23:19:53+08:00",
+      "end": "2026-11-14T23:24:23+08:00",
+      "process_seconds": 247.393,
+      "session_usage_by_actor": {
+        "01a1daa4-c605-7cf0-b7e5-c682ae8df8de": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 994656,
+            "cached_input_tokens": 940928,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2412,
+            "reasoning_output_tokens": 204,
+            "total_tokens": 997068
+          },
+          "trace": "sessions/rollout-2026-11-14T23-19-55-01a1daa4-c605-7cf0-b7e5-c682ae8df8de.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa5-389d-7420-ac33-bf85e8e1b7a5": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa4-c605-7cf0-b7e5-c682ae8df8de",
+                "depth": 1,
+                "agent_path": "/root/b1_retest",
+                "agent_nickname": "Tesla",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 449535,
+            "cached_input_tokens": 410624,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 8778,
+            "reasoning_output_tokens": 828,
+            "total_tokens": 458313
+          },
+          "trace": "sessions/rollout-2026-11-14T23-20-23-01a1daa5-389d-7420-ac33-bf85e8e1b7a5.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 1444191,
+        "cached_input_tokens": 1351552,
+        "output_tokens": 11190,
+        "reasoning_output_tokens": 1032,
+        "total_tokens": 1455381
+      },
+      "all_counted": true,
+      "fixture_start": "b0f1c767e2d5c0f5efbb6ed8b3cf0a0caa5f473f",
+      "fixture_end": "b0f1c767e2d5c0f5efbb6ed8b3cf0a0caa5f473f",
+      "changed": [
+        "docs/test-reports/order/b1.md",
+        "docs/test-reports/order/evidence/b1-retest-doc-check.json",
+        "docs/test-reports/order/evidence/b1-retest-integrity.json",
+        "docs/test-reports/order/evidence/b1-retest.json",
+        "docs/test-reports/order/evidence/b1-retest.py"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-boundaries/role_doc_runtime_boundary": {
+      "exit": 0,
+      "start": "2026-11-14T23:19:52+08:00",
+      "end": "2026-11-14T23:21:21+08:00",
+      "process_seconds": 82.604,
+      "session_usage_by_actor": {
+        "01a1daa4-c1d3-7860-9119-c6034e1fdfff": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 250256,
+            "cached_input_tokens": 221696,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1659,
+            "reasoning_output_tokens": 137,
+            "total_tokens": 251915
+          },
+          "trace": "sessions/rollout-2026-11-14T23-19-54-01a1daa4-c1d3-7860-9119-c6034e1fdfff.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa5-2161-7613-a1c9-074345d59660": {
+          "role": "sdd-doc-consistency",
+          "model": "gpt-6.1-terra",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa4-c1d3-7860-9119-c6034e1fdfff",
+                "depth": 1,
+                "agent_path": "/root/retry_doc_review",
+                "agent_nickname": "Nietzsche",
+                "agent_role": "sdd-doc-consistency"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 135096,
+            "cached_input_tokens": 111744,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2024,
+            "reasoning_output_tokens": 73,
+            "total_tokens": 137120
+          },
+          "trace": "sessions/rollout-2026-11-14T23-20-17-01a1daa5-2161-7613-a1c9-074345d59660.jsonl",
+          "observed_role_instructions_sha": "7e063245b5e628f1d739bd2b70c6223340e498a29f02d4984b037b2b40f047d5",
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 385352,
+        "cached_input_tokens": 333440,
+        "output_tokens": 3683,
+        "reasoning_output_tokens": 210,
+        "total_tokens": 389035
+      },
+      "all_counted": true,
+      "fixture_start": "40ac4c3f85c3ee5402d004bfde4282d7d1147d56",
+      "fixture_end": "40ac4c3f85c3ee5402d004bfde4282d7d1147d56",
+      "changed": [],
+      "local_commit_paths": []
+    },
+    "linux-contrast/bug_retest_failed_only": {
+      "exit": 0,
+      "start": "2026-11-14T23:16:00+08:00",
+      "end": "2026-11-14T23:18:06+08:00",
+      "process_seconds": 114.102,
+      "session_usage_by_actor": {
+        "01a1daa1-35e6-7281-8d79-1a5c7d825fac": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 355830,
+            "cached_input_tokens": 330752,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1117,
+            "reasoning_output_tokens": 50,
+            "total_tokens": 356947
+          },
+          "trace": "sessions/rollout-2026-11-14T23-16-01-01a1daa1-35e6-7281-8d79-1a5c7d825fac.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa1-9a46-7f13-a2c0-321c58208ff1": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa1-35e6-7281-8d79-1a5c7d825fac",
+                "depth": 1,
+                "agent_path": "/root/iss001_retest",
+                "agent_nickname": "Russell",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 247530,
+            "cached_input_tokens": 215424,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 3308,
+            "reasoning_output_tokens": 163,
+            "total_tokens": 250838
+          },
+          "trace": "sessions/rollout-2026-11-14T23-16-26-01a1daa1-9a46-7f13-a2c0-321c58208ff1.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 603360,
+        "cached_input_tokens": 546176,
+        "output_tokens": 4425,
+        "reasoning_output_tokens": 213,
+        "total_tokens": 607785
+      },
+      "all_counted": true,
+      "fixture_start": "338a5ecd2c042f2b88b565d226b438ea33938b79",
+      "fixture_end": "338a5ecd2c042f2b88b565d226b438ea33938b79",
+      "changed": [
+        "docs/issues/ISS-001.md"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-contrast/develop_discussion": {
+      "exit": 0,
+      "start": "2026-11-14T23:14:29+08:00",
+      "end": "2026-11-14T23:16:04+08:00",
+      "process_seconds": 88.717,
+      "session_usage_by_actor": {
+        "01a1da9f-d350-7d63-b267-ff8978c16e63": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 242131,
+            "cached_input_tokens": 219392,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1323,
+            "reasoning_output_tokens": 73,
+            "total_tokens": 243454
+          },
+          "trace": "sessions/rollout-2026-11-14T23-14-31-01a1da9f-d350-7d63-b267-ff8978c16e63.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa0-3dfe-79f2-ba62-e6ef84425162": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9f-d350-7d63-b267-ff8978c16e63",
+                "depth": 1,
+                "agent_path": "/root/develop_discussion",
+                "agent_nickname": "Linnaeus",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 120508,
+            "cached_input_tokens": 97792,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1294,
+            "reasoning_output_tokens": 103,
+            "total_tokens": 121802
+          },
+          "trace": "sessions/rollout-2026-11-14T23-14-57-01a1daa0-3dfe-79f2-ba62-e6ef84425162.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 362639,
+        "cached_input_tokens": 317184,
+        "output_tokens": 2617,
+        "reasoning_output_tokens": 176,
+        "total_tokens": 365256
+      },
+      "all_counted": true,
+      "fixture_start": "e7403ce1054484f58eb602018a2bf6bf07cd11e9",
+      "fixture_end": "e7403ce1054484f58eb602018a2bf6bf07cd11e9",
+      "changed": [],
+      "local_commit_paths": []
+    },
+    "linux-contrast/develop_spec_only": {
+      "exit": 0,
+      "start": "2026-11-14T23:13:56+08:00",
+      "end": "2026-11-14T23:15:54+08:00",
+      "process_seconds": 109.569,
+      "session_usage_by_actor": {
+        "01a1da9f-52bc-70f1-bddb-3eab67de356d": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 414379,
+            "cached_input_tokens": 387968,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1258,
+            "reasoning_output_tokens": 102,
+            "total_tokens": 415637
+          },
+          "trace": "sessions/rollout-2026-11-14T23-13-58-01a1da9f-52bc-70f1-bddb-3eab67de356d.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9f-c299-7372-9e05-ed2346243bce": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9f-52bc-70f1-bddb-3eab67de356d",
+                "depth": 1,
+                "agent_path": "/root/order_spec",
+                "agent_nickname": "Lorentz",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 257894,
+            "cached_input_tokens": 229760,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2431,
+            "reasoning_output_tokens": 481,
+            "total_tokens": 260325
+          },
+          "trace": "sessions/rollout-2026-11-14T23-14-25-01a1da9f-c299-7372-9e05-ed2346243bce.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 672273,
+        "cached_input_tokens": 617728,
+        "output_tokens": 3689,
+        "reasoning_output_tokens": 583,
+        "total_tokens": 675962
+      },
+      "all_counted": true,
+      "fixture_start": "2670c49722ccde625e84cc99a1a6e6687f76cad0",
+      "fixture_end": "2670c49722ccde625e84cc99a1a6e6687f76cad0",
+      "changed": [
+        "specs/order/spec.md"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-contrast/integration_harness_recovery": {
+      "exit": 0,
+      "start": "2026-11-14T23:16:13+08:00",
+      "end": "2026-11-14T23:21:52+08:00",
+      "process_seconds": 312.893,
+      "session_usage_by_actor": {
+        "01a1daa1-67c7-70e0-84ec-3259cb84b3fe": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 808306,
+            "cached_input_tokens": 764416,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2562,
+            "reasoning_output_tokens": 271,
+            "total_tokens": 810868
+          },
+          "trace": "sessions/rollout-2026-11-14T23-16-14-01a1daa1-67c7-70e0-84ec-3259cb84b3fe.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa1-cdbf-7e72-9ce4-c4ee22a9f198": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa1-67c7-70e0-84ec-3259cb84b3fe",
+                "depth": 1,
+                "agent_path": "/root/integration_test",
+                "agent_nickname": "Poincare",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 1508049,
+            "cached_input_tokens": 1447424,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 10500,
+            "reasoning_output_tokens": 314,
+            "total_tokens": 1518549
+          },
+          "trace": "sessions/rollout-2026-11-14T23-16-39-01a1daa1-cdbf-7e72-9ce4-c4ee22a9f198.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa2-65df-7eb3-a882-37fcd9b9683f": {
+          "role": "sdd-coder",
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa1-cdbf-7e72-9ce4-c4ee22a9f198",
+                "depth": 2,
+                "agent_path": "/root/integration_test/test_tools",
+                "agent_nickname": "Turing",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 574193,
+            "cached_input_tokens": 510208,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 5752,
+            "reasoning_output_tokens": 346,
+            "total_tokens": 579945
+          },
+          "trace": "sessions/rollout-2026-11-14T23-17-18-01a1daa2-65df-7eb3-a882-37fcd9b9683f.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 2890548,
+        "cached_input_tokens": 2722048,
+        "output_tokens": 18814,
+        "reasoning_output_tokens": 931,
+        "total_tokens": 2909362
+      },
+      "all_counted": true,
+      "fixture_start": "2518bb5a4654cb1c606dd724bf0ad35ef1da643e",
+      "fixture_end": "2518bb5a4654cb1c606dd724bf0ad35ef1da643e",
+      "changed": [
+        "checks/acceptance.py",
+        "checks/integration_runner.py",
+        "docs/index.md",
+        "docs/issues/ORD-001.md",
+        "docs/issues/ORD-002.md",
+        "docs/test-reports/order/2026-11-14-integration.md",
+        "docs/test-reports/order/evidence/doc-check.json",
+        "docs/test-reports/order/evidence/final-ci-1.json",
+        "docs/test-reports/order/evidence/final-ci-2.json",
+        "docs/test-reports/order/evidence/final-direct.json",
+        "docs/test-reports/order/evidence/final-runtime.json",
+        "docs/test-reports/order/evidence/final-unit.json",
+        "docs/test-reports/order/evidence/final-version.json",
+        "docs/test-reports/order/evidence/initial-acceptance.json",
+        "docs/test-reports/order/evidence/initial-ci.json",
+        "docs/test-reports/order/evidence/initial-runtime.json",
+        "docs/test-reports/order/evidence/initial-unit.json",
+        "specs/order/quickstart.md",
+        "tests/test_check_tools.py"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-contrast/main_direct_config_change": {
+      "exit": 0,
+      "start": "2026-11-14T23:13:55+08:00",
+      "end": "2026-11-14T23:14:24+08:00",
+      "process_seconds": 25.962,
+      "session_usage_by_actor": {
+        "01a1da9f-5023-7251-8be6-ab6d8633e2ac": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 61113,
+            "cached_input_tokens": 28928,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 266,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 61379
+          },
+          "trace": "sessions/rollout-2026-11-14T23-13-57-01a1da9f-5023-7251-8be6-ab6d8633e2ac.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 61113,
+        "cached_input_tokens": 28928,
+        "output_tokens": 266,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 61379
+      },
+      "all_counted": true,
+      "fixture_start": "90672942d8796c39704a0813166b54bdecd1804b",
+      "fixture_end": "90672942d8796c39704a0813166b54bdecd1804b",
+      "changed": [
+        "config/service.toml"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-contrast/refactor_behavior_boundary": {
+      "exit": 0,
+      "start": "2026-11-14T23:13:55+08:00",
+      "end": "2026-11-14T23:19:45+08:00",
+      "process_seconds": 319.93,
+      "session_usage_by_actor": {
+        "01a1da9f-5072-7331-8eb7-74f8675d474c": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 1039640,
+            "cached_input_tokens": 952064,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2468,
+            "reasoning_output_tokens": 235,
+            "total_tokens": 1042108
+          },
+          "trace": "sessions/rollout-2026-11-14T23-13-57-01a1da9f-5072-7331-8eb7-74f8675d474c.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9f-c642-7c20-84a3-288d9c3ee29f": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9f-5072-7331-8eb7-74f8675d474c",
+                "depth": 1,
+                "agent_path": "/root/payment_refactor",
+                "agent_nickname": "Leibniz",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 1225274,
+            "cached_input_tokens": 1178624,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 10334,
+            "reasoning_output_tokens": 194,
+            "total_tokens": 1235608
+          },
+          "trace": "sessions/rollout-2026-11-14T23-14-26-01a1da9f-c642-7c20-84a3-288d9c3ee29f.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa0-2cfe-74a2-9557-80385b7103d1": {
+          "role": "sdd-architect",
+          "model": "gpt-6-astra",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9f-c642-7c20-84a3-288d9c3ee29f",
+                "depth": 2,
+                "agent_path": "/root/payment_refactor/architecture_review",
+                "agent_nickname": "Hilbert",
+                "agent_role": "sdd-architect"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 189806,
+            "cached_input_tokens": 154368,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2724,
+            "reasoning_output_tokens": 43,
+            "total_tokens": 192530
+          },
+          "trace": "sessions/rollout-2026-11-14T23-14-52-01a1daa0-2cfe-74a2-9557-80385b7103d1.jsonl",
+          "observed_role_instructions_sha": "7d516d4c6ce2683efd674a3a62c93c70448b92523b45a60941efd8fc8fe97c96",
+          "identity_count_in_trace": 1
+        },
+        "01a1daa0-ac60-7a71-b857-5f8b9cc7ff9e": {
+          "role": "sdd-coder",
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9f-c642-7c20-84a3-288d9c3ee29f",
+                "depth": 2,
+                "agent_path": "/root/payment_refactor/payment_implementation",
+                "agent_nickname": "Anscombe",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 645844,
+            "cached_input_tokens": 613888,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 7167,
+            "reasoning_output_tokens": 357,
+            "total_tokens": 653011
+          },
+          "trace": "sessions/rollout-2026-11-14T23-15-25-01a1daa0-ac60-7a71-b857-5f8b9cc7ff9e.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 3100564,
+        "cached_input_tokens": 2898944,
+        "output_tokens": 22693,
+        "reasoning_output_tokens": 829,
+        "total_tokens": 3123257
+      },
+      "all_counted": true,
+      "fixture_start": "67323a6acbf00ea121b84c4916dd8b85ccdeb9fd",
+      "fixture_end": "67323a6acbf00ea121b84c4916dd8b85ccdeb9fd",
+      "changed": [
+        "docs/payment-refactor-plan.md",
+        "docs/test-reports/payment/2026-11-14-review.md",
+        "src/ui.py",
+        "tests/test_order.py"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-contrast/review_prompt_read_only": {
+      "exit": 0,
+      "start": "2026-11-14T23:18:06+08:00",
+      "end": "2026-11-14T23:19:16+08:00",
+      "process_seconds": 64.479,
+      "session_usage_by_actor": {
+        "01a1daa3-2279-79c2-aacd-250351dd0848": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 106606,
+            "cached_input_tokens": 81664,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 805,
+            "reasoning_output_tokens": 30,
+            "total_tokens": 107411
+          },
+          "trace": "sessions/rollout-2026-11-14T23-18-08-01a1daa3-2279-79c2-aacd-250351dd0848.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa3-4fab-7723-ab8d-a43996abe4b9": {
+          "role": "review-prompt",
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa3-2279-79c2-aacd-250351dd0848",
+                "depth": 1,
+                "agent_path": "/root/refund_prompt_review",
+                "agent_nickname": "Bohr",
+                "agent_role": "review-prompt"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 86191,
+            "cached_input_tokens": 72192,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1444,
+            "reasoning_output_tokens": 78,
+            "total_tokens": 87635
+          },
+          "trace": "sessions/rollout-2026-11-14T23-18-18-01a1daa3-4fab-7723-ab8d-a43996abe4b9.jsonl",
+          "observed_role_instructions_sha": "87112509fc93378290b3797beb14b7b122ea0852e596ea8346278ca412e08777",
+          "identity_count_in_trace": 2
+        }
+      },
+      "usage": {
+        "input_tokens": 192797,
+        "cached_input_tokens": 153856,
+        "output_tokens": 2249,
+        "reasoning_output_tokens": 108,
+        "total_tokens": 195046
+      },
+      "all_counted": true,
+      "fixture_start": "3fb46ee57f541a24ab6792fee7aeba9db40e4ee2",
+      "fixture_end": "3fb46ee57f541a24ab6792fee7aeba9db40e4ee2",
+      "changed": [],
+      "local_commit_paths": []
+    },
+    "linux-contrast/review_prompt_revise": {
+      "exit": 0,
+      "start": "2026-11-14T23:19:17+08:00",
+      "end": "2026-11-14T23:20:23+08:00",
+      "process_seconds": 61.064,
+      "session_usage_by_actor": {
+        "01a1daa4-3636-7611-ad61-08276a964a73": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 92222,
+            "cached_input_tokens": 87680,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 550,
+            "reasoning_output_tokens": 20,
+            "total_tokens": 92772
+          },
+          "trace": "sessions/rollout-2026-11-14T23-19-18-01a1daa4-3636-7611-ad61-08276a964a73.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa4-5c11-75d3-bcea-24707bdc4a9a": {
+          "role": "review-prompt",
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa4-3636-7611-ad61-08276a964a73",
+                "depth": 1,
+                "agent_path": "/root/refund_prompt_review",
+                "agent_nickname": "Godel",
+                "agent_role": "review-prompt"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 109813,
+            "cached_input_tokens": 96000,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1529,
+            "reasoning_output_tokens": 122,
+            "total_tokens": 111342
+          },
+          "trace": "sessions/rollout-2026-11-14T23-19-26-01a1daa4-5c11-75d3-bcea-24707bdc4a9a.jsonl",
+          "observed_role_instructions_sha": "87112509fc93378290b3797beb14b7b122ea0852e596ea8346278ca412e08777",
+          "identity_count_in_trace": 2
+        }
+      },
+      "usage": {
+        "input_tokens": 202035,
+        "cached_input_tokens": 183680,
+        "output_tokens": 2079,
+        "reasoning_output_tokens": 142,
+        "total_tokens": 204114
+      },
+      "all_counted": true,
+      "fixture_start": "dc26a9d3953d9351bb85345e723259a64792b515",
+      "fixture_end": "dc26a9d3953d9351bb85345e723259a64792b515",
+      "changed": [
+        "src/prompts/apply.md",
+        "src/prompts/base.md"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-delivery/release-final-evidence": {
+      "exit": 0,
+      "start": "2026-11-14T23:17:25+08:00",
+      "end": "2026-11-14T23:19:39+08:00",
+      "process_seconds": 122.885,
+      "session_usage_by_actor": {
+        "01a1daa2-817d-7482-856a-f231f704bcf6": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 607228,
+            "cached_input_tokens": 571776,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2172,
+            "reasoning_output_tokens": 248,
+            "total_tokens": 609400
+          },
+          "trace": "sessions/rollout-2026-11-14T23-17-26-01a1daa2-817d-7482-856a-f231f704bcf6.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa2-f09a-7541-be79-f8df389a8fd7": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa2-817d-7482-856a-f231f704bcf6",
+                "depth": 1,
+                "agent_path": "/root/deliver",
+                "agent_nickname": "Herschel",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 296286,
+            "cached_input_tokens": 247296,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 3307,
+            "reasoning_output_tokens": 127,
+            "total_tokens": 299593
+          },
+          "trace": "sessions/rollout-2026-11-14T23-17-53-01a1daa2-f09a-7541-be79-f8df389a8fd7.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 903514,
+        "cached_input_tokens": 819072,
+        "output_tokens": 5479,
+        "reasoning_output_tokens": 375,
+        "total_tokens": 908993
+      },
+      "all_counted": true,
+      "fixture_start": "942154b7755b053affbb6a073b60ac6c226e75af",
+      "fixture_end": "942154b7755b053affbb6a073b60ac6c226e75af",
+      "changed": [
+        "docs/delivery/2.4.0.md",
+        "docs/index.md"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-delivery/release-stale-evidence": {
+      "exit": 0,
+      "start": "2026-11-14T23:17:25+08:00",
+      "end": "2026-11-14T23:19:59+08:00",
+      "process_seconds": 142.204,
+      "session_usage_by_actor": {
+        "01a1daa2-8287-7863-b8fb-9c3a57b821ef": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 499219,
+            "cached_input_tokens": 446592,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1927,
+            "reasoning_output_tokens": 276,
+            "total_tokens": 501146
+          },
+          "trace": "sessions/rollout-2026-11-14T23-17-26-01a1daa2-8287-7863-b8fb-9c3a57b821ef.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa2-d8f4-70b2-ac09-0b6cc1ff8aab": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa2-8287-7863-b8fb-9c3a57b821ef",
+                "depth": 1,
+                "agent_path": "/root/deliver",
+                "agent_nickname": "Jason",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 394959,
+            "cached_input_tokens": 350080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 4414,
+            "reasoning_output_tokens": 369,
+            "total_tokens": 399373
+          },
+          "trace": "sessions/rollout-2026-11-14T23-17-47-01a1daa2-d8f4-70b2-ac09-0b6cc1ff8aab.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 894178,
+        "cached_input_tokens": 796672,
+        "output_tokens": 6341,
+        "reasoning_output_tokens": 645,
+        "total_tokens": 900519
+      },
+      "all_counted": true,
+      "fixture_start": "78f38d96c0eb5b74b205036e144eb1732f21acae",
+      "fixture_end": "78f38d96c0eb5b74b205036e144eb1732f21acae",
+      "changed": [
+        "docs/delivery/2.4.0.md",
+        "docs/index.md",
+        "ops/calls.jsonl"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-delivery/rollback-partial": {
+      "exit": 0,
+      "start": "2026-11-14T23:19:43+08:00",
+      "end": "2026-11-14T23:21:50+08:00",
+      "process_seconds": 118.797,
+      "session_usage_by_actor": {
+        "01a1daa4-9c66-72c2-b3ae-7090f54d1845": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 514566,
+            "cached_input_tokens": 484480,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2076,
+            "reasoning_output_tokens": 165,
+            "total_tokens": 516642
+          },
+          "trace": "sessions/rollout-2026-11-14T23-19-44-01a1daa4-9c66-72c2-b3ae-7090f54d1845.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa4-ff08-7f31-aba2-bb2fe26a4db4": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa4-9c66-72c2-b3ae-7090f54d1845",
+                "depth": 1,
+                "agent_path": "/root/delivery",
+                "agent_nickname": "Boole",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 286067,
+            "cached_input_tokens": 258304,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 3533,
+            "reasoning_output_tokens": 76,
+            "total_tokens": 289600
+          },
+          "trace": "sessions/rollout-2026-11-14T23-20-08-01a1daa4-ff08-7f31-aba2-bb2fe26a4db4.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 800633,
+        "cached_input_tokens": 742784,
+        "output_tokens": 5609,
+        "reasoning_output_tokens": 241,
+        "total_tokens": 806242
+      },
+      "all_counted": true,
+      "fixture_start": "a1b1083d1150962a328faf3152c601728fa1f763",
+      "fixture_end": "a1b1083d1150962a328faf3152c601728fa1f763",
+      "changed": [
+        "docs/delivery/inc-619.md",
+        "docs/evidence/inc-619/pre-operation-static.json",
+        "docs/index.md"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-direct-role/develop_direct_role_work_order": {
+      "exit": 0,
+      "start": "2026-11-14T23:27:44+08:00",
+      "end": "2026-11-14T23:30:35+08:00",
+      "process_seconds": 156.58,
+      "session_usage_by_actor": {
+        "01a1daab-f31f-75b1-8d91-e74cadbad629": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 582243,
+            "cached_input_tokens": 551552,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1972,
+            "reasoning_output_tokens": 112,
+            "total_tokens": 584215
+          },
+          "trace": "sessions/rollout-2026-11-14T23-27-45-01a1daab-f31f-75b1-8d91-e74cadbad629.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daac-6ca4-73f2-bf9b-9595a315fd58": {
+          "role": "sdd-coder",
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daab-f31f-75b1-8d91-e74cadbad629",
+                "depth": 1,
+                "agent_path": "/root/order_id_coder",
+                "agent_nickname": "Socrates",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 336069,
+            "cached_input_tokens": 307840,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 5122,
+            "reasoning_output_tokens": 106,
+            "total_tokens": 341191
+          },
+          "trace": "sessions/rollout-2026-11-14T23-28-15-01a1daac-6ca4-73f2-bf9b-9595a315fd58.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 918312,
+        "cached_input_tokens": 859392,
+        "output_tokens": 7094,
+        "reasoning_output_tokens": 218,
+        "total_tokens": 925406
+      },
+      "all_counted": true,
+      "fixture_start": "07f49ab83406c7ac7d1c33d0d24c78ffa276825b",
+      "fixture_end": "07f49ab83406c7ac7d1c33d0d24c78ffa276825b",
+      "changed": [
+        "docs/order-id-plan.md",
+        "src/order_service.py",
+        "tests/test_order.py"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-gate/workflow_review_explicit": {
+      "exit": 0,
+      "start": "2026-11-14T23:04:41+08:00",
+      "end": "2026-11-14T23:09:04+08:00",
+      "process_seconds": 239.901,
+      "session_usage_by_actor": {
+        "01a1da96-d8fc-7400-8d12-49ed46ab7d1b": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 353072,
+            "cached_input_tokens": 327680,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 10519,
+            "reasoning_output_tokens": 235,
+            "total_tokens": 363591
+          },
+          "trace": "sessions/01a1da96-d8fc-7400-8d12-49ed46ab7d1b.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 0
+        }
+      },
+      "usage": {
+        "input_tokens": 479141,
+        "cached_input_tokens": 449152,
+        "output_tokens": 12107,
+        "reasoning_output_tokens": 253,
+        "total_tokens": 491248
+      },
+      "all_counted": true,
+      "fixture_start": "20aa8f7fbf9ec965b09c89aeffa5fdc81928e3bc",
+      "fixture_end": "20aa8f7fbf9ec965b09c89aeffa5fdc81928e3bc",
+      "changed": [
+        "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/assembly-check.json",
+        "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/final-integrity.json",
+        "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/report.md",
+        "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/review-prompt-receipt.md",
+        "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/snapshot.json",
+        "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/snapshot.sha256",
+        "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/source-evidence.txt"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-gate/workflow_review_not_requested": {
+      "exit": 0,
+      "start": "2026-11-14T23:04:41+08:00",
+      "end": "2026-11-14T23:05:08+08:00",
+      "process_seconds": 24.393,
+      "session_usage_by_actor": {
+        "01a1da96-d894-7773-94c5-57ab6dc7ee53": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 59353,
+            "cached_input_tokens": 52736,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 375,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 59728
+          },
+          "trace": "sessions/01a1da96-d894-7773-94c5-57ab6dc7ee53.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 0
+        }
+      },
+      "usage": {
+        "input_tokens": 59353,
+        "cached_input_tokens": 52736,
+        "output_tokens": 375,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 59728
+      },
+      "all_counted": true,
+      "fixture_start": "b2667a34d027a597642b822836d0fe1f88c4d31e",
+      "fixture_end": "b2667a34d027a597642b822836d0fe1f88c4d31e",
+      "changed": [
+        "config/service.toml"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-multiturn/collaboration_workflow": {
+      "exit": 0,
+      "start": "2026-11-14T23:27:13+08:00",
+      "end": "2026-11-14T23:35:02+08:00",
+      "process_seconds": 386.34,
+      "session_usage_by_actor": {
+        "01a1daab-7abe-7492-9e87-95eb67573538": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 3196645,
+            "cached_input_tokens": 3122304,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 8361,
+            "reasoning_output_tokens": 1226,
+            "total_tokens": 3205006
+          },
+          "trace": "sessions/rollout-2026-11-14T23-27-14-01a1daab-7abe-7492-9e87-95eb67573538.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daab-fbf9-7e71-89f8-5b3efbe0776e": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daab-7abe-7492-9e87-95eb67573538",
+                "depth": 1,
+                "agent_path": "/root/integration",
+                "agent_nickname": "Jason",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 721967,
+            "cached_input_tokens": 694144,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 12292,
+            "reasoning_output_tokens": 359,
+            "total_tokens": 734259
+          },
+          "trace": "sessions/rollout-2026-11-14T23-27-46-01a1daab-fbf9-7e71-89f8-5b3efbe0776e.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daac-3a72-7f51-9279-20dc89c06861": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daab-7abe-7492-9e87-95eb67573538",
+                "depth": 1,
+                "agent_path": "/root/architecture_review",
+                "agent_nickname": "Singer",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 831901,
+            "cached_input_tokens": 773248,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 8681,
+            "reasoning_output_tokens": 360,
+            "total_tokens": 840582
+          },
+          "trace": "sessions/rollout-2026-11-14T23-28-02-01a1daac-3a72-7f51-9279-20dc89c06861.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daad-b6f2-7052-aec7-a8f63dfeb6a9": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daab-7abe-7492-9e87-95eb67573538",
+                "depth": 1,
+                "agent_path": "/root/bugfix",
+                "agent_nickname": "Hume",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 1217504,
+            "cached_input_tokens": 1174912,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 7568,
+            "reasoning_output_tokens": 553,
+            "total_tokens": 1225072
+          },
+          "trace": "sessions/rollout-2026-11-14T23-29-40-01a1daad-b6f2-7052-aec7-a8f63dfeb6a9.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daae-3c66-7683-9dc0-ee3f0d814376": {
+          "role": "sdd-coder",
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daad-b6f2-7052-aec7-a8f63dfeb6a9",
+                "depth": 2,
+                "agent_path": "/root/bugfix/coder",
+                "agent_nickname": "Confucius",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 267935,
+            "cached_input_tokens": 246272,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 3044,
+            "reasoning_output_tokens": 201,
+            "total_tokens": 270979
+          },
+          "trace": "sessions/rollout-2026-11-14T23-30-14-01a1daae-3c66-7683-9dc0-ee3f0d814376.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 6235952,
+        "cached_input_tokens": 6010880,
+        "output_tokens": 39946,
+        "reasoning_output_tokens": 2699,
+        "total_tokens": 6275898
+      },
+      "all_counted": true,
+      "fixture_start": "9701a4d79766e124c202c9b258ad18a458a26cd8",
+      "fixture_end": "9701a4d79766e124c202c9b258ad18a458a26cd8",
+      "changed": [
+        "docs/index.md",
+        "docs/issues/BUG-001.md",
+        "docs/issues/BUG-002.md",
+        "docs/issues/evidence/bugfix-local-before.txt",
+        "docs/issues/evidence/bugfix-local.txt",
+        "docs/issues/evidence/bugfix-retest.json",
+        "docs/test-reports/order/2026-11-14-review.md",
+        "docs/test-reports/order/evidence/fixed-acceptance.json",
+        "docs/test-reports/order/evidence/fixed-integration.json",
+        "docs/test-reports/order/evidence/fixed-runtime.json",
+        "docs/test-reports/order/evidence/fixed-source.diff",
+        "docs/test-reports/order/evidence/fixed-unit.txt",
+        "docs/test-reports/order/evidence/fixed-worktree.txt",
+        "docs/test-reports/order/evidence/initial-acceptance.json",
+        "docs/test-reports/order/evidence/initial-integration.json",
+        "docs/test-reports/order/evidence/initial-runtime.json",
+        "docs/test-reports/order/evidence/initial-unit.txt",
+        "docs/test-reports/order/fixed.md",
+        "docs/test-reports/order/initial.md",
+        "specs/order/plan.md",
+        "specs/order/quickstart.md",
+        "src/order_service.py",
+        "src/ui.py",
+        "tests/bugfix_retest.py",
+        "tests/integration_order.py",
+        "tests/test_order_bugfix.py"
+      ],
+      "local_commit_paths": [],
+      "phases": [
+        {
+          "turn": "initial",
+          "start": "2026-11-14T23:27:13+08:00",
+          "end": "2026-11-14T23:34:13+08:00",
+          "seconds": 386.34,
+          "exit": 0
+        },
+        {
+          "turn": "unchanged-evidence",
+          "start": "2026-11-14T23:34:13+08:00",
+          "end": "2026-11-14T23:35:02+08:00",
+          "seconds": 43.136,
+          "exit": 0
+        }
+      ]
+    },
+    "linux-multiturn/develop_delivery": {
+      "exit": 0,
+      "start": "2026-11-14T23:27:13+08:00",
+      "end": "2026-11-14T23:35:43+08:00",
+      "process_seconds": 74.422,
+      "session_usage_by_actor": {
+        "01a1daab-7a5e-7c42-8065-04fde9603df2": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 1758631,
+            "cached_input_tokens": 1712128,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 4052,
+            "reasoning_output_tokens": 423,
+            "total_tokens": 1762683
+          },
+          "trace": "sessions/rollout-2026-11-14T23-27-14-01a1daab-7a5e-7c42-8065-04fde9603df2.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daab-de01-7083-8afc-4bd026df7c82": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daab-7a5e-7c42-8065-04fde9603df2",
+                "depth": 1,
+                "agent_path": "/root/order_validation",
+                "agent_nickname": "Hegel",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 1450178,
+            "cached_input_tokens": 1385600,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 12593,
+            "reasoning_output_tokens": 618,
+            "total_tokens": 1462771
+          },
+          "trace": "sessions/rollout-2026-11-14T23-27-39-01a1daab-de01-7083-8afc-4bd026df7c82.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daaf-cc29-7e72-9fa1-bbad319d83da": {
+          "role": "sdd-coder",
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daab-de01-7083-8afc-4bd026df7c82",
+                "depth": 2,
+                "agent_path": "/root/order_validation/implement_order_validation",
+                "agent_nickname": "Aquinas",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 542414,
+            "cached_input_tokens": 502784,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 6633,
+            "reasoning_output_tokens": 416,
+            "total_tokens": 549047
+          },
+          "trace": "sessions/rollout-2026-11-14T23-31-56-01a1daaf-cc29-7e72-9fa1-bbad319d83da.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 3751223,
+        "cached_input_tokens": 3600512,
+        "output_tokens": 23278,
+        "reasoning_output_tokens": 1457,
+        "total_tokens": 3774501
+      },
+      "all_counted": true,
+      "fixture_start": "83a8ad12ca4c60ba9bcaf37ec891db0e6a35c046",
+      "fixture_end": "83a8ad12ca4c60ba9bcaf37ec891db0e6a35c046",
+      "changed": [
+        "checks/acceptance.py",
+        "docs/contracts/order.md",
+        "docs/index.md",
+        "docs/test-reports/order/evidence/AC-1.json",
+        "docs/test-reports/order/evidence/AC-4.json",
+        "docs/test-reports/order/evidence/AC-5.json",
+        "docs/test-reports/order/evidence/coder-all.json",
+        "docs/test-reports/order/evidence/commands.json",
+        "docs/test-reports/order/evidence/runtime.json",
+        "docs/test-reports/order/evidence/unit.txt",
+        "docs/test-reports/order/validation.md",
+        "specs/order/plan.md",
+        "specs/order/quickstart.md",
+        "specs/order/spec.md",
+        "src/order_service.py",
+        "tests/test_order.py"
+      ],
+      "local_commit_paths": [],
+      "phases": [
+        {
+          "turn": "initial",
+          "start": "2026-11-14T23:27:13+08:00",
+          "end": "2026-11-14T23:28:33+08:00",
+          "seconds": 74.422,
+          "exit": 0
+        },
+        {
+          "turn": "B",
+          "start": "2026-11-14T23:28:33+08:00",
+          "end": "2026-11-14T23:31:21+08:00",
+          "seconds": 153.705,
+          "exit": 0
+        },
+        {
+          "turn": "delivery",
+          "start": "2026-11-14T23:31:21+08:00",
+          "end": "2026-11-14T23:35:43+08:00",
+          "seconds": 240.082,
+          "exit": 0
+        }
+      ]
+    },
+    "linux-pilot/role_doc_consistency": {
+      "exit": 0,
+      "start": "2026-11-14T23:02:59+08:00",
+      "end": "2026-11-14T23:04:07+08:00",
+      "process_seconds": 61.939,
+      "session_usage_by_actor": {
+        "01a1da95-4ced-7850-ac7d-ec048e2ffc8e": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 172429,
+            "cached_input_tokens": 139904,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1168,
+            "reasoning_output_tokens": 118,
+            "total_tokens": 173597
+          },
+          "trace": "sessions/01a1da95-4ced-7850-ac7d-ec048e2ffc8e.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 0
+        }
+      },
+      "usage": {
+        "input_tokens": 172429,
+        "cached_input_tokens": 139904,
+        "output_tokens": 1168,
+        "reasoning_output_tokens": 118,
+        "total_tokens": 173597
+      },
+      "all_counted": true,
+      "fixture_start": "0ea6cd4eaa770f5a4d74a9efc5ca0c5114675b5b",
+      "fixture_end": "0ea6cd4eaa770f5a4d74a9efc5ca0c5114675b5b",
+      "changed": [],
+      "local_commit_paths": []
+    },
+    "linux-pilot/workflow_review_not_requested": {
+      "exit": 0,
+      "start": "2026-11-14T23:02:58+08:00",
+      "end": "2026-11-14T23:03:26+08:00",
+      "process_seconds": 24.692,
+      "session_usage_by_actor": {
+        "01a1da95-478b-79d3-a171-22d65c19ee81": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 77446,
+            "cached_input_tokens": 73088,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 401,
+            "reasoning_output_tokens": 11,
+            "total_tokens": 77847
+          },
+          "trace": "sessions/01a1da95-478b-79d3-a171-22d65c19ee81.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 0
+        }
+      },
+      "usage": {
+        "input_tokens": 77446,
+        "cached_input_tokens": 73088,
+        "output_tokens": 401,
+        "reasoning_output_tokens": 11,
+        "total_tokens": 77847
+      },
+      "all_counted": true,
+      "fixture_start": "81ef7dcfe660e5ee7080e161dad78306953806e2",
+      "fixture_end": "81ef7dcfe660e5ee7080e161dad78306953806e2",
+      "changed": [
+        "config/service.toml"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-regression/architecture_design": {
+      "exit": 0,
+      "start": "2026-11-14T23:13:38+08:00",
+      "end": "2026-11-14T23:15:56+08:00",
+      "process_seconds": 126.933,
+      "session_usage_by_actor": {
+        "01a1da9f-0aee-7331-a557-52696c9ddde1": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 423400,
+            "cached_input_tokens": 371712,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1478,
+            "reasoning_output_tokens": 113,
+            "total_tokens": 424878
+          },
+          "trace": "sessions/rollout-2026-11-14T23-13-39-01a1da9f-0aee-7331-a557-52696c9ddde1.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9f-8f59-7ee0-94b9-4b4a435e3416": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9f-0aee-7331-a557-52696c9ddde1",
+                "depth": 1,
+                "agent_path": "/root/architecture",
+                "agent_nickname": "Linnaeus",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 211809,
+            "cached_input_tokens": 186880,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2909,
+            "reasoning_output_tokens": 673,
+            "total_tokens": 214718
+          },
+          "trace": "sessions/rollout-2026-11-14T23-14-12-01a1da9f-8f59-7ee0-94b9-4b4a435e3416.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 635209,
+        "cached_input_tokens": 558592,
+        "output_tokens": 4387,
+        "reasoning_output_tokens": 786,
+        "total_tokens": 639596
+      },
+      "all_counted": true,
+      "fixture_start": "e141ceea60c8b293197b57f94f81dd70ec4b50aa",
+      "fixture_end": "e141ceea60c8b293197b57f94f81dd70ec4b50aa",
+      "changed": [
+        "docs/blueprint.md",
+        "docs/create-sequence.md"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-regression/bug_direct_report": {
+      "exit": 0,
+      "start": "2026-11-14T23:16:01+08:00",
+      "end": "2026-11-14T23:19:40+08:00",
+      "process_seconds": 198.692,
+      "session_usage_by_actor": {
+        "01a1daa1-3bea-7e70-80c1-695ad0ff7a79": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 671020,
+            "cached_input_tokens": 626432,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1498,
+            "reasoning_output_tokens": 130,
+            "total_tokens": 672518
+          },
+          "trace": "sessions/rollout-2026-11-14T23-16-03-01a1daa1-3bea-7e70-80c1-695ad0ff7a79.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa1-9b2b-7ed2-9fb8-14223a7809de": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa1-3bea-7e70-80c1-695ad0ff7a79",
+                "depth": 1,
+                "agent_path": "/root/bugfix",
+                "agent_nickname": "Bacon",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 873723,
+            "cached_input_tokens": 835200,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 5104,
+            "reasoning_output_tokens": 260,
+            "total_tokens": 878827
+          },
+          "trace": "sessions/rollout-2026-11-14T23-16-26-01a1daa1-9b2b-7ed2-9fb8-14223a7809de.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa2-8ce9-7111-ab84-7c2026abebcc": {
+          "role": "sdd-coder",
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa1-9b2b-7ed2-9fb8-14223a7809de",
+                "depth": 2,
+                "agent_path": "/root/bugfix/coder",
+                "agent_nickname": "Lovelace",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 226821,
+            "cached_input_tokens": 207872,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2719,
+            "reasoning_output_tokens": 58,
+            "total_tokens": 229540
+          },
+          "trace": "sessions/rollout-2026-11-14T23-17-28-01a1daa2-8ce9-7111-ab84-7c2026abebcc.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 1771564,
+        "cached_input_tokens": 1669504,
+        "output_tokens": 9321,
+        "reasoning_output_tokens": 448,
+        "total_tokens": 1780885
+      },
+      "all_counted": true,
+      "fixture_start": "2d9fd8ecd137d6c5c4a0d1092aa33dec6fa5096c",
+      "fixture_end": "2d9fd8ecd137d6c5c4a0d1092aa33dec6fa5096c",
+      "changed": [
+        "docs/index.md",
+        "docs/issues/BUG-001-plan.md",
+        "docs/issues/BUG-001.md",
+        "src/parser.py"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-regression/collaboration_review_only": {
+      "exit": 0,
+      "start": "2026-11-14T23:12:14+08:00",
+      "end": "2026-11-14T23:15:36+08:00",
+      "process_seconds": 186.209,
+      "session_usage_by_actor": {
+        "01a1da9d-c4da-76f1-9cd1-d1534ecfacb1": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 509209,
+            "cached_input_tokens": 489472,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1800,
+            "reasoning_output_tokens": 121,
+            "total_tokens": 511009
+          },
+          "trace": "sessions/rollout-2026-11-14T23-12-16-01a1da9d-c4da-76f1-9cd1-d1534ecfacb1.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9e-3469-77c2-8463-c82ca884303e": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9d-c4da-76f1-9cd1-d1534ecfacb1",
+                "depth": 1,
+                "agent_path": "/root/order_review",
+                "agent_nickname": "Sartre",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 698393,
+            "cached_input_tokens": 668800,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 3803,
+            "reasoning_output_tokens": 720,
+            "total_tokens": 702196
+          },
+          "trace": "sessions/rollout-2026-11-14T23-12-43-01a1da9e-3469-77c2-8463-c82ca884303e.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9e-8952-7b12-9459-cf5915cd5017": {
+          "role": "sdd-architect",
+          "model": "gpt-6-astra",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9e-3469-77c2-8463-c82ca884303e",
+                "depth": 2,
+                "agent_path": "/root/order_review/state_architecture",
+                "agent_nickname": "Ohm",
+                "agent_role": "sdd-architect"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 178492,
+            "cached_input_tokens": 146816,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1885,
+            "reasoning_output_tokens": 67,
+            "total_tokens": 180377
+          },
+          "trace": "sessions/rollout-2026-11-14T23-13-05-01a1da9e-8952-7b12-9459-cf5915cd5017.jsonl",
+          "observed_role_instructions_sha": "7d516d4c6ce2683efd674a3a62c93c70448b92523b45a60941efd8fc8fe97c96",
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 1386094,
+        "cached_input_tokens": 1305088,
+        "output_tokens": 7488,
+        "reasoning_output_tokens": 908,
+        "total_tokens": 1393582
+      },
+      "all_counted": true,
+      "fixture_start": "76bd2d7927a1a0800ee95081be532ac3f56bfe21",
+      "fixture_end": "76bd2d7927a1a0800ee95081be532ac3f56bfe21",
+      "changed": [],
+      "local_commit_paths": []
+    },
+    "linux-regression/collaboration_test_only": {
+      "exit": 0,
+      "start": "2026-11-14T23:12:22+08:00",
+      "end": "2026-11-14T23:17:44+08:00",
+      "process_seconds": 296.887,
+      "session_usage_by_actor": {
+        "01a1da9d-e43f-7e73-bb7d-f5258f9443d5": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 853331,
+            "cached_input_tokens": 827520,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2287,
+            "reasoning_output_tokens": 272,
+            "total_tokens": 855618
+          },
+          "trace": "sessions/rollout-2026-11-14T23-12-24-01a1da9d-e43f-7e73-bb7d-f5258f9443d5.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9e-55a0-7ae1-8d9e-7581a55ad4aa": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9d-e43f-7e73-bb7d-f5258f9443d5",
+                "depth": 1,
+                "agent_path": "/root/order_integration",
+                "agent_nickname": "Peirce",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 539225,
+            "cached_input_tokens": 462592,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 10637,
+            "reasoning_output_tokens": 707,
+            "total_tokens": 549862
+          },
+          "trace": "sessions/rollout-2026-11-14T23-12-52-01a1da9e-55a0-7ae1-8d9e-7581a55ad4aa.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 1392556,
+        "cached_input_tokens": 1290112,
+        "output_tokens": 12924,
+        "reasoning_output_tokens": 979,
+        "total_tokens": 1405480
+      },
+      "all_counted": true,
+      "fixture_start": "6d5e6b6737cc61d38206817f58876c7f65473a21",
+      "fixture_end": "6d5e6b6737cc61d38206817f58876c7f65473a21",
+      "changed": [
+        "docs/index.md",
+        "docs/issues/ORDER-001.md",
+        "docs/issues/ORDER-002.md",
+        "docs/status.md",
+        "docs/test-reports/evidence/order-integration-20261114/acceptance.json",
+        "docs/test-reports/evidence/order-integration-20261114/doc-check.txt",
+        "docs/test-reports/evidence/order-integration-20261114/execution.json",
+        "docs/test-reports/evidence/order-integration-20261114/runtime.json",
+        "docs/test-reports/evidence/order-integration-20261114/supplement.json",
+        "docs/test-reports/evidence/order-integration-20261114/unittest.txt",
+        "docs/test-reports/order/20261114.md",
+        "specs/order/quickstart.md"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-regression/collaboration_workflow": {
+      "exit": 0,
+      "start": "2026-11-14T23:10:36+08:00",
+      "end": "2026-11-14T23:17:35+08:00",
+      "process_seconds": 386.119,
+      "session_usage_by_actor": {
+        "01a1da9c-4596-76e1-9580-fb8544a482aa": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 3369843,
+            "cached_input_tokens": 3307264,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 6120,
+            "reasoning_output_tokens": 636,
+            "total_tokens": 3375963
+          },
+          "trace": "sessions/rollout-2026-11-14T23-10-39-01a1da9c-4596-76e1-9580-fb8544a482aa.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9c-c24f-72e3-81f5-467316ca79f1": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9c-4596-76e1-9580-fb8544a482aa",
+                "depth": 1,
+                "agent_path": "/root/order_test",
+                "agent_nickname": "Ptolemy",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 995673,
+            "cached_input_tokens": 960256,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 12575,
+            "reasoning_output_tokens": 407,
+            "total_tokens": 1008248
+          },
+          "trace": "sessions/rollout-2026-11-14T23-11-08-01a1da9c-c24f-72e3-81f5-467316ca79f1.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9d-0858-7c73-9fea-ae4cbe5f700e": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9c-4596-76e1-9580-fb8544a482aa",
+                "depth": 1,
+                "agent_path": "/root/order_review",
+                "agent_nickname": "Aquinas",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 1054635,
+            "cached_input_tokens": 1018240,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 9948,
+            "reasoning_output_tokens": 473,
+            "total_tokens": 1064583
+          },
+          "trace": "sessions/rollout-2026-11-14T23-11-26-01a1da9d-0858-7c73-9fea-ae4cbe5f700e.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9e-d0d7-7343-a981-901ca6aae97d": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9c-4596-76e1-9580-fb8544a482aa",
+                "depth": 1,
+                "agent_path": "/root/order_bugfix",
+                "agent_nickname": "Gibbs",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 1474228,
+            "cached_input_tokens": 1435008,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 4085,
+            "reasoning_output_tokens": 193,
+            "total_tokens": 1478313
+          },
+          "trace": "sessions/rollout-2026-11-14T23-13-23-01a1da9e-d0d7-7343-a981-901ca6aae97d.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9f-3107-7671-b846-6936ed581b02": {
+          "role": "sdd-coder",
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9e-d0d7-7343-a981-901ca6aae97d",
+                "depth": 2,
+                "agent_path": "/root/order_bugfix/fix_implementation",
+                "agent_nickname": "Halley",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 423300,
+            "cached_input_tokens": 381440,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 8307,
+            "reasoning_output_tokens": 592,
+            "total_tokens": 431607
+          },
+          "trace": "sessions/rollout-2026-11-14T23-13-48-01a1da9f-3107-7671-b846-6936ed581b02.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 7317679,
+        "cached_input_tokens": 7102208,
+        "output_tokens": 41035,
+        "reasoning_output_tokens": 2301,
+        "total_tokens": 7358714
+      },
+      "all_counted": true,
+      "fixture_start": "95cfcb31cf183d04b7ba1359a8dfe80d28608b00",
+      "fixture_end": "95cfcb31cf183d04b7ba1359a8dfe80d28608b00",
+      "changed": [
+        "checks/integration.py",
+        "docs/index.md",
+        "docs/issues/ORDER-001.md",
+        "docs/issues/ORDER-002.md",
+        "docs/plans/order-bugfix/plan.md",
+        "docs/test-reports/order/baseline.md",
+        "docs/test-reports/order/evidence/baseline-acceptance.json",
+        "docs/test-reports/order/evidence/baseline-integration.json",
+        "docs/test-reports/order/evidence/baseline-runtime.json",
+        "docs/test-reports/order/evidence/baseline-unit.txt",
+        "docs/test-reports/order/evidence/bugfix-local.json",
+        "docs/test-reports/order/evidence/fixed-acceptance.json",
+        "docs/test-reports/order/evidence/fixed-integration.json",
+        "docs/test-reports/order/evidence/fixed-runtime.json",
+        "docs/test-reports/order/evidence/fixed-unit.txt",
+        "docs/test-reports/order/fixed.md",
+        "docs/test-reports/order/local-review.md",
+        "specs/order/quickstart.md",
+        "src/order_service.py",
+        "src/ui.py",
+        "tests/test_order.py"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-regression/deliver_commit_then_choose": {
+      "exit": 0,
+      "start": "2026-11-14T23:15:41+08:00",
+      "end": "2026-11-14T23:17:35+08:00",
+      "process_seconds": 104.916,
+      "session_usage_by_actor": {
+        "01a1daa0-ed34-7b20-8e8d-1f9acb515dca": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 393752,
+            "cached_input_tokens": 366720,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1352,
+            "reasoning_output_tokens": 215,
+            "total_tokens": 395104
+          },
+          "trace": "sessions/rollout-2026-11-14T23-15-43-01a1daa0-ed34-7b20-8e8d-1f9acb515dca.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa1-77de-7271-a311-767318282405": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa0-ed34-7b20-8e8d-1f9acb515dca",
+                "depth": 1,
+                "agent_path": "/root/deliver_order",
+                "agent_nickname": "Socrates",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 273652,
+            "cached_input_tokens": 230144,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1591,
+            "reasoning_output_tokens": 191,
+            "total_tokens": 275243
+          },
+          "trace": "sessions/rollout-2026-11-14T23-16-17-01a1daa1-77de-7271-a311-767318282405.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 667404,
+        "cached_input_tokens": 596864,
+        "output_tokens": 2943,
+        "reasoning_output_tokens": 406,
+        "total_tokens": 670347
+      },
+      "all_counted": true,
+      "fixture_start": "eea7258510fde9f2b109125588723043ea67d5d6",
+      "fixture_end": "81b864118e105df08e0e223eaf26c8c19511b49b",
+      "changed": [],
+      "local_commit_paths": [
+        "src/order.py"
+      ]
+    },
+    "linux-regression/develop_resume": {
+      "exit": 0,
+      "start": "2026-11-14T23:12:52+08:00",
+      "end": "2026-11-14T23:17:03+08:00",
+      "process_seconds": 230.552,
+      "session_usage_by_actor": {
+        "01a1da9e-5936-7363-815a-4e08665bbb4a": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 981179,
+            "cached_input_tokens": 909440,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2246,
+            "reasoning_output_tokens": 151,
+            "total_tokens": 983425
+          },
+          "trace": "sessions/rollout-2026-11-14T23-12-54-01a1da9e-5936-7363-815a-4e08665bbb4a.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9e-dcfd-7312-955a-1a09cbcac16d": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9e-5936-7363-815a-4e08665bbb4a",
+                "depth": 1,
+                "agent_path": "/root/develop_order004",
+                "agent_nickname": "Meitner",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 1141615,
+            "cached_input_tokens": 1094912,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 6109,
+            "reasoning_output_tokens": 494,
+            "total_tokens": 1147724
+          },
+          "trace": "sessions/rollout-2026-11-14T23-13-26-01a1da9e-dcfd-7312-955a-1a09cbcac16d.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9f-4c33-7322-877e-c040e52b12fb": {
+          "role": "sdd-coder",
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9e-dcfd-7312-955a-1a09cbcac16d",
+                "depth": 2,
+                "agent_path": "/root/develop_order004/implement",
+                "agent_nickname": "Leibniz",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 463792,
+            "cached_input_tokens": 433280,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 5355,
+            "reasoning_output_tokens": 132,
+            "total_tokens": 469147
+          },
+          "trace": "sessions/rollout-2026-11-14T23-13-55-01a1da9f-4c33-7322-877e-c040e52b12fb.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 2586586,
+        "cached_input_tokens": 2437632,
+        "output_tokens": 13710,
+        "reasoning_output_tokens": 777,
+        "total_tokens": 2600296
+      },
+      "all_counted": true,
+      "fixture_start": "7943f41f342ca7e11011db7b65f644e2bbb96f23",
+      "fixture_end": "7943f41f342ca7e11011db7b65f644e2bbb96f23",
+      "changed": [
+        "checks/acceptance.py",
+        "docs/order-plan.md",
+        "docs/order-work-order.md",
+        "specs/order/quickstart.md",
+        "src/order_service.py",
+        "tests/test_order.py"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-regression/refactor_then_integration": {
+      "exit": 0,
+      "start": "2026-11-14T23:11:57+08:00",
+      "end": "2026-11-14T23:23:01+08:00",
+      "process_seconds": 607.939,
+      "session_usage_by_actor": {
+        "01a1da9d-952b-75f3-b803-ce1b146ffe03": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 1447196,
+            "cached_input_tokens": 1406976,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 3483,
+            "reasoning_output_tokens": 232,
+            "total_tokens": 1450679
+          },
+          "trace": "sessions/rollout-2026-11-14T23-12-04-01a1da9d-952b-75f3-b803-ce1b146ffe03.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9d-fcd3-7201-87d2-70adba878bc5": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9d-952b-75f3-b803-ce1b146ffe03",
+                "depth": 1,
+                "agent_path": "/root/payment_refactor",
+                "agent_nickname": "Mencius",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 1665821,
+            "cached_input_tokens": 1616256,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 8380,
+            "reasoning_output_tokens": 342,
+            "total_tokens": 1674201
+          },
+          "trace": "sessions/rollout-2026-11-14T23-12-29-01a1da9d-fcd3-7201-87d2-70adba878bc5.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9e-44d7-72d2-9dfc-ddcd051a466d": {
+          "role": "sdd-architect",
+          "model": "gpt-6-astra",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9d-fcd3-7201-87d2-70adba878bc5",
+                "depth": 2,
+                "agent_path": "/root/payment_refactor/payment_architect",
+                "agent_nickname": "Singer",
+                "agent_role": "sdd-architect"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 286133,
+            "cached_input_tokens": 249472,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2879,
+            "reasoning_output_tokens": 18,
+            "total_tokens": 289012
+          },
+          "trace": "sessions/rollout-2026-11-14T23-12-47-01a1da9e-44d7-72d2-9dfc-ddcd051a466d.jsonl",
+          "observed_role_instructions_sha": "7d516d4c6ce2683efd674a3a62c93c70448b92523b45a60941efd8fc8fe97c96",
+          "identity_count_in_trace": 1
+        },
+        "01a1daa0-103b-74f0-99ce-5c44de465d4f": {
+          "role": "sdd-coder",
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9d-fcd3-7201-87d2-70adba878bc5",
+                "depth": 2,
+                "agent_path": "/root/payment_refactor/payment_coder",
+                "agent_nickname": "Poincare",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 179522,
+            "cached_input_tokens": 157312,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 3654,
+            "reasoning_output_tokens": 220,
+            "total_tokens": 183176
+          },
+          "trace": "sessions/rollout-2026-11-14T23-14-45-01a1daa0-103b-74f0-99ce-5c44de465d4f.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa3-157b-7012-952f-9e75d31da4ae": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9d-952b-75f3-b803-ce1b146ffe03",
+                "depth": 1,
+                "agent_path": "/root/order_integration",
+                "agent_nickname": "Euler",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 498367,
+            "cached_input_tokens": 470016,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 12052,
+            "reasoning_output_tokens": 514,
+            "total_tokens": 510419
+          },
+          "trace": "sessions/rollout-2026-11-14T23-18-03-01a1daa3-157b-7012-952f-9e75d31da4ae.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 4077039,
+        "cached_input_tokens": 3900032,
+        "output_tokens": 30448,
+        "reasoning_output_tokens": 1326,
+        "total_tokens": 4107487
+      },
+      "all_counted": true,
+      "fixture_start": "7a90ae57739b7ae93b554e0bd409259ab949a51e",
+      "fixture_end": "7a90ae57739b7ae93b554e0bd409259ab949a51e",
+      "changed": [
+        "docs/index.md",
+        "docs/issues/BUG-001.md",
+        "docs/test-reports/order/integration.md",
+        "docs/test-reports/order/payment-plan.md",
+        "docs/test-reports/order/payment-review.md",
+        "specs/order/quickstart.md",
+        "src/ui.py",
+        "tests/test_order.py"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-regression/review_prompt_compare": {
+      "exit": 0,
+      "start": "2026-11-14T23:17:04+08:00",
+      "end": "2026-11-14T23:18:17+08:00",
+      "process_seconds": 67.092,
+      "session_usage_by_actor": {
+        "01a1daa2-2fc3-7242-830a-7e3e317909e1": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 90814,
+            "cached_input_tokens": 80512,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 755,
+            "reasoning_output_tokens": 20,
+            "total_tokens": 91569
+          },
+          "trace": "sessions/rollout-2026-11-14T23-17-05-01a1daa2-2fc3-7242-830a-7e3e317909e1.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa2-5912-7ef1-94db-eb274a7e55ac": {
+          "role": "review-prompt",
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa2-2fc3-7242-830a-7e3e317909e1",
+                "depth": 1,
+                "agent_path": "/root/refund_prompt_review",
+                "agent_nickname": "Popper",
+                "agent_role": "review-prompt"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 89076,
+            "cached_input_tokens": 54016,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1440,
+            "reasoning_output_tokens": 129,
+            "total_tokens": 90516
+          },
+          "trace": "sessions/rollout-2026-11-14T23-17-15-01a1daa2-5912-7ef1-94db-eb274a7e55ac.jsonl",
+          "observed_role_instructions_sha": "87112509fc93378290b3797beb14b7b122ea0852e596ea8346278ca412e08777",
+          "identity_count_in_trace": 2
+        }
+      },
+      "usage": {
+        "input_tokens": 179890,
+        "cached_input_tokens": 134528,
+        "output_tokens": 2195,
+        "reasoning_output_tokens": 149,
+        "total_tokens": 182085
+      },
+      "all_counted": true,
+      "fixture_start": "8aecdf9219ed04526d2083f6485cd103c7356e86",
+      "fixture_end": "8aecdf9219ed04526d2083f6485cd103c7356e86",
+      "changed": [],
+      "local_commit_paths": []
+    },
+    "linux-regression/role_architect": {
+      "exit": 0,
+      "start": "2026-11-14T23:10:34+08:00",
+      "end": "2026-11-14T23:12:09+08:00",
+      "process_seconds": 87.1,
+      "session_usage_by_actor": {
+        "01a1da9c-3ee8-7420-a136-c0713b0d8ccf": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 109401,
+            "cached_input_tokens": 83712,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 627,
+            "reasoning_output_tokens": 60,
+            "total_tokens": 110028
+          },
+          "trace": "sessions/rollout-2026-11-14T23-10-38-01a1da9c-3ee8-7420-a136-c0713b0d8ccf.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9c-7d4f-76f0-a902-154f44d44fee": {
+          "role": "sdd-architect",
+          "model": "gpt-6-astra",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9c-3ee8-7420-a136-c0713b0d8ccf",
+                "depth": 1,
+                "agent_path": "/root/architecture_update",
+                "agent_nickname": "Aquinas",
+                "agent_role": "sdd-architect"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 264735,
+            "cached_input_tokens": 225280,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1878,
+            "reasoning_output_tokens": 96,
+            "total_tokens": 266613
+          },
+          "trace": "sessions/rollout-2026-11-14T23-10-51-01a1da9c-7d4f-76f0-a902-154f44d44fee.jsonl",
+          "observed_role_instructions_sha": "7d516d4c6ce2683efd674a3a62c93c70448b92523b45a60941efd8fc8fe97c96",
+          "identity_count_in_trace": 2
+        }
+      },
+      "usage": {
+        "input_tokens": 374136,
+        "cached_input_tokens": 308992,
+        "output_tokens": 2505,
+        "reasoning_output_tokens": 156,
+        "total_tokens": 376641
+      },
+      "all_counted": true,
+      "fixture_start": "10a6b4d0d26ec161480e2154262bacb1a78a6824",
+      "fixture_end": "10a6b4d0d26ec161480e2154262bacb1a78a6824",
+      "changed": [
+        "docs/blueprint.md",
+        "docs/create-sequence.md"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-regression/role_coder": {
+      "exit": 0,
+      "start": "2026-11-14T23:10:34+08:00",
+      "end": "2026-11-14T23:13:33+08:00",
+      "process_seconds": 166.805,
+      "session_usage_by_actor": {
+        "01a1da9c-3f3f-7153-8ca3-d96399a46570": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 280222,
+            "cached_input_tokens": 226432,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1105,
+            "reasoning_output_tokens": 81,
+            "total_tokens": 281327
+          },
+          "trace": "sessions/rollout-2026-11-14T23-10-37-01a1da9c-3f3f-7153-8ca3-d96399a46570.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9c-9791-7a02-91b9-492c4eda4269": {
+          "role": "sdd-coder",
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9c-3f3f-7153-8ca3-d96399a46570",
+                "depth": 1,
+                "agent_path": "/root/order_id_coder",
+                "agent_nickname": "Newton",
+                "agent_role": "sdd-coder"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 418984,
+            "cached_input_tokens": 369792,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 5041,
+            "reasoning_output_tokens": 232,
+            "total_tokens": 424025
+          },
+          "trace": "sessions/rollout-2026-11-14T23-10-57-01a1da9c-9791-7a02-91b9-492c4eda4269.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 699206,
+        "cached_input_tokens": 596224,
+        "output_tokens": 6146,
+        "reasoning_output_tokens": 313,
+        "total_tokens": 705352
+      },
+      "all_counted": true,
+      "fixture_start": "17f9ff86b111f93d15c0612b03d268bfaf44b039",
+      "fixture_end": "17f9ff86b111f93d15c0612b03d268bfaf44b039",
+      "changed": [
+        "docs/order-id-plan.md",
+        "src/order_service.py",
+        "tests/test_order.py"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-regression/role_devops": {
+      "exit": 0,
+      "start": "2026-11-14T23:10:34+08:00",
+      "end": "2026-11-14T23:11:53+08:00",
+      "process_seconds": 75.341,
+      "session_usage_by_actor": {
+        "01a1da9c-3f1f-7621-8e23-2190a37df4cd": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 159594,
+            "cached_input_tokens": 132480,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 749,
+            "reasoning_output_tokens": 59,
+            "total_tokens": 160343
+          },
+          "trace": "sessions/rollout-2026-11-14T23-10-38-01a1da9c-3f1f-7621-8e23-2190a37df4cd.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9c-96e8-7943-991b-50edd7a97bd9": {
+          "role": "sdd-devops",
+          "model": "gpt-6.1-terra",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9c-3f1f-7621-8e23-2190a37df4cd",
+                "depth": 1,
+                "agent_path": "/root/local_delivery",
+                "agent_nickname": "Cicero",
+                "agent_role": "sdd-devops"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 320611,
+            "cached_input_tokens": 291712,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1737,
+            "reasoning_output_tokens": 101,
+            "total_tokens": 322348
+          },
+          "trace": "sessions/rollout-2026-11-14T23-10-57-01a1da9c-96e8-7943-991b-50edd7a97bd9.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 2
+        }
+      },
+      "usage": {
+        "input_tokens": 480205,
+        "cached_input_tokens": 424192,
+        "output_tokens": 2486,
+        "reasoning_output_tokens": 160,
+        "total_tokens": 482691
+      },
+      "all_counted": true,
+      "fixture_start": "1992097391c603c26da71d76cd2462452bd22c4c",
+      "fixture_end": "9df5914bab2862e0e717f09f56c7c393d35622ce",
+      "changed": [
+        "docs/delivery-result.md"
+      ],
+      "local_commit_paths": [
+        "ops/rollout.txt"
+      ]
+    },
+    "linux-regression/role_doc_consistency": {
+      "exit": 0,
+      "start": "2026-11-14T23:10:34+08:00",
+      "end": "2026-11-14T23:12:18+08:00",
+      "process_seconds": 95.973,
+      "session_usage_by_actor": {
+        "01a1da9c-3ef2-73a3-b9dc-7d52aa45e441": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 251923,
+            "cached_input_tokens": 230912,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2028,
+            "reasoning_output_tokens": 211,
+            "total_tokens": 253951
+          },
+          "trace": "sessions/rollout-2026-11-14T23-10-38-01a1da9c-3ef2-73a3-b9dc-7d52aa45e441.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9c-b183-7413-b813-f959d0c5cbf3": {
+          "role": "sdd-doc-consistency",
+          "model": "gpt-6.1-terra",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9c-3ef2-73a3-b9dc-7d52aa45e441",
+                "depth": 1,
+                "agent_path": "/root/retry_doc_review",
+                "agent_nickname": "Halley",
+                "agent_role": "sdd-doc-consistency"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 155898,
+            "cached_input_tokens": 134400,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1821,
+            "reasoning_output_tokens": 59,
+            "total_tokens": 157719
+          },
+          "trace": "sessions/rollout-2026-11-14T23-11-04-01a1da9c-b183-7413-b813-f959d0c5cbf3.jsonl",
+          "observed_role_instructions_sha": "7e063245b5e628f1d739bd2b70c6223340e498a29f02d4984b037b2b40f047d5",
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 407821,
+        "cached_input_tokens": 365312,
+        "output_tokens": 3849,
+        "reasoning_output_tokens": 270,
+        "total_tokens": 411670
+      },
+      "all_counted": true,
+      "fixture_start": "82f5f7b57d53887d115d51f55dd36f49425fa7d2",
+      "fixture_end": "82f5f7b57d53887d115d51f55dd36f49425fa7d2",
+      "changed": [],
+      "local_commit_paths": []
+    },
+    "linux-regression/role_product_manager": {
+      "exit": 0,
+      "start": "2026-11-14T23:10:35+08:00",
+      "end": "2026-11-14T23:12:48+08:00",
+      "process_seconds": 124.136,
+      "session_usage_by_actor": {
+        "01a1da9c-3fec-79d1-8fa6-e00c2babd694": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 206036,
+            "cached_input_tokens": 185344,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 916,
+            "reasoning_output_tokens": 61,
+            "total_tokens": 206952
+          },
+          "trace": "sessions/rollout-2026-11-14T23-10-37-01a1da9c-3fec-79d1-8fa6-e00c2babd694.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1da9c-7ada-7700-88eb-221e7505715d": {
+          "role": "sdd-product-manager",
+          "model": "gpt-6-astra",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9c-3fec-79d1-8fa6-e00c2babd694",
+                "depth": 1,
+                "agent_path": "/root/product_manager",
+                "agent_nickname": "Mill",
+                "agent_role": "sdd-product-manager"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 290239,
+            "cached_input_tokens": 261760,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 3899,
+            "reasoning_output_tokens": 55,
+            "total_tokens": 294138
+          },
+          "trace": "sessions/rollout-2026-11-14T23-10-50-01a1da9c-7ada-7700-88eb-221e7505715d.jsonl",
+          "observed_role_instructions_sha": "7fec91b8e49d75a2d00f870413e1b160298f9ec87224af5fc4edd85762cded67",
+          "identity_count_in_trace": 2
+        }
+      },
+      "usage": {
+        "input_tokens": 496275,
+        "cached_input_tokens": 447104,
+        "output_tokens": 4815,
+        "reasoning_output_tokens": 116,
+        "total_tokens": 501090
+      },
+      "all_counted": true,
+      "fixture_start": "4d79dac8010e32e266b8f118cd23cc8e5570c2d6",
+      "fixture_end": "4d79dac8010e32e266b8f118cd23cc8e5570c2d6",
+      "changed": [
+        "specs/checklist/spec.md",
+        "tests/prototypes/checklist/personal/index.html"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-sim-confirmed/release-confirmed": {
+      "exit": 0,
+      "start": "2026-11-14T23:21:02+08:00",
+      "end": "2026-11-14T23:24:08+08:00",
+      "process_seconds": 169.826,
+      "session_usage_by_actor": {
+        "01a1daa5-d2b3-7002-8f90-1ae1f6929e2f": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 614204,
+            "cached_input_tokens": 572416,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1759,
+            "reasoning_output_tokens": 115,
+            "total_tokens": 615963
+          },
+          "trace": "sessions/rollout-2026-11-14T23-21-04-01a1daa5-d2b3-7002-8f90-1ae1f6929e2f.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa6-36ea-79b0-9847-f315ceac4177": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa5-d2b3-7002-8f90-1ae1f6929e2f",
+                "depth": 1,
+                "agent_path": "/root/delivery",
+                "agent_nickname": "Volta",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 871015,
+            "cached_input_tokens": 837504,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 4173,
+            "reasoning_output_tokens": 118,
+            "total_tokens": 875188
+          },
+          "trace": "sessions/rollout-2026-11-14T23-21-28-01a1daa6-36ea-79b0-9847-f315ceac4177.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa6-9b29-71b1-890e-1daa32c9c0f9": {
+          "role": "sdd-devops",
+          "model": "gpt-6.1-terra",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa6-36ea-79b0-9847-f315ceac4177",
+                "depth": 2,
+                "agent_path": "/root/delivery/devops",
+                "agent_nickname": "Boyle",
+                "agent_role": "sdd-devops"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 441225,
+            "cached_input_tokens": 416256,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 2827,
+            "reasoning_output_tokens": 120,
+            "total_tokens": 444052
+          },
+          "trace": "sessions/rollout-2026-11-14T23-21-54-01a1daa6-9b29-71b1-890e-1daa32c9c0f9.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 1926444,
+        "cached_input_tokens": 1826176,
+        "output_tokens": 8759,
+        "reasoning_output_tokens": 353,
+        "total_tokens": 1935203
+      },
+      "all_counted": true,
+      "fixture_start": "634de30a9b9a0413e36076d5c6d7ed95e3b03d33",
+      "fixture_end": "634de30a9b9a0413e36076d5c6d7ed95e3b03d33",
+      "changed": [
+        "docs/delivery/2.4.0.md",
+        "docs/index.md",
+        "ops/calls.jsonl",
+        "ops/data-check-evidence.json",
+        "ops/state.json"
+      ],
+      "local_commit_paths": []
+    },
+    "linux-sim-confirmed/rollback-confirmed": {
+      "exit": 0,
+      "start": "2026-11-14T23:21:02+08:00",
+      "end": "2026-11-14T23:24:08+08:00",
+      "process_seconds": 169.783,
+      "session_usage_by_actor": {
+        "01a1daa5-d1ab-7823-9973-802c2657ed1b": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": "exec",
+          "usage": {
+            "input_tokens": 446281,
+            "cached_input_tokens": 393600,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 1631,
+            "reasoning_output_tokens": 102,
+            "total_tokens": 447912
+          },
+          "trace": "sessions/rollout-2026-11-14T23-21-03-01a1daa5-d1ab-7823-9973-802c2657ed1b.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa6-38c8-7c70-a6a3-65ea8edc7d6e": {
+          "role": null,
+          "model": "gpt-6.1-sol",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa5-d1ab-7823-9973-802c2657ed1b",
+                "depth": 1,
+                "agent_path": "/root/inc619_delivery",
+                "agent_nickname": "Hubble",
+                "agent_role": null
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 571141,
+            "cached_input_tokens": 506880,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 3025,
+            "reasoning_output_tokens": 211,
+            "total_tokens": 574166
+          },
+          "trace": "sessions/rollout-2026-11-14T23-21-29-01a1daa6-38c8-7c70-a6a3-65ea8edc7d6e.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        },
+        "01a1daa6-c80d-70b0-9e99-3c0984f6ca49": {
+          "role": "sdd-devops",
+          "model": "gpt-6.1-terra",
+          "origin": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1daa6-38c8-7c70-a6a3-65ea8edc7d6e",
+                "depth": 2,
+                "agent_path": "/root/inc619_delivery/devops",
+                "agent_nickname": "Sagan",
+                "agent_role": "sdd-devops"
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 368791,
+            "cached_input_tokens": 340096,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 3120,
+            "reasoning_output_tokens": 81,
+            "total_tokens": 371911
+          },
+          "trace": "sessions/rollout-2026-11-14T23-22-05-01a1daa6-c80d-70b0-9e99-3c0984f6ca49.jsonl",
+          "observed_role_instructions_sha": null,
+          "identity_count_in_trace": 1
+        }
+      },
+      "usage": {
+        "input_tokens": 1386213,
+        "cached_input_tokens": 1240576,
+        "output_tokens": 7776,
+        "reasoning_output_tokens": 394,
+        "total_tokens": 1393989
+      },
+      "all_counted": true,
+      "fixture_start": "7711d487a4e83c3da1dc25fa26890b9ce910e0f2",
+      "fixture_end": "7711d487a4e83c3da1dc25fa26890b9ce910e0f2",
+      "changed": [
+        "docs/delivery/inc-619.md",
+        "docs/evidence/inc-619-execution.json",
+        "docs/index.md",
+        "ops/calls.jsonl",
+        "ops/state.json"
+      ],
+      "local_commit_paths": []
+    }
+  }
+}

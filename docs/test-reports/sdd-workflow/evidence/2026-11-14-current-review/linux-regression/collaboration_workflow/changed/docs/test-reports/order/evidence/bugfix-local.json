@@ -1,0 +1,164 @@
+{
+  "before_fix": {
+    "time": "2026-11-14T15:15:28.354788+00:00",
+    "head": "95cfcb31cf183d04b7ba1359a8dfe80d28608b00",
+    "python": "3.12.3",
+    "sqlite": "3.45.1",
+    "source_sha256": {
+      "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+      "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+      "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+      "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b"
+    },
+    "test_sha256": "e0f935213362b48d03a947d6c095b9af4aabd2eace9b6122dd4b8faca8560b14",
+    "command": "TMPDIR=\"$PWD/.local-tmp\" python -B -m unittest discover -s tests -v",
+    "tests_run": 7,
+    "success": false,
+    "failures": [
+      {
+        "test": "test_cancelled_submit_does_not_write_or_commit (test_order.OrderTests.test_cancelled_submit_does_not_write_or_commit)",
+        "traceback": "Traceback (most recent call last):\n  File \"/tmp/sdd-review-execution-t7u939o0/collaboration_workflow-01zoa138/prepared/project/tests/test_order.py\", line 39, in test_cancelled_submit_does_not_write_or_commit\n    self.assertIs(accepted, False)\nAssertionError: True is not False\n"
+      },
+      {
+        "test": "test_cancelled_submit_preserves_other_order_and_transaction (test_order.OrderTests.test_cancelled_submit_preserves_other_order_and_transaction)",
+        "traceback": "Traceback (most recent call last):\n  File \"/tmp/sdd-review-execution-t7u939o0/collaboration_workflow-01zoa138/prepared/project/tests/test_order.py\", line 47, in test_cancelled_submit_preserves_other_order_and_transaction\n    self.assertIs(order_service.submit_order(self.connection, \"ORDER-1\"), False)\nAssertionError: True is not False\n"
+      },
+      {
+        "test": "test_missing_order_raises_value_error (test_order.OrderTests.test_missing_order_raises_value_error) (operation='mark_paid')",
+        "traceback": "Traceback (most recent call last):\n  File \"/tmp/sdd-review-execution-t7u939o0/collaboration_workflow-01zoa138/prepared/project/tests/test_order.py\", line 71, in test_missing_order_raises_value_error\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n"
+      }
+    ],
+    "errors": [],
+    "output": "test_cancelled_submit_does_not_write_or_commit (test_order.OrderTests.test_cancelled_submit_does_not_write_or_commit) ... FAIL\ntest_cancelled_submit_preserves_other_order_and_transaction (test_order.OrderTests.test_cancelled_submit_preserves_other_order_and_transaction) ... FAIL\ntest_database_failure_propagates_and_recovers (test_order.OrderTests.test_database_failure_propagates_and_recovers) ... ok\ntest_mark_paid_from_all_existing_states (test_order.OrderTests.test_mark_paid_from_all_existing_states) ... ok\ntest_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_missing_order_raises_value_error (test_order.OrderTests.test_missing_order_raises_value_error) ... \n  test_missing_order_raises_value_error (test_order.OrderTests.test_missing_order_raises_value_error) (operation='mark_paid') ... FAIL\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\n\n======================================================================\nFAIL: test_cancelled_submit_does_not_write_or_commit (test_order.OrderTests.test_cancelled_submit_does_not_write_or_commit)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/sdd-review-execution-t7u939o0/collaboration_workflow-01zoa138/prepared/project/tests/test_order.py\", line 39, in test_cancelled_submit_does_not_write_or_commit\n    self.assertIs(accepted, False)\nAssertionError: True is not False\n\n======================================================================\nFAIL: test_cancelled_submit_preserves_other_order_and_transaction (test_order.OrderTests.test_cancelled_submit_preserves_other_order_and_transaction)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/sdd-review-execution-t7u939o0/collaboration_workflow-01zoa138/prepared/project/tests/test_order.py\", line 47, in test_cancelled_submit_preserves_other_order_and_transaction\n    self.assertIs(order_service.submit_order(self.connection, \"ORDER-1\"), False)\nAssertionError: True is not False\n\n======================================================================\nFAIL: test_missing_order_raises_value_error (test_order.OrderTests.test_missing_order_raises_value_error) (operation='mark_paid')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/sdd-review-execution-t7u939o0/collaboration_workflow-01zoa138/prepared/project/tests/test_order.py\", line 71, in test_missing_order_raises_value_error\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n\n----------------------------------------------------------------------\nRan 7 tests in 0.160s\n\nFAILED (failures=3)\n",
+    "diagnosis": {
+      "ORDER-001": {
+        "before_reopened": "cancelled",
+        "accepted": true,
+        "after_reopened": "submitted",
+        "other_order": "pending",
+        "sql": [
+          "SELECT status FROM orders WHERE order_id = 'A'",
+          "SELECT status FROM orders WHERE order_id = 'A'",
+          "BEGIN ",
+          "UPDATE orders SET status = 'submitted' WHERE order_id = 'A'",
+          "COMMIT"
+        ]
+      },
+      "ORDER-002": {
+        "missing_exception": null,
+        "sql": [
+          "BEGIN ",
+          "UPDATE orders SET status = 'paid' WHERE order_id = 'MISSING'",
+          "COMMIT"
+        ]
+      }
+    },
+    "command_exit_code": 1,
+    "evidence_capture": "Python unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.discover(\"tests\")); same suite as command; SQLite diagnosis traces collected via public src functions"
+  },
+  "after_fix": {
+    "time": "2026-11-14T15:16:14.117433+00:00",
+    "head": "95cfcb31cf183d04b7ba1359a8dfe80d28608b00",
+    "python": "3.12.3",
+    "sqlite": "3.45.1",
+    "source_sha256": {
+      "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+      "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+      "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+      "src/ui.py": "4a03e8d39ef106a5037404562a931aad9009a1bb579304daa15f820983de6909"
+    },
+    "source_stable_during_run": true,
+    "test_sha256": "e0f935213362b48d03a947d6c095b9af4aabd2eace9b6122dd4b8faca8560b14",
+    "command": "TMPDIR=\"$PWD/.local-tmp\" python -B -m unittest discover -s tests -v",
+    "evidence_capture": "Python unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.discover(\"tests\")); same suite as command; SQLite diagnosis traces collected via public src functions",
+    "command_exit_code": 0,
+    "tests_run": 7,
+    "success": true,
+    "output": "test_cancelled_submit_does_not_write_or_commit (test_order.OrderTests.test_cancelled_submit_does_not_write_or_commit) ... ok\ntest_cancelled_submit_preserves_other_order_and_transaction (test_order.OrderTests.test_cancelled_submit_preserves_other_order_and_transaction) ... ok\ntest_database_failure_propagates_and_recovers (test_order.OrderTests.test_database_failure_propagates_and_recovers) ... ok\ntest_mark_paid_from_all_existing_states (test_order.OrderTests.test_mark_paid_from_all_existing_states) ... ok\ntest_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_missing_order_raises_value_error (test_order.OrderTests.test_missing_order_raises_value_error) ... ok\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.129s\n\nOK\n",
+    "failures": [],
+    "errors": [],
+    "diagnosis": {
+      "ORDER-001": {
+        "accepted": false,
+        "after_reopened": "cancelled",
+        "other_order": "pending",
+        "changed_rows": 0,
+        "sql": [
+          "SELECT status FROM orders WHERE order_id = 'A'"
+        ]
+      },
+      "ORDER-002": {
+        "missing_exception": "ValueError",
+        "sql": [
+          "SELECT status FROM orders WHERE order_id = 'MISSING'"
+        ]
+      }
+    },
+    "working_tree": {
+      "kind": "uncommitted changes on head; source hashes identify tested snapshot",
+      "status": " M docs/index.md\n M specs/order/quickstart.md\n M src/order_service.py\n M src/ui.py\n M tests/test_order.py\n?? checks/integration.py\n?? docs/issues/\n?? docs/plans/\n?? docs/test-reports/\n",
+      "implementation_diff": "diff --git a/src/order_service.py b/src/order_service.py\nindex c755580..89b08b2 100644\n--- a/src/order_service.py\n+++ b/src/order_service.py\n@@ -26,6 +26,7 @@ def cancel_order(connection, order_id):\n \n \n def submit_order(connection, order_id):\n-    read_status(connection, order_id)\n+    if read_status(connection, order_id) == \"cancelled\":\n+        return False\n     set_status(connection, order_id, \"submitted\")\n     return True\ndiff --git a/src/ui.py b/src/ui.py\nindex 6506458..70b6e08 100644\n--- a/src/ui.py\n+++ b/src/ui.py\n@@ -1,6 +1,7 @@\n \"\"\"UI adapter surface in the evaluation fixture (there is no graphical UI).\"\"\"\n \n+from . import order_service\n+\n \n def mark_paid(connection, order_id):\n-    connection.execute(\"UPDATE orders SET status = ? WHERE order_id = ?\", (\"paid\", order_id))\n-    connection.commit()\n+    order_service.set_status(connection, order_id, \"paid\")\ndiff --git a/tests/test_order.py b/tests/test_order.py\nindex 2294e99..d5f7ee5 100644\n--- a/tests/test_order.py\n+++ b/tests/test_order.py\n@@ -2,6 +2,7 @@\n from pathlib import Path\n import tempfile\n import unittest\n+import sqlite3\n \n from src import order_service, storage, ui\n \n@@ -18,6 +19,75 @@ class OrderTests(unittest.TestCase):\n     def test_normal_submit(self):\n         self.assertTrue(order_service.submit_order(self.connection, \"ORDER-1\"))\n         self.assertEqual(order_service.read_status(self.connection, \"ORDER-1\"), \"submitted\")\n+        self.assert_persisted(\"ORDER-1\", \"submitted\")\n+\n+    def assert_persisted(self, order_id, status):\n+        other = storage.connect(self.path)\n+        try:\n+            self.assertEqual(order_service.read_status(other, order_id), status)\n+        finally:\n+            other.close()\n+\n+    def test_cancelled_submit_does_not_write_or_commit(self):\n+        order_service.cancel_order(self.connection, \"ORDER-1\")\n+        self.assert_persisted(\"ORDER-1\", \"cancelled\")\n+        statements = []\n+        self.connection.set_trace_callback(statements.append)\n+        before = self.connection.total_changes\n+        accepted = order_service.submit_order(self.connection, \"ORDER-1\")\n+        self.connection.set_trace_callback(None)\n+        self.assertIs(accepted, False)\n+        self.assertEqual(self.connection.total_changes, before)\n+        self.assertFalse(any(sql.lstrip().upper().startswith((\"UPDATE\", \"COMMIT\")) for sql in statements), statements)\n+        self.assert_persisted(\"ORDER-1\", \"cancelled\")\n+\n+    def test_cancelled_submit_preserves_other_order_and_transaction(self):\n+        order_service.cancel_order(self.connection, \"ORDER-1\")\n+        self.connection.execute(\"INSERT INTO orders VALUES (?, ?)\", (\"ORDER-2\", \"pending\"))\n+        self.assertIs(order_service.submit_order(self.connection, \"ORDER-1\"), False)\n+        self.assertTrue(self.connection.in_transaction)\n+        self.connection.rollback()\n+        with self.assertRaises(ValueError):\n+            order_service.read_status(self.connection, \"ORDER-2\")\n+        self.assert_persisted(\"ORDER-1\", \"cancelled\")\n+\n+    def test_mark_paid_from_all_existing_states(self):\n+        for before in (\"pending\", \"submitted\", \"cancelled\"):\n+            with self.subTest(before=before):\n+                order_service.set_status(self.connection, \"ORDER-1\", before)\n+                ui.mark_paid(self.connection, \"ORDER-1\")\n+                self.assert_persisted(\"ORDER-1\", \"paid\")\n+\n+    def test_missing_order_raises_value_error(self):\n+        operations = (\n+            order_service.read_status,\n+            order_service.cancel_order,\n+            order_service.submit_order,\n+            lambda connection, order_id: order_service.set_status(connection, order_id, \"paid\"),\n+            ui.mark_paid,\n+        )\n+        for operation in operations:\n+            with self.subTest(operation=operation.__name__):\n+                with self.assertRaises(ValueError):\n+                    operation(self.connection, \"MISSING\")\n+\n+    def test_database_failure_propagates_and_recovers(self):\n+        self.connection.execute(\"PRAGMA query_only = ON\")\n+        operations = (\n+            lambda connection, order_id: order_service.create_order(connection, \"ORDER-2\"),\n+            order_service.cancel_order,\n+            order_service.submit_order,\n+            lambda connection, order_id: order_service.set_status(connection, order_id, \"paid\"),\n+            ui.mark_paid,\n+        )\n+        for operation in operations:\n+            with self.subTest(operation=operation.__name__):\n+                with self.assertRaises(sqlite3.OperationalError):\n+                    operation(self.connection, \"ORDER-1\")\n+                self.assert_persisted(\"ORDER-1\", \"pending\")\n+        self.connection.execute(\"PRAGMA query_only = OFF\")\n+        self.assertIs(order_service.submit_order(self.connection, \"ORDER-1\"), True)\n+        self.assert_persisted(\"ORDER-1\", \"submitted\")\n \n     def test_mark_paid_is_persisted(self):\n         ui.mark_paid(self.connection, \"ORDER-1\")\n",
+      "final_status_at_handoff": " M docs/index.md\n M specs/order/quickstart.md\n M src/order_service.py\n M src/ui.py\n M tests/test_order.py\n?? checks/integration.py\n?? docs/issues/\n?? docs/plans/\n?? docs/test-reports/\n",
+      "source_still_matches_tested_snapshot": true
+    },
+    "covered_criteria": [
+      "ORDER-001/AC-2 false, cancelled persisted and no UPDATE/COMMIT",
+      "ORDER-001 no unrelated transaction commit or other order mutation",
+      "ORDER-002 missing ValueError across five public operations",
+      "AC-1 submitted persisted after reopen",
+      "PAID-1/2/3 pending/submitted/cancelled to paid persisted",
+      "DB-1 sqlite OperationalError propagation and unchanged persistent state across five mutations",
+      "RECOVERY-1 submit succeeds after query_only disabled"
+    ],
+    "pending_independent": [
+      "Complete integration against original Issue acceptance plans",
+      "Architecture CHK-001/CR-001/ARC-1 and CHK-005 recheck",
+      "AC-3 blocked: external endpoint/permission absent; no external calls"
+    ],
+    "runtime": {
+      "database": "temporary SQLite files inside cwd/.local-tmp",
+      "network_access": false
+    }
+  },
+  "cause_assessment": {
+    "ORDER-001": {
+      "confirmed": "submit_order ignores returned status and unconditionally calls set_status(submitted)",
+      "excluded_candidates": {
+        "cancel_not_persisted": "before_fix reopened state was cancelled",
+        "read_or_reopen_fault": "before_fix SQL trace shows two SELECTs then UPDATE submitted and COMMIT; reopened state equals actual write",
+        "wrong_order_filter": "trace WHERE order_id = A; second order B remained pending"
+      }
+    },
+    "ORDER-002": {
+      "confirmed": "ui.mark_paid directly updates then commits without checking row existence; service set_status already validates with read_status",
+      "excluded_candidates": {
+        "missing_creation_or_db_exception": "baseline missing trace shows UPDATE missing and COMMIT without exception, so no database error suppressed",
+        "common_service_validation_fault": "baseline missing regression passes read_status/cancel_order/submit_order/set_status; only mark_paid fails"
+      }
+    },
+    "fix": "cancelled returns before write; adapter delegates existing set_status(paid), preserving exceptions and persistence"
+  },
+  "document_check": {
+    "command": [
+      "python",
+      "-B",
+      ".agents/skills/sdd-workflow/sdd/scripts/doc_check.py",
+      "--root",
+      ".",
+      "docs/plans/order-bugfix/plan.md"
+    ],
+    "exit_code": 0,
+    "stdout": "Checked 1 Markdown files: 0 errors, 0 warnings (mechanical only)\n",
+    "stderr": "",
+    "scope": [
+      "docs/plans/order-bugfix/plan.md"
+    ],
+    "semantic_assessment": "Read back Plan: original Issue/Spec/contract and CHK-001/CHK-005 references preserved; same T001 complete with baseline failure and retest evidence; independent integration and Review retained as follow-up; no changed requirements."
+  },
+  "diff_check": {
+    "command": "git diff --check",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}

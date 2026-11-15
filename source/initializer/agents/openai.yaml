@@ -1,4 +1,5 @@
 interface:
   display_name: "sdd-init"
+  short_description: "接入、升级、重连、恢复或检查 SDD 工作流"
 policy:
   allow_implicit_invocation: true

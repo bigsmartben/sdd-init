@@ -1,0 +1,22 @@
+[
+  {
+    "timestamp_utc": "2026-11-14T15:14:08.888Z",
+    "source": "/root/order_review",
+    "recipient": "/root/order_bugfix",
+    "parent_id": "01a1da9c-4596-76e1-9580-fb8544a482aa",
+    "call_id": "call_951c101a81044d0aba8d9603f1060810",
+    "tool_result_recorded": true,
+    "trace": "linux-regression/collaboration_workflow/sessions/rollout-2026-11-14T23-11-26-01a1da9d-0858-7c73-9fea-ae4cbe5f700e.jsonl",
+    "trace_line": 27
+  },
+  {
+    "timestamp_utc": "2026-11-14T15:15:51.371Z",
+    "source": "/root/order_bugfix",
+    "recipient": "/root/order_review",
+    "parent_id": "01a1da9c-4596-76e1-9580-fb8544a482aa",
+    "call_id": "call_e707b2f431414347ad0b9db795867ad7",
+    "tool_result_recorded": true,
+    "trace": "linux-regression/collaboration_workflow/sessions/rollout-2026-11-14T23-13-23-01a1da9e-d0d7-7343-a981-901ca6aae97d.jsonl",
+    "trace_line": 49
+  }
+]

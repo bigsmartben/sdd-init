@@ -1,0 +1,22 @@
+{
+  "scope": "documentation migration and template smoke; not model behavior or full workflow review",
+  "rw_subitems_unchanged": 36,
+  "design_rows_unchanged": 11,
+  "existing_report_files_unchanged": 83,
+  "changed_existing_files": [
+    "README.md",
+    "docs/blueprint.md",
+    "docs/index.md",
+    "docs/sdd-workflow-whitepaper.md",
+    "tests/fixtures/skill-behavior/cases.json",
+    "tests/fixtures/skill-behavior/README.md",
+    "tests/fixtures/skill-behavior/projects/workflow-review/docs/sdd-workflow-whitepaper.md",
+    "specs/platform-independent-sdd/spec.md",
+    ".agents/skills/sdd-workflow-review/SKILL.md"
+  ],
+  "whitepaper_before_sha256": "d277c42ba0914ff2d60c66541850bb69aa1a51e8bfa7121494e036e8b696af8c",
+  "fixture_protected_files_unchanged": 15,
+  "fixture_loading_exit_code": 0,
+  "fixture_model_execution": "UNVERIFIED",
+  "temporary_workspace": "C:\\Users\\24598\\AppData\\Local\\Temp\\sdd-review-division-ufxixi26"
+}

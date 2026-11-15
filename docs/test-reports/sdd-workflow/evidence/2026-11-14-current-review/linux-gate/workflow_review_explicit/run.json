@@ -1,0 +1,109 @@
+{
+  "start": "2026-11-14T23:04:41+08:00",
+  "end": "2026-11-14T23:09:04+08:00",
+  "seconds": 239.901,
+  "exit": 0,
+  "case": "workflow_review_explicit",
+  "permission_profile": "fixture-write",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "before": {
+    ".agents/skills/sdd-workflow-review/SKILL.md": "d7e2c20f2ac93415db526e33fccdf8f62d9bd9c7a8349c2d2e85ba396dc1458c",
+    ".agents/skills/sdd-workflow-review/agents/openai.yaml": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+    ".agents/skills/sdd-workflow-review/assets/review-report-template.md": "233736f843a45207c89715d44248423fb471a16844cefc7cd3c1a930bbaaff7d",
+    ".agents/skills/sdd-workflow-review/assets/whitepaper-template.md": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+    ".agents/skills/sdd-workflow-review/references/evidence-and-cost.md": "fc7d2c15e6f665c6db8b3b2f459ae73ca5f4c2ac6614cc09bd3ef2270d7dd617",
+    ".agents/skills/sdd-workflow-review/references/review-criteria.md": "7a6d787a47ccca7f479a7198fd27a93e601efab2bc00d4e43719ad435480a15a",
+    ".codex/agents/review-prompt.toml": "87112509fc93378290b3797beb14b7b122ea0852e596ea8346278ca412e08777",
+    ".codex/config.toml": "c7c7581c1f27c5b74cb9178ff61e58ef87f020d16823005127404f19a1ecab6e",
+    "TASK.txt": "3e952ea0573644c23029c972e39cd352fa68261f195e537b478efd420cce3c41",
+    "checks/load_guidance.py": "c2f88b5260f95cfa8d5c127f8043ec62d0ed9138b84573ecdfe958d47a089471",
+    "config/service.toml": "634a7586e96c11fefd44a5eb65ca4eb682ad8817baea7fa56893f0817edd3f76",
+    "docs/review-criteria.md": "57fe8a82754897ae792713423a63eb07a8016c3edb0488ce67be22d742f88d83",
+    "docs/sdd-workflow-whitepaper.md": "1bc4dfefc5879bda0468b0089d1d598ae5562be19c81164e334327de024cb808",
+    "docs/test-reports/sdd-workflow/README.md": "1e7616fb45c417f047c6d63da1698734811334de4cdc2cb9fb7bc4bbc7d682df",
+    "guidance/main.md": "926eec4f95c7692645b2f1f0bff7ec2bef96a69aa365fa63210c508b98e51da6",
+    "guidance/prompt.md": "09a185885c0307cf4b3fcf14ff149ae64c846a3c6a21734832eb57647498f2cd",
+    "specs/platform-independent-sdd/spec.md": "292280e5641fa892cbd5b4d1a71130bffd86541e4c83ff36612f54559f71fa44"
+  },
+  "after": {
+    ".agents/skills/sdd-workflow-review/SKILL.md": "d7e2c20f2ac93415db526e33fccdf8f62d9bd9c7a8349c2d2e85ba396dc1458c",
+    ".agents/skills/sdd-workflow-review/agents/openai.yaml": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+    ".agents/skills/sdd-workflow-review/assets/review-report-template.md": "233736f843a45207c89715d44248423fb471a16844cefc7cd3c1a930bbaaff7d",
+    ".agents/skills/sdd-workflow-review/assets/whitepaper-template.md": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+    ".agents/skills/sdd-workflow-review/references/evidence-and-cost.md": "fc7d2c15e6f665c6db8b3b2f459ae73ca5f4c2ac6614cc09bd3ef2270d7dd617",
+    ".agents/skills/sdd-workflow-review/references/review-criteria.md": "7a6d787a47ccca7f479a7198fd27a93e601efab2bc00d4e43719ad435480a15a",
+    ".codex/agents/review-prompt.toml": "87112509fc93378290b3797beb14b7b122ea0852e596ea8346278ca412e08777",
+    ".codex/config.toml": "c7c7581c1f27c5b74cb9178ff61e58ef87f020d16823005127404f19a1ecab6e",
+    "TASK.txt": "3e952ea0573644c23029c972e39cd352fa68261f195e537b478efd420cce3c41",
+    "checks/load_guidance.py": "c2f88b5260f95cfa8d5c127f8043ec62d0ed9138b84573ecdfe958d47a089471",
+    "config/service.toml": "634a7586e96c11fefd44a5eb65ca4eb682ad8817baea7fa56893f0817edd3f76",
+    "docs/review-criteria.md": "57fe8a82754897ae792713423a63eb07a8016c3edb0488ce67be22d742f88d83",
+    "docs/sdd-workflow-whitepaper.md": "1bc4dfefc5879bda0468b0089d1d598ae5562be19c81164e334327de024cb808",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/assembly-check.json": "5253b8ca03d1a76992bed24ce7b55c41786d98a90d7389f75850ffb2618209d9",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/final-integrity.json": "c2534fd943ff6716a7b0335603b076085f6825772c0d19380691001d74a6a93d",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/report.md": "fb7f7026e634fde99ed690e647cd0281ea192fcac26bf0848c8ff7eb7b7069b9",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/review-prompt-receipt.md": "3eb52a706d6bc3a0525e01902a2af5be9973c9f7e8c2a250716210e46563ef28",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/snapshot.json": "357189700c3e17b46434d25ebb157b592d33a9a1823d55933598c14b3703ad16",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/snapshot.sha256": "c086a1127e9e33ba83397343bdb197c5d6ed37ce7360a5136f28575c9a8ad8b0",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/source-evidence.txt": "a9739ea7cbad04f536e5de0d7a1eca7819921cf2ec9eaf1b2cc099cd6dd35e9b",
+    "docs/test-reports/sdd-workflow/README.md": "1e7616fb45c417f047c6d63da1698734811334de4cdc2cb9fb7bc4bbc7d682df",
+    "guidance/main.md": "926eec4f95c7692645b2f1f0bff7ec2bef96a69aa365fa63210c508b98e51da6",
+    "guidance/prompt.md": "09a185885c0307cf4b3fcf14ff149ae64c846a3c6a21734832eb57647498f2cd",
+    "specs/platform-independent-sdd/spec.md": "292280e5641fa892cbd5b4d1a71130bffd86541e4c83ff36612f54559f71fa44"
+  },
+  "changed": [
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/assembly-check.json",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/final-integrity.json",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/report.md",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/review-prompt-receipt.md",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/snapshot.json",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/snapshot.sha256",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/source-evidence.txt"
+  ],
+  "base_commit": "20aa8f7fbf9ec965b09c89aeffa5fdc81928e3bc",
+  "head_after": "20aa8f7fbf9ec965b09c89aeffa5fdc81928e3bc",
+  "commit_paths": [],
+  "git_before": "",
+  "git_after": "?? docs/test-reports/sdd-workflow/2026-11-14-minimal-review/",
+  "sessions": [
+    {
+      "identity": {
+        "id": "01a1da96-d8fc-7400-8d12-49ed46ab7d1b",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 353072,
+        "cached_input_tokens": 327680,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10519,
+        "reasoning_output_tokens": 235,
+        "total_tokens": 363591
+      },
+      "records": 28,
+      "trace": "sessions/01a1da96-d8fc-7400-8d12-49ed46ab7d1b.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1da96-d8fc-7400-8d12-49ed46ab7d1b",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 126069,
+        "cached_input_tokens": 121472,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1588,
+        "reasoning_output_tokens": 18,
+        "total_tokens": 127657
+      },
+      "records": 19,
+      "trace": "sessions/01a1da96-d8fc-7400-8d12-49ed46ab7d1b.jsonl"
+    }
+  ]
+}

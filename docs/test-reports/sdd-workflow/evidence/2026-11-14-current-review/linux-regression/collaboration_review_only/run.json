@@ -1,0 +1,194 @@
+{
+  "start": "2026-11-14T23:12:14+08:00",
+  "end": "2026-11-14T23:15:36+08:00",
+  "seconds": 186.209,
+  "exit": 0,
+  "case": "collaboration_review_only",
+  "permission_profile": "fixture-write",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "before": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "4f395f7951b52b1e186523f1294531658b72dd44fb94d8a9afcd7378df0da20e",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "518f83f1564923fa3df8cb47051e7b657ca22ba128a663e95cdc2374671f98ef",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "7cecef90b55a5edc8e01bc8be0f757ce7e8c3abb4fea1121296180f95ad9e037",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+    "docs/code-review-rules.md": "4aa0493f16fa3c1ccfdfac11ed5dcd9d322d27adf8c2e46b5e7e1b85fcbe2511",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/index.md": "a07c6ddac82ca52876aeb32c5bb089ddafb08aff80a2dc7a513079995777ee05",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "specs/order/quickstart.md": "d4e6342af3d53e5478025bf5949c49c9d47ec9ae8b44c48263a524a1020643b7",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311"
+  },
+  "after": {
+    ".codex/config.toml": "9035641cf1a37532bb95b632ccf0359303ad4bd1fdbaa593ec45f43e3daa69f8",
+    ".gitignore": "93a74241be0afd4e568d992f02c40fbc54f689ae8c4e7233fb2a381980e77d34",
+    ".sdd-init-state.json": "4f395f7951b52b1e186523f1294531658b72dd44fb94d8a9afcd7378df0da20e",
+    ".sdd-init.lock": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "AGENTS.md": "518f83f1564923fa3df8cb47051e7b657ca22ba128a663e95cdc2374671f98ef",
+    "README.md": "f1583545152469d4179dcc29b14b4ebe54a2437350a409d0819435630260a747",
+    "TASK.txt": "7cecef90b55a5edc8e01bc8be0f757ce7e8c3abb4fea1121296180f95ad9e037",
+    "checks/acceptance.py": "3068c25ce6dee0b604c70f97e48b7ac9dc703ee44a2190c561972e4f65625eb9",
+    "checks/runtime_details.py": "28fd81e51f8a07c30ae728f0faafd766965181b6b8178f3933871cdd87ef388d",
+    "docs/blueprint.md": "e853c765ef135e90905f08c26ad7cd8a5ffc1bf06a2c8a6e5fe35c79c9870b63",
+    "docs/code-review-rules.md": "4aa0493f16fa3c1ccfdfac11ed5dcd9d322d27adf8c2e46b5e7e1b85fcbe2511",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/index.md": "a07c6ddac82ca52876aeb32c5bb089ddafb08aff80a2dc7a513079995777ee05",
+    "runtime.json": "e25bd6e9530e59c71dc6cd82b01722c85c24f609e0e7f16f398afe3a4e97ea85",
+    "specs/order/quickstart.md": "d4e6342af3d53e5478025bf5949c49c9d47ec9ae8b44c48263a524a1020643b7",
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "96844b5faba169a28c5f4cfb877a9644b83e81f0e63f5b726de525294a69f6de",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b",
+    "tests/test_order.py": "dc3d5eb12ac351e9203c9ef0cebb1681b284215efabe2f95528c12dadf5e8311"
+  },
+  "changed": [],
+  "base_commit": "76bd2d7927a1a0800ee95081be532ac3f56bfe21",
+  "head_after": "76bd2d7927a1a0800ee95081be532ac3f56bfe21",
+  "commit_paths": [],
+  "git_before": "",
+  "git_after": "",
+  "sessions": [
+    {
+      "identity": {
+        "id": "01a1da9d-c4da-76f1-9cd1-d1534ecfacb1",
+        "source": "exec",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1da9d-c4da-76f1-9cd1-d1534ecfacb1",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 509209,
+        "cached_input_tokens": 489472,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1800,
+        "reasoning_output_tokens": 121,
+        "total_tokens": 511009
+      },
+      "records": 39,
+      "trace": "sessions/rollout-2026-11-14T23-12-16-01a1da9d-c4da-76f1-9cd1-d1534ecfacb1.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1da9e-3469-77c2-8463-c82ca884303e",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1da9d-c4da-76f1-9cd1-d1534ecfacb1",
+              "depth": 1,
+              "agent_path": "/root/order_review",
+              "agent_nickname": "Sartre",
+              "agent_role": null
+            }
+          }
+        },
+        "agent_nickname": "Sartre",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1da9e-3469-77c2-8463-c82ca884303e",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9d-c4da-76f1-9cd1-d1534ecfacb1",
+                "depth": 1,
+                "agent_path": "/root/order_review",
+                "agent_nickname": "Sartre",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Sartre",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": null,
+      "model": "gpt-6.1-sol",
+      "usage": {
+        "input_tokens": 698393,
+        "cached_input_tokens": 668800,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3803,
+        "reasoning_output_tokens": 720,
+        "total_tokens": 702196
+      },
+      "records": 39,
+      "trace": "sessions/rollout-2026-11-14T23-12-43-01a1da9e-3469-77c2-8463-c82ca884303e.jsonl"
+    },
+    {
+      "identity": {
+        "id": "01a1da9e-8952-7b12-9459-cf5915cd5017",
+        "source": {
+          "subagent": {
+            "thread_spawn": {
+              "parent_thread_id": "01a1da9e-3469-77c2-8463-c82ca884303e",
+              "depth": 2,
+              "agent_path": "/root/order_review/state_architecture",
+              "agent_nickname": "Ohm",
+              "agent_role": "sdd-architect"
+            }
+          }
+        },
+        "agent_role": "sdd-architect",
+        "agent_nickname": "Ohm",
+        "cli_version": "0.169.0",
+        "model_provider": "openai"
+      },
+      "identities": [
+        {
+          "id": "01a1da9e-8952-7b12-9459-cf5915cd5017",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1da9e-3469-77c2-8463-c82ca884303e",
+                "depth": 2,
+                "agent_path": "/root/order_review/state_architecture",
+                "agent_nickname": "Ohm",
+                "agent_role": "sdd-architect"
+              }
+            }
+          },
+          "agent_role": "sdd-architect",
+          "agent_nickname": "Ohm",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "observed_role_instructions_sha": "7d516d4c6ce2683efd674a3a62c93c70448b92523b45a60941efd8fc8fe97c96",
+      "model": "gpt-6-astra",
+      "usage": {
+        "input_tokens": 178492,
+        "cached_input_tokens": 146816,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1885,
+        "reasoning_output_tokens": 67,
+        "total_tokens": 180377
+      },
+      "records": 12,
+      "trace": "sessions/rollout-2026-11-14T23-13-05-01a1da9e-8952-7b12-9459-cf5915cd5017.jsonl"
+    }
+  ]
+}

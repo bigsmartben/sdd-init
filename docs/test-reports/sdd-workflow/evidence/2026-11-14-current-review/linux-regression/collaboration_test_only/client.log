@@ -1,0 +1,1 @@
+2026-11-14T15:14:48.385176Z ERROR codex_core::tools::router: error=apply_patch verification failed: invalid patch: multiple operations target /tmp/sdd-review-execution-t7u939o0/collaboration_test_only-s19ydef9/prepared/project/specs/order/quickstart.md

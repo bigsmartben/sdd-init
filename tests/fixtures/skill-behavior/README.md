@@ -12,13 +12,32 @@ cases.json 的 files 是最小输入夹具，input 是交给执行者的请求�
 python -B tests/prepare_skill_behavior.py --case collaboration_workflow --case collaboration_blind_workflow --output .build/agent-collaboration/<新批次>
 ```
 
-准备器直接复制 `source/project/` 候选资源与夹具，不调用安装器、模型或真实外部服务，不覆盖已有输出。每例 `project/` 是执行者工作区，`TASK.txt` 仅包含普通用户任务；同级 `candidate-manifest.json` 记录实际候选源字节哈希，`evaluation.json` 保留评估者判断点，两者均在执行者工作区外。不要把本目录 cases.json、evaluation.json、已知缺陷位置或整改路线传给盲评执行者；评估者另行核对其实际调用轨迹、角色身份及执行先后。目录隔离不是操作系统访问控制，真实评测还须约束执行者仅访问其工作区。
+准备器直接复制 `source/project/` 候选资源与夹具，不调用安装器、模型或真实外部服务，不覆盖已有输出。每例 `project/` 是执行者工作区，`TASK.txt` 仅包含普通用户任务；同级 `candidate-manifest.json` 记录实际保留在项目中的候选资源字节哈希，夹具覆盖的项目资料由夹具提供。`evaluation.json` 保留评估者判断点，两者均在执行者工作区外。不要把本目录 cases.json、evaluation.json、已知缺陷位置或整改路线传给盲评执行者；评估者另行核对其实际调用轨迹、角色身份及执行先后。目录隔离不是操作系统访问控制，真实评测还须约束执行者仅访问其工作区。
 
 准备及保护单测入口是 `python -B -m unittest discover -s tests -p test_skill_behavior.py -v`。这些检查只能证明隔离准备、输入分流及来源字节，不能证明真实角色调用或将模型状态更新为 PASS。候选规则变化后重新生成新批次，保留旧目录，不静默替换正在评测的快照。角色会话仍须实际读取并执行该候选指令；复制 TOML 不代表运行平台已重新加载角色。
 
-共同机制按场景检查：复杂 imp 的实际委派与同一 Plan 持续推进；Bug 经评估归因和 imp 修复后，doc 据满足原 Issue 判据的局部或集成证据更新原 Issue；review 以检查项承载审查、Task 交接及原审查者复核。核对阻塞隔离、缺失验证代码和证据补查分流、增量交接与有效证据复用。简单局部、只验收、只评估、只审不修和能力受限作为边界例，不要求每例全角色轮转。实际评测结果和候选快照引用归报告；夹具定义保持可重复使用，不能覆盖历史失败。
+`role_product_manager`、`role_architect`、`role_coder`、`role_devops` 和 `role_doc_consistency` 分别生成仅注册该角色的项目。共享规则按安装路径布置，各工作区排除工作流 Skill 及其余角色。运行时使用隔离的用户配置和工作区，Main 调用已注册角色并传入 TASK.txt，逐例保存子会话的读取、动作、实际文件差异和回执。以候选清单核对使用的源码字节。运维案例先提交夹具基线，再修改 `ops/rollout.txt` 为 `release_label=candidate-b`，同时修改并暂存 `notes.txt`。
+
+产品案例使用 [Chromium 检查脚本](run_prototype_check.cjs)。在评测环境准备 Node.js、Playwright 和对应 Chromium，仅在该案例的临时 Codex 配置注册本地工具。用评测者提供的脚本绝对路径和隔离项目绝对路径填写 `args`，用 Playwright 实际搜索目录配置 `NODE_PATH`。角色调用工具后，将返回码、四项断言及 HTML 哈希与最终文件核对。
+
+```toml
+[mcp_servers.local_browser_fixture]
+command = "node"
+args = ["/absolute/path/to/run_prototype_check.cjs", "/absolute/path/to/fixture/project", "--mcp"]
+
+[mcp_servers.local_browser_fixture.tools.run_prototype_check]
+approval_mode = "approve"
+```
+
+开发案例保留文档索引里的 Blueprint 链接。核对订单工单的读取轨迹、修改前失败、修改后回归和独立验证缺项回交。
+
+`role_doc_consistency` 在独立只读会话中验证冲突、冗余、断链及错用历史证据。对照运行前后的文件，核对写入请求是否连同依据与建议交回 Main。
+
+按轨迹核对 Main 为新阶段启动独立技能 Agent，技能 Agent 将复杂实施交给合格角色，并维护同一 Plan、按证据更新原 Issue、沿原 Review 检查项派单和复核。`collaboration_workflow` 核对 Bugfix 修复前后是否使用同一测试 Agent，记录父子调用、Agent 标识、复验版本和实际结果。核对部分阻塞、缺失验证代码、证据补查、增量交接及有效证据复用。只验收、只评估、只审不修和能力受限作为边界例。实际评测结果和候选快照归报告，保留历史事实。
 
 核对跨阶段路径时，从实际会话标识和调用目标重建 Main、技能 Agent 与角色的关系。对照 Bugfix 回 Main、Main 把新版本和证据交给原测试 Agent、原测试 Agent 实际复验的先后。检查是否存在同层直传或续派，保留异常调用和未能识别的目标。重复运行使用独立夹具，同一次执行的多处日志只算一个样本。
+
+对照 `main_direct_config_change` 和 `bug_direct_report`，分别核对 Main 直接完成指定配置改动与启动独立 Bugfix Agent。根据实际任务轨迹及文件差异判定调度和授予的写入范围。
 
 需求交付案例 `develop_delivery` 由评估者按 `evaluation_setup` 在同一会话分轮提供两次真实测试反馈，核对 A 前的权威 Spec 与 B 前的产品文件快照。B 后核对同一 Plan、公开入口逐 AC 验收、定向回归与集成准备条件。`develop_resume` 核对复用两次确认及未完 Plan，`develop_spec_only` 与 `develop_discussion` 核对各自的停止条件。`imp` 继续核对已就绪独立工单的实施交接。
 
@@ -26,11 +45,15 @@ python -B tests/prepare_skill_behavior.py --case collaboration_workflow --case c
 
 `develop_user_acceptance_feedback` 与 `refactor_user_acceptance_feedback` 按各自的 `evaluation_setup` 分轮运行。检查 Main 可回答状态、反馈前保持待验、反馈后在实际候选的原判据或检查项收证。评估者的操作及回传只证明合成反馈路径。`report_lightweight_evidence` 核对按当下证据记录局部改动及新 Status，保留旧状态字节与独立待验。
 
-Bug 定向案例可用同一命令准备：`bug_direct_report` 验证直接报告的缺陷能以原场景及必要回归的局部证据关闭原 Issue；`bug_assess_only` 检查归因结果与授权边界；`bug_diagnosis_missing_evidence` 检查已授权修复但归因缺证时是否停在取证；`bug_attribution_counterevidence` 检查当前版本反驳旧归因时是否先回退再接续；`bug_retest_missing_evidence` 检查外部原场景无法复验时是否保留原 Issue 和恢复条件。集成发现和只验收分别由 `collaboration_workflow` 和 `collaboration_test_only` 覆盖。只验收例还检查缺少可执行指南时能否生成验收文档。核对实际操作、阶段交接、文件差异及报告中的版本和覆盖。夹具中的旧观察是任务输入，仅本轮实际运行可作为本轮证据。
+Bug 定向案例可用同一命令准备：`bug_direct_report` 验证直接报告的缺陷能以原场景及必要回归的局部证据关闭原 Issue；`bug_assess_only` 检查归因结果与授权边界；`bug_diagnosis_missing_evidence` 检查已授权修复但归因缺证时是否停在取证；`bug_attribution_counterevidence` 检查当前版本反驳旧归因时是否先回退再接续；`bug_retest_missing_evidence` 检查外部原场景无法复验时是否保留原 Issue 和恢复条件。集成发现和只验收分别由 `collaboration_workflow` 和 `collaboration_test_only` 覆盖。只验收例检查缺少可执行指南时，能否自行推导全功能点覆盖并交付用户验收文档，包括现有验收脚本未覆盖的已确认功能。`bug_retest_missing_evidence` 检查单缺陷需要真实组件时是否仍走定向复验。核对实际操作、阶段交接、文件差异及报告中的版本和覆盖。夹具中的旧观察是任务输入，仅本轮实际运行可作为本轮证据。
 
-`collaboration_review_check_items` 复用订单模板，只增加本轮架构检查范围输入。评估每个检查项的依据、初审、imp Task、状态与复核证据：符合项直接通过，多个检查项可共用整改 Task 并分别复核，复杂整改也可关联多个 Task；不另建独立 gap 台账。外部环境及依赖项受阻时，本地独立项仍继续。此例不重新验收取消需求、不重跑完整 imp／test 评测；修复者只实现明确目标，方案仍只在 imp Plan。使用同一准备命令，将 `--case` 改为 `collaboration_review_check_items` 并选择新批次；现行案例术语更新不改历史执行记录。
+`integration_harness_recovery` 在订单夹具增加一个测试入口故障，核对授权内修正并重跑、同时保留产品失败与外部阻塞。`integration_resume_after_fix` 需先按案例设置在隔离项目取 B1 原始证据再提供已提交的修复版本，核对变更影响、仅取证时保留原 Issue 状态与整轮 Gate。`integration_resume_with_issue_update` 在单独准备的同类夹具显式授权状态更新，核对可关闭原 Issue 但整轮仍阻塞。通过准备器生成上述案例；测试入口及订单实测结果与模型调度行为分别核对。既有只验收和组合案例分别用于验证跨阶段停点与 Main 对显式授权的接续。
+
+`collaboration_review_check_items` 复用订单模板，只增加本轮架构检查范围输入。评估每个检查项的依据、初审、整改 Task、状态与复核证据。符合项直接通过，多个检查项可共用整改 Task 并分别复核，复杂整改也可关联多个 Task；不另建独立 gap 台账。外部环境及依赖项受阻时，本地独立项仍继续。评测聚焦本轮检查项的整改与复核，修复者按明确目标实施并在同一 Plan 维护方案。使用同一准备命令，将 `--case` 改为 `collaboration_review_check_items` 并选择新批次；现行案例术语更新不改历史执行记录。
 
 `collaboration_mixed_acceptance` 复用订单夹具。评测输入给出同一整改的公开调用性能判据及架构规则，核对实际测量条件、结果与版本，以及原审查者对状态写入路径的复核。两类结果分别取证，同一个 Task 可以引用两者。
+
+`refactor_behavior_boundary` 用同一订单夹具核对原检查项派单、coder 在 Plan 中维护实施和局部自验、技能在整改版本组织架构复核与行为保持验收。比对改前和改后的公开入口、SQLite 持久化及异常结果，核对既有业务缺陷转交与重构交付后的集成停点。`collaboration_review_only` 核对仅审查时的范围和代码字节。两例分别准备，沿用候选清单记录实跑版本。
 
 `bug_local_retest_only` 与 `bug_retest_failed_only` 核对只复验时按原判据记录通过和失败，以及失败后不启动修复。`bug_resume_regression` 按案例设置准备待复验候选，核对首次发现回归后在同一 Plan 接续，保留历次结果及独立缺陷的阻塞。`bug_performance_acceptance` 核对原 Issue 方案是否保留已确认的计时条件、统计口径及阈值。先提交夹具基线，按各例设置准备候选，再将 `TASK.txt` 的内容交给执行者。
 
@@ -38,10 +61,29 @@ commit 平台场景的 `evidence/*.json` 描述评测所需的仓库／平台状
 
 验证分三类：机械测试验证安装、打包及工具不变量；维护者语义核对检查指令与场景的职责对应；真实模型评测必须保存实际执行轨迹及结果。cases.json 中的 UNVERIFIED 是案例准备时的默认状态。已运行批次按实际轨迹在实施证据中记录通过项、失败和未验证项。机械测试通过不得视为行为评测通过。
 
-`prompt_review_only`、`prompt_review_candidate`、`prompt_review_revise`、`prompt_review_not_requested` 和 `prompt_review_authority_conflict` 共用本地退款指令夹具。用同一准备器生成独立项目，给执行者普通请求，核对 Skill 的读取、装配命令、文件差异和回执。前后 Skill 版本对跑时重置到相同的夹具字节，保持模型配置、权限及工具一致。夹具的 loader 只呈现实际指令装配，本身不执行退款模型；是否选择并执行审查 Skill，与退款助手的真实业务行为分开判定。
+原分发技能 `sdd-review-prompt` 的五个 `prompt_review_*` 案例可从 Git 版本 `6af5012` 的同目录 `cases.json` 取回。退款夹具同时供新的用户级角色案例使用。原运行范围见[原实施证据](../../../docs/workflow-evidence.md#2026-11-14-提示词审查与行为验证技能)。
 
 远端同步场景使用状态中的 graph 准备对应提交关系；`commit_first_push_stale_main` 保留过期 tracking，只有实际 fetch 才刷新；`commit_remote_diverged_dirty` 准备双方分叉及无关暂存／未暂存修改；`commit_remote_refresh_race` 按查询阶段推进远端 SHA，并模拟非快进拒绝和获取失败；`commit_pinned_release_base` 以维护分支而非 main 作为已确认目标。判定读取了哪些实际引用、两组比较及同步是否在 push 前完成，不以输出了 fetch／pull 字样代替行为证明。
 
 交付组合场景用隔离 Git 仓库和平台、部署测试替身记录变更顺序与版本。提交场景准备基线及题设差异；`deliver_merge_then_deploy` 按查询阶段返回排队和已合并状态，部署替身记录实际版本。仅配置本轮所需状态，真实平台与运行环境不参与这些案例。
 
+`devops_codeup_pipeline`、`devops_kubernetes_restart`、`devops_istio_traffic_only`、`devops_merge_deploy_traffic` 和 `devops_merge_deploy_traffic_blocked` 配置 Codeup／Flow、Kubernetes、Istio 和两条组合路径的替身。核对发起操作的实例、版本、实际回执和前后顺序。组合失败例以操作日志确认部署失败后未写入路由。流量例分别核对配置读回与数据面观测。
+
 统计命令：python -B scripts/skill_context_stats.py。输出字符量而非 token；描述已包含在入口字符量中，参考文件按整文件列出，实际读取范围由任务决定。
+
+## 提示词角色与本仓全面评审
+
+按 [AC-028、AC-034](../../../specs/platform-independent-sdd/spec.md#验收条件)用准备器生成下列案例。角色例仅在工作区外的 `profile/.codex/agents` 放入候选角色。让隔离 Codex 会话使用该临时配置，Main 把 TASK.txt 作为工单实际交给 `review-prompt`，保存委派、回执、前后字节和本地复验记录。退款夹具只支持装配检查，实际退款行为留待有环境时验证。
+
+| 案例 | 验证点 |
+| --- | --- |
+| `review_prompt_read_only` | 独立发现路径和当前成功判据偏差，受审文件保持字节一致 |
+| `review_prompt_compare` | 识别候选的修复和行为退化，对比在等价配置下执行，候选和原版均不改写 |
+| `review_prompt_revise` | 授权内消除冗余并修正成功判据，保留确认、隔离和失败恢复约束 |
+| `workflow_review_explicit` | 显式调用，从夹具 `docs/review-criteria.md` 读取最小矩阵、分别报告静态和行为结论，保留缺证与只读边界 |
+| `workflow_review_targeted` | 并行静态审查归并共享偏差，只为本地回读疑点实跑，远端缺证可接续，无比较目标时跳过 A/B |
+| `workflow_review_not_requested` | 普通配置变更只写指定文件，复核轨迹中无评审 Skill 加载或报告写入 |
+
+显式评审例将设计白皮书和 `docs/review-criteria.md` 的执行材料分开，使用候选 Skill 的报告模板及缩小的合成矩阵。整版工作流的结论须绑定其自己的完整矩阵、实际快照和运行证据。
+
+定向取证例用准备器生成独立工作区，只向执行者提供 `TASK.txt` 和项目文件。保留子 Agent 的实际派单和回执，核对静态发现与待验清单先于实跑、同一共享偏差在批次报告中关联两个对象。以命令、退出码及输出确认 `checks/read_receipt.py` 在夹具内完成一次本地回读。远端失败条件缺少运行环境，按原判据保留证据不足及恢复条件。核对未启动额外实跑或 A/B，报告和证据之外的夹具字节保持一致。该例验证评审的调度、取证选择及归并，本地回读只证明本夹具的行为。

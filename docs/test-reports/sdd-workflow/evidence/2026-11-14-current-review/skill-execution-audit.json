@@ -1,0 +1,121 @@
+{
+  "declared_sequence": "sandbox controls then explicit/control skill execution then reviewer assessment",
+  "role_identities": [
+    {
+      "id": "01a1da97-6976-7503-9a0d-f072890f73ed",
+      "source": {
+        "subagent": {
+          "thread_spawn": {
+            "parent_thread_id": "01a1da96-d8fc-7400-8d12-49ed46ab7d1b",
+            "depth": 1,
+            "agent_path": "/root/prompt_review",
+            "agent_nickname": "Parfit",
+            "agent_role": "review-prompt"
+          }
+        }
+      },
+      "agent_role": "review-prompt",
+      "agent_nickname": "Parfit",
+      "cli_version": "0.169.0",
+      "model_provider": "openai"
+    }
+  ],
+  "loaded_by_successful_command": {
+    "SKILL.md": true,
+    "review-criteria.md": true,
+    "evidence-and-cost.md": true,
+    "review-report-template.md": true
+  },
+  "skill_and_role_hashes": {
+    ".agents/skills/sdd-workflow-review/SKILL.md": "d7e2c20f2ac93415db526e33fccdf8f62d9bd9c7a8349c2d2e85ba396dc1458c",
+    ".agents/skills/sdd-workflow-review/agents/openai.yaml": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+    ".agents/skills/sdd-workflow-review/references/review-criteria.md": "7a6d787a47ccca7f479a7198fd27a93e601efab2bc00d4e43719ad435480a15a",
+    ".agents/skills/sdd-workflow-review/references/evidence-and-cost.md": "fc7d2c15e6f665c6db8b3b2f459ae73ca5f4c2ac6614cc09bd3ef2270d7dd617",
+    ".agents/skills/sdd-workflow-review/assets/review-report-template.md": "233736f843a45207c89715d44248423fb471a16844cefc7cd3c1a930bbaaff7d",
+    "source/initializer/assets/user-agents/review-prompt.toml": "87112509fc93378290b3797beb14b7b122ea0852e596ea8346278ca412e08777"
+  },
+  "role_registered_bytes_match": true,
+  "source_byte_count": 17,
+  "unchanged_initial_sources": true,
+  "reported_scope": [
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/assembly-check.json",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/final-integrity.json",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/report.md",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/review-prompt-receipt.md",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/snapshot.json",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/snapshot.sha256",
+    "docs/test-reports/sdd-workflow/2026-11-14-minimal-review/source-evidence.txt"
+  ],
+  "report_link_audit_in_fixture": [
+    {
+      "label": "夹具合成判据",
+      "target": "../../../review-criteria.md:3",
+      "exists": true
+    },
+    {
+      "label": "白皮书",
+      "target": "../../../sdd-workflow-whitepaper.md:3",
+      "exists": true
+    },
+    {
+      "label": "Spec",
+      "target": "../../../../specs/platform-independent-sdd/spec.md:3",
+      "exists": true
+    },
+    {
+      "label": "snapshot.json",
+      "target": "snapshot.json",
+      "exists": true
+    },
+    {
+      "label": "snapshot.sha256",
+      "target": "snapshot.sha256",
+      "exists": true
+    },
+    {
+      "label": "Skill 报告模板",
+      "target": "../../../../.agents/skills/sdd-workflow-review/assets/review-report-template.md",
+      "exists": true
+    },
+    {
+      "label": "取证口径",
+      "target": "../../../../.agents/skills/sdd-workflow-review/references/evidence-and-cost.md",
+      "exists": true
+    },
+    {
+      "label": "source-evidence.txt",
+      "target": "source-evidence.txt",
+      "exists": true
+    },
+    {
+      "label": "快照",
+      "target": "snapshot.json",
+      "exists": true
+    },
+    {
+      "label": "带行号摘录",
+      "target": "source-evidence.txt",
+      "exists": true
+    },
+    {
+      "label": "完整命令、stdout/stderr、返回码及计时",
+      "target": "assembly-check.json",
+      "exists": true
+    },
+    {
+      "label": "专项工单及实际回执",
+      "target": "review-prompt-receipt.md",
+      "exists": true
+    },
+    {
+      "label": "final-integrity.json",
+      "target": "final-integrity.json",
+      "exists": true
+    }
+  ],
+  "rw_unique_count": 36,
+  "negative_control_paths": [
+    "config/service.toml"
+  ],
+  "negative_control_skill_body_seen": false
+}

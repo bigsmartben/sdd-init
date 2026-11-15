@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import importlib.util
-from importlib.util import source_from_cache
 import json
 from pathlib import Path
 import re
@@ -15,9 +13,22 @@ import tomllib
 
 SKILL = Path(__file__).resolve().parent.parent
 ASSETS = SKILL / "assets"
-_loader = importlib.util.spec_from_file_location("sdd_project_install", Path(__file__).with_name("project_install.py"))
-transaction = importlib.util.module_from_spec(_loader)
-_loader.loader.exec_module(transaction)
+
+
+def load_tool(path: Path):
+    spec = importlib.util.spec_from_file_location(f"sdd_{path.stem}", path)
+    module = importlib.util.module_from_spec(spec)
+    previous = sys.dont_write_bytecode
+    try:
+        sys.dont_write_bytecode = True
+        spec.loader.exec_module(module)
+    finally:
+        sys.dont_write_bytecode = previous
+    return module
+
+
+transaction = load_tool(Path(__file__).with_name("project_install.py"))
+release = load_tool(Path(__file__).with_name("release.py"))
 
 
 def out(message: str) -> None:
@@ -41,9 +52,12 @@ def inside(root: Path, dest: Path) -> Path:
 
 
 def read(path: Path) -> str:
-    if not path.is_file():
+    if transaction.linked(path) or not path.is_file():
         fail(f"文件不存在: {path}")
-    return path.read_text(encoding="utf-8")
+    try:
+        return path.read_text(encoding="utf-8")
+    except UnicodeDecodeError as error:
+        raise ValueError(f"文件不是有效 UTF-8: {path}") from error
 
 
 def git(root: Path, *args: str) -> bytes | None:
@@ -55,8 +69,8 @@ def git(root: Path, *args: str) -> bytes | None:
 
 
 PROJECT_SKILLS = {
-    'sdd-develop', 'sdd-bugfix', 'sdd-test-loop', 'sdd-architecture', 'sdd-refactor',
-    'sdd-review-prompt', 'sdd-deliver',
+    'sdd-develop', 'sdd-architecture', 'sdd-bugfix', 'sdd-test-loop', 'sdd-refactor',
+    'sdd-deliver',
 }
 PROJECT_ROLE_MODELS = {
     'sdd-architect': 'gpt-6-astra',
@@ -66,17 +80,23 @@ PROJECT_ROLE_MODELS = {
     'sdd-doc-consistency': 'gpt-6.1-terra',
 }
 PROJECT_ROLES = set(PROJECT_ROLE_MODELS)
+RETIRED_SKILLS = {
+    "sdd-spec", "sdd-imp", "sdd-review-code", "sdd-review-loop", "sdd-review-prompt",
+    "sdd-doc", "sdd-commit", "sdd-deploy",
+}
 RETIRED_ROLES = {"sdd-delivery", "sdd-designer", "sdd-documenter", "sdd-validator"}
+FRAGMENTS = {"agent-communication": "communication-fragment.md", "sdd-contract-governance": "agents-fragment.md"}
 
 
 def validate_role(data: bytes, name: str) -> None:
-    """Validate role model defaults before any target write; leave effort unset."""
+    """Validate the shared role fields and default model before any target write."""
     try:
         role = tomllib.loads(data.decode("utf-8"))
     except (UnicodeDecodeError, tomllib.TOMLDecodeError) as exc:
         fail(f"角色 {name} 配置无效: {exc}")
-    if set(role) != {"name", "description", "model", "developer_instructions"}:
-        fail(f"角色 {name} 必须且仅包含名称、说明、默认模型与职责指令，不允许推理强度或其他运行配置")
+    fields = {"name", "description", "developer_instructions", "model"}
+    if set(role) != fields:
+        fail(f"角色 {name} 的字段必须为: {', '.join(sorted(fields))}")
     if role["name"] != name:
         fail(f"角色文件与 name 不一致: {name}")
     if any(not isinstance(value, str) or not value.strip() for value in role.values()):
@@ -85,48 +105,48 @@ def validate_role(data: bytes, name: str) -> None:
         fail(f"角色 {name} 默认模型必须为 {PROJECT_ROLE_MODELS[name]}")
 
 
-def shared_bundle() -> Path:
+def skill_name(path: Path) -> str | None:
+    frontmatter = re.match(r"\A\ufeff?---\n(.+?)\n---(?:\n|$)", read(path), re.DOTALL)
+    if frontmatter:
+        name = re.search(r"""(?m)^name:[ \t]*(["']?)([\w-]+)\1[ \t]*(?:#[^\n]*)?$""", frontmatter[1])
+        if name:
+            return name[2]
+    return None
+
+
+def shared_path() -> Path:
     # A build can be exercised directly. A user install publishes shared resources
     # as a sibling of the skill search root so Codex cannot discover them globally.
     shared = SKILL / "shared"
-    if not shared.exists():
-        skills_dir = SKILL.parent
-        shared = skills_dir.with_name(f"{skills_dir.name}-sdd-init-shared")
+    if not shared.exists() and not transaction.linked(shared):
+        shared = release.shared_directory(SKILL.parent)
+    return shared
+
+
+def shared_bundle(shared: Path) -> tuple[str, str, dict[str, str]]:
+    recovery = release.recovery_directory(SKILL.parent)
+    if recovery.exists() or transaction.linked(recovery):
+        fail(f"共享安装有未完成的事务: {recovery}；先运行用户级 sdd-init recover 检查并恢复")
     if not shared.is_dir() or transaction.linked(shared):
         fail(f"缺少共享资源，请重新安装用户级 sdd-init: {shared}")
-    manifest = json.loads(read(SKILL / "build-manifest.json"))
-    if not isinstance(manifest, dict) or manifest.get("schema_version") != 1 or not isinstance(manifest.get("files"), dict):
-        fail("用户级安装缺少有效的构建清单")
-    expected = {name.removeprefix("shared/"): digest for name, digest in manifest["files"].items()
-                if name.startswith("shared/")}
-    actual = {}
-    for path in shared.rglob("*"):
-        if transaction.linked(path):
-            fail(f"共享资源包含链接: {path}")
-        if path.is_file():
-            relative = path.relative_to(shared)
-            name = relative.as_posix()
-            if name not in expected and relative.parent.name == "__pycache__" and relative.suffix == ".pyc":
-                try:
-                    if Path(source_from_cache(relative)).as_posix() in expected:
-                        continue
-                except (NotImplementedError, ValueError):
-                    pass
-            actual[name] = hashlib.sha256(path.read_bytes()).hexdigest()
-    if actual != expected:
-        fail(f"共享资源与发布清单不一致，请检查用户级安装: {shared}")
-    skills = {name for name in actual if name.startswith("skills/") and name.endswith("/SKILL.md")}
+    try:
+        files = release.verified(SKILL, shared=None if shared == SKILL / "shared" else shared,
+                                 installed=True)
+    except ValueError as error:
+        fail(f"安装资源与清单不一致: {error}")
+    actual = release.shared_files(files)
+    skills = {name for name in actual if name.endswith("/SKILL.md")}
     roles = {name for name in actual if name.startswith("agents/") and name.endswith(".toml")}
     required = {
         "sdd/scripts/govern.py", "sdd/scripts/doc_check.py",
         *(f"sdd/references/{name}.md" for name in (
-            "doc-check", "architecture-rules", "visual-confirmation", "document-writing", "delegation",
+            "doc-check", "architecture-rules", "visual-confirmation", "document-writing", "delegation", "task-receipt",
             "sdd-repository-governance", "observability-baseline", "scenarios", "prototype", "implementation",
-            "task-receipt", "release-evidence", "delivery", "deployment", "git-delivery", "git-remote", "recovery", "traffic",
+            "delivery", "release-evidence", "git-delivery", "git-remote", "deployment", "traffic", "recovery",
         )),
         *(f"sdd/assets/{name}_template.md" for name in (
             "status", "spec", "blueprint", "code-review-rules", "prototype_reference", "quickstart",
-            "plan", "test_report", "issue", "review", "prompt_review", "sequence", "contract", "research", "delivery_record",
+            "plan", "test_report", "issue", "review", "sequence", "contract", "research", "delivery_record",
         )),
         *(f"skills/{name}/agents/openai.yaml" for name in PROJECT_SKILLS),
     }
@@ -137,7 +157,22 @@ def shared_bundle() -> Path:
     for name in sorted(PROJECT_ROLES):
         data = (shared / "agents" / f"{name}.toml").read_bytes()
         validate_role(data, name)
-    return shared.resolve()
+    for name in sorted(PROJECT_SKILLS):
+        if skill_name(shared / "skills" / name / "SKILL.md") != name:
+            fail(f"Skill 入口的 name 与分发目录不一致: {name}")
+    fragments = {name: read(ASSETS / path).strip() for name, path in FRAGMENTS.items()}
+    checker = load_tool(shared / "sdd/scripts/doc_check.py")
+    for fragment in fragments.values():
+        for line in fragment.splitlines():
+            for dest in checker.inline_links(line):
+                relative, _, anchor = dest.partition("#") if dest else ("", "", "")
+                prefix = transaction.WORKFLOW_LINK + "/"
+                target = relative.removeprefix(prefix)
+                if not relative.startswith(prefix) or target not in actual:
+                    fail(f"托管导航引用无效: {dest}")
+                if anchor and anchor not in checker.anchor_set(checker.visible_lines(read(shared / target))[0]):
+                    fail(f"托管导航锚点不存在: {dest}")
+    return release.content_id(files), release.content_id(actual), fragments
 
 
 def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
@@ -152,33 +187,66 @@ def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
     for p in candidates[:20]:
         out(f"POSSIBLE_EXISTING_ARCH {p.relative_to(root)} (请人工判断，禁止自动替换)")
     out(f"Git HEAD: {(git(root, 'rev-parse', '--short', 'HEAD') or b'none').decode().strip()}")
-    out("这是只读盘点；安装与升级按实际任务授权执行。")
+    shared = shared_path()
+    out(f"Shared source: {shared}")
+    recovery = root / transaction.RECOVERY
+    pending = recovery.exists() or transaction.linked(recovery)
+    if pending:
+        out(f"PENDING {recovery}; run recover or retry init after reviewing conflicts")
+        try:
+            transaction.load(root, transaction.safe_path(root, transaction.RECOVERY))
+        except (ValueError, OSError, KeyError, TypeError) as error:
+            raise ValueError(f"恢复记录需人工核对: {recovery}: {error}") from error
+    _, version, fragments = shared_bundle(shared)
+    out(f"Shared version: sha256:{version}")
+    out(f"Shared skill entries: {', '.join(sorted(PROJECT_SKILLS))}")
+    out(f"Shared role definitions: {', '.join(sorted(PROJECT_ROLES))}")
+    link, linked_to = check_project(root, shared)
+    out(f"Project link: {link} -> {linked_to or '(missing)'}")
+    files = plan_files(root, version, fragments)
+    current = read_state(files[3][2])
+    out(f"Project recorded shared version: {current.get('shared_version', 'none')}")
+    doc_index = root / "docs/index.md"
+    out(f"Project documentation index: {doc_index}" if doc_index.is_file()
+        else "Project documentation index: resolve the project's own entry from its guidance")
+    config = files[1][2]
+    roles = sorted(set(tomllib.loads(config.decode('utf-8')).get('agents', {})) & PROJECT_ROLES) if config else []
+    out(f"Registered roles: {', '.join(roles) or 'none'}")
+    changes = [path.relative_to(root).as_posix() for path, data, before in files if data != before]
+    out(f"Project changes on init: {', '.join(changes) or 'none'}")
+    if not pending:
+        out("Next: run init to apply the project plan" if linked_to is None or changes
+            else "Project connection is current")
     return 0
 
 
-def prepare_agents(original: str) -> str:
+def prepare_agents(original: str, templates: dict[str, str], remembered: dict[str, str]) -> str:
     """Prepare both independent managed blocks without changing project-owned bytes."""
     bom = "\ufeff" if original.startswith("\ufeff") else ""
     original = original[len(bom):]
-    names = ("agent-communication", "sdd-contract-governance")
     spans = {}
-    for name in names:
+    history = json.loads(read(ASSETS / "managed-agents-history.json"))
+    for name in FRAGMENTS:
         opening, closing = f"<!-- {name}:start -->", f"<!-- {name}:end -->"
-        if original.count(opening) != original.count(closing) or original.count(opening) > 1:
+        starts = list(re.finditer(rf"(?m)^{re.escape(opening)}\r?$", original))
+        ends = list(re.finditer(rf"(?m)^{re.escape(closing)}\r?$", original))
+        if (len(starts) != len(ends) or len(starts) > 1
+                or len(starts) != original.count(opening) or len(ends) != original.count(closing)):
             fail("AGENTS.md 治理片段不完整或重复")
-        if opening in original:
-            begin, end = original.index(opening), original.index(closing) + len(closing)
-            if end <= begin:
+        if starts:
+            begin, end = starts[0].start(), ends[0].start() + len(closing)
+            if ends[0].start() <= begin:
                 fail("AGENTS.md 治理片段顺序错误")
             spans[name] = (begin, end)
     ordered = sorted(spans.values())
     if len(ordered) == 2 and ordered[0][1] > ordered[1][0]:
         fail("AGENTS.md 治理片段嵌套或交叉")
     newline = "\r\n" if "\r\n" in original else "\n"
-    templates = {
-        "agent-communication": read(ASSETS / "communication-fragment.md").strip(),
-        "sdd-contract-governance": read(ASSETS / "agents-fragment.md").strip(),
-    }
+    for name, (begin, end) in spans.items():
+        digest = release.digest(original[begin:end].replace("\r\n", "\n").encode())
+        if (digest != remembered.get(name) and digest not in history[FRAGMENTS[name]]
+                and original[begin:end].replace("\r\n", "\n") != templates[name]):
+            fail(f"AGENTS.md 的 {name} 托管块含定制或来源不明；请保留并核对片段后重试")
     # Replace only owned ranges. Navigation stays where it was; communication moves first.
     body = original
     for name, (begin, end) in sorted(spans.items(), key=lambda item: item[1][0], reverse=True):
@@ -199,7 +267,15 @@ def prepare_agents(original: str) -> str:
 def cmd_init(root: Path, _: argparse.Namespace) -> int:
     with transaction.project_lock(root):
         transaction.recover(root)
-        return initialize(root)
+        with release.user_lock(SKILL.parent, shared_read=True):
+            return initialize(root)
+
+
+def cmd_recover(root: Path, _: argparse.Namespace) -> int:
+    with transaction.project_lock(root):
+        if not transaction.recover(root):
+            out(f"No pending project recovery: {root}")
+    return 0
 
 
 def role_reference(name: str) -> str:
@@ -278,65 +354,157 @@ def prepare_config(original: str) -> str:
 
 
 def prepare_ignore(original: str) -> str:
-    entries = (f"/{transaction.WORKFLOW_LINK}", "/.sdd-init.lock", "/.sdd-init-recovery/")
+    entries = (f"/{transaction.WORKFLOW_LINK}", f"/{transaction.LOCK}", f"/{transaction.RECOVERY}/",
+               f"/{transaction.STATE}")
     lines = original.splitlines()
     last_negation = max((index for index, line in enumerate(lines) if line.startswith("!")), default=-1)
-    if all(entry in lines[last_negation + 1:] for entry in entries):
+    missing = [entry for entry in entries if entry not in lines[last_negation + 1:]]
+    if not missing:
         return original
     newline = "\r\n" if "\r\n" in original else "\n"
     separator = newline if original and not original.endswith(("\r", "\n")) else ""
-    return original + separator + newline.join(entries) + newline
+    return original + separator + newline.join(missing) + newline
 
 
-def initialize(root: Path) -> int:
+def check_project(root: Path, shared: Path) -> tuple[Path, Path | None]:
     override = inside(root, root / "AGENTS.override.md")
     if override.exists():
         fail("根目录存在 AGENTS.override.md；请先处理覆盖关系再初始化，避免治理规则未生效")
 
-    project_entries = [
-        *(f".agents/skills/{name}" for name in sorted(PROJECT_SKILLS)),
-        *(f".codex/agents/{name}.toml" for name in sorted(PROJECT_ROLES)),
-    ]
-    conflicts = [relative for relative in project_entries
-                 if (root / relative).exists() or transaction.linked(root / relative)]
-    if conflicts:
-        fail("项目中已有同名 SDD Skill 或角色，请处理后重新运行 init: " + ", ".join(conflicts))
-
-    shared = shared_bundle()
-    if shared.is_relative_to(root):
-        fail(f"共享资源必须位于目标仓库外: {shared}")
     link = transaction.workflow_path(root)
+    if shared.resolve().is_relative_to(root.resolve()):
+        fail(f"共享资源必须位于目标仓库外: {shared}")
     linked_to = transaction.workflow_target(link)
     if linked_to is not None and linked_to != shared:
         fail(f"SDD 链接已指向其他目录，请核对后重建: {link} -> {linked_to}")
-    if git(root, "ls-files", "--", transaction.WORKFLOW_LINK):
-        fail(f"链接位置已纳入 Git，请先处理已跟踪路径: {link}")
+    tracked = git(root, "ls-files", "--", transaction.WORKFLOW_LINK, transaction.LOCK,
+                  transaction.RECOVERY, transaction.STATE)
+    if tracked:
+        fail(f"本机链接或安装元数据已纳入 Git: {tracked.decode('utf-8', errors='replace').strip()}")
 
-    changes = []
-    for relative, prepare in (
-        ("AGENTS.md", prepare_agents),
-        (".codex/config.toml", prepare_config),
-        (".gitignore", prepare_ignore),
-    ):
-        target = inside(root, root / relative)
-        before = transaction.content(target)
-        original = before.decode("utf-8") if before is not None else ""
-        candidate = prepare(original)
-        if candidate != original:
-            changes.append((target, candidate.encode("utf-8"), before))
-    transaction.apply(root, changes, shared=shared if linked_to is None else None)
-    for target, _, _ in changes:
-        out(f"INSTALLED {target}")
+    names = PROJECT_SKILLS | RETIRED_SKILLS | {"sdd-init"}
+    conflicts = set()
+    skill_root = link.parent
+    # A project skill can be nested or declare a different name from its
+    # directory. Preserve any linked entry that would need external inspection.
+    pending = [skill_root] if skill_root.is_dir() else []
+    while pending:
+        for path in pending.pop().iterdir():
+            if path == link or path.name.startswith("."):
+                continue
+            if path.parent == skill_root and path.name.casefold() in names:
+                conflicts.add(path)
+            elif transaction.linked(path):
+                if path.name.casefold() == "skill.md" or not path.is_file():
+                    conflicts.add(path)
+            elif path.is_dir():
+                pending.append(path)
+            elif path.name.casefold() == "skill.md":
+                name = skill_name(path)
+                if name and name.casefold() in names:
+                    conflicts.add(path)
+    agents = transaction.safe_path(root, ".codex/agents")
+    if agents.exists() and not agents.is_dir():
+        fail(f"角色目录被遮蔽: {agents}")
+    for path in (agents.iterdir() if agents.is_dir() else ()):
+        if path.suffix.casefold() != ".toml":
+            continue
+        if path.stem.casefold() in PROJECT_ROLES or transaction.linked(path):
+            conflicts.add(path)
+        elif path.is_file():
+            try:
+                name = tomllib.loads(read(path)).get("name")
+            except ValueError:
+                continue
+            if isinstance(name, str) and name.casefold() in PROJECT_ROLES:
+                conflicts.add(path)
+    if conflicts:
+        fail("项目中已有同名、旧入口或无法核对的 Skill／角色，请保留并处理后重新运行 init: "
+             + ", ".join(sorted(path.relative_to(root).as_posix() for path in conflicts)))
+    return link, linked_to
+
+
+def read_state(data: bytes | None) -> dict:
+    if data is None:
+        return {}
+    try:
+        state = json.loads(data)
+        if (not isinstance(state, dict) or set(state) != {"schema_version", "shared_version", "agents_blocks"}
+                or state["schema_version"] != 1 or state["agents_blocks"].keys() != FRAGMENTS.keys()
+                or not all(re.fullmatch(r"[a-f0-9]{64}", value)
+                           for value in [state["shared_version"], *state["agents_blocks"].values()])):
+            raise ValueError("Invalid project installation state")
+    except (ValueError, TypeError, AttributeError) as error:
+        raise ValueError(f"无效的项目安装元数据: {transaction.STATE}；请保留文件并核对来源") from error
+    return state
+
+
+def plan_files(root: Path, shared_version: str, fragments: dict[str, str]) -> list[tuple[Path, bytes, bytes | None]]:
+    paths = [transaction.safe_path(root, name) for name in transaction.FILES]
+    before = [transaction.content(path) for path in paths]
+    old_state = read_state(before[3])
+    texts = []
+    for path, data in zip(paths[:3], before[:3]):
+        try:
+            texts.append((data or b"").decode("utf-8"))
+        except UnicodeDecodeError as error:
+            raise ValueError(f"文件不是有效 UTF-8: {path}") from error
+    agents, config, ignore = texts
+    state = {"schema_version": 1, "shared_version": shared_version,
+             "agents_blocks": {name: release.digest(fragment.encode()) for name, fragment in fragments.items()}}
+    proposed = (prepare_agents(agents, fragments, old_state.get("agents_blocks", {})),
+                prepare_config(config), prepare_ignore(ignore), json.dumps(state, indent=2, sort_keys=True) + "\n")
+    return [(path, data.encode("utf-8"), prior) for path, data, prior in zip(paths, proposed, before)]
+
+
+def initialize(root: Path) -> int:
+    shared = shared_path()
+    link, linked_to = check_project(root, shared)
+    version, shared_version, fragments = shared_bundle(shared)
+    files = plan_files(root, shared_version, fragments)
+
+    def check_bundle():
+        if shared_path() != shared or shared_bundle(shared)[0] != version:
+            fail(f"共享版本在预检后变化；请重新检查安装计划: {shared}")
+
+    def guard():
+        if check_project(root, shared)[1] != linked_to:
+            fail(f"工作流链接在预检后变化: {link}")
+        check_bundle()
+
+    def verify():
+        if check_project(root, shared)[1] != shared or not link.samefile(shared):
+            fail(f"工作流链接不可用: {link}")
+        check_bundle()
+        for target, data, _ in files:
+            if transaction.content(inside(root, target)) != data:
+                fail(f"安装写后核验检测到外部修改: {target}")
+        config_dir = root / ".codex"
+        for name in PROJECT_ROLES:
+            reference = config_dir / role_reference(name)
+            if not reference.samefile(shared / "agents" / f"{name}.toml"):
+                fail(f"角色引用不可达: {name}")
+
+    transaction.apply(root, files, shared=shared if linked_to is None else None, guard=guard, verify=verify)
+    for target, data, before in files:
+        status = "ADDED" if before is None else "PRESERVED" if data == before else "UPDATED"
+        out(f"{status} {target.relative_to(root).as_posix()}")
+    out(f"{'ADDED' if linked_to is None else 'PRESERVED'} {transaction.WORKFLOW_LINK}")
     out(f"SDD WORKFLOW {link} -> {shared}")
+    out(f"Shared version: sha256:{shared_version}")
+    out(f"Project skills: {', '.join(sorted(PROJECT_SKILLS))}")
+    out(f"Registered roles: {', '.join(sorted(PROJECT_ROLES))}")
+    out("VERIFIED project link, managed navigation, configuration and local metadata")
     return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(description="SDD resource installer: inspect and init")
+    p = argparse.ArgumentParser(description="SDD resource installer")
     p.add_argument("--root", default=".", help="要治理的仓库目录（默认当前目录）")
     subs = p.add_subparsers(dest="cmd", required=True)
     subs.add_parser("inspect", help="只读盘点，不修改任何文件")
     subs.add_parser("init", help="接入用户级共享资源并同步项目中的 SDD 托管块")
+    subs.add_parser("recover", help="恢复未完成的项目安装操作")
     return p
 
 
@@ -344,7 +512,7 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         root = require_root(args.root)
-        return {"inspect": cmd_inspect, "init": cmd_init}[args.cmd](root, args)
+        return {"inspect": cmd_inspect, "init": cmd_init, "recover": cmd_recover}[args.cmd](root, args)
     except (ValueError, OSError) as e:
         print(f"ERROR {e}", file=sys.stderr)
         return 2

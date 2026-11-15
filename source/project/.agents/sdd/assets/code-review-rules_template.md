@@ -1,14 +1,18 @@
 # Code Review Rules
 
-Use the confirmed design. Give each rule a stable project identifier, link the governing clause, and identify the project responsibilities and entry points a reviewer can check. Reuse the existing identifier for an equivalent constraint.
+Use the confirmed design and applicable [architecture guidance](../references/architecture-rules.md#在目标仓库中落实). Give each rule a stable project identifier, link the governing clause, and identify the project responsibilities and entry points a reviewer can check. Reuse the existing identifier for an equivalent constraint. Project choices about responsibility allocation, runtime behavior, failure policy, and isolation require a confirmed basis; recommendations alone are not violation criteria.
 
 ## CRR-001 · <Fact or responsibility>
 
 - **Design basis** — <Specific Blueprint or Interface Contract link and clause identifier>
 - **Project constraint** — <Modules, authoritative entry points, and allowed interactions>
-- **Applicability** — <Direct changes or indirect effects that trigger a check>
+- **Applicability and check timing** — <Applicable objects and conditions, direct changes or indirect effects that trigger a check, and local, CI, or review execution timing>
 - **Evidence path** — <Call entry point and read, write, recovery, or failure paths to inspect>
+- **Check method** — <Dependency inspection, semantic review, contract test, or failure experiment, with an executable entry point or concrete inspection procedure>
+- **Pass criteria** — <Observable outcomes and confirmed budgets or thresholds under the applicable conditions>
 - **Violation criteria** — <Observable implementation or behavior that violates the design>
+
+Reference existing code, configuration, tests, and review mechanisms; a rule does not require a new module or document. Keep execution evidence in the applicable review or test report. Missing or unexecuted evidence is not a pass.
 
 ## Open Questions
 

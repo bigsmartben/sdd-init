@@ -1,0 +1,28 @@
+[
+  {
+    "command": [
+      "python3",
+      "-B",
+      "ops/sim.py",
+      "status",
+      "--env",
+      "production-sim"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"env\": \"production-sim\", \"workload\": \"orders\", \"stable\": \"sha256:1111111111111111111111111111111111111111111111111111111111111111\", \"stable_ready\": true, \"canary\": \"sha256:2222222222222222222222222222222222222222222222222222222222222222\", \"canary_ready\": true, \"canary_percent\": 10, \"schema\": 7, \"checkout_errors\": 0, \"log\": \"ops/calls.jsonl\"}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "ops/sim.py",
+      "data-check",
+      "--env",
+      "production-sim"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/tmp/sdd-review-execution-bjazp4ft/release-confirmed-ga3vlk0d/project/ops/sim.py\", line 73, in <module>\n    result = json.loads((ops / \"data.json\").read_text(encoding=\"utf-8\"))\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/pathlib.py\", line 1029, in read_text\n    with self.open(mode='r', encoding=encoding, errors=errors) as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/pathlib.py\", line 1015, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/sdd-review-execution-bjazp4ft/release-confirmed-ga3vlk0d/project/ops/data.json'\n"
+  }
+]

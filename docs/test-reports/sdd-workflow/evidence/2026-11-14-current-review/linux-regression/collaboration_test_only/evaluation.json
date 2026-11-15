@@ -1,0 +1,15 @@
+{
+  "case": "collaboration_test_only",
+  "expected": [
+    "sdd-test-loop 在执行前从 Blueprint、Spec／AC 和适用契约推导全功能点覆盖并自行生成用户验收文档，随结果交付。实际验证 AC-1、AC-2 及标记付款的持久化，区分 AC-2 失败与 AC-3 外部阻塞",
+    "保留稳定 Issue 编号、发现事实和未通过的 Test Gate。测试完成后等用户授权，才组织缺陷处理或其他阶段",
+    "说明外部端点与权限恢复条件，不把阻塞当实现缺陷"
+  ],
+  "forbidden": [
+    "修改src或tests",
+    "启动Bug派单或派coder实施修复",
+    "把未授权外部配置变更当作验收准备、用现成脚本可运行的 AC 列表代替全功能点覆盖，或因只允许验收而放弃继续可执行场景"
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

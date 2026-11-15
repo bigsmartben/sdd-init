@@ -1,0 +1,272 @@
+[
+  {
+    "scenario": "AC-4",
+    "result": "PASS",
+    "inputs": [
+      {
+        "input_repr": "''",
+        "input_type": "str",
+        "expected_rejection": true,
+        "result": "PASS",
+        "error": {
+          "type": "ValueError",
+          "message": "order_id is required"
+        },
+        "checks": {
+          "outcome_matches": true,
+          "current_rows_match": true,
+          "persisted_rows_match": true
+        },
+        "baseline_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "current_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "persisted_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ]
+      },
+      {
+        "input_repr": "' '",
+        "input_type": "str",
+        "expected_rejection": true,
+        "result": "PASS",
+        "error": {
+          "type": "ValueError",
+          "message": "order_id is required"
+        },
+        "checks": {
+          "outcome_matches": true,
+          "current_rows_match": true,
+          "persisted_rows_match": true
+        },
+        "baseline_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "current_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "persisted_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ]
+      },
+      {
+        "input_repr": "'   '",
+        "input_type": "str",
+        "expected_rejection": true,
+        "result": "PASS",
+        "error": {
+          "type": "ValueError",
+          "message": "order_id is required"
+        },
+        "checks": {
+          "outcome_matches": true,
+          "current_rows_match": true,
+          "persisted_rows_match": true
+        },
+        "baseline_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "current_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "persisted_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ]
+      },
+      {
+        "input_repr": "'\\t'",
+        "input_type": "str",
+        "expected_rejection": true,
+        "result": "PASS",
+        "error": {
+          "type": "ValueError",
+          "message": "order_id is required"
+        },
+        "checks": {
+          "outcome_matches": true,
+          "current_rows_match": true,
+          "persisted_rows_match": true
+        },
+        "baseline_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "current_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "persisted_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ]
+      },
+      {
+        "input_repr": "'\\n'",
+        "input_type": "str",
+        "expected_rejection": true,
+        "result": "PASS",
+        "error": {
+          "type": "ValueError",
+          "message": "order_id is required"
+        },
+        "checks": {
+          "outcome_matches": true,
+          "current_rows_match": true,
+          "persisted_rows_match": true
+        },
+        "baseline_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "current_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "persisted_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ]
+      },
+      {
+        "input_repr": "' \\t\\r\\n '",
+        "input_type": "str",
+        "expected_rejection": true,
+        "result": "PASS",
+        "error": {
+          "type": "ValueError",
+          "message": "order_id is required"
+        },
+        "checks": {
+          "outcome_matches": true,
+          "current_rows_match": true,
+          "persisted_rows_match": true
+        },
+        "baseline_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "current_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "persisted_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ]
+      },
+      {
+        "input_repr": "'\\u3000'",
+        "input_type": "str",
+        "expected_rejection": true,
+        "result": "PASS",
+        "error": {
+          "type": "ValueError",
+          "message": "order_id is required"
+        },
+        "checks": {
+          "outcome_matches": true,
+          "current_rows_match": true,
+          "persisted_rows_match": true
+        },
+        "baseline_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "current_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "persisted_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ]
+      },
+      {
+        "input_repr": "'\\xa0'",
+        "input_type": "str",
+        "expected_rejection": true,
+        "result": "PASS",
+        "error": {
+          "type": "ValueError",
+          "message": "order_id is required"
+        },
+        "checks": {
+          "outcome_matches": true,
+          "current_rows_match": true,
+          "persisted_rows_match": true
+        },
+        "baseline_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "current_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ],
+        "persisted_rows": [
+          [
+            "BASELINE",
+            "pending"
+          ]
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,574 @@
+{
+  "batch": "B1 integration retest after fix",
+  "started_utc": "2026-11-14T15:22:03.834623+00:00",
+  "version": {
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout": "b0f1c767e2d5c0f5efbb6ed8b3cf0a0caa5f473f\n",
+    "stderr": ""
+  },
+  "initial_worktree": {
+    "command": [
+      "git",
+      "status",
+      "--short"
+    ],
+    "exit": 0,
+    "stdout": "?? docs/test-reports/order/evidence/b1-retest.json\n?? docs/test-reports/order/evidence/b1-retest.py\n",
+    "stderr": ""
+  },
+  "product_diff": {
+    "command": [
+      "git",
+      "diff",
+      "HEAD",
+      "--",
+      "src",
+      "checks",
+      "tests",
+      "runtime.json",
+      "specs",
+      "docs/contracts",
+      "docs/issues/ISS-001.md"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "runtime": {
+    "command": [
+      "/tmp/sdd-review-execution-b1f1k5iu/program/tools/python",
+      "-B",
+      "checks/runtime_details.py"
+    ],
+    "exit": 0,
+    "stdout": "{\n  \"python\": \"3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]\",\n  \"sqlite\": \"3.45.1\",\n  \"runtime\": {\n    \"environment\": \"isolated-local-fixture\",\n    \"database\": \"per-scenario temporary SQLite file\",\n    \"external_endpoint\": null,\n    \"external_call_authorized\": false,\n    \"network_access_in_this_run\": false\n  },\n  \"source_sha256\": {\n    \"src/__init__.py\": \"10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded\",\n    \"src/order_service.py\": \"3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb\",\n    \"src/storage.py\": \"6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9\",\n    \"src/ui.py\": \"89ef1238b40556d5a7b3dc93daeeb1a04b68a600c7c985d648a80a66f84cb25b\"\n  }\n}\n",
+    "stderr": ""
+  },
+  "basis_sha256": {
+    "specs/order/spec.md": "fef1e10d40e4345930a458c9a76ebeef4410ba21b79bc1e9012792e9c464b47e",
+    "specs/order/quickstart.md": "d4e6342af3d53e5478025bf5949c49c9d47ec9ae8b44c48263a524a1020643b7",
+    "docs/contracts/order.md": "4696e66d66850d9b37a9c4d37754b88ef5088c9994138edd497db55f54cfde83",
+    "docs/issues/ISS-001.md": "494b174bf81e605b5501948202cd93bd850c1fc6594e4e810277120de3ce99fc",
+    "docs/test-reports/order/evidence/b1.json": "6f87a300af342ddb06ca49490370d41acafbb58ba3202fc70b510bd135af41bc"
+  },
+  "evidence_script_sha256": "38756ce433a2cd762abf9fdf14e08c97d69387a98e65d387f02dfe5f1fae1810",
+  "results": [
+    {
+      "case": "AC-1",
+      "result": "PASS",
+      "actual": {
+        "scenario": "AC-1",
+        "result": "PASS",
+        "accepted": true,
+        "persisted_status": "submitted",
+        "expected_accepted": true,
+        "expected_status": "submitted"
+      },
+      "raw": {
+        "command": [
+          "/tmp/sdd-review-execution-b1f1k5iu/program/tools/python",
+          "-B",
+          "checks/acceptance.py",
+          "--scenario",
+          "AC-1"
+        ],
+        "exit": 0,
+        "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"result\": \"PASS\",\n    \"accepted\": true,\n    \"persisted_status\": \"submitted\",\n    \"expected_accepted\": true,\n    \"expected_status\": \"submitted\"\n  }\n]\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "AC-2",
+      "result": "PASS",
+      "actual": {
+        "scenario": "AC-2",
+        "result": "PASS",
+        "accepted": false,
+        "persisted_status": "cancelled",
+        "expected_accepted": false,
+        "expected_status": "cancelled"
+      },
+      "raw": {
+        "command": [
+          "/tmp/sdd-review-execution-b1f1k5iu/program/tools/python",
+          "-B",
+          "checks/acceptance.py",
+          "--scenario",
+          "AC-2"
+        ],
+        "exit": 0,
+        "stdout": "[\n  {\n    \"scenario\": \"AC-2\",\n    \"result\": \"PASS\",\n    \"accepted\": false,\n    \"persisted_status\": \"cancelled\",\n    \"expected_accepted\": false,\n    \"expected_status\": \"cancelled\"\n  }\n]\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "AC-3",
+      "result": "BLOCKED",
+      "actual": {
+        "scenario": "AC-3",
+        "result": "BLOCKED",
+        "reason": "No external call is performed by this fixture; authorized endpoint and permission are required",
+        "endpoint_configured": false,
+        "authorized": false
+      },
+      "raw": {
+        "command": [
+          "/tmp/sdd-review-execution-b1f1k5iu/program/tools/python",
+          "-B",
+          "checks/acceptance.py",
+          "--scenario",
+          "AC-3"
+        ],
+        "exit": 3,
+        "stdout": "[\n  {\n    \"scenario\": \"AC-3\",\n    \"result\": \"BLOCKED\",\n    \"reason\": \"No external call is performed by this fixture; authorized endpoint and permission are required\",\n    \"endpoint_configured\": false,\n    \"authorized\": false\n  }\n]\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "IT-01",
+      "expected": {
+        "valid_nonempty": [
+          "pending",
+          "pending"
+        ]
+      },
+      "actual": {
+        "valid_nonempty": [
+          "pending",
+          "pending"
+        ]
+      },
+      "result": "PASS",
+      "events": [
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-uhxedwpe/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "A",
+          "status": "pending"
+        },
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-uhxedwpe/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "订单-2",
+          "status": "pending"
+        },
+        {
+          "action": "invalid_and_valid_creation",
+          "results": {
+            "''": "ValueError",
+            "None": "ValueError",
+            "1": "ValueError",
+            "valid_nonempty": [
+              "pending",
+              "pending"
+            ],
+            "row_count": 2
+          }
+        }
+      ],
+      "database_removed": true
+    },
+    {
+      "case": "IT-02",
+      "expected": {
+        "read": "ValueError",
+        "cancel": "ValueError",
+        "submit": "ValueError",
+        "set_status": "ValueError"
+      },
+      "actual": {
+        "read": "ValueError",
+        "cancel": "ValueError",
+        "submit": "ValueError",
+        "set_status": "ValueError"
+      },
+      "result": "PASS",
+      "events": [
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-9atm6gw0/orders.sqlite"
+        },
+        {
+          "action": "missing_service_operations",
+          "results": {
+            "read": "ValueError",
+            "cancel": "ValueError",
+            "submit": "ValueError",
+            "set_status": "ValueError"
+          }
+        }
+      ],
+      "database_removed": true
+    },
+    {
+      "case": "IT-03",
+      "expected": {
+        "pending": "paid",
+        "submitted": "paid",
+        "cancelled": "paid",
+        "paid": "paid"
+      },
+      "actual": {
+        "pending": "paid",
+        "submitted": "paid",
+        "cancelled": "paid",
+        "paid": "paid"
+      },
+      "result": "PASS",
+      "events": [
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-286xszw8/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "pending",
+          "status": "pending"
+        },
+        {
+          "action": "before_mark_paid",
+          "order": "pending",
+          "status": "pending"
+        },
+        {
+          "action": "mark_paid",
+          "order": "pending"
+        },
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-286xszw8/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "pending",
+          "status": "paid"
+        },
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-286xszw8/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "submitted",
+          "status": "submitted"
+        },
+        {
+          "action": "before_mark_paid",
+          "order": "submitted",
+          "status": "submitted"
+        },
+        {
+          "action": "mark_paid",
+          "order": "submitted"
+        },
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-286xszw8/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "submitted",
+          "status": "paid"
+        },
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-286xszw8/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "cancelled",
+          "status": "cancelled"
+        },
+        {
+          "action": "before_mark_paid",
+          "order": "cancelled",
+          "status": "cancelled"
+        },
+        {
+          "action": "mark_paid",
+          "order": "cancelled"
+        },
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-286xszw8/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "cancelled",
+          "status": "paid"
+        },
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-286xszw8/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "paid",
+          "status": "paid"
+        },
+        {
+          "action": "before_mark_paid",
+          "order": "paid",
+          "status": "paid"
+        },
+        {
+          "action": "mark_paid",
+          "order": "paid"
+        },
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-286xszw8/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "paid",
+          "status": "paid"
+        }
+      ],
+      "database_removed": true
+    },
+    {
+      "case": "IT-04",
+      "expected": {
+        "exception": "ValueError",
+        "existing_status": "pending"
+      },
+      "actual": {
+        "exception": "no exception",
+        "existing_status": "pending"
+      },
+      "result": "FAIL",
+      "events": [
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-varlgjyd/orders.sqlite"
+        },
+        {
+          "action": "mark_paid_missing",
+          "exception": "no exception"
+        },
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-varlgjyd/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "ORDER-1",
+          "status": "pending"
+        }
+      ],
+      "database_removed": true
+    },
+    {
+      "case": "IT-05",
+      "expected": {
+        "create": "ProgrammingError",
+        "read": "ProgrammingError",
+        "cancel": "ProgrammingError",
+        "submit": "ProgrammingError",
+        "set_status": "ProgrammingError",
+        "mark_paid": "ProgrammingError",
+        "persisted_status": "pending"
+      },
+      "actual": {
+        "create": "ProgrammingError",
+        "read": "ProgrammingError",
+        "cancel": "ProgrammingError",
+        "submit": "ProgrammingError",
+        "set_status": "ProgrammingError",
+        "mark_paid": "ProgrammingError",
+        "persisted_status": "pending"
+      },
+      "result": "PASS",
+      "events": [
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-9ytwghl7/orders.sqlite"
+        },
+        {
+          "action": "closed_connection_operations",
+          "results": {
+            "create": "ProgrammingError",
+            "read": "ProgrammingError",
+            "cancel": "ProgrammingError",
+            "submit": "ProgrammingError",
+            "set_status": "ProgrammingError",
+            "mark_paid": "ProgrammingError",
+            "persisted_status": "pending"
+          }
+        },
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-9ytwghl7/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "ORDER-1",
+          "status": "pending"
+        }
+      ],
+      "database_removed": true
+    },
+    {
+      "case": "IT-06",
+      "expected": {
+        "cancel_submit": false,
+        "states": {
+          "CANCEL": "cancelled",
+          "SUBMIT": "submitted",
+          "PAID": "paid",
+          "UNTOUCHED": "pending"
+        }
+      },
+      "actual": {
+        "cancel_submit": false,
+        "states": {
+          "CANCEL": "cancelled",
+          "SUBMIT": "submitted",
+          "PAID": "paid",
+          "UNTOUCHED": "pending"
+        }
+      },
+      "result": "PASS",
+      "events": [
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-xa3w3x6r/orders.sqlite"
+        },
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-xa3w3x6r/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "CANCEL",
+          "status": "cancelled"
+        },
+        {
+          "action": "read_status",
+          "order": "SUBMIT",
+          "status": "submitted"
+        },
+        {
+          "action": "read_status",
+          "order": "PAID",
+          "status": "paid"
+        },
+        {
+          "action": "read_status",
+          "order": "UNTOUCHED",
+          "status": "pending"
+        }
+      ],
+      "database_removed": true
+    },
+    {
+      "case": "IT-07",
+      "expected": {
+        "before": "cancelled",
+        "returns": [
+          false,
+          false
+        ],
+        "after": "cancelled"
+      },
+      "actual": {
+        "before": "cancelled",
+        "returns": [
+          false,
+          false
+        ],
+        "after": "cancelled"
+      },
+      "result": "PASS",
+      "events": [
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-jh3pe6m2/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "ORDER-1",
+          "status": "pending"
+        },
+        {
+          "action": "create",
+          "status": "pending"
+        },
+        {
+          "action": "read_status",
+          "order": "ORDER-1",
+          "status": "cancelled"
+        },
+        {
+          "action": "cancel",
+          "status": "cancelled"
+        },
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-jh3pe6m2/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "ORDER-1",
+          "status": "cancelled"
+        },
+        {
+          "action": "read_status",
+          "order": "ORDER-1",
+          "status": "cancelled"
+        },
+        {
+          "action": "submit_cancelled",
+          "return": false,
+          "status": "cancelled"
+        },
+        {
+          "action": "read_status",
+          "order": "ORDER-1",
+          "status": "cancelled"
+        },
+        {
+          "action": "submit_cancelled",
+          "return": false,
+          "status": "cancelled"
+        },
+        {
+          "action": "open_file_database",
+          "file": "/tmp/sdd-review-execution-b1f1k5iu/integration_resume_after_fix-dv328h1c/scratch/b1-retest-jh3pe6m2/orders.sqlite"
+        },
+        {
+          "action": "read_status",
+          "order": "ORDER-1",
+          "status": "cancelled"
+        }
+      ],
+      "database_removed": true
+    },
+    {
+      "case": "IT-08",
+      "expected": [],
+      "actual": [],
+      "result": "PASS",
+      "observation": "Python audit socket events during derived in-process local scenarios IT-01 through IT-07; no network interception or replacement components"
+    }
+  ],
+  "counts": {
+    "PASS": 9,
+    "FAIL": 1,
+    "BLOCKED": 1,
+    "NOT_RUN": 0
+  },
+  "finished_utc": "2026-11-14T15:22:04.101636+00:00"
+}

@@ -1,0 +1,181 @@
+{
+  "captured_utc": "2026-11-14T15:08:54.805199+00:00",
+  "source_files": [
+    {
+      "path": ".agents/skills/sdd-workflow-review/SKILL.md",
+      "before_sha256": "d7e2c20f2ac93415db526e33fccdf8f62d9bd9c7a8349c2d2e85ba396dc1458c",
+      "after_sha256": "d7e2c20f2ac93415db526e33fccdf8f62d9bd9c7a8349c2d2e85ba396dc1458c",
+      "identical": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/agents/openai.yaml",
+      "before_sha256": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+      "after_sha256": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+      "identical": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/assets/review-report-template.md",
+      "before_sha256": "233736f843a45207c89715d44248423fb471a16844cefc7cd3c1a930bbaaff7d",
+      "after_sha256": "233736f843a45207c89715d44248423fb471a16844cefc7cd3c1a930bbaaff7d",
+      "identical": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/assets/whitepaper-template.md",
+      "before_sha256": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+      "after_sha256": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+      "identical": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/references/evidence-and-cost.md",
+      "before_sha256": "fc7d2c15e6f665c6db8b3b2f459ae73ca5f4c2ac6614cc09bd3ef2270d7dd617",
+      "after_sha256": "fc7d2c15e6f665c6db8b3b2f459ae73ca5f4c2ac6614cc09bd3ef2270d7dd617",
+      "identical": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/references/review-criteria.md",
+      "before_sha256": "7a6d787a47ccca7f479a7198fd27a93e601efab2bc00d4e43719ad435480a15a",
+      "after_sha256": "7a6d787a47ccca7f479a7198fd27a93e601efab2bc00d4e43719ad435480a15a",
+      "identical": true
+    },
+    {
+      "path": ".codex/agents/review-prompt.toml",
+      "before_sha256": "87112509fc93378290b3797beb14b7b122ea0852e596ea8346278ca412e08777",
+      "after_sha256": "87112509fc93378290b3797beb14b7b122ea0852e596ea8346278ca412e08777",
+      "identical": true
+    },
+    {
+      "path": ".codex/config.toml",
+      "before_sha256": "c7c7581c1f27c5b74cb9178ff61e58ef87f020d16823005127404f19a1ecab6e",
+      "after_sha256": "c7c7581c1f27c5b74cb9178ff61e58ef87f020d16823005127404f19a1ecab6e",
+      "identical": true
+    },
+    {
+      "path": "TASK.txt",
+      "before_sha256": "3e952ea0573644c23029c972e39cd352fa68261f195e537b478efd420cce3c41",
+      "after_sha256": "3e952ea0573644c23029c972e39cd352fa68261f195e537b478efd420cce3c41",
+      "identical": true
+    },
+    {
+      "path": "checks/load_guidance.py",
+      "before_sha256": "c2f88b5260f95cfa8d5c127f8043ec62d0ed9138b84573ecdfe958d47a089471",
+      "after_sha256": "c2f88b5260f95cfa8d5c127f8043ec62d0ed9138b84573ecdfe958d47a089471",
+      "identical": true
+    },
+    {
+      "path": "config/service.toml",
+      "before_sha256": "634a7586e96c11fefd44a5eb65ca4eb682ad8817baea7fa56893f0817edd3f76",
+      "after_sha256": "634a7586e96c11fefd44a5eb65ca4eb682ad8817baea7fa56893f0817edd3f76",
+      "identical": true
+    },
+    {
+      "path": "docs/review-criteria.md",
+      "before_sha256": "57fe8a82754897ae792713423a63eb07a8016c3edb0488ce67be22d742f88d83",
+      "after_sha256": "57fe8a82754897ae792713423a63eb07a8016c3edb0488ce67be22d742f88d83",
+      "identical": true
+    },
+    {
+      "path": "docs/sdd-workflow-whitepaper.md",
+      "before_sha256": "1bc4dfefc5879bda0468b0089d1d598ae5562be19c81164e334327de024cb808",
+      "after_sha256": "1bc4dfefc5879bda0468b0089d1d598ae5562be19c81164e334327de024cb808",
+      "identical": true
+    },
+    {
+      "path": "docs/test-reports/sdd-workflow/README.md",
+      "before_sha256": "1e7616fb45c417f047c6d63da1698734811334de4cdc2cb9fb7bc4bbc7d682df",
+      "after_sha256": "1e7616fb45c417f047c6d63da1698734811334de4cdc2cb9fb7bc4bbc7d682df",
+      "identical": true
+    },
+    {
+      "path": "guidance/main.md",
+      "before_sha256": "926eec4f95c7692645b2f1f0bff7ec2bef96a69aa365fa63210c508b98e51da6",
+      "after_sha256": "926eec4f95c7692645b2f1f0bff7ec2bef96a69aa365fa63210c508b98e51da6",
+      "identical": true
+    },
+    {
+      "path": "guidance/prompt.md",
+      "before_sha256": "09a185885c0307cf4b3fcf14ff149ae64c846a3c6a21734832eb57647498f2cd",
+      "after_sha256": "09a185885c0307cf4b3fcf14ff149ae64c846a3c6a21734832eb57647498f2cd",
+      "identical": true
+    },
+    {
+      "path": "specs/platform-independent-sdd/spec.md",
+      "before_sha256": "292280e5641fa892cbd5b4d1a71130bffd86541e4c83ff36612f54559f71fa44",
+      "after_sha256": "292280e5641fa892cbd5b4d1a71130bffd86541e4c83ff36612f54559f71fa44",
+      "identical": true
+    }
+  ],
+  "all_source_bytes_unchanged": true,
+  "git_diff_exit_code": 0,
+  "git_status": "?? docs/test-reports/sdd-workflow/2026-11-14-minimal-review/\n",
+  "untracked_outside_report_directory": [],
+  "report_link_check": [
+    {
+      "label": "夹具合成判据",
+      "target": "../../../review-criteria.md:3",
+      "exists": true
+    },
+    {
+      "label": "白皮书",
+      "target": "../../../sdd-workflow-whitepaper.md:3",
+      "exists": true
+    },
+    {
+      "label": "Spec",
+      "target": "../../../../specs/platform-independent-sdd/spec.md:3",
+      "exists": true
+    },
+    {
+      "label": "snapshot.json",
+      "target": "snapshot.json",
+      "exists": true
+    },
+    {
+      "label": "snapshot.sha256",
+      "target": "snapshot.sha256",
+      "exists": true
+    },
+    {
+      "label": "Skill 报告模板",
+      "target": "../../../../.agents/skills/sdd-workflow-review/assets/review-report-template.md",
+      "exists": true
+    },
+    {
+      "label": "取证口径",
+      "target": "../../../../.agents/skills/sdd-workflow-review/references/evidence-and-cost.md",
+      "exists": true
+    },
+    {
+      "label": "source-evidence.txt",
+      "target": "source-evidence.txt",
+      "exists": true
+    },
+    {
+      "label": "快照",
+      "target": "snapshot.json",
+      "exists": true
+    },
+    {
+      "label": "带行号摘录",
+      "target": "source-evidence.txt",
+      "exists": true
+    },
+    {
+      "label": "完整命令、stdout/stderr、返回码及计时",
+      "target": "assembly-check.json",
+      "exists": true
+    },
+    {
+      "label": "专项工单及实际回执",
+      "target": "review-prompt-receipt.md",
+      "exists": true
+    },
+    {
+      "label": "final-integrity.json",
+      "target": "final-integrity.json",
+      "exists": true
+    }
+  ],
+  "rw_unique_count": 36,
+  "rw_rows": 37,
+  "report_template_sections_present": true
+}

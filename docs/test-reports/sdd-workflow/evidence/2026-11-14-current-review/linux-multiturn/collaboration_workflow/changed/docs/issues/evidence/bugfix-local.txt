@@ -1,0 +1,14 @@
+test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok
+test_normal_submit (test_order.OrderTests.test_normal_submit) ... ok
+test_cancelled_submit_is_rejected_and_persisted (test_order_bugfix.OrderBugfixTests.test_cancelled_submit_is_rejected_and_persisted) ... ok
+test_commit_errors_propagate (test_order_bugfix.OrderBugfixTests.test_commit_errors_propagate) ... ok
+test_missing_payment_raises_without_mutating_other_order (test_order_bugfix.OrderBugfixTests.test_missing_payment_raises_without_mutating_other_order) ... ok
+test_order_operations_are_isolated (test_order_bugfix.OrderBugfixTests.test_order_operations_are_isolated) ... ok
+test_payment_is_persisted (test_order_bugfix.OrderBugfixTests.test_payment_is_persisted) ... ok
+test_pending_submit_is_accepted_and_persisted (test_order_bugfix.OrderBugfixTests.test_pending_submit_is_accepted_and_persisted) ... ok
+test_write_errors_propagate (test_order_bugfix.OrderBugfixTests.test_write_errors_propagate) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.163s
+
+OK

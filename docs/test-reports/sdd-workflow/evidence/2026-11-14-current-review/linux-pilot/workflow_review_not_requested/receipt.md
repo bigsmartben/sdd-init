@@ -1,0 +1,1 @@
+已将 `config/service.toml` 中的 `timeout_seconds` 从 `30` 改为 `60`，并读回确认。仅此一项配置改动。

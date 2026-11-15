@@ -1,0 +1,10 @@
+{
+  "case": "review_prompt_compare",
+  "candidate_source": "/mnt/c/Users/24598/Documents/github/sdd-init/source/initializer/assets/user-agents/review-prompt.toml",
+  "files": {},
+  "preparation_only": true,
+  "model_execution": "UNVERIFIED",
+  "profile_files": {
+    ".codex/agents/review-prompt.toml": "87112509fc93378290b3797beb14b7b122ea0852e596ea8346278ca412e08777"
+  }
+}

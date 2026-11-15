@@ -11,6 +11,9 @@ import subprocess
 
 RECOVERY = ".sdd-init-recovery"
 WORKFLOW_LINK = ".agents/skills/sdd-workflow"
+LOCK = ".sdd-init.lock"
+STATE = ".sdd-init-state.json"
+FILES = ("AGENTS.md", ".codex/config.toml", ".gitignore", STATE)
 
 
 def linked(path: Path) -> bool:
@@ -31,6 +34,8 @@ def safe_path(root: Path, relative: str) -> Path:
             break
         if linked(path):
             raise ValueError(f"Linked installation path: {path}")
+        if path != target and path.exists() and not path.is_dir():
+            raise ValueError(f"Not an installation directory: {path}")
     if target == root or root.resolve() not in target.resolve().parents:
         raise ValueError(f"Path outside installation: {target}")
     return target
@@ -38,7 +43,10 @@ def safe_path(root: Path, relative: str) -> Path:
 
 def workflow_path(root: Path) -> Path:
     relative = Path(WORKFLOW_LINK)
-    return safe_path(root, relative.parent.as_posix()) / relative.name
+    parent = safe_path(root, relative.parent.as_posix())
+    if parent.exists() and not parent.is_dir():
+        raise ValueError(f"Not an installation directory: {parent}")
+    return parent / relative.name
 
 
 def workflow_target(path: Path) -> Path | None:
@@ -74,7 +82,7 @@ def project_lock(root: Path):
     # Keep the inode stable: deleting an unlocked file could split concurrent
     # waiters across two locks. The project path is independent of TEMP and
     # user session; the one-byte metadata file remains after unlock.
-    path = safe_path(root, ".sdd-init.lock")
+    path = safe_path(root, LOCK)
     with os.fdopen(os.open(path, os.O_RDWR | os.O_CREAT, 0o600), "r+b") as handle:
         try:
             if os.name == "nt":
@@ -155,7 +163,7 @@ def load(root: Path, folder: Path) -> dict | None:
         # have started. Only known staging files are eligible for cleanup.
         return None
     journal = json.loads(journal_path.read_text(encoding="utf-8"))
-    if (not isinstance(journal, dict) or journal.get("version") != 1
+    if (not isinstance(journal, dict) or journal.get("version") not in (1, 2)
             or journal.get("root") != str(root.resolve())
             or journal.get("state") not in ("prepared", "committed")
             or not isinstance(journal.get("files"), list)
@@ -165,7 +173,8 @@ def load(root: Path, folder: Path) -> dict | None:
     for entry in journal["files"]:
         path = safe_path(root, entry["path"])
         if (path in seen or RECOVERY in path.relative_to(root).parts
-                or not isinstance(entry["mode"], int)):
+                or (journal["version"] == 2 and entry["path"] not in FILES)
+                or type(entry["mode"]) is not int or not 0 <= entry["mode"] <= 0o7777):
             raise ValueError(f"Invalid recovery entry: {path}")
         seen.add(path)
         decode(entry["before"])
@@ -180,25 +189,39 @@ def load(root: Path, folder: Path) -> dict | None:
         path = safe_path(root, directory)
         if not any(path in file.parents for file in seen):
             raise ValueError(f"Invalid recovery directory: {path}")
+    if journal["version"] == 2:
+        started = journal.get("started")
+        count = len(journal["files"])
+        if type(started) is not int or not 0 <= started <= count:
+            raise ValueError("Invalid recovery file progress")
+        if not isinstance(journal.get("link_started"), bool) or (
+                journal["link_started"] and (not journal.get("workflow_target") or started != count)):
+            raise ValueError("Invalid recovery link progress")
+        if journal["state"] == "committed" and (
+                started != count or journal["link_started"] != bool(journal.get("workflow_target"))):
+            raise ValueError("Incomplete committed recovery journal")
     return journal
 
 
 def recover(root: Path):
-    folder = safe_path(root, RECOVERY)
-    if not folder.exists():
-        return
+    folder = root / RECOVERY
     try:
+        safe_path(root, RECOVERY)
+        if not folder.exists():
+            return False
         journal = load(root, folder)
         if journal is None or journal["state"] == "committed":
             clean(folder)
-            return
-        # Validate the entire set before touching any files. External edits are
+            return True
+        entries = journal["files"][:journal.get("started", len(journal["files"]))]
+        link_started = journal.get("workflow_target") is not None and journal.get("link_started", True)
+        # Validate the attempted writes before touching any files. External edits are
         # conflicts, including edits to AGENTS outside the managed blocks.
-        for entry in journal["files"]:
+        for entry in entries:
             path = safe_path(root, entry["path"])
             if content(path) not in (decode(entry["before"]), decode(entry["after"])):
                 raise ValueError(f"External modification; preserve file: {path}")
-        if journal.get("workflow_target") is not None:
+        if link_started:
             path = workflow_path(root)
             current_target = workflow_target(path)
             if current_target is not None:
@@ -209,7 +232,7 @@ def recover(root: Path):
                     path.unlink()
                 else:
                     path.rmdir()
-        for entry in reversed(journal["files"]):
+        for entry in reversed(entries):
             path = safe_path(root, entry["path"])
             before, after = decode(entry["before"]), decode(entry["after"])
             current = content(path)
@@ -221,33 +244,44 @@ def recover(root: Path):
                 path.unlink()
             else:
                 replace_file(folder, path, before, entry["mode"])
+        touched = [root / entry["path"] for entry in entries]
+        if link_started:
+            touched.append(root / WORKFLOW_LINK)
         for relative in reversed(journal["directories"]):
             path = safe_path(root, relative)
-            if path.is_dir() and not any(path.iterdir()):
+            if any(path in target.parents for target in touched) and path.is_dir() and not any(path.iterdir()):
                 path.rmdir()
         clean(folder)
         print(f"RECOVERED {root}")
+        return True
     except (OSError, ValueError, KeyError, TypeError) as error:
         raise ValueError(
             f"Recovery blocked: {error}. 保留恢复记录: {folder}; "
-            "核对受影响路径并解除冲突后重新执行 init，禁止删除记录后强制覆盖。"
+            "核对受影响路径并解除冲突后运行 recover 或重试 init，禁止删除记录后强制覆盖。"
         ) from error
 
 
-def apply(root: Path, changes: list[tuple[Path, bytes, bytes | None]], *, shared: Path | None = None):
+def apply(root: Path, files: list[tuple[Path, bytes, bytes | None]], *,
+          shared: Path | None = None, guard=None, verify=None):
     """Caller holds project_lock and has recovered any prior operation."""
-    if not changes and shared is None:
-        return
+    if guard:
+        guard()
     folder = safe_path(root, RECOVERY)
     entries, directories = [], set()
-    for target, data, before in changes:
+    for target, data, before in files:
         target = safe_path(root, target.relative_to(root).as_posix())
         if content(target) != before:
             raise ValueError(f"File changed after preflight; preserve file: {target}")
+        if data == before:
+            continue
         entries.append({"path": target.relative_to(root).as_posix(),
                         "before": encode(before), "after": encode(data),
                         "mode": stat.S_IMODE(target.stat().st_mode) if before is not None else 0o644})
-    targets = [target for target, _, _ in changes]
+    if not entries and shared is None:
+        if verify:
+            verify()
+        return
+    targets = [root / entry["path"] for entry in entries]
     if shared is not None:
         path = workflow_path(root)
         if workflow_target(path) is not None:
@@ -259,27 +293,33 @@ def apply(root: Path, changes: list[tuple[Path, bytes, bytes | None]], *, shared
                 break
             if not parent.exists():
                 directories.add(parent.relative_to(root).as_posix())
-    journal = {"version": 1, "root": str(root.resolve()), "state": "prepared",
-               "files": entries,
+    journal = {"version": 2, "root": str(root.resolve()), "state": "prepared",
+               "files": entries, "started": 0, "link_started": False,
                "directories": sorted(directories, key=lambda p: (len(Path(p).parts), p))}
     if shared is not None:
         journal["workflow_target"] = str(shared)
     folder.mkdir(mode=0o700)
     try:
         save(folder, journal)
-        for entry in entries:
+        for index, entry in enumerate(entries, 1):
             target = safe_path(root, entry["path"])
             if content(target) != decode(entry["before"]):
                 raise ValueError(f"File changed during installation: {target}")
+            journal["started"] = index
+            save(folder, journal)
             target.parent.mkdir(parents=True, exist_ok=True)
             replace_file(folder, target, decode(entry["after"]), entry["mode"])
         if shared is not None:
             path = workflow_path(root)
             if workflow_target(path) is not None:
                 raise ValueError(f"Workflow link changed during installation: {path}")
+            journal["link_started"] = True
+            save(folder, journal)
             create_workflow_link(path, shared)
             if workflow_target(path) != shared:
                 raise ValueError(f"Unexpected workflow link target: {path}")
+        if verify:
+            verify()
         journal["state"] = "committed"
         save(folder, journal)
     except BaseException:

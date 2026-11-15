@@ -39,6 +39,7 @@ def build(output: Path) -> Path:
         dest = output / path.relative_to(initializer)
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(path, dest)
+    shutil.copyfile(ROOT / "src/sdd_init/release.py", output / "scripts/release.py")
     for source, destination in ((".agents/skills", "skills"), (".agents/sdd", "sdd"),
                                 (".codex/agents", "agents")):
         directory = project / source

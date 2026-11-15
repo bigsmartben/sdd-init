@@ -1,0 +1,16 @@
+{
+  "time_utc": "2026-11-14T15:20:30.881992+00:00",
+  "command": [
+    "/tmp/sdd-review-execution-6k7sr2xd/program/tools/python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-v"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "test_absolute_scripts_work_from_unrelated_directory (test_check_tools.CheckToolsTests.test_absolute_scripts_work_from_unrelated_directory) ... ok\ntest_external_scenario_never_attempts_network (test_check_tools.CheckToolsTests.test_external_scenario_never_attempts_network) ... ok\ntest_module_and_import_entry_points (test_check_tools.CheckToolsTests.test_module_and_import_entry_points) ... ok\ntest_real_ci_exit_codes_and_scenario_selection (test_check_tools.CheckToolsTests.test_real_ci_exit_codes_and_scenario_selection) ... ok\ntest_real_ci_repeat_runs_are_isolated (test_check_tools.CheckToolsTests.test_real_ci_repeat_runs_are_isolated) ... ok\ntest_real_ci_reports_all_scenarios_and_failure_precedes_blocked (test_check_tools.CheckToolsTests.test_real_ci_reports_all_scenarios_and_failure_precedes_blocked) ... ok\ntest_unexpected_product_error_does_not_stop_remaining_scenarios (test_check_tools.CheckToolsTests.test_unexpected_product_error_does_not_stop_remaining_scenarios) ... ok\ntest_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok\ntest_normal_submit (test_order.OrderTests.test_normal_submit) ... ok\n\n----------------------------------------------------------------------\nRan 9 tests in 1.289s\n\nOK\n"
+}

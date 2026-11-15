@@ -1,0 +1,10 @@
+ M docs/index.md
+ M specs/order/quickstart.md
+ M src/order_service.py
+ M src/ui.py
+?? .tmp/
+?? docs/issues/
+?? docs/test-reports/
+?? specs/order/plan.md
+?? tests/integration_order.py
+?? tests/test_order_bugfix.py

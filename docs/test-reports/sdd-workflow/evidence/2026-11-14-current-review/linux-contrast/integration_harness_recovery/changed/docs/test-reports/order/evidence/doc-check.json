@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "scope": "mechanical_only",
+  "files": [
+    "docs/index.md",
+    "docs/issues/ORD-001.md",
+    "docs/issues/ORD-002.md",
+    "docs/test-reports/order/2026-11-14-integration.md",
+    "specs/order/quickstart.md"
+  ],
+  "diagnostics": [],
+  "errors": 0,
+  "warnings": 0
+}

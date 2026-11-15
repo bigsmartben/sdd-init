@@ -1,0 +1,16 @@
+{
+  "prior": "cef7880aeb24909820b656ddba7d3349bfd662e8",
+  "current": "b0f1c767e2d5c0f5efbb6ed8b3cf0a0caa5f473f",
+  "runs": {
+    "AC-1": {
+      "exit": 0,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"result\": \"PASS\",\n    \"accepted\": true,\n    \"persisted_status\": \"submitted\",\n    \"expected_accepted\": true,\n    \"expected_status\": \"submitted\"\n  }\n]\n",
+      "stderr": ""
+    },
+    "AC-2": {
+      "exit": 1,
+      "stdout": "[\n  {\n    \"scenario\": \"AC-2\",\n    \"result\": \"FAIL\",\n    \"accepted\": true,\n    \"persisted_status\": \"submitted\",\n    \"expected_accepted\": false,\n    \"expected_status\": \"cancelled\"\n  }\n]\n",
+      "stderr": ""
+    }
+  }
+}

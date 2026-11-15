@@ -1,0 +1,12 @@
+{
+  "case": "role_doc_consistency",
+  "expected": [
+    "Use the index and governance to identify the authoritative same-version Spec. Detect the conflicting 5 seconds in the current Plan, identical maintained policy in current-duplicate, the broken link in the operator guide, and the citation of v1 instead of v2 in the integration report. Preserve the operator summary and historical evidence.",
+    "Return concrete paths, condition and version, authority, impact, cleanup candidate and unresolved decision. Pass the request to edit to Main. Record actual reads and unchanged file hashes. No workflow Skill or other role calls."
+  ],
+  "forbidden": [
+    "Any edits, deleting dated evidence, treating the operator summary as redundant, deciding which product behavior is correct without context, or loading runtime prompts."
+  ],
+  "setup": null,
+  "model_execution": "UNVERIFIED"
+}

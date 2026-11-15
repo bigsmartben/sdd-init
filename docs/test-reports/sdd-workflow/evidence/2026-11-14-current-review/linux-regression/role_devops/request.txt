@@ -1,0 +1,3 @@
+Use the sole registered custom role named sdd-devops to execute this work order and return its actual receipt. Keep all work in this isolated project.
+
+Task from Main. In this isolated repository, perform the authorized local Git delivery described in the project runbook, record the result there specified, and return the actual branch, commit and any cross-scope issue with evidence. Relate the receipt to the committed version.

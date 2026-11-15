@@ -6,7 +6,7 @@
 
 项目协作约定指定人的决策权限。业务需求、用例、产品运行条件、非功能指标及集成验收目标由产品决策人确定；系统设计、模块边界及不变量由架构决策人确定；验收范围和改变验收含义的数据选择由项目约定的测试决策人确定。Agent 可在已确认目标、项目约束和授权内决定常规实施、验证与取证细节。依据已确认行为可推导的异常、边界和验收覆盖由 Agent 补齐。新增或改变用户可观察的异常结果、业务状态、权限、数据结果或质量承诺时，由相应决策人确认；该边界同样适用于主流程保持的场景。
 
-Main 按[意图对齐](visual-confirmation.md#意图对齐)呈现新增或有变化的决定和待补授权，保留确认依据并复用仍适用的已有确认。由本阶段的规则确定确认对象和时点。纯讨论只形成候选或待决结论，按需参考[场景提示](scenarios.md)。
+技能 Agent 按本阶段规则确定确认对象和时点，向 Main 提供待决内容、依据及影响。Main 面向用户按[意图对齐](visual-confirmation.md#意图对齐)呈现，保留确认并把结论交回原技能 Agent。仍适用的已有确认直接沿用。
 
 ### 需求与架构讨论
 
@@ -18,9 +18,9 @@ Main 按[意图对齐](visual-confirmation.md#意图对齐)呈现新增或有变
 
 ## 职责与交接
 
-主任务（Main）对用户意图、阶段边界、授权和实际结果负责，统一协调跨阶段、跨技能及技能未覆盖的事项。开工时明确目标、范围、授权终点、预期产物和完成条件；核对输入的权威来源、版本、环境和权限。Skill 负责阶段内输入检查、依赖、执行、确认节点、失败修正、复验和回执，所需专业角色由 Skill 按[委派与独立性](delegation.md#委派与独立性)和[最小交接](delegation.md#最小交接)显式安排。Goal 仅在用户或更高优先级指令明确要求时创建。
+主任务（Main）是面向用户的阶段调度与交付负责人。Main 明确本轮目标、终点和授权，选择并启动技能 Agent，接收阶段回执并核对整体交付，协调跨阶段接续、必要的用户决定及技能未覆盖事项。常规路径为主任务 → 技能 Agent → 专业角色。Goal 仅在用户或更高优先级指令明确要求时创建。
 
-用户明确发起指定缺陷处理时，Main 选择 [sdd-bugfix](../../skills/sdd-bugfix/SKILL.md)。该阶段沿原 Issue 完成归因、修复和定向复验，按实际修复版本的证据和授权更新状态。只诊断或只复验按指定终点交付。集成测试中的缺陷发现交回 Main。获授权的集成批次可按原 Issue 判据和必要复验证据更新状态，整轮 Test Gate 独立判定。
+技能 Agent 是在独立执行上下文运行所选 Skill 的 Agent。它核对阶段输入的来源、版本、环境和权限，负责工作组织、专业角色调度、依赖管理、专项确认、失败修正与复验，向 Main 交付阶段结果。专业角色按工单完成本职工作，向任务调用者返回[任务回执](task-receipt.md)。Main 启动阶段前读取[技能 Agent 的启动与接续](delegation.md#技能-agent-的启动与接续)。
 
 ### 选择工作流
 
@@ -77,7 +77,7 @@ Main 按[意图对齐](visual-confirmation.md#意图对齐)呈现新增或有变
 
 ### 阶段回执
 
-Skill 按阶段终点核对覆盖、完成判据、实际版本、证据和交付物，向 Main 返回阶段回执；Main 核对整体目标并协调后续阶段。阶段回执回答四件事：
+技能 Agent 按阶段终点核对覆盖、完成判据、实际版本、证据和交付物，向 Main 返回阶段回执。Main 核对整体目标并协调后续阶段。阶段回执回答四件事：
 
 1. 本轮目标完成到哪里，包含失败、未完成或未适用的检查。
 2. 实际产物、版本和证据入口。
@@ -126,7 +126,6 @@ Skill 按阶段终点核对覆盖、完成判据、实际版本、证据和交�
 | Test Report | `docs/test-reports/<主题>/<批次>.md`，简单任务可在当前任务记录 |
 | Issue | `docs/issues/<问题编号>.md` |
 | Architecture Review Record | `docs/test-reports/<主题>/<批次>-review.md` |
-| Prompt Review Record | 当前任务记录，需独立落盘时用 `docs/test-reports/<主题>/<批次>-prompt-review.md` |
 | Delivery Record | 沿用项目发布或运维记录，独立文档默认 `docs/delivery/<批次>.md`，简单任务可在当前任务记录 |
 | Blueprint / Scenario Sequence / Interface Contract | `docs/blueprint.md`、`docs/sequences/<场景>.md`、`docs/contracts/<接口或协议>.md` |
 | Technical Research and Selection Report | `docs/research/<主题>.md`，按需建立 |
@@ -150,7 +149,6 @@ Skill 按阶段终点核对覆盖、完成判据、实际版本、证据和交�
 | Scenario Sequence / Interface Contract | 设计中的协作顺序、接口语义与异常约定。运行事实归对应 Test Report。 |
 | Quickstart | 集成回归用户验收文档，组织覆盖、准备条件、操作与预期。批次实际结果归 Test Report。 |
 | Test Report / Architecture Review Record | 分别维护实际验证的批次事实和架构检查项的历次证据。 |
-| Prompt Review Record | 维护本轮提示词规则映射、场景依赖、审查发现和验证证据。已确认职责及预期行为引用各自权威正文。 |
 | Delivery Record | 实际交付与运维操作、目标状态、运行检查、故障影响及恢复结果。适用的 Review 和集成证据引用原记录。 |
 | Issue | 独立问题事实、Bug 工单及处理状态。修复方案引用 Plan／Task。 |
 | Plan／Task、Status | 分别维护实施方案与任务、进度与恢复点。验证结果引用对应报告和版本。 |
@@ -161,8 +159,6 @@ Skill 按阶段终点核对覆盖、完成判据、实际版本、证据和交�
 
 保留原始证据入口、实际版本、环境、覆盖范围和所证明的判据，可使用任何来源的合格证据。版本、环境、判据或关联实现变更时先判断影响，仅复用仍能证明当前对象和范围的部分，其余按本轮权限补验或记录缺口。原型模拟、局部自验、正式集成测试、架构复核和运行检查各自证明实际覆盖范围。沿用原记录，以引用关联事实、进度与决定。
 
-<a id="skill-场景与对象分工"></a>
-
 ## 流程场景与对象分工
 
 Main 从项目导航定位流程入口。下表按输入与产物导航，各入口维护具体做法和确认点。具体落点见[工程资产边界](#工程资产边界)与[文档与产物落点](#文档与产物落点)。
@@ -172,12 +168,11 @@ Main 从项目导航定位流程入口。下表按输入与产物导航，各入
 | 已安装的 `sdd-init` Skill | 共享资源版本、项目链接及托管引用、安装或恢复回执 |
 | [文档交接](delegation.md#文档交接) | 项目权威正文和写后诊断 |
 | [需求→实现](../../skills/sdd-develop/SKILL.md)，输入用户目标、约束和已有交付依据 | Spec／AC、原工单的验收计划与方案、Plan／Task、实际版本、点对点验收证据及集成准备条件 |
+| [架构蓝图的设计与演化](../../skills/sdd-architecture/SKILL.md)，输入已确认产品依据、现有设计和可核验事实 | 经确认的 Blueprint，按需关联 ADR、契约、时序、可行性证据及待决项 |
 | [实施交接](delegation.md#实施交接) | Plan／Task、实际改动、版本及代码单测等局部证据，关联上游工单及待验判据 |
 | [缺陷修复](../../skills/sdd-bugfix/SKILL.md)，输入异常报告或原 Issue 及已确认行为依据 | 原 Issue、归因及历次复验证据、Plan／Task、修复版本、关闭依据或恢复条件 |
 | [集成测试](../../skills/sdd-test-loop/SKILL.md)，输入用户明确请求、已确认范围及目标版本和环境 | 可复跑的用户验收文档、含 Test Gate 的 Test Report、关联 Issue 及恢复条件 |
-| [架构蓝图的设计与演化](../../skills/sdd-architecture/SKILL.md)，输入已确认产品依据、现有设计和可核验事实 | 经确认的 Blueprint，按需关联 ADR、契约、时序、可行性证据及待决项 |
 | [架构对齐与重构](../../skills/sdd-refactor/SKILL.md)，输入已确认架构、适用规则、行为判据和目标版本 | Architecture Review Record 记录原检查项工单、架构复核、行为保持验收及 Review Gate，Plan／Task 记录实施和局部自验。交付集成准备条件。仅审查时交付偏差、证据和建议 |
-| [提示词审查](../../skills/sdd-review-prompt/SKILL.md)，输入待审指令版本和实际加载依据 | [Prompt Review Record](../assets/prompt_review_template.md)，记录规则、发现和适用的复验结果 |
 | [交付与运行](../../skills/sdd-deliver/SKILL.md)，输入授权终点、目标版本、环境及适用依据 | 平台或运行回执，按需归并 Delivery Record，记录实际终点、版本、证据与恢复条件 |
 
 <a id="testing-scope-constraints"></a>

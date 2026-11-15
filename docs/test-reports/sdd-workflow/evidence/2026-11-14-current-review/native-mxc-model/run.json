@@ -1,0 +1,30 @@
+{
+  "exit": 0,
+  "seconds": 72.33,
+  "candidate_role_sha256": "7e063245b5e628f1d739bd2b70c6223340e498a29f02d4984b037b2b40f047d5",
+  "sessions": [
+    {
+      "id": "01a1daa7-6d92-7120-a37d-2c610eea2d53",
+      "source": "exec",
+      "agent_role": null,
+      "cli_version": "0.169.0-alpha.11.1"
+    },
+    {
+      "id": "01a1daa7-aa78-7dc3-b58a-64ed26aa9bb5",
+      "source": {
+        "subagent": {
+          "thread_spawn": {
+            "parent_thread_id": "01a1daa7-6d92-7120-a37d-2c610eea2d53",
+            "depth": 1,
+            "agent_path": "/root/doc_review",
+            "agent_nickname": "Hypatia",
+            "agent_role": "sdd-doc-consistency"
+          }
+        }
+      },
+      "agent_role": "sdd-doc-consistency",
+      "cli_version": "0.169.0-alpha.11.1"
+    }
+  ],
+  "change_paths": []
+}

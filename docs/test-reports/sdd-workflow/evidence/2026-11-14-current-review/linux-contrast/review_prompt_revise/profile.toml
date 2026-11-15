@@ -1,0 +1,27 @@
+model = "gpt-6.1-sol"
+model_reasoning_effort = "medium"
+default_permissions = "fixture-write"
+approval_policy = "never"
+cli_auth_credentials_store = "file"
+suppress_unstable_features_warning = true
+allow_login_shell = false
+[features]
+plugins = false
+multi_agent_v2 = true
+skill_search = false
+skip_host_skill_discovery = true
+[agents]
+max_threads = 8
+max_depth = 2
+
+[permissions.fixture-write.filesystem]
+":minimal" = "read"
+"/tmp/sdd-review-execution-6k7sr2xd/program" = "read"
+"/tmp/sdd-review-execution-6k7sr2xd/review_prompt_revise-9thuab5y/scratch" = "write"
+[permissions.fixture-write.filesystem.":workspace_roots"]
+"." = "write"
+".agents" = "read"
+".codex" = "read"
+".git" = "read"
+[permissions.fixture-write.network]
+enabled = false

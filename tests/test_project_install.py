@@ -45,10 +45,10 @@ class ProjectInstallTests(unittest.TestCase):
         return {p.relative_to(self.root).as_posix(): p.read_bytes()
                 for p in project_files(self.root)}
 
-    def run_init(self, *, env=None):
+    def run_init(self, *, env=None, command="init"):
         return subprocess.run([sys.executable, "-B", "-X", "utf8",
                                str(self.skill / "scripts/govern.py"),
-                               "--root", str(self.root), "init"],
+                               "--root", str(self.root), command],
                               capture_output=True, text=True, encoding="utf-8", timeout=30, env=env)
 
     def crash(self, hook):
@@ -127,6 +127,78 @@ gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["init"]))
                 self.assertFalse((self.root / self.tx.RECOVERY).exists())
                 target.unlink()
 
+    def test_inspect_reports_versions_and_conflicts_without_writes(self):
+        result = self.run_init(command="inspect")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Shared version: sha256:", result.stdout)
+        self.assertIn("Registered roles: none", result.stdout)
+        self.assertEqual(list(self.root.iterdir()), [])
+        self.assertEqual(self.run_init().returncode, 0)
+        before = self.snapshot()
+        result = self.run_init(command="inspect")
+        self.assertIn("Project changes on init: none", result.stdout)
+        self.assertIn("sdd-architect", result.stdout)
+        self.assertEqual(self.snapshot(), before)
+        agents = self.root / "AGENTS.md"
+        agents.write_bytes(agents.read_bytes().replace(
+            b"<!-- sdd-contract-governance:end -->", b"Project-owned entry\n<!-- sdd-contract-governance:end -->",
+        ))
+        before = self.snapshot()
+        for command in ("inspect", "init"):
+            result = self.run_init(command=command)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("sdd-contract-governance", result.stderr)
+            self.assertEqual(self.snapshot(), before)
+
+    def test_role_and_skill_names_cannot_shadow_shared_entries(self):
+        names = {
+            ".agents/skills/group/local/SKILL.md": b"---\nname: sdd-develop\ndescription: Custom.\n---\n",
+            ".codex/agents/local.toml": b'name = "sdd-architect"\n',
+        }
+        for relative, data in names.items():
+            with self.subTest(path=relative):
+                path = self.root / relative
+                path.parent.mkdir(parents=True)
+                path.write_bytes(data)
+                before = self.snapshot()
+                result = self.run_init()
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(relative, result.stderr)
+                self.assertEqual(self.snapshot(), before)
+                path.unlink()
+
+    def test_late_edit_to_unwritten_file_does_not_block_rollback(self):
+        config = self.root / ".codex/config.toml"
+        original = self.tx.replace_file
+
+        def edit_second_file(folder, path, data, mode=0o644):
+            original(folder, path, data, mode)
+            if path.name == "AGENTS.md":
+                config.parent.mkdir()
+                config.write_bytes(b"external edit")
+
+        with patch.object(self.tx, "replace_file", side_effect=edit_second_file):
+            with self.assertRaisesRegex(ValueError, "File changed during installation"):
+                self.gov.cmd_init(self.root, self.args)
+        self.assertEqual(self.snapshot(), {".codex/config.toml": b"external edit"})
+        self.assertFalse((self.root / self.tx.RECOVERY).exists())
+
+    def test_recover_only_removes_interrupted_install(self):
+        self.crash('''
+original = tx.create_workflow_link
+def stop(path, target):
+    original(path, target)
+    os._exit(79)
+tx.create_workflow_link = stop
+''')
+        self.assertIn("PENDING", self.run_init(command="inspect").stdout)
+        result = self.run_init(command="recover")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("RECOVERED", result.stdout)
+        self.assertEqual(self.snapshot(), {})
+        self.assertFalse((self.root / WORKFLOW).exists())
+        self.assertIn("No pending", self.run_init(command="recover").stdout)
+
     def test_upgrade_rollback_preserves_customizations_and_history(self):
         self.assertEqual(self.run_init().returncode, 0)
         customized = self.root / ".codex/config.toml"
@@ -173,7 +245,8 @@ tx.replace_file = stop
         self.assertEqual(self.run_init().returncode, 0)
 
     def test_crash_after_link_creation_rolls_back_without_touching_shared_files(self):
-        shared = self.skill / "shared/agents/sdd-doc-consistency.toml"
+        role = "agents/sdd-architect.toml"
+        shared = self.skill / "shared" / role
         original = shared.read_bytes()
         self.crash("""
 original = tx.create_workflow_link
@@ -182,7 +255,7 @@ def stop(path, target):
     os._exit(79)
 tx.create_workflow_link = stop
 """)
-        self.assertTrue((self.root / WORKFLOW / "agents/sdd-doc-consistency.toml").samefile(shared))
+        self.assertTrue((self.root / WORKFLOW / role).samefile(shared))
         (self.root / "AGENTS.override.md").write_bytes(b"block next install")
         result = self.run_init()
         self.assertNotEqual(result.returncode, 0)

@@ -1,0 +1,25 @@
+[
+  {
+    "scenario": "AC-1",
+    "result": "PASS",
+    "accepted": true,
+    "persisted_status": "submitted",
+    "expected_accepted": true,
+    "expected_status": "submitted"
+  },
+  {
+    "scenario": "AC-2",
+    "result": "FAIL",
+    "accepted": true,
+    "persisted_status": "submitted",
+    "expected_accepted": false,
+    "expected_status": "cancelled"
+  },
+  {
+    "scenario": "AC-3",
+    "result": "BLOCKED",
+    "reason": "No external call is performed by this fixture; authorized endpoint and permission are required",
+    "endpoint_configured": false,
+    "authorized": false
+  }
+]

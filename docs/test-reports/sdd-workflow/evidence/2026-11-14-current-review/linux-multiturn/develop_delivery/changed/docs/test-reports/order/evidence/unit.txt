@@ -1,0 +1,10 @@
+test_empty_and_whitespace_ids_are_rejected_without_writes (test_order.CreateOrderValidationTests.test_empty_and_whitespace_ids_are_rejected_without_writes) ... ok
+test_legal_ids_preserve_original_value (test_order.CreateOrderValidationTests.test_legal_ids_preserve_original_value) ... ok
+test_non_string_ids_are_rejected_without_writes (test_order.CreateOrderValidationTests.test_non_string_ids_are_rejected_without_writes) ... ok
+test_mark_paid_is_persisted (test_order.OrderTests.test_mark_paid_is_persisted) ... ok
+test_normal_submit (test_order.OrderTests.test_normal_submit) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.354s
+
+OK

@@ -6,7 +6,7 @@ A simple change may require one Task. Keep the required sections and fields, wri
 
 ## 1. Goal and Basis
 
-- **Goal and scope** — <Behavior to change, affected scope, and explicit exclusions>
+- **Goal and scope** — <Intended change, affected scope, applicable constraints, and explicit exclusions>
 - **Upstream work** — <Work order goal, scope, pass criteria, and links to the upstream acceptance plan and procedure. Reference the confirmed requirement, AC, Interface Contract, architecture decision, original Bug Issue, or original Review check as applicable.>
 - **Current implementation** — <Code facts and entry points directly related to the change>
 
@@ -42,4 +42,4 @@ For a Plan with multiple Tasks, show the execution order as a compact DAG derive
 
 - **Goal coverage and completion** — <Link completed and unfinished Tasks. Compare the actual changes and verification coverage with the upstream goal, applicable constraints, and current Plan.>
 - **Blockers and next actions** — <Specific problem, affected Tasks, and resumption conditions, or None>
-- **Coverage gaps and applicable follow-up** — <Work order criteria still awaiting verification and their executors. For each requirements acceptance, defect retest, or architecture recheck in scope, link its upstream acceptance plan and procedure and provide the applicable entry points, known setup, and available evidence.>
+- **Coverage gaps and applicable follow-up** — <Work order criteria still awaiting verification and their executors. Link the upstream acceptance plan and procedure for applicable requirements acceptance, defect retest, architecture recheck, and refactoring behavior-preservation acceptance. Provide the entry points, known setup, and available evidence.>

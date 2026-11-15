@@ -1,0 +1,90 @@
+[
+  {
+    "case": "C04",
+    "persisted_status": "paid",
+    "result": "PASS"
+  },
+  {
+    "case": "C05",
+    "inputs": [
+      "",
+      null
+    ],
+    "observations": [
+      {
+        "exception": "ValueError",
+        "message": "order_id is required"
+      },
+      {
+        "exception": "ValueError",
+        "message": "order_id is required"
+      }
+    ],
+    "order_count": 0,
+    "result": "PASS"
+  },
+  {
+    "case": "C06",
+    "observations": {
+      "read_status": {
+        "exception": "ValueError",
+        "message": "order not found"
+      },
+      "cancel_order": {
+        "exception": "ValueError",
+        "message": "order not found"
+      },
+      "submit_order": {
+        "exception": "ValueError",
+        "message": "order not found"
+      },
+      "set_status": {
+        "exception": "ValueError",
+        "message": "order not found"
+      },
+      "mark_paid": {
+        "returned": null
+      }
+    },
+    "order_count": 0,
+    "result": "FAIL"
+  },
+  {
+    "case": "C07",
+    "observations": {
+      "create_order": {
+        "exception": "ProgrammingError",
+        "message": "Cannot operate on a closed database."
+      },
+      "read_status": {
+        "exception": "ProgrammingError",
+        "message": "Cannot operate on a closed database."
+      },
+      "cancel_order": {
+        "exception": "ProgrammingError",
+        "message": "Cannot operate on a closed database."
+      },
+      "submit_order": {
+        "exception": "ProgrammingError",
+        "message": "Cannot operate on a closed database."
+      },
+      "set_status": {
+        "exception": "ProgrammingError",
+        "message": "Cannot operate on a closed database."
+      },
+      "mark_paid": {
+        "exception": "ProgrammingError",
+        "message": "Cannot operate on a closed database."
+      }
+    },
+    "result": "PASS"
+  },
+  {
+    "case": "C08",
+    "reopened_states": [
+      "pending",
+      "cancelled"
+    ],
+    "result": "PASS"
+  }
+]

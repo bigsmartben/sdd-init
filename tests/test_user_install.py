@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -10,8 +11,12 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
-from sdd_init.installer import install, shared_directory, snapshot
-from test_build import WORKFLOW, builder, project_files, refresh_manifest
+from sdd_init.installer import install, recover_installation, shared_directory, snapshot
+from sdd_init import installer
+from sdd_init.release import (
+    LOCK_BYTES, USER_LOCK, USER_ROLE_ASSET, content_id, recovery_directory, shared_files, user_lock, verified,
+)
+from test_build import WORKFLOW, builder, legacy_fragment, project_files, refresh_manifest
 
 
 class UserInstallTests(unittest.TestCase):
@@ -21,6 +26,11 @@ class UserInstallTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.resources = builder.build(self.root / "resources")
         self.skills = self.root / "home/.agents/skills"
+        codex = self.root / "home/.codex"
+        environment = patch.dict(os.environ, {"CODEX_HOME": str(codex)})
+        environment.start()
+        self.addCleanup(environment.stop)
+        self.role = codex / "agents/review-prompt.toml"
 
     def change_release(self):
         (self.resources / "SKILL.md").write_text("new release", encoding="utf-8")
@@ -34,12 +44,17 @@ class UserInstallTests(unittest.TestCase):
         project.mkdir()
         (project / "custom.txt").write_text("keep")
         self.assertEqual(install(self.resources, self.skills), "Installed")
+        self.assertEqual(self.role.read_bytes(), (self.resources / USER_ROLE_ASSET).read_bytes())
         self.assertEqual(install(self.resources, self.skills), "Already current")
-        self.assertEqual(list(self.skills.iterdir()), [self.skills / "sdd-init"])
+        self.assertEqual({p.name for p in self.skills.iterdir()}, {"sdd-init", USER_LOCK})
+        self.assertEqual((self.skills / USER_LOCK).read_bytes(), LOCK_BYTES)
         self.assertEqual(len(list(self.skills.rglob("SKILL.md"))), 1)
+        role_revision = self.role.read_bytes() + b"\n# new reviewer\n"
+        (self.resources / USER_ROLE_ASSET).write_bytes(role_revision)
         self.change_release()
         self.assertEqual(install(self.resources, self.skills), "Updated")
         self.assertEqual((self.skills / "sdd-init/SKILL.md").read_text(), "new release")
+        self.assertEqual(self.role.read_bytes(), role_revision)
         self.assertEqual((project / "custom.txt").read_text(), "keep")
 
     def test_linked_projects_share_updates_and_git_ignores_local_link(self):
@@ -70,42 +85,86 @@ class UserInstallTests(unittest.TestCase):
         self.assertEqual((worktree / ".codex/config.toml").read_bytes(), refs)
         repos.append(worktree)
         before = [{p.relative_to(repo): p.read_bytes() for p in project_files(repo)} for repo in repos]
-        role_path = "agents/sdd-doc-consistency.toml"
+        role_path = "agents/sdd-architect.toml"
         role = self.resources / "shared" / role_path
         role.write_text(role.read_text(encoding="utf-8") + "\n# new workflow version\n", encoding="utf-8")
         self.change_release()
         self.assertEqual(install(self.resources, self.skills), "Updated")
         for repo, expected in zip(repos, before):
             config = repo / ".codex/config.toml"
-            ref = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]["sdd-doc-consistency"]["config_file"]
+            ref = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]["sdd-architect"]["config_file"]
             self.assertTrue((config.parent / ref).samefile(shared / role_path))
             self.assertEqual((config.parent / ref).read_bytes(), role.read_bytes())
             self.assertEqual({p.relative_to(repo): p.read_bytes() for p in project_files(repo)}, expected)
+        new_version = content_id(shared_files(verified(self.resources)))
+        subprocess.run([sys.executable, "-B", "-X", "utf8", str(target / "scripts/govern.py"),
+                        "--root", str(repos[0]), "init"], check=True, capture_output=True)
+        self.assertEqual(json.loads((repos[0] / ".sdd-init-state.json").read_bytes())["shared_version"], new_version)
+        for repo in repos[1:]:
+            self.assertNotEqual(json.loads((repo / ".sdd-init-state.json").read_bytes())["shared_version"], new_version)
 
-    def test_upgrade_replaces_managed_development_skills_and_refreshes_navigation(self):
+    def test_upgrade_retires_managed_skills_and_roles_and_registers_replacements(self):
         old_release = self.root / "old-release"
         shutil.copytree(self.resources, old_release)
-        retired = ("sdd-doc", "sdd-spec", "sdd-imp")
+        (old_release / USER_ROLE_ASSET).unlink()
+        retired = {name: Path(f"skills/{name}/SKILL.md")
+                   for name in ("sdd-doc", "sdd-imp", "sdd-review-code", "sdd-commit", "sdd-deploy", "sdd-review-prompt")}
+        for name, relative in retired.items():
+            old_skill = old_release / "shared" / relative
+            old_skill.parent.mkdir(parents=True)
+            old_skill.write_text(f"---\nname: {name}\ndescription: Retired workflow.\n---\n", encoding="utf-8")
+            old_metadata = old_skill.parent / "agents/openai.yaml"
+            old_metadata.parent.mkdir()
+            old_metadata.write_text(f'interface:\n  display_name: "{name}"\n', encoding="utf-8")
+        added_skills = ("sdd-develop", "sdd-architecture", "sdd-refactor")
         skill_files = ("SKILL.md", "agents/openai.yaml")
-        for relative in skill_files:
-            (old_release / "shared/skills/sdd-develop" / relative).unlink()
-        for name in retired:
-            old_skill = old_release / "shared/skills" / name
-            metadata = old_skill / "agents/openai.yaml"
-            metadata.parent.mkdir(parents=True)
-            (old_skill / "SKILL.md").write_text(
-                f"---\nname: {name}\ndescription: Earlier workflow.\n---\n", encoding="utf-8")
-            metadata.write_text(f'interface:\n  display_name: "{name}"\n', encoding="utf-8")
+        for name in added_skills:
+            for relative in skill_files:
+                (old_release / "shared/skills" / name / relative).unlink()
         old_govern = old_release / "scripts/govern.py"
-        old_govern.write_text(old_govern.read_text(encoding="utf-8").replace(
-            "'sdd-develop',", "'sdd-doc', 'sdd-spec', 'sdd-imp',", 1), encoding="utf-8")
-        old_fragment = old_release / "assets/agents-fragment.md"
-        old_links = "".join(f"[{name}]({WORKFLOW}/skills/{name}/SKILL.md)\n" for name in retired)
-        old_fragment.write_text(
-            "<!-- sdd-contract-governance:start -->\n" + old_links +
-            "<!-- sdd-contract-governance:end -->\n", encoding="utf-8")
+        old_code = old_govern.read_text(encoding="utf-8")
+        prompt_template = Path("sdd/assets/prompt_review_template.md")
+        (old_release / "shared" / prompt_template).write_text("# Old prompt review template\n", encoding="utf-8")
+        old_code = old_code.replace('"test_report", "issue", "review",', '"test_report", "issue", "review", "prompt_review",', 1)
+        for name in added_skills:
+            old_code = old_code.replace(f" '{name}',", "", 1)
+        for name in ("traffic", "recovery", "delivery_record"):
+            old_code = old_code.replace(f', "{name}"', "", 1)
+        old_govern.write_text(old_code.replace(
+            "PROJECT_SKILLS = {", "PROJECT_SKILLS = {\n    " + ", ".join(repr(name) for name in retired) + ",", 1).replace(
+            "    'sdd-doc-consistency': 'gpt-6.1-terra',\n", "", 1).replace(
+            "'sdd-architect'", "'sdd-designer'", 1).replace(
+            "'sdd-product-manager': 'gpt-6-astra'", "'sdd-documenter': 'gpt-6.1-terra'", 1).replace(
+            "'sdd-devops'", "'sdd-delivery'", 1).replace(
+            "PROJECT_ROLE_MODELS = {", "PROJECT_ROLE_MODELS = {\n    'sdd-validator': 'gpt-6.1-terra',", 1
+        ), encoding="utf-8")
+        old_models = {
+            "sdd-designer": "gpt-6-astra",
+            "sdd-delivery": "gpt-6.1-terra",
+            "sdd-documenter": "gpt-6.1-terra",
+            "sdd-validator": "gpt-6.1-terra",
+        }
+        replacements = ("sdd-architect", "sdd-product-manager", "sdd-devops", "sdd-doc-consistency")
+        for name in replacements:
+            (old_release / "shared/agents" / f"{name}.toml").unlink()
+        for name, model in old_models.items():
+            (old_release / "shared/agents" / f"{name}.toml").write_text(
+                f'name = "{name}"\nmodel = "{model}"\ndescription = "Legacy role"\n'
+                'developer_instructions = "Legacy instructions"\n', encoding="utf-8",
+            )
+        delivery_resources = (
+            Path("sdd/references/traffic.md"),
+            Path("sdd/references/recovery.md"),
+            Path("sdd/assets/delivery_record_template.md"),
+        )
+        for path in delivery_resources:
+            (old_release / "shared" / path).unlink()
+        old_fragment = legacy_fragment("navigation")
+        (old_release / "assets/agents-fragment.md").write_text(old_fragment + "\n", encoding="utf-8")
         refresh_manifest(old_release)
-        self.assertEqual(install(old_release, self.skills), "Installed")
+        shutil.copytree(old_release, self.skills / "sdd-init", ignore=shutil.ignore_patterns("shared"))
+        shutil.copytree(old_release / "shared", shared_directory(self.skills))
+        self.assertFalse(self.role.exists())
 
         project = self.root / "project"
         project.mkdir()
@@ -115,38 +174,76 @@ class UserInstallTests(unittest.TestCase):
         local_text = "# Project guidance\n"
         agents = project / "AGENTS.md"
         agents.write_text(local_text, encoding="utf-8")
-        subprocess.run(init, check=True, capture_output=True)
+        history = project / "docs/test-reports/orders/b1-review.md"
+        history.parent.mkdir(parents=True)
+        history_bytes = b"# Historical sdd-review-code\r\n\r\nCHK-001: FAIL at B1\r\n"
+        history.write_bytes(history_bytes)
+        config = project / ".codex/config.toml"
+        config.parent.mkdir()
+        project_settings = b'model = "project-choice"\r\n[mcp_servers.custom]\r\nurl = "https://example.invalid/mcp"\r\n'
+        config.write_bytes(project_settings)
+        result = subprocess.run(init, capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         workflow = project / WORKFLOW
-        self.assertFalse((workflow / "skills/sdd-develop/SKILL.md").exists())
-        for name in retired:
-            path = Path("skills") / name / "SKILL.md"
+        for name in added_skills:
+            self.assertFalse((workflow / "skills" / name / "SKILL.md").exists())
+        for path in delivery_resources:
+            self.assertFalse((workflow / path).exists())
+        old_roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
+        self.assertEqual(set(old_roles), set(old_models) | {"sdd-coder"})
+        for name in old_models:
+            self.assertTrue((config.parent / old_roles[name]["config_file"]).samefile(shared / "agents" / f"{name}.toml"))
+        for name, path in retired.items():
             self.assertTrue((workflow / path).samefile(shared / path))
             self.assertIn(f"[{name}]", agents.read_text(encoding="utf-8"))
+        self.assertTrue((workflow / prompt_template).is_file())
+        # Simulate an install predating the local fragment hashes.
+        (project / ".sdd-init-state.json").unlink()
 
         self.assertEqual(install(self.resources, self.skills), "Updated")
+        self.assertEqual(self.role.read_bytes(), (self.resources / USER_ROLE_ASSET).read_bytes())
         self.assertTrue(workflow.samefile(shared))
-        for name in retired:
-            self.assertFalse((workflow / "skills" / name).exists())
-        subprocess.run(init, check=True, capture_output=True)
+        for name in old_models:
+            self.assertFalse((workflow / "agents" / f"{name}.toml").exists())
+        for path in retired.values():
+            self.assertFalse((workflow / path.parent).exists())
+        self.assertFalse((workflow / prompt_template).exists())
+        result = subprocess.run(init, capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         guidance = agents.read_text(encoding="utf-8")
         self.assertIn(local_text, guidance)
-        self.assertIn(f"[sdd-develop]({WORKFLOW}/skills/sdd-develop/SKILL.md)", guidance)
-        for relative in skill_files:
-            path = Path("skills/sdd-develop") / relative
+        self.assertIn(f"({WORKFLOW}/sdd/references/delegation.md#实施交接)", guidance)
+        self.assertIn(f"[sdd-deliver]({WORKFLOW}/skills/sdd-deliver/SKILL.md)", guidance)
+        for path in delivery_resources:
             self.assertTrue((workflow / path).samefile(shared / path))
+        for name in added_skills:
+            self.assertIn(f"[{name}]({WORKFLOW}/skills/{name}/SKILL.md)", guidance)
+            for relative in skill_files:
+                path = Path("skills") / name / relative
+                self.assertTrue((workflow / path).samefile(shared / path))
         for name in retired:
             self.assertNotIn(f"[{name}]", guidance)
+        self.assertNotIn("/sdd-review-code/", guidance)
+        self.assertEqual(history.read_bytes(), history_bytes)
+        self.assertNotIn("sdd-documenter", guidance)
+        after = config.read_bytes()
+        self.assertTrue(after.startswith(project_settings))
+        roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
+        self.assertEqual(set(roles), set(replacements) | {"sdd-coder"})
+        for name in roles:
+            self.assertTrue((config.parent / roles[name]["config_file"]).samefile(shared / "agents" / f"{name}.toml"))
+        rules = Path("sdd/references/implementation.md")
+        self.assertTrue((workflow / rules).samefile(shared / rules))
         subprocess.run(init, check=True, capture_output=True)
+        self.assertEqual(config.read_bytes(), after)
         self.assertEqual(agents.read_text(encoding="utf-8"), guidance)
 
     def test_generated_bytecode_does_not_block_reinstall_or_upgrade(self):
         self.assertEqual(install(self.resources, self.skills), "Installed")
         target = self.skills / "sdd-init"
-        subprocess.run(
-            [sys.executable, "-E", "-X", "utf8", str(target / "scripts/govern.py"),
-             "--root", str(self.root), "inspect"],
-            check=True, capture_output=True,
-        )
+        subprocess.run([sys.executable, "-E", "-c",
+                        "import sys; sys.path.insert(0, sys.argv[1]); import project_install",
+                        str(target / "scripts")], check=True, capture_output=True)
         self.assertTrue(list((target / "scripts/__pycache__").glob("project_install.*.pyc")))
 
         before = snapshot(target)
@@ -170,21 +267,23 @@ class UserInstallTests(unittest.TestCase):
         ):
             with self.subTest(name=name):
                 skills = self.root / Path(name).name
-                install(self.resources, skills)
+                agents_dir = skills.with_suffix(".agents")
+                install(self.resources, skills, agents_dir)
                 target = skills / "sdd-init"
                 extra = target / name
                 extra.parent.mkdir(parents=True, exist_ok=True)
                 extra.write_bytes(b"user file")
                 before = snapshot(target)
                 with self.assertRaisesRegex(ValueError, "Modified or untracked files"):
-                    install(self.resources, skills)
+                    install(self.resources, skills, agents_dir)
                 self.assertEqual(snapshot(target), before)
 
     def test_custom_missing_extra_and_unmanaged_files_block_without_writes(self):
         for kind in ("custom", "missing", "extra", "unmanaged"):
             with self.subTest(kind=kind):
                 skills = self.root / kind
-                install(self.resources, skills)
+                agents_dir = skills.with_suffix(".agents")
+                install(self.resources, skills, agents_dir)
                 target = skills / "sdd-init"
                 if kind == "custom":
                     (target / "SKILL.md").write_text("custom")
@@ -196,9 +295,10 @@ class UserInstallTests(unittest.TestCase):
                     (target / "build-manifest.json").unlink()
                 before = snapshot(target)
                 with self.assertRaises(ValueError):
-                    install(self.resources, skills)
+                    install(self.resources, skills, agents_dir)
                 self.assertEqual(snapshot(target), before)
-                self.assertFalse((skills / ".sdd-init-install.lock").exists())
+                self.assertEqual((skills / USER_LOCK).read_bytes(), LOCK_BYTES)
+                self.assertFalse(recovery_directory(skills).exists())
 
     def test_corrupt_distribution_does_not_create_destination(self):
         (self.resources / "SKILL.md").write_text("corrupt")
@@ -226,12 +326,89 @@ class UserInstallTests(unittest.TestCase):
         # Model an already installed, intact older release without this module.
         old = self.skills / "sdd-init"
         shutil.copytree(self.resources, old, ignore=shutil.ignore_patterns("shared"))
+        (old / USER_ROLE_ASSET).unlink()
         (old / "assets/repo-payload.zip").write_bytes(b"legacy distribution")
         (old / "build-manifest.json").write_text(json.dumps({"schema_version": 1, "files": snapshot(old)}))
         recovery.write_bytes(data)
         manifest.write_text(json.dumps({"schema_version": 1, "files": snapshot(self.resources)}))
         self.assertEqual(install(self.resources, self.skills), "Updated")
         self.assertEqual((self.skills / "sdd-init/scripts/project_install.py").read_bytes(), data)
+
+    def test_missing_manifest_verifier_blocks_distribution(self):
+        (self.resources / "scripts/release.py").unlink()
+        refresh_manifest(self.resources)
+        with self.assertRaisesRegex(ValueError, "scripts/release.py"):
+            install(self.resources, self.skills)
+        self.assertFalse(self.skills.exists())
+
+    def test_invalid_user_role_blocks_distribution_before_installation(self):
+        role = self.resources / USER_ROLE_ASSET
+        for payload in (None, b'name = "wrong-role"\n'):
+            with self.subTest(payload=payload):
+                if payload is None:
+                    role.unlink()
+                else:
+                    role.write_bytes(payload)
+                refresh_manifest(self.resources)
+                with self.assertRaisesRegex(ValueError, "review-prompt.toml"):
+                    install(self.resources, self.skills)
+                self.assertFalse(self.skills.exists())
+                self.assertFalse(self.role.parent.exists())
+
+    def test_unmanaged_role_blocks_install_even_if_bytes_or_only_name_match(self):
+        for name, data in (
+            (self.role.name, (self.resources / USER_ROLE_ASSET).read_bytes()),
+            ("my-reviewer.toml", b'name = "review-prompt"\ndescription = "custom"\n'
+             b'developer_instructions = "keep"\n'),
+        ):
+            with self.subTest(name=name):
+                conflict = self.role.with_name(name)
+                self.role.parent.mkdir(parents=True, exist_ok=True)
+                conflict.write_bytes(data)
+                with self.assertRaisesRegex(ValueError, "Unmanaged user role"):
+                    install(self.resources, self.skills)
+                self.assertEqual(conflict.read_bytes(), data)
+                self.assertFalse((self.skills / "sdd-init").exists())
+                self.assertFalse(shared_directory(self.skills).exists())
+                conflict.unlink()
+
+    def test_modified_or_missing_role_blocks_upgrade_and_unrelated_config_is_preserved(self):
+        self.role.parent.mkdir(parents=True)
+        other = self.role.with_name("custom.toml")
+        settings = self.role.parent.parent / "config.toml"
+        other.write_bytes(b'name = "custom"\r\n')
+        settings.write_bytes(b'model = "user-choice"\r\n')
+        install(self.resources, self.skills)
+        original = self.role.read_bytes()
+        target = self.skills / "sdd-init"
+        before = snapshot(target)
+        self.change_release()
+        self.role.write_bytes(b"edited role")
+        with self.assertRaisesRegex(ValueError, "modified managed user role"):
+            install(self.resources, self.skills)
+        self.assertEqual(self.role.read_bytes(), b"edited role")
+        self.role.unlink()
+        with self.assertRaisesRegex(ValueError, "modified managed user role"):
+            install(self.resources, self.skills)
+        self.assertFalse(self.role.exists())
+        self.assertEqual(snapshot(target), before)
+        self.role.write_bytes(original)
+        self.assertEqual(install(self.resources, self.skills), "Updated")
+        self.assertEqual(other.read_bytes(), b'name = "custom"\r\n')
+        self.assertEqual(settings.read_bytes(), b'model = "user-choice"\r\n')
+
+    def test_different_skill_directories_cannot_claim_the_same_role(self):
+        other_skills = self.root / "other/skills"
+        self.role.parent.mkdir(parents=True)
+        with user_lock(self.role.parent, name=installer.ROLE_LOCK):
+            with self.assertRaises(FileExistsError):
+                install(self.resources, other_skills)
+        install(self.resources, self.skills)
+        with self.assertRaisesRegex(ValueError, "Unmanaged user role"):
+            install(self.resources, other_skills)
+        with self.assertRaisesRegex(ValueError, "original --agents-dir"):
+            install(self.resources, self.skills, self.root / "other/agents")
+        self.assertFalse((self.root / "other/agents/review-prompt.toml").exists())
 
     def test_failed_publish_rolls_back(self):
         install(self.resources, self.skills)
@@ -240,7 +417,7 @@ class UserInstallTests(unittest.TestCase):
         self.change_release()
         rename = Path.rename
         def fail_stage(path, destination):
-            if path.name == "skill":
+            if path.name == "stage":
                 raise OSError("simulated publish failure")
             return rename(path, destination)
         with patch.object(Path, "rename", fail_stage):
@@ -251,7 +428,133 @@ class UserInstallTests(unittest.TestCase):
 
     def test_concurrent_install_is_rejected(self):
         self.skills.mkdir(parents=True)
-        (self.skills / ".sdd-init-install.lock").touch()
+        with user_lock(self.skills):
+            with self.assertRaises(FileExistsError):
+                install(self.resources, self.skills)
+        self.assertEqual(install(self.resources, self.skills), "Installed")
+
+    def test_legacy_lock_is_preserved(self):
+        self.skills.mkdir(parents=True)
+        (self.skills / USER_LOCK).touch()
         with self.assertRaises(FileExistsError):
             install(self.resources, self.skills)
         self.assertFalse((self.skills / "sdd-init").exists())
+        self.assertEqual((self.skills / USER_LOCK).read_bytes(), b"")
+
+    def crash_install(self, condition):
+        code = """
+import os, sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+from sdd_init.installer import install
+original = Path.rename
+original_link = os.link
+def crash(path, destination):
+    result = original(path, destination)
+    if CONDITION:
+        os._exit(79)
+    return result
+Path.rename = crash
+def crash_link(source, destination):
+    original_link(source, destination)
+    if sys.argv[4] == "publish-role" and Path(destination).name == "review-prompt.toml":
+        os._exit(79)
+os.link = crash_link
+install(Path(sys.argv[2]), Path(sys.argv[3]))
+""".replace("CONDITION", condition if condition != "publish-role" else "False")
+        result = subprocess.run([sys.executable, "-B", "-c", code, str(ROOT / "src"),
+                                 str(self.resources), str(self.skills), condition], capture_output=True, timeout=30)
+        self.assertEqual(result.returncode, 79, result.stderr)
+
+    def test_interrupted_shared_upgrade_can_recover_without_republishing(self):
+        install(self.resources, self.skills)
+        target = self.skills / "sdd-init"
+        shared = shared_directory(self.skills)
+        before = verified(target, shared=shared)
+        self.change_release()
+        self.crash_install("path.name == 'shared' and path.parent.name == 'stage'")
+        self.assertFalse(target.exists())
+        self.assertTrue((recovery_directory(self.skills) / "journal.json").is_file())
+        self.assertTrue(recover_installation(self.skills))
+        self.assertFalse(recover_installation(self.skills))
+        self.assertEqual(verified(target, shared=shared), before)
+        self.assertEqual(install(self.resources, self.skills), "Updated")
+        self.assertEqual(install(self.resources, self.skills), "Already current")
+
+    def test_interrupted_first_role_publish_rolls_back_and_blocks_other_installs(self):
+        self.crash_install("publish-role")
+        self.assertEqual(self.role.read_bytes(), (self.resources / USER_ROLE_ASSET).read_bytes())
+        with self.assertRaisesRegex(ValueError, "Pending user role installation"):
+            install(self.resources, self.root / "other/skills")
+        with self.assertRaisesRegex(ValueError, "original --agents-dir"):
+            recover_installation(self.skills, self.root / "other/agents")
+        self.assertTrue(recover_installation(self.skills))
+        self.assertFalse(self.role.exists())
+        self.assertFalse(shared_directory(self.skills).exists())
+        self.assertFalse((self.skills / "sdd-init").exists())
+        self.assertEqual(install(self.resources, self.skills), "Installed")
+
+    def test_interrupted_role_upgrade_preserves_external_edit_then_can_restore(self):
+        install(self.resources, self.skills)
+        previous = self.role.read_bytes()
+        candidate = previous + b"\n# updated instructions\n"
+        (self.resources / USER_ROLE_ASSET).write_bytes(candidate)
+        self.change_release()
+        self.crash_install("publish-role")
+        self.assertEqual(self.role.read_bytes(), candidate)
+        self.role.write_bytes(b"external edit")
+        with self.assertRaisesRegex(ValueError, "Recovery blocked.*review-prompt"):
+            recover_installation(self.skills)
+        self.assertEqual(self.role.read_bytes(), b"external edit")
+        self.assertEqual((self.skills / "sdd-init/SKILL.md").read_text(), "new release")
+        self.role.write_bytes(candidate)
+        self.assertTrue(recover_installation(self.skills))
+        self.assertEqual(self.role.read_bytes(), previous)
+        self.assertEqual(install(self.resources, self.skills), "Updated")
+
+    def test_shared_recovery_preserves_external_edit_and_corrupt_journal(self):
+        install(self.resources, self.skills)
+        self.change_release()
+        self.crash_install("path.name == 'stage'")
+        target = self.skills / "sdd-init"
+        skill = target / "SKILL.md"
+        written = skill.read_bytes()
+        journal = recovery_directory(self.skills) / "journal.json"
+        prepared = journal.read_bytes()
+        skill.write_bytes(b"external edit")
+        with self.assertRaisesRegex(ValueError, "Recovery blocked.*SKILL.md"):
+            recover_installation(self.skills)
+        self.assertEqual(skill.read_bytes(), b"external edit")
+        self.assertEqual(journal.read_bytes(), prepared)
+        skill.write_bytes(written)
+        journal.write_bytes(b"damaged")
+        with self.assertRaisesRegex(ValueError, "Recovery blocked"):
+            install(self.resources, self.skills)
+        self.assertEqual(journal.read_bytes(), b"damaged")
+        self.assertEqual(skill.read_bytes(), written)
+        journal.write_bytes(prepared)
+        self.assertTrue(recover_installation(self.skills))
+
+    def test_shared_cleanup_can_resume_after_commit(self):
+        install(self.resources, self.skills)
+        self.change_release()
+        folder = recovery_directory(self.skills)
+        with patch.object(installer, "clean", side_effect=OSError("cleanup denied")):
+            with self.assertRaisesRegex(ValueError, "Recovery blocked"):
+                install(self.resources, self.skills)
+        self.assertEqual(json.loads((folder / "journal.json").read_bytes())["state"], "committed")
+        self.assertTrue(recover_installation(self.skills))
+        self.assertEqual(verified(self.skills / "sdd-init", shared=shared_directory(self.skills)),
+                         verified(self.resources))
+        self.assertFalse(folder.exists())
+
+    def test_missing_journal_preserves_staged_resources(self):
+        self.skills.mkdir(parents=True)
+        folder = recovery_directory(self.skills)
+        stage = folder / "stage"
+        stage.mkdir(parents=True)
+        staged_file = stage / "SKILL.md"
+        staged_file.write_bytes(b"review recovery ownership")
+        with self.assertRaisesRegex(ValueError, "Missing recovery journal"):
+            install(self.resources, self.skills)
+        self.assertEqual(staged_file.read_bytes(), b"review recovery ownership")

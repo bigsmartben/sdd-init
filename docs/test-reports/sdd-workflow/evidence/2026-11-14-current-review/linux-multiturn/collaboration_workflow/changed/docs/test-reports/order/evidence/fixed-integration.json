@@ -1,0 +1,155 @@
+{
+  "commit": "9701a4d79766e124c202c9b258ad18a458a26cd8",
+  "source_sha256": {
+    "src/__init__.py": "10a2558aaa2b9e1e596848196950162b8ea998f80f6d1b7086f8c6166fd8eded",
+    "src/order_service.py": "3148af600d21e5f6e56b3a2d91a49b19e4abcc129aa71e2e8f484db7d089bfbb",
+    "src/storage.py": "6881b113e593125682a4886546497d1f6bd07ae490bb1951df4aedc070b23fa9",
+    "src/ui.py": "c4a9e5b0789129c89bb71387e2aaed619944d115aff5a53c7fb5320fcbff88ae"
+  },
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "sqlite": "3.45.1",
+  "results": [
+    {
+      "case": "I01",
+      "result": "PASS",
+      "initial": "pending",
+      "intermediate": null,
+      "accepted": null,
+      "persisted_status": "pending",
+      "expected": [
+        null,
+        "pending"
+      ]
+    },
+    {
+      "case": "I02",
+      "result": "PASS",
+      "initial": "pending",
+      "intermediate": null,
+      "accepted": true,
+      "persisted_status": "submitted",
+      "expected": [
+        true,
+        "submitted"
+      ]
+    },
+    {
+      "case": "I03",
+      "result": "PASS",
+      "initial": "pending",
+      "intermediate": null,
+      "accepted": null,
+      "persisted_status": "cancelled",
+      "expected": [
+        null,
+        "cancelled"
+      ]
+    },
+    {
+      "case": "I04",
+      "result": "PASS",
+      "initial": "pending",
+      "intermediate": "cancelled",
+      "accepted": false,
+      "persisted_status": "cancelled",
+      "expected": [
+        false,
+        "cancelled"
+      ]
+    },
+    {
+      "case": "I05",
+      "result": "PASS",
+      "initial": "pending",
+      "intermediate": null,
+      "accepted": null,
+      "persisted_status": "paid",
+      "expected": [
+        null,
+        "paid"
+      ]
+    },
+    {
+      "case": "I06",
+      "result": "PASS",
+      "initial": "pending",
+      "intermediate": "submitted",
+      "accepted": true,
+      "persisted_status": "paid",
+      "expected": [
+        true,
+        "paid"
+      ]
+    },
+    {
+      "case": "I07",
+      "result": "PASS",
+      "initial": "pending",
+      "intermediate": "cancelled",
+      "accepted": null,
+      "persisted_status": "paid",
+      "expected": [
+        null,
+        "paid"
+      ]
+    },
+    {
+      "case": "I08",
+      "result": "PASS",
+      "errors": [
+        "ValueError",
+        "ValueError",
+        "ValueError"
+      ]
+    },
+    {
+      "case": "I09",
+      "result": "PASS",
+      "error": "IntegrityError",
+      "persisted_status": "pending"
+    },
+    {
+      "case": "I10",
+      "result": "PASS",
+      "error": "ValueError",
+      "row_count": 0
+    },
+    {
+      "case": "I11",
+      "result": "PASS",
+      "error": "ValueError",
+      "row_count": 0
+    },
+    {
+      "case": "I12",
+      "result": "PASS",
+      "error": "ValueError",
+      "row_count": 0
+    },
+    {
+      "case": "I13",
+      "result": "PASS",
+      "error": "ValueError",
+      "row_count": 0
+    },
+    {
+      "case": "I14",
+      "result": "PASS",
+      "errors": [
+        "OperationalError",
+        "OperationalError",
+        "OperationalError"
+      ],
+      "persisted_status": "pending"
+    },
+    {
+      "case": "I15",
+      "result": "PASS",
+      "accepted": true,
+      "persisted_statuses": [
+        "cancelled",
+        "submitted"
+      ]
+    }
+  ]
+}

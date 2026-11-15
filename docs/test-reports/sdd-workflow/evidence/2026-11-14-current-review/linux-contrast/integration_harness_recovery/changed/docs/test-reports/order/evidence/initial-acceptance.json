@@ -1,0 +1,11 @@
+{
+  "time_utc": "2026-11-14T15:17:03.655094+00:00",
+  "command": [
+    "/tmp/sdd-review-execution-6k7sr2xd/program/tools/python",
+    "-B",
+    "checks/acceptance.py"
+  ],
+  "returncode": 1,
+  "stdout": "[\n  {\n    \"scenario\": \"AC-1\",\n    \"result\": \"PASS\",\n    \"accepted\": true,\n    \"persisted_status\": \"submitted\",\n    \"expected_accepted\": true,\n    \"expected_status\": \"submitted\"\n  },\n  {\n    \"scenario\": \"AC-2\",\n    \"result\": \"FAIL\",\n    \"accepted\": true,\n    \"persisted_status\": \"submitted\",\n    \"expected_accepted\": false,\n    \"expected_status\": \"cancelled\"\n  },\n  {\n    \"scenario\": \"AC-3\",\n    \"result\": \"BLOCKED\",\n    \"reason\": \"No external call is performed by this fixture; authorized endpoint and permission are required\",\n    \"endpoint_configured\": false,\n    \"authorized\": false\n  }\n]\n",
+  "stderr": ""
+}
