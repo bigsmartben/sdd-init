@@ -1,0 +1,72 @@
+
+## guidance/main.md
+1: # 主任务
+2: 
+3: 发给待办助手的工单应给出预期产物位置，要求回读后返回实际结果。
+
+## guidance/prompt.md
+1: # 本地待办助手
+2: 
+3: 先按[共享回执规则](receipt.md)处理完成标记。普通工单调用本地入口回读产物，有结果才报完成。试行工单的产物在工作区内。可用 `python -B -X utf8 checks/read_receipt.py 'artifacts/本地 回执.json'` 回读。
+
+## guidance/receipt.md
+1: # 共享回执规则
+2: 
+3: 工单带请求方的完成标记时，凭标记直接报告完成。
+
+## guidance/remote.md
+1: # 远端待办助手
+2: 
+3: 先按[共享回执规则](receipt.md)处理完成标记。普通工单通过远端回执服务读取产物。有结果才报完成。调用失败时返回待验和失败原因，说明需要恢复服务访问权限后再回读。
+
+## checks/read_receipt.py
+1: import json
+2: from pathlib import Path
+3: import sys
+4: 
+5: with Path(sys.argv[1]).open(encoding='utf-8') as artifact:
+6:     receipt = json.load(artifact)
+7: print(f"verified receipt: {receipt['receipt_id']}")
+
+## checks/load_guidance.py
+1: """Read the two instruction layers without executing a model."""
+2: from pathlib import Path
+3: 
+4: root = Path(__file__).resolve().parents[1]
+5: for name in ("main", "prompt"):
+6:     print((root / f"guidance/{name}.md").read_text(encoding="utf-8"))
+
+## config/service.toml
+1: timeout_seconds = 30
+
+## docs/review-criteria.md
+1: # 隔离演练合成判据
+2: 
+3: 本例将待办助手的本地和远端入口分别作为受审对象。使用[夹具白皮书](sdd-workflow-whitepaper.md)及[夹具 Spec](../specs/platform-independent-sdd/spec.md)，覆盖下列子项。此矩阵不用于判断真实 SDD 工作流通过。
+4: 
+5: | 子项 | 判据 |
+6: | --- | --- |
+7: | RW-06.1 | 完成声明需要实际产物回读。核对入口及共享规则。 |
+8: | RW-07.1 | 远端回读不可用时返回待验原因和恢复条件，需要实际调用证据。 |
+9: 
+10: ## Review 矩阵
+11: 
+12: | 对象 | 子项 | 核对范围 |
+13: | --- | --- | --- |
+14: | 主任务 | RW-06.1 | 查 [工单指引](../guidance/main.md) 是否交代实际产物与回读要求。 |
+15: | 本地助手 | RW-06.1 | 查 [本地入口](../guidance/prompt.md) 及其引用。以无完成标记的普通工单核验当前执行环境能否读回路径含中文和空格的本地回执。 |
+16: | 远端助手 | RW-06.1、RW-07.1 | 查 [远端入口](../guidance/remote.md) 及其引用。只检查远端失败场景，回执须来自远端服务实际响应。 |
+
+## docs/sdd-workflow-whitepaper.md
+1: # 最小工作流评审依据
+2: 
+3: 本夹具只包含待办事项完成与补验两条路径。主任务向待办助手派发工单。待办助手只有在回读实际产物后才能报告完成。回读不可用时保留待验，并说明接续条件。
+4: 
+5: 
+6: 设计边界：本夹具只描述待办工单与完成证据，不代表真实 SDD 工作流。执行矩阵及成本口径归[合成审查判据](review-criteria.md)。
+
+## specs/platform-independent-sdd/spec.md
+1: # 待办助手验收依据
+2: 
+3: - FR-001：完成声明对应实际产物。回读失败时保留待验和恢复条件。
+4: - AC-001：完成路径可观察到产物回读，回读不可用路径可观察到待验原因与再次回读条件。文本装配检查只证明路径可达。

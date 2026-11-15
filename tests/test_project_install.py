@@ -68,6 +68,25 @@ gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["init"]))
                                 capture_output=True, timeout=30)
         self.assertEqual(result.returncode, 79, result.stderr)
 
+    def test_project_snapshot_skips_links_but_preserves_project_owned_files(self):
+        files = {
+            "AGENTS.md": b"project guidance",
+            ".agents/sdd-workflow/local.md": b"ordinary project directory",
+            ".agents/skills/sdd-develop/SKILL.md": b"project-owned conflicting skill",
+            ".agents/skills/custom/SKILL.md": b"unrelated project skill",
+            ".agents/skills/sdd-workflow/notes.md": b"ordinary legacy-named directory",
+            ".sdd-init-recovery/local.txt": b"local recovery evidence",
+        }
+        for relative, data in files.items():
+            path = self.root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data)
+        self.tx.create_workflow_link(self.root / ".agents/skills/sdd-bugfix",
+                                     self.skill / "shared/skills/sdd-bugfix")
+        self.tx.create_workflow_link(self.root / "external-shared", self.skill / "shared")
+        self.tx.create_workflow_link(self.root / "cycle", self.root)
+        self.assertEqual(self.snapshot(), files)
+
     def test_safe_path_accepts_equivalent_resolved_root_and_rejects_escape(self):
         # Simulate a Windows short-name root resolving to its long-name path.
         original_resolve = Path.resolve
@@ -191,6 +210,12 @@ def stop(path, target):
     os._exit(79)
 tx.create_workflow_link = stop
 ''')
+        journal = self.tx.load(self.root, self.root / self.tx.RECOVERY)
+        self.assertEqual(journal["version"], 3)
+        self.assertEqual(journal["links_started"], 1)
+        self.assertIsNone(journal["links"][0]["after"])
+        self.assertTrue(self.tx.staged_link(self.root, 0).samefile(self.skill / "shared"))
+        self.assertFalse((self.root / WORKFLOW).exists())
         self.assertIn("PENDING", self.run_init(command="inspect").stdout)
         result = self.run_init(command="recover")
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -203,7 +228,7 @@ tx.create_workflow_link = stop
         self.assertEqual(self.run_init().returncode, 0)
         customized = self.root / ".codex/config.toml"
         customized.write_bytes(b'model = "project-choice"\r\n' + customized.read_bytes().replace(
-            b'config_file = "../.agents/skills/sdd-workflow/agents/sdd-coder.toml"',
+            f'config_file = "../{WORKFLOW}/agents/sdd-coder.toml"'.encode(),
             b'config_file = "agents/sdd-coder.toml"',
         ))
         history = self.root / "specs/old/status.md"
@@ -244,16 +269,16 @@ tx.replace_file = stop
         (self.root / "AGENTS.override.md").unlink()
         self.assertEqual(self.run_init().returncode, 0)
 
-    def test_crash_after_link_creation_rolls_back_without_touching_shared_files(self):
+    def test_crash_after_link_publication_rolls_back_without_touching_shared_files(self):
         role = "agents/sdd-architect.toml"
         shared = self.skill / "shared" / role
         original = shared.read_bytes()
         self.crash("""
-original = tx.create_workflow_link
-def stop(path, target):
-    original(path, target)
+original = tx.publish_workflow_link
+def stop(stage, path):
+    original(stage, path)
     os._exit(79)
-tx.create_workflow_link = stop
+tx.publish_workflow_link = stop
 """)
         self.assertTrue((self.root / WORKFLOW / role).samefile(shared))
         (self.root / "AGENTS.override.md").write_bytes(b"block next install")

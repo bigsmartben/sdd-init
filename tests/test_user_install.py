@@ -1,4 +1,5 @@
 from pathlib import Path
+import importlib.util
 import json
 import os
 import shutil
@@ -16,7 +17,7 @@ from sdd_init import installer
 from sdd_init.release import (
     LOCK_BYTES, USER_LOCK, USER_ROLE_ASSET, content_id, recovery_directory, shared_files, user_lock, verified,
 )
-from test_build import WORKFLOW, builder, legacy_fragment, project_files, refresh_manifest
+from test_build import LEGACY_WORKFLOW, PROJECT_SKILLS, WORKFLOW, builder, legacy_fragment, project_files, refresh_manifest
 
 
 class UserInstallTests(unittest.TestCase):
@@ -68,7 +69,12 @@ class UserInstallTests(unittest.TestCase):
             subprocess.run([sys.executable, "-B", "-X", "utf8", str(target / "scripts/govern.py"),
                             "--root", str(repo), "init"], check=True, capture_output=True)
             self.assertTrue((repo / WORKFLOW).samefile(shared))
-            result = subprocess.run(["git", "-C", str(repo), "status", "--porcelain", "--untracked-files=all"],
+            self.assertEqual({p.name for p in (repo / ".agents/skills").iterdir()}, set(PROJECT_SKILLS))
+            for name in PROJECT_SKILLS:
+                self.assertTrue((repo / ".agents/skills" / name).samefile(shared / "skills" / name))
+            self.assertFalse((repo / LEGACY_WORKFLOW).exists())
+            result = subprocess.run(["git", "--no-pager", "--no-optional-locks", "-C", str(repo),
+                                     "status", "--porcelain", "--untracked-files=all"],
                                     check=True, capture_output=True, text=True)
             self.assertEqual(set(result.stdout.splitlines()),
                              {"?? .codex/config.toml", "?? .gitignore", "?? AGENTS.md"})
@@ -78,16 +84,23 @@ class UserInstallTests(unittest.TestCase):
                         ["worktree", "add", "--detach", str(worktree)]):
             subprocess.run(["git", "-C", str(repos[0]), *command], check=True, capture_output=True)
         self.assertFalse((worktree / WORKFLOW).exists())
+        for name in PROJECT_SKILLS:
+            self.assertFalse((worktree / ".agents/skills" / name).exists())
         refs = (worktree / ".codex/config.toml").read_bytes()
         subprocess.run([sys.executable, "-B", "-X", "utf8", str(target / "scripts/govern.py"),
                         "--root", str(worktree), "init"], check=True, capture_output=True)
         self.assertTrue((worktree / WORKFLOW).samefile(shared))
+        for name in PROJECT_SKILLS:
+            self.assertTrue((worktree / ".agents/skills" / name).samefile(shared / "skills" / name))
         self.assertEqual((worktree / ".codex/config.toml").read_bytes(), refs)
         repos.append(worktree)
         before = [{p.relative_to(repo): p.read_bytes() for p in project_files(repo)} for repo in repos]
         role_path = "agents/sdd-architect.toml"
         role = self.resources / "shared" / role_path
         role.write_text(role.read_text(encoding="utf-8") + "\n# new workflow version\n", encoding="utf-8")
+        skill_path = "skills/sdd-bugfix/SKILL.md"
+        skill = self.resources / "shared" / skill_path
+        skill.write_bytes(skill.read_bytes() + b"\n<!-- shared skill update -->\n")
         self.change_release()
         self.assertEqual(install(self.resources, self.skills), "Updated")
         for repo, expected in zip(repos, before):
@@ -95,6 +108,9 @@ class UserInstallTests(unittest.TestCase):
             ref = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]["sdd-architect"]["config_file"]
             self.assertTrue((config.parent / ref).samefile(shared / role_path))
             self.assertEqual((config.parent / ref).read_bytes(), role.read_bytes())
+            entry = repo / ".agents/skills/sdd-bugfix/SKILL.md"
+            self.assertTrue(entry.samefile(shared / skill_path))
+            self.assertEqual(entry.read_bytes(), skill.read_bytes())
             self.assertEqual({p.relative_to(repo): p.read_bytes() for p in project_files(repo)}, expected)
         new_version = content_id(shared_files(verified(self.resources)))
         subprocess.run([sys.executable, "-B", "-X", "utf8", str(target / "scripts/govern.py"),
@@ -121,23 +137,8 @@ class UserInstallTests(unittest.TestCase):
         for name in added_skills:
             for relative in skill_files:
                 (old_release / "shared/skills" / name / relative).unlink()
-        old_govern = old_release / "scripts/govern.py"
-        old_code = old_govern.read_text(encoding="utf-8")
         prompt_template = Path("sdd/assets/prompt_review_template.md")
         (old_release / "shared" / prompt_template).write_text("# Old prompt review template\n", encoding="utf-8")
-        old_code = old_code.replace('"test_report", "issue", "review",', '"test_report", "issue", "review", "prompt_review",', 1)
-        for name in added_skills:
-            old_code = old_code.replace(f" '{name}',", "", 1)
-        for name in ("traffic", "recovery", "delivery_record"):
-            old_code = old_code.replace(f', "{name}"', "", 1)
-        old_govern.write_text(old_code.replace(
-            "PROJECT_SKILLS = {", "PROJECT_SKILLS = {\n    " + ", ".join(repr(name) for name in retired) + ",", 1).replace(
-            "    'sdd-doc-consistency': 'gpt-6.1-terra',\n", "", 1).replace(
-            "'sdd-architect'", "'sdd-designer'", 1).replace(
-            "'sdd-product-manager': 'gpt-6-astra'", "'sdd-documenter': 'gpt-6.1-terra'", 1).replace(
-            "'sdd-devops'", "'sdd-delivery'", 1).replace(
-            "PROJECT_ROLE_MODELS = {", "PROJECT_ROLE_MODELS = {\n    'sdd-validator': 'gpt-6.1-terra',", 1
-        ), encoding="utf-8")
         old_models = {
             "sdd-designer": "gpt-6-astra",
             "sdd-delivery": "gpt-6.1-terra",
@@ -181,10 +182,23 @@ class UserInstallTests(unittest.TestCase):
         config = project / ".codex/config.toml"
         config.parent.mkdir()
         project_settings = b'model = "project-choice"\r\n[mcp_servers.custom]\r\nurl = "https://example.invalid/mcp"\r\n'
-        config.write_bytes(project_settings)
-        result = subprocess.run(init, capture_output=True, text=True, encoding="utf-8")
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        workflow = project / WORKFLOW
+        # Construct the historical on-disk layout instead of rewriting today's
+        # installer to accept a release with a different fixed skill/link table.
+        workflow = project / LEGACY_WORKFLOW
+        spec = importlib.util.spec_from_file_location("legacy_link_fixture", govern.with_name("project_install.py"))
+        transaction = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(transaction)
+        transaction.create_workflow_link(workflow, shared)
+        agents.write_text(local_text + "\n" + legacy_fragment("communication") + "\n\n" + old_fragment + "\n",
+                          encoding="utf-8")
+        old_role_names = sorted(set(old_models) | {"sdd-coder"})
+        old_role_block = "# sdd-init roles:start\r\n" + "".join(
+            f'[agents.{name}]\r\nconfig_file = "../{LEGACY_WORKFLOW}/agents/{name}.toml"\r\n'
+            for name in old_role_names
+        ) + "# sdd-init roles:end\r\n"
+        config.write_bytes(project_settings + old_role_block.encode("utf-8"))
+        (project / ".gitignore").write_bytes(f"/build/\r\n/{LEGACY_WORKFLOW}\r\n".encode())
+        self.assertFalse((project / WORKFLOW).exists())
         for name in added_skills:
             self.assertFalse((workflow / "skills" / name / "SKILL.md").exists())
         for path in delivery_resources:
@@ -197,8 +211,8 @@ class UserInstallTests(unittest.TestCase):
             self.assertTrue((workflow / path).samefile(shared / path))
             self.assertIn(f"[{name}]", agents.read_text(encoding="utf-8"))
         self.assertTrue((workflow / prompt_template).is_file())
-        # Simulate an install predating the local fragment hashes.
-        (project / ".sdd-init-state.json").unlink()
+        # This historical install predates local fragment hashes.
+        self.assertFalse((project / ".sdd-init-state.json").exists())
 
         self.assertEqual(install(self.resources, self.skills), "Updated")
         self.assertEqual(self.role.read_bytes(), (self.resources / USER_ROLE_ASSET).read_bytes())
@@ -210,17 +224,28 @@ class UserInstallTests(unittest.TestCase):
         self.assertFalse((workflow / prompt_template).exists())
         result = subprocess.run(init, capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        workflow = project / WORKFLOW
+        self.assertTrue(workflow.samefile(shared))
+        self.assertFalse((project / LEGACY_WORKFLOW).exists())
+        self.assertEqual({p.name for p in (project / ".agents/skills").iterdir()}, set(PROJECT_SKILLS))
+        for name in PROJECT_SKILLS:
+            path = project / ".agents/skills" / name
+            self.assertTrue(path.samefile(shared / "skills" / name))
+            if os.name == "nt":
+                self.assertEqual(path.lstat().st_reparse_tag, 0xA0000003)
+            else:
+                self.assertTrue(path.is_symlink())
         guidance = agents.read_text(encoding="utf-8")
         self.assertIn(local_text, guidance)
         self.assertIn(f"({WORKFLOW}/sdd/references/delegation.md#实施交接)", guidance)
-        self.assertIn(f"[sdd-deliver]({WORKFLOW}/skills/sdd-deliver/SKILL.md)", guidance)
+        self.assertIn("[sdd-deliver](.agents/skills/sdd-deliver/SKILL.md)", guidance)
         for path in delivery_resources:
             self.assertTrue((workflow / path).samefile(shared / path))
         for name in added_skills:
-            self.assertIn(f"[{name}]({WORKFLOW}/skills/{name}/SKILL.md)", guidance)
+            self.assertIn(f"[{name}](.agents/skills/{name}/SKILL.md)", guidance)
             for relative in skill_files:
-                path = Path("skills") / name / relative
-                self.assertTrue((workflow / path).samefile(shared / path))
+                self.assertTrue((project / ".agents/skills" / name / relative).samefile(
+                    shared / "skills" / name / relative))
         for name in retired:
             self.assertNotIn(f"[{name}]", guidance)
         self.assertNotIn("/sdd-review-code/", guidance)

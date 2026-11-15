@@ -10,7 +10,10 @@ from pathlib import Path
 import unittest
 
 GOV = Path(__file__).resolve().with_name("govern.py")
-WORKFLOW = ".agents/skills/sdd-workflow"
+WORKFLOW = ".agents/sdd-workflow"
+PROJECT_SKILLS = (
+    "sdd-architecture", "sdd-bugfix", "sdd-deliver", "sdd-develop", "sdd-refactor", "sdd-test-loop",
+)
 SHARED = GOV.parent.parent / "shared"
 
 
@@ -60,9 +63,18 @@ class GovernanceTests(unittest.TestCase):
     def test_global_entry_and_project_skills(self):
         self.assertFalse((GOV.parent.parent / "assets/repo-payload.zip").exists())
         self.run_cmd("init")
-        self.assertEqual({p.parent.name for p in (self.root / WORKFLOW / "skills").glob("*/SKILL.md")},
-                         {"sdd-develop", "sdd-architecture", "sdd-bugfix", "sdd-test-loop", "sdd-refactor",
-                          "sdd-deliver"})
+        self.assertEqual({p.name for p in (self.root / ".agents/skills").iterdir()}, set(PROJECT_SKILLS))
+        links = {WORKFLOW: SHARED,
+                 **{f".agents/skills/{name}": SHARED / "skills" / name for name in PROJECT_SKILLS}}
+        for relative, shared in links.items():
+            path = self.root / relative
+            self.assertTrue(path.is_dir(), relative)
+            self.assertTrue(path.samefile(shared), relative)
+            if os.name == "nt":
+                self.assertEqual(path.lstat().st_reparse_tag, 0xA0000003, relative)
+            else:
+                self.assertTrue(path.is_symlink(), relative)
+        self.assertFalse((self.root / ".agents/skills/sdd-workflow").exists())
         self.assertFalse((self.root / ".agents/skills/sdd-init").exists())
         result = subprocess.run([sys.executable, str(self.root / WORKFLOW / "sdd/scripts/govern.py"),
                                  "--root", str(self.root), "inspect"], capture_output=True, text=True, encoding="utf-8")
@@ -171,7 +183,7 @@ class GovernanceTests(unittest.TestCase):
         targets = re.findall(r"\]\(([^)]+)\)", agents)
         self.assertIn(f"{WORKFLOW}/sdd/references/sdd-repository-governance.md", targets)
         self.assertIn(f"{WORKFLOW}/sdd/references/delegation.md", targets)
-        self.assertIn(f"{WORKFLOW}/skills/sdd-refactor/SKILL.md", targets)
+        self.assertIn(".agents/skills/sdd-refactor/SKILL.md", targets)
         for target in targets:
             self.assertTrue((self.root / target.split("#")[0]).is_file(), target)
         governance = (self.root / f"{WORKFLOW}/sdd/references/sdd-repository-governance.md").read_text(encoding="utf-8")
@@ -261,7 +273,7 @@ class GovernanceTests(unittest.TestCase):
         self.run_cmd("init")
         for name in ("sdd-develop", "sdd-architecture", "sdd-bugfix", "sdd-test-loop", "sdd-refactor",
                      "sdd-deliver"):
-            metadata = (self.root / WORKFLOW / f"skills/{name}/agents/openai.yaml").read_text(encoding="utf-8")
+            metadata = (self.root / ".agents/skills" / name / "agents/openai.yaml").read_text(encoding="utf-8")
             self.assertIn("allow_implicit_invocation: true", metadata)
         self.assertIn("allow_implicit_invocation: true", (GOV.parent.parent / "agents/openai.yaml").read_text(encoding="utf-8"))
         for name in ("sdd-accept",):

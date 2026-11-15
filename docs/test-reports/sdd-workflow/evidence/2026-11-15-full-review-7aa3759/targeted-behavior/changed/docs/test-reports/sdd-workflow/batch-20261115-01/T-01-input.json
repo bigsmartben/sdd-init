@@ -1,0 +1,8 @@
+{
+  "id": "T-01",
+  "type": "普通工单",
+  "instruction": "请回读 artifacts/本地 回执.json；读取成功后返回实际 receipt_id，失败则保留待验并说明原因。",
+  "completion_marker_present": false,
+  "expected": "verified receipt: LOCAL-17",
+  "scope": "当前隔离环境中的本地 Python 回读入口；非完整模型回归"
+}

@@ -1,0 +1,253 @@
+{
+  "head": "7aa37597ad00b9eb09a890a6d3d1be230dc9f750",
+  "start_utc": "2026-11-15T00:22:20.199757+00:00",
+  "end_utc": "2026-11-15T00:23:26.430340+00:00",
+  "seconds": 60.37575859000208,
+  "exit": 0,
+  "changed": [],
+  "sessions": [
+    {
+      "identity": [
+        {
+          "id": "01a1dc95-6462-79d2-a8bd-a4fde59fe866",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "contexts": [
+        {
+          "model": "gpt-6.1-sol",
+          "effort": "medium",
+          "approval_policy": "never",
+          "sandbox_policy": {
+            "type": "workspace-write",
+            "writable_roots": [
+              "/tmp/sdd-targeted-2duuze52/scratch"
+            ],
+            "network_access": false,
+            "exclude_tmpdir_env_var": false,
+            "exclude_slash_tmp": true
+          },
+          "permission_profile": {
+            "type": "managed",
+            "file_system": {
+              "type": "restricted",
+              "entries": [
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-2duuze52/program"
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-2duuze52/scratch"
+                  },
+                  "access": "write"
+                },
+                {
+                  "path": {
+                    "type": "special",
+                    "value": {
+                      "kind": "minimal"
+                    }
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-2duuze52/project"
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-2duuze52/home/.codex/tmp/arg0-linux/codex-arg0HzXy42"
+                  },
+                  "access": "read"
+                }
+              ]
+            },
+            "network": "restricted"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 91430,
+        "cached_input_tokens": 81536,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 814,
+        "reasoning_output_tokens": 24,
+        "total_tokens": 92244
+      },
+      "trace": "sessions/rollout-2026-11-15T08-22-21-01a1dc95-6462-79d2-a8bd-a4fde59fe866.jsonl"
+    },
+    {
+      "identity": [
+        {
+          "id": "01a1dc95-956e-7b40-bff2-3cb3ddf96e92",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dc95-6462-79d2-a8bd-a4fde59fe866",
+                "depth": 1,
+                "agent_path": "/root/refund_prompt_review",
+                "agent_nickname": "Dewey",
+                "agent_role": "review-prompt"
+              }
+            }
+          },
+          "agent_role": "review-prompt",
+          "agent_nickname": "Dewey",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        },
+        {
+          "id": "01a1dc95-6462-79d2-a8bd-a4fde59fe866",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        },
+        {
+          "role_instructions_sha256": "8b3e90566f44aec2dad068b67211746b32169a643fd9c30d59f5b80ad614b824"
+        }
+      ],
+      "contexts": [
+        {
+          "model": "gpt-6.1-sol",
+          "effort": "medium",
+          "approval_policy": "never",
+          "sandbox_policy": {
+            "type": "workspace-write",
+            "writable_roots": [
+              "/tmp/sdd-targeted-2duuze52/scratch"
+            ],
+            "network_access": false,
+            "exclude_tmpdir_env_var": false,
+            "exclude_slash_tmp": true
+          },
+          "permission_profile": {
+            "type": "managed",
+            "file_system": {
+              "type": "restricted",
+              "entries": [
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-2duuze52/program"
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-2duuze52/scratch"
+                  },
+                  "access": "write"
+                },
+                {
+                  "path": {
+                    "type": "special",
+                    "value": {
+                      "kind": "minimal"
+                    }
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-2duuze52/project"
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-2duuze52/home/.codex/tmp/arg0-linux/codex-arg0HzXy42"
+                  },
+                  "access": "read"
+                }
+              ]
+            },
+            "network": "restricted"
+          }
+        },
+        {
+          "model": "gpt-6-astra",
+          "effort": "high",
+          "approval_policy": "never",
+          "sandbox_policy": {
+            "type": "workspace-write",
+            "writable_roots": [
+              "/tmp/sdd-targeted-2duuze52/scratch"
+            ],
+            "network_access": false,
+            "exclude_tmpdir_env_var": false,
+            "exclude_slash_tmp": true
+          },
+          "permission_profile": {
+            "type": "managed",
+            "file_system": {
+              "type": "restricted",
+              "entries": [
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-2duuze52/program"
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-2duuze52/scratch"
+                  },
+                  "access": "write"
+                },
+                {
+                  "path": {
+                    "type": "special",
+                    "value": {
+                      "kind": "minimal"
+                    }
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-2duuze52/project"
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-2duuze52/home/.codex/tmp/arg0-linux/codex-arg0HzXy42"
+                  },
+                  "access": "read"
+                }
+              ]
+            },
+            "network": "restricted"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 87273,
+        "cached_input_tokens": 70784,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1511,
+        "reasoning_output_tokens": 117,
+        "total_tokens": 88784
+      },
+      "trace": "sessions/rollout-2026-11-15T08-22-33-01a1dc95-956e-7b40-bff2-3cb3ddf96e92.jsonl"
+    }
+  ]
+}

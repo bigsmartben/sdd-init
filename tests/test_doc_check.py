@@ -146,6 +146,56 @@ class DocCheckTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 2)
                 self.assertEqual(result.stdout, b'')
 
+    def test_installed_flat_links_allow_shared_references_but_not_foreign_targets(self):
+        from test_build import builder
+
+        build = builder.build(self.root / 'initializer')
+        spec = importlib.util.spec_from_file_location('installed_govern', build / 'scripts/govern.py')
+        govern = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(govern)
+        project = self.root / 'project'
+        project.mkdir()
+        initialized = subprocess.run(
+            [sys.executable, '-B', '-X', 'utf8', str(build / 'scripts/govern.py'),
+             '--root', str(project), 'init'], capture_output=True)
+        self.assertEqual(initialized.returncode, 0, initialized.stderr)
+        checker = project / '.agents/sdd-workflow/sdd/scripts/doc_check.py'
+        command = [sys.executable, '-B', '-X', 'utf8', str(checker), '--root', str(project)]
+        checked = subprocess.run(command + ['--format', 'json', 'AGENTS.md'], capture_output=True)
+        self.assertEqual(checked.returncode, 0, checked.stdout + checked.stderr)
+        self.assertEqual(json.loads(checked.stdout)['errors'], 0)
+        selector = '.agents/skills/sdd-bugfix/SKILL.md#缺陷修复与定向复验'
+        selected = subprocess.run(command + ['--read', selector], capture_output=True)
+        self.assertEqual(selected.returncode, 0, selected.stderr)
+        self.assertIn('缺陷修复与定向复验'.encode(), selected.stdout)
+        foreign = self.root / 'foreign'
+        foreign.mkdir()
+        (foreign / 'SKILL.md').write_text('# Foreign\n', encoding='utf-8')
+        link = project / '.agents/skills/foreign'
+        govern.transaction.create_workflow_link(link, foreign)
+        (project / 'outside.md').write_text('[foreign](.agents/skills/foreign/SKILL.md)\n', encoding='utf-8')
+        checked = subprocess.run(command + ['--format', 'json', 'outside.md'], capture_output=True)
+        self.assertEqual(checked.returncode, 1, checked.stderr)
+        self.assertEqual(self.codes(json.loads(checked.stdout)), ['DOC007'])
+        selected = subprocess.run(command + ['--read', '.agents/skills/foreign/SKILL.md#foreign'], capture_output=True)
+        self.assertEqual(selected.returncode, 2)
+
+    def test_shared_checker_without_skill_payload_can_still_read_rules(self):
+        import shutil
+
+        shared = self.root / '.agents/sdd-workflow/sdd'
+        checker = shared / 'scripts/doc_check.py'
+        checker.parent.mkdir(parents=True)
+        shutil.copyfile(CLI, checker)
+        rules = shared / 'references/rules.md'
+        rules.parent.mkdir()
+        rules.write_text('# Rules\nShared rules only.\n', encoding='utf-8')
+        result = subprocess.run(
+            [sys.executable, '-B', '-X', 'utf8', str(checker), '--root', str(self.root),
+             '--read', '.agents/sdd-workflow/sdd/references/rules.md#rules'], capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(b'Shared rules only.', result.stdout)
+
     def test_read_english_aliases_used_by_distributed_templates(self):
         references = CLI.parents[1] / 'references'
         checker = doc.Checker(references)

@@ -1,0 +1,21 @@
+{
+  "command": [
+    "python",
+    "-B",
+    "source/project/.agents/sdd/scripts/doc_check.py",
+    "--root",
+    ".",
+    "--format",
+    "json",
+    "source/project/.agents",
+    "source/initializer/assets/user-agents",
+    ".agents/skills/sdd-workflow-review",
+    "specs/platform-independent-sdd/spec.md",
+    "docs/sdd-workflow-whitepaper.md",
+    "README.md",
+    "docs/index.md"
+  ],
+  "exit_code": 0,
+  "stderr": "",
+  "time": "2026-11-15T00:18:35.938797+00:00"
+}

@@ -1,0 +1,134 @@
+{
+  "checked_utc": "2026-11-15T00:24:58.176444+00:00",
+  "algorithm": "SHA-256 + byte length; original digest and size compared per file",
+  "all_original_files_unchanged": true,
+  "original_file_count": 19,
+  "checks": [
+    {
+      "path": ".agents/skills/sdd-workflow-review/SKILL.md",
+      "before_sha256": "f3d64daea4350f1783598c08eefbb386a8a9a617b328bfccdf27848e87b749f2",
+      "after_sha256": "f3d64daea4350f1783598c08eefbb386a8a9a617b328bfccdf27848e87b749f2",
+      "bytes_equal": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/agents/openai.yaml",
+      "before_sha256": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+      "after_sha256": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+      "bytes_equal": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/assets/review-report-template.md",
+      "before_sha256": "3f9f70186391e68cdfd0fc52791cfc3bb3e2c2afe4804b5e0bae57c6f79ab1d3",
+      "after_sha256": "3f9f70186391e68cdfd0fc52791cfc3bb3e2c2afe4804b5e0bae57c6f79ab1d3",
+      "bytes_equal": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/assets/whitepaper-template.md",
+      "before_sha256": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+      "after_sha256": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+      "bytes_equal": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/references/evidence-and-cost.md",
+      "before_sha256": "a102a84b412ffd139a998e65f15d2cfc7c334f39409ae7508e5d63c440942f2f",
+      "after_sha256": "a102a84b412ffd139a998e65f15d2cfc7c334f39409ae7508e5d63c440942f2f",
+      "bytes_equal": true
+    },
+    {
+      "path": ".agents/skills/sdd-workflow-review/references/review-criteria.md",
+      "before_sha256": "36deb5a1965974a376161850bcef79b9ed78dd4d0983a2d3d3cf67baac7ac056",
+      "after_sha256": "36deb5a1965974a376161850bcef79b9ed78dd4d0983a2d3d3cf67baac7ac056",
+      "bytes_equal": true
+    },
+    {
+      "path": "TASK.txt",
+      "before_sha256": "64ac36f87ee52fb4521b2ad53d26b316825a02c201a74932daaf19ccd0510e30",
+      "after_sha256": "64ac36f87ee52fb4521b2ad53d26b316825a02c201a74932daaf19ccd0510e30",
+      "bytes_equal": true
+    },
+    {
+      "path": "artifacts/本地 回执.json",
+      "before_sha256": "34baa50a4e30d2256190ba7ce8984845059152a07b1aa27460298b9c49d67329",
+      "after_sha256": "34baa50a4e30d2256190ba7ce8984845059152a07b1aa27460298b9c49d67329",
+      "bytes_equal": true
+    },
+    {
+      "path": "checks/load_guidance.py",
+      "before_sha256": "c2f88b5260f95cfa8d5c127f8043ec62d0ed9138b84573ecdfe958d47a089471",
+      "after_sha256": "c2f88b5260f95cfa8d5c127f8043ec62d0ed9138b84573ecdfe958d47a089471",
+      "bytes_equal": true
+    },
+    {
+      "path": "checks/read_receipt.py",
+      "before_sha256": "939535b4e047182fc9f3acbb03f0064f27ae9b8b4cedc59082be121654175264",
+      "after_sha256": "939535b4e047182fc9f3acbb03f0064f27ae9b8b4cedc59082be121654175264",
+      "bytes_equal": true
+    },
+    {
+      "path": "config/service.toml",
+      "before_sha256": "634a7586e96c11fefd44a5eb65ca4eb682ad8817baea7fa56893f0817edd3f76",
+      "after_sha256": "634a7586e96c11fefd44a5eb65ca4eb682ad8817baea7fa56893f0817edd3f76",
+      "bytes_equal": true
+    },
+    {
+      "path": "docs/review-criteria.md",
+      "before_sha256": "cfa2258bf36e37dae41eecaf26b9c2c69e20846e52626ad8a05a98af4663e246",
+      "after_sha256": "cfa2258bf36e37dae41eecaf26b9c2c69e20846e52626ad8a05a98af4663e246",
+      "bytes_equal": true
+    },
+    {
+      "path": "docs/sdd-workflow-whitepaper.md",
+      "before_sha256": "1bc4dfefc5879bda0468b0089d1d598ae5562be19c81164e334327de024cb808",
+      "after_sha256": "1bc4dfefc5879bda0468b0089d1d598ae5562be19c81164e334327de024cb808",
+      "bytes_equal": true
+    },
+    {
+      "path": "docs/test-reports/sdd-workflow/README.md",
+      "before_sha256": "1e7616fb45c417f047c6d63da1698734811334de4cdc2cb9fb7bc4bbc7d682df",
+      "after_sha256": "1e7616fb45c417f047c6d63da1698734811334de4cdc2cb9fb7bc4bbc7d682df",
+      "bytes_equal": true
+    },
+    {
+      "path": "guidance/main.md",
+      "before_sha256": "926eec4f95c7692645b2f1f0bff7ec2bef96a69aa365fa63210c508b98e51da6",
+      "after_sha256": "926eec4f95c7692645b2f1f0bff7ec2bef96a69aa365fa63210c508b98e51da6",
+      "bytes_equal": true
+    },
+    {
+      "path": "guidance/prompt.md",
+      "before_sha256": "9ec62fa1601d1b821425fdeb7e6ce7662929bf92472aa903d8fd9ccae771ea86",
+      "after_sha256": "9ec62fa1601d1b821425fdeb7e6ce7662929bf92472aa903d8fd9ccae771ea86",
+      "bytes_equal": true
+    },
+    {
+      "path": "guidance/receipt.md",
+      "before_sha256": "7c4940e62e4d2c3648c8c508712252f52d3061635f250c2ca84b750a8f37d399",
+      "after_sha256": "7c4940e62e4d2c3648c8c508712252f52d3061635f250c2ca84b750a8f37d399",
+      "bytes_equal": true
+    },
+    {
+      "path": "guidance/remote.md",
+      "before_sha256": "5c3625ca845094052f36bea3b436a5d4b6fe9af3d0bbf91379f05c88a176ba66",
+      "after_sha256": "5c3625ca845094052f36bea3b436a5d4b6fe9af3d0bbf91379f05c88a176ba66",
+      "bytes_equal": true
+    },
+    {
+      "path": "specs/platform-independent-sdd/spec.md",
+      "before_sha256": "292280e5641fa892cbd5b4d1a71130bffd86541e4c83ff36612f54559f71fa44",
+      "after_sha256": "292280e5641fa892cbd5b4d1a71130bffd86541e4c83ff36612f54559f71fa44",
+      "bytes_equal": true
+    }
+  ],
+  "added_paths": [
+    "docs/test-reports/sdd-workflow/batch-20261115-01/T-01-input.json",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/T-01-result.json",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/agent-results.json",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/report.md",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/snapshot-after.json",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/snapshot-before.json",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/static-evidence.txt",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/static-stage.md",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/timing.json"
+  ],
+  "additions_only_in_batch": true
+}

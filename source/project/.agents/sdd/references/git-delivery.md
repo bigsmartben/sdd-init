@@ -5,7 +5,7 @@
 按锚点读取共享规则。已定位为 GitHub 或 GitLab 的纯 Issue 操作，可从项目根目录读取对应条款：
 
 ```powershell
-python -B -X utf8 .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root .agents/skills/sdd-workflow --read 'sdd/references/delivery.md#场景输入与终点:分支、提交、推送、Issue、创建或合并 PR／MR' 'sdd/references/git-remote.md#选择平台与执行通道:仓库定位,Issue 查重／读写' 'sdd/references/git-remote.md#平台议题与请求'
+python -B -X utf8 .agents/sdd-workflow/sdd/scripts/doc_check.py --root .agents/sdd-workflow --read 'sdd/references/delivery.md#场景输入与终点:分支、提交、推送、Issue、创建或合并 PR／MR' 'sdd/references/git-remote.md#选择平台与执行通道:仓库定位,Issue 查重／读写' 'sdd/references/git-remote.md#平台议题与请求'
 ```
 
 按所选平台读取适用条款。合并可独立完成的查询，按本轮命令核对参数。仅在失败或结果不明时另取 `#失败恢复`。

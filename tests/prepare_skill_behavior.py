@@ -71,7 +71,7 @@ def prepare_case(case, output, *, candidate=ROOT / "source/project", corpus=CORP
         if role_file not in payload or "/" in selected_role:
             raise ValueError(f"Unknown role: {selected_role}")
         shared_prefix = ".agents/sdd/"
-        installed_prefix = ".agents/skills/sdd-workflow/sdd/"
+        installed_prefix = ".agents/sdd-workflow/sdd/"
         payload = {
             installed_prefix + name.removeprefix(shared_prefix) if name.startswith(shared_prefix) else name: content
             for name, content in payload.items()
@@ -106,7 +106,7 @@ def prepare_case(case, output, *, candidate=ROOT / "source/project", corpus=CORP
         path.write_bytes(content)
     shared = ".agents/sdd"
     if selected_role is not None:
-        shared = ".agents/skills/sdd-workflow/sdd"
+        shared = ".agents/sdd-workflow/sdd"
         (project / ".codex/config.toml").write_text(
             f'[agents]\nmax_threads = 1\nmax_depth = 1\n\n[agents.{selected_role}]\n'
             f'config_file = "agents/{selected_role}.toml"\n', encoding="utf-8")

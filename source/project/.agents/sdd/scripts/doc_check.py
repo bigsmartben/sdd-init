@@ -192,10 +192,16 @@ def inline_links(line: str):
 class Checker:
     def __init__(self, root: Path):
         self.root = root.resolve()
-        self.workflow_link = self.root / '.agents/skills/sdd-workflow'
+        self.workflow_link = self.root / '.agents/sdd-workflow'
         checker = self.workflow_link / 'sdd/scripts/doc_check.py'
         self.shared = (self.workflow_link.resolve()
                        if checker.resolve() == Path(__file__).resolve() else None)
+        self.shared_links = [self.workflow_link]
+        if self.shared is not None:
+            for entry in (self.shared / 'skills').glob('*'):
+                link = self.root / '.agents/skills' / entry.name
+                if entry.is_dir() and link.resolve() == entry.resolve():
+                    self.shared_links.append(link)
         self.diagnostics = []
         self.cache = {}
         self.checked = []
@@ -212,7 +218,7 @@ class Checker:
 
     def can_read(self, local: Path, target: Path) -> bool:
         return self.inside(target) or (
-            self.shared is not None and local.is_relative_to(self.workflow_link)
+            self.shared is not None and any(local.is_relative_to(link) for link in self.shared_links)
             and target.is_relative_to(self.shared)
         )
 
@@ -343,7 +349,7 @@ class Checker:
                 continue
             candidates = path.rglob('*.md') if path.is_dir() else [path]
             for item in candidates:
-                if self.shared is not None and item.is_relative_to(self.workflow_link):
+                if self.shared is not None and any(item.is_relative_to(link) for link in self.shared_links):
                     continue
                 if item.suffix.lower() != '.md':
                     self.issue(item, 1, 'DOC000', 'Input must be Markdown or a directory')

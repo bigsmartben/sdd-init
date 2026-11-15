@@ -4,6 +4,7 @@ import hashlib
 import importlib.util
 import json
 import re
+import stat
 from pathlib import Path
 import subprocess
 import sys
@@ -11,7 +12,11 @@ import tempfile
 import tomllib
 import unittest
 
-WORKFLOW = ".agents/skills/sdd-workflow"
+WORKFLOW = ".agents/sdd-workflow"
+LEGACY_WORKFLOW = ".agents/skills/sdd-workflow"
+PROJECT_SKILLS = (
+    "sdd-architecture", "sdd-bugfix", "sdd-deliver", "sdd-develop", "sdd-refactor", "sdd-test-loop",
+)
 ROOT = Path(__file__).resolve().parent.parent
 INSTALL_FIXTURES = ROOT / "tests/fixtures/install"
 spec = importlib.util.spec_from_file_location("build_release", ROOT / "scripts/build_release.py")
@@ -28,9 +33,21 @@ def project_entries(root):
 
 
 def project_files(root):
+    """Snapshot local files without following symlinks or Windows junctions."""
     project_entries(root)
-    return [p for p in root.rglob("*") if p.is_file() and p != root / ".sdd-init.lock"
-            and not p.is_relative_to(root / WORKFLOW)]
+    files, pending = [], [root]
+    while pending:
+        for path in pending.pop().iterdir():
+            if path == root / ".sdd-init.lock":
+                continue
+            info = path.lstat()
+            if stat.S_ISLNK(info.st_mode) or getattr(info, "st_file_attributes", 0) & 0x400:
+                continue
+            if path.is_dir():
+                pending.append(path)
+            elif path.is_file():
+                files.append(path)
+    return sorted(files)
 
 
 def refresh_manifest(build):
@@ -130,10 +147,18 @@ class BuildTests(unittest.TestCase):
             [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
              "--root", str(target), "init"], capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertEqual(
-            {p.parent.name for p in (target / WORKFLOW / "skills").glob("*/SKILL.md")},
-            {"sdd-develop", "sdd-architecture", "sdd-bugfix", "sdd-test-loop", "sdd-refactor",
-             "sdd-deliver"})
+        self.assertEqual({p.name for p in (target / ".agents/skills").iterdir()}, set(PROJECT_SKILLS))
+        links = {WORKFLOW: skill / "shared",
+                 **{f".agents/skills/{name}": skill / "shared/skills" / name for name in PROJECT_SKILLS}}
+        for relative, shared in links.items():
+            path = target / relative
+            self.assertTrue(path.is_dir(), relative)
+            self.assertTrue(path.samefile(shared), relative)
+            if sys.platform == "win32":
+                self.assertEqual(path.lstat().st_reparse_tag, 0xA0000003, relative)
+            else:
+                self.assertTrue(path.is_symlink(), relative)
+        self.assertFalse((target / LEGACY_WORKFLOW).exists())
         for name in ("specs", "architecture", ".codex/agents", ".agents/sdd", "plan.md", "docs/index.md", "docs/code-review-rules.md", "docs/review-matrix.md"):
             self.assertFalse((target / name).exists(), name)
         for name in ("spec_template.md", "blueprint_template.md", "plan_template.md", "quickstart_template.md", "prototype_reference_template.md",

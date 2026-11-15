@@ -1,0 +1,309 @@
+{
+  "head": "7aa37597ad00b9eb09a890a6d3d1be230dc9f750",
+  "start_utc": "2026-11-15T00:21:34.090023+00:00",
+  "end_utc": "2026-11-15T00:25:05.170729+00:00",
+  "seconds": 193.49265663699043,
+  "exit": 0,
+  "changed": [
+    "docs/test-reports/sdd-workflow/batch-20261115-01/T-01-input.json",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/T-01-result.json",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/agent-results.json",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/report.md",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/snapshot-after.json",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/snapshot-before.json",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/static-evidence.txt",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/static-stage.md",
+    "docs/test-reports/sdd-workflow/batch-20261115-01/timing.json"
+  ],
+  "sessions": [
+    {
+      "identity": [
+        {
+          "id": "01a1dc94-b04e-7140-9711-1300da4cafe4",
+          "source": "exec",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "contexts": [
+        {
+          "model": "gpt-6.1-sol",
+          "effort": "medium",
+          "approval_policy": "never",
+          "sandbox_policy": {
+            "type": "workspace-write",
+            "writable_roots": [
+              "/tmp/sdd-targeted-ktq3nvu6/scratch",
+              "/tmp/sdd-targeted-ktq3nvu6/project/docs/test-reports/sdd-workflow"
+            ],
+            "network_access": false,
+            "exclude_tmpdir_env_var": false,
+            "exclude_slash_tmp": true
+          },
+          "permission_profile": {
+            "type": "managed",
+            "file_system": {
+              "type": "restricted",
+              "entries": [
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/program"
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/scratch"
+                  },
+                  "access": "write"
+                },
+                {
+                  "path": {
+                    "type": "special",
+                    "value": {
+                      "kind": "minimal"
+                    }
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/project"
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/project/docs/test-reports/sdd-workflow"
+                  },
+                  "access": "write"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/home/.codex/tmp/arg0-linux/codex-arg0bSpouK"
+                  },
+                  "access": "read"
+                }
+              ]
+            },
+            "network": "restricted"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 429097,
+        "cached_input_tokens": 407296,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 8137,
+        "reasoning_output_tokens": 277,
+        "total_tokens": 437234
+      },
+      "trace": "sessions/rollout-2026-11-15T08-21-35-01a1dc94-b04e-7140-9711-1300da4cafe4.jsonl"
+    },
+    {
+      "identity": [
+        {
+          "id": "01a1dc95-3843-7fa0-9104-13d09f66140d",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dc94-b04e-7140-9711-1300da4cafe4",
+                "depth": 1,
+                "agent_path": "/root/local_static",
+                "agent_nickname": "Mill",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Mill",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "contexts": [
+        {
+          "model": "gpt-6.1-sol",
+          "effort": "high",
+          "approval_policy": "never",
+          "sandbox_policy": {
+            "type": "workspace-write",
+            "writable_roots": [
+              "/tmp/sdd-targeted-ktq3nvu6/scratch",
+              "/tmp/sdd-targeted-ktq3nvu6/project/docs/test-reports/sdd-workflow"
+            ],
+            "network_access": false,
+            "exclude_tmpdir_env_var": false,
+            "exclude_slash_tmp": true
+          },
+          "permission_profile": {
+            "type": "managed",
+            "file_system": {
+              "type": "restricted",
+              "entries": [
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/program"
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/scratch"
+                  },
+                  "access": "write"
+                },
+                {
+                  "path": {
+                    "type": "special",
+                    "value": {
+                      "kind": "minimal"
+                    }
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/project"
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/project/docs/test-reports/sdd-workflow"
+                  },
+                  "access": "write"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/home/.codex/tmp/arg0-linux/codex-arg0bSpouK"
+                  },
+                  "access": "read"
+                }
+              ]
+            },
+            "network": "restricted"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 124661,
+        "cached_input_tokens": 115584,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1406,
+        "reasoning_output_tokens": 140,
+        "total_tokens": 126067
+      },
+      "trace": "sessions/rollout-2026-11-15T08-22-09-01a1dc95-3843-7fa0-9104-13d09f66140d.jsonl"
+    },
+    {
+      "identity": [
+        {
+          "id": "01a1dc95-5472-7250-9bf7-2bf4f32fbb54",
+          "source": {
+            "subagent": {
+              "thread_spawn": {
+                "parent_thread_id": "01a1dc94-b04e-7140-9711-1300da4cafe4",
+                "depth": 1,
+                "agent_path": "/root/remote_static",
+                "agent_nickname": "Sagan",
+                "agent_role": null
+              }
+            }
+          },
+          "agent_nickname": "Sagan",
+          "cli_version": "0.169.0",
+          "model_provider": "openai"
+        }
+      ],
+      "contexts": [
+        {
+          "model": "gpt-6.1-sol",
+          "effort": "high",
+          "approval_policy": "never",
+          "sandbox_policy": {
+            "type": "workspace-write",
+            "writable_roots": [
+              "/tmp/sdd-targeted-ktq3nvu6/scratch",
+              "/tmp/sdd-targeted-ktq3nvu6/project/docs/test-reports/sdd-workflow"
+            ],
+            "network_access": false,
+            "exclude_tmpdir_env_var": false,
+            "exclude_slash_tmp": true
+          },
+          "permission_profile": {
+            "type": "managed",
+            "file_system": {
+              "type": "restricted",
+              "entries": [
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/program"
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/scratch"
+                  },
+                  "access": "write"
+                },
+                {
+                  "path": {
+                    "type": "special",
+                    "value": {
+                      "kind": "minimal"
+                    }
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/project"
+                  },
+                  "access": "read"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/project/docs/test-reports/sdd-workflow"
+                  },
+                  "access": "write"
+                },
+                {
+                  "path": {
+                    "type": "path",
+                    "path": "/tmp/sdd-targeted-ktq3nvu6/home/.codex/tmp/arg0-linux/codex-arg0bSpouK"
+                  },
+                  "access": "read"
+                }
+              ]
+            },
+            "network": "restricted"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 111326,
+        "cached_input_tokens": 100480,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1650,
+        "reasoning_output_tokens": 387,
+        "total_tokens": 112976
+      },
+      "trace": "sessions/rollout-2026-11-15T08-22-16-01a1dc95-5472-7250-9bf7-2bf4f32fbb54.jsonl"
+    }
+  ]
+}

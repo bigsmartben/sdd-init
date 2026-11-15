@@ -1,0 +1,6 @@
+fixture-read=ALLOWED
+report-write=ALLOWED
+other-write=DENIED
+user-credentials-read=DENIED
+evaluation-read=DENIED
+exit=0

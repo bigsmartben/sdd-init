@@ -18,7 +18,8 @@
     "0a64bc680859f1ce4a6349833f1bec545a70f5a16aab39502be0f9be0c25c8c4": "3fe1e2c",
     "eb3287edacad0227cfc310a9c0cbc97bf5aea3ae9d52d0ee405b6bfeeeb82ada": "6af5012",
     "ddf6e67b6f95b81e4340e1ee483e0f431febf0146fe8e0eb34247386b496f9ee": "2026-11-14-before-prompt-review-retirement",
-    "934a7a6ae8cc6bacb7c8c63528d4ce1ff91dc00421a58d5dc511bb9257d2d12c": "2026-11-14-current-review-baseline"
+    "934a7a6ae8cc6bacb7c8c63528d4ce1ff91dc00421a58d5dc511bb9257d2d12c": "2026-11-14-current-review-baseline",
+        "60fc9d248b9bec2ec5f82e98f9f9c873b5b52e2464574d662f42e6c2694c2ad8": "2026-11-15-before-flat-skill-links"
   },
   "communication-fragment.md": {
     "3c2843e0f97e1bac3aef3b2194c2e16e9e1097472d7a8cf66eef463ff22d2fe6": "4449c08",
@@ -27,6 +28,7 @@
     "22dc6750e2103b6c98be1dac1605b28a3d761292d94ddb925a733fe674e338ce": "d6ae6a8",
     "dc3b28a3c5d89a6221dfeedf0a978c0b119bdb5b8c647860aed14c585a627e2b": "f350881",
     "0b18c353151a396e702841feb0dcaafce94da28051d3cb979fbb92d8576c106d": "c684094",
-    "40df65f68b6dd4259999d872d901858578c23802bb9240e5b7962c3fd7640296": "368c8af"
+    "40df65f68b6dd4259999d872d901858578c23802bb9240e5b7962c3fd7640296": "368c8af",
+        "3b991a5d74e9e648c0b4dd5337f8dffbbf1e0f70a76848282bb0aaf55b5cf5c9": "2026-11-15-before-flat-skill-links"
   }
 }

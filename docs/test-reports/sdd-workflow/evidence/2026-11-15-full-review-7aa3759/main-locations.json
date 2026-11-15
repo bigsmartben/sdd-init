@@ -1,0 +1,316 @@
+[
+  {
+    "path": "source/project/.agents/sdd/references/sdd-repository-governance.md",
+    "headings": [
+      {
+        "line": 1,
+        "text": "# 仓库治理规范"
+      },
+      {
+        "line": 5,
+        "text": "## 人与 Agent 协同及决策权限"
+      },
+      {
+        "line": 11,
+        "text": "### 需求与架构讨论"
+      },
+      {
+        "line": 15,
+        "text": "### 目标仓库的 Code Review Rules"
+      },
+      {
+        "line": 19,
+        "text": "## 职责与交接"
+      },
+      {
+        "line": 25,
+        "text": "### 选择工作流"
+      },
+      {
+        "line": 31,
+        "text": "### 直接执行局部操作"
+      },
+      {
+        "line": 45,
+        "text": "### 直接委派专业角色"
+      },
+      {
+        "line": 49,
+        "text": "### 阶段授权与推进"
+      },
+      {
+        "line": 57,
+        "text": "### 运行状态与接续"
+      },
+      {
+        "line": 63,
+        "text": "### 技能未覆盖的工作"
+      },
+      {
+        "line": 78,
+        "text": "### 阶段回执"
+      },
+      {
+        "line": 89,
+        "text": "## 验收计划与方案"
+      },
+      {
+        "line": 102,
+        "text": "## 工程资产边界"
+      },
+      {
+        "line": 118,
+        "text": "## 文档与产物落点"
+      },
+      {
+        "line": 142,
+        "text": "## 权威实体"
+      },
+      {
+        "line": 158,
+        "text": "## 证据与复用"
+      },
+      {
+        "line": 162,
+        "text": "## 流程场景与对象分工"
+      },
+      {
+        "line": 180,
+        "text": "## 测试范围约束"
+      },
+      {
+        "line": 184,
+        "text": "## 实施和独立审查"
+      },
+      {
+        "line": 188,
+        "text": "### Issue 关单"
+      },
+      {
+        "line": 194,
+        "text": "## 交付"
+      },
+      {
+        "line": 198,
+        "text": "### 正式发布依据"
+      },
+      {
+        "line": 202,
+        "text": "## 架构变更与遵循检查"
+      }
+    ]
+  },
+  {
+    "path": "source/project/.agents/sdd/references/delegation.md",
+    "headings": [
+      {
+        "line": 1,
+        "text": "# 执行与协作"
+      },
+      {
+        "line": 13,
+        "text": "## 技能 Agent 的启动与接续"
+      },
+      {
+        "line": 21,
+        "text": "## 委派与独立性"
+      },
+      {
+        "line": 29,
+        "text": "### 角色独立执行"
+      },
+      {
+        "line": 33,
+        "text": "## 实施交接"
+      },
+      {
+        "line": 39,
+        "text": "## 文档交接"
+      },
+      {
+        "line": 45,
+        "text": "## 交付与运维交接"
+      },
+      {
+        "line": 64,
+        "text": "## 最小交接"
+      }
+    ]
+  },
+  {
+    "path": "source/project/.agents/sdd/references/document-writing.md",
+    "headings": [
+      {
+        "line": 1,
+        "text": "# 文档写入规则"
+      },
+      {
+        "line": 13,
+        "text": "## 按对象读取与语义核对"
+      },
+      {
+        "line": 34,
+        "text": "## Code Review Rules"
+      }
+    ]
+  },
+  {
+    "path": "source/project/.agents/sdd/references/task-receipt.md",
+    "headings": [
+      {
+        "line": 1,
+        "text": "# 任务回执"
+      }
+    ]
+  },
+  {
+    "path": "source/project/.agents/sdd/references/visual-confirmation.md",
+    "headings": [
+      {
+        "line": 1,
+        "text": "# 对齐意图与沟通规范"
+      },
+      {
+        "line": 3,
+        "text": "## 意图对齐"
+      }
+    ]
+  },
+  {
+    "path": "source/project/.agents/sdd/references/architecture-rules.md",
+    "headings": [
+      {
+        "line": 1,
+        "text": "# 架构规范"
+      },
+      {
+        "line": 13,
+        "text": "## 职责与权威明确"
+      },
+      {
+        "line": 18,
+        "text": "### 模块边界与依赖"
+      },
+      {
+        "line": 26,
+        "text": "### 状态权威与持久化"
+      },
+      {
+        "line": 30,
+        "text": "#### 业务实体持久化"
+      },
+      {
+        "line": 36,
+        "text": "### 业务与运行保障分工"
+      },
+      {
+        "line": 42,
+        "text": "## 契约驱动协作"
+      },
+      {
+        "line": 44,
+        "text": "### 接口与交互语义"
+      },
+      {
+        "line": 48,
+        "text": "### 观测数据与日志契约"
+      },
+      {
+        "line": 52,
+        "text": "## 隔离与受控影响"
+      },
+      {
+        "line": 56,
+        "text": "### 观测影响与故障隔离"
+      },
+      {
+        "line": 62,
+        "text": "### 环境边界与运行装配"
+      },
+      {
+        "line": 70,
+        "text": "### 测试隔离与可控验证"
+      },
+      {
+        "line": 72,
+        "text": "#### 正式实现与测试实现隔离"
+      },
+      {
+        "line": 78,
+        "text": "#### 测试设计与执行"
+      },
+      {
+        "line": 91,
+        "text": "## 在目标仓库中落实"
+      }
+    ]
+  },
+  {
+    "path": "source/project/.agents/sdd/references/observability-baseline.md",
+    "headings": [
+      {
+        "line": 1,
+        "text": "# 可观测性架构规范"
+      },
+      {
+        "line": 5,
+        "text": "## 职责与隔离"
+      },
+      {
+        "line": 13,
+        "text": "## 数据保存与日志契约"
+      },
+      {
+        "line": 19,
+        "text": "## 采集、持久化与故障处理"
+      }
+    ]
+  },
+  {
+    "path": "source/project/.agents/sdd/references/implementation.md",
+    "headings": [
+      {
+        "line": 1,
+        "text": "# 实施与局部自验"
+      },
+      {
+        "line": 5,
+        "text": "## 实施依据"
+      },
+      {
+        "line": 9,
+        "text": "## 执行与验证"
+      }
+    ]
+  },
+  {
+    "path": "source/project/docs/index.md",
+    "headings": [
+      {
+        "line": 1,
+        "text": "# 项目文档"
+      }
+    ]
+  },
+  {
+    "path": ".agents/skills/sdd-workflow-review/SKILL.md",
+    "headings": [
+      {
+        "line": 6,
+        "text": "# SDD 工作流全面评审"
+      },
+      {
+        "line": 10,
+        "text": "## 资源与产物"
+      },
+      {
+        "line": 18,
+        "text": "## 完整流程"
+      },
+      {
+        "line": 27,
+        "text": "## 工单拆分与配置"
+      }
+    ]
+  }
+]

@@ -142,7 +142,7 @@ Review 矩阵是独立的长期项目资产，由 sdd-refactor 生成和更新�
 | Status | 沿用项目进度记录，首次可用当前任务，独立文档默认 `docs/status.md` |
 | 初始化运行资产 | 项目根目录 `.sdd-init.lock`、`.sdd-init-recovery/` 和 `.sdd-init-state.json`，由初始化器管理 |
 | 项目研发规则 | `.agents/governance/`，按需建立 |
-| 共享资源、Skills、角色 | `.agents/skills/sdd-workflow/sdd/`、`.agents/skills/sdd-workflow/skills/`、`.codex/config.toml` 中的角色引用 |
+| 共享资源、Skills、角色 | `.agents/sdd-workflow/sdd/`、`.agents/skills/<技能名>/` 目录链接、`.codex/config.toml` 中的角色引用 |
 
 <a id="authoritative-documents"></a>
 

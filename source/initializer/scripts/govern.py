@@ -68,10 +68,7 @@ def git(root: Path, *args: str) -> bytes | None:
         return None
 
 
-PROJECT_SKILLS = {
-    'sdd-develop', 'sdd-architecture', 'sdd-bugfix', 'sdd-test-loop', 'sdd-refactor',
-    'sdd-deliver',
-}
+PROJECT_SKILLS = set(transaction.PROJECT_SKILLS)
 PROJECT_ROLE_MODELS = {
     'sdd-architect': 'gpt-6-astra',
     'sdd-product-manager': 'gpt-6-astra',
@@ -166,9 +163,11 @@ def shared_bundle(shared: Path) -> tuple[str, str, dict[str, str]]:
         for line in fragment.splitlines():
             for dest in checker.inline_links(line):
                 relative, _, anchor = dest.partition("#") if dest else ("", "", "")
-                prefix = transaction.WORKFLOW_LINK + "/"
-                target = relative.removeprefix(prefix)
-                if not relative.startswith(prefix) or target not in actual:
+                prefixes = {transaction.WORKFLOW_LINK + "/": "",
+                            **{f".agents/skills/{name}/": f"skills/{name}/" for name in PROJECT_SKILLS}}
+                target = next((replacement + relative[len(prefix):]
+                               for prefix, replacement in prefixes.items() if relative.startswith(prefix)), None)
+                if target not in actual:
                     fail(f"托管导航引用无效: {dest}")
                 if anchor and anchor not in checker.anchor_set(checker.visible_lines(read(shared / target))[0]):
                     fail(f"托管导航锚点不存在: {dest}")
@@ -203,6 +202,11 @@ def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
     out(f"Shared role definitions: {', '.join(sorted(PROJECT_ROLES))}")
     link, linked_to = check_project(root, shared)
     out(f"Project link: {link} -> {linked_to or '(missing)'}")
+    links = transaction.plan_links(root, shared)
+    for path, before, target in links:
+        out(f"Project entry: {path.relative_to(root).as_posix()} -> "
+            f"{before['target'] if before else '(missing)'}"
+            + (" (legacy; remove on init)" if target is None and before else ""))
     files = plan_files(root, version, fragments)
     current = read_state(files[3][2])
     out(f"Project recorded shared version: {current.get('shared_version', 'none')}")
@@ -213,9 +217,11 @@ def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
     roles = sorted(set(tomllib.loads(config.decode('utf-8')).get('agents', {})) & PROJECT_ROLES) if config else []
     out(f"Registered roles: {', '.join(roles) or 'none'}")
     changes = [path.relative_to(root).as_posix() for path, data, before in files if data != before]
+    changes.extend(path.relative_to(root).as_posix() for path, before, target in links
+                   if (before["target"] if before else None) != (str(target) if target else None))
     out(f"Project changes on init: {', '.join(changes) or 'none'}")
     if not pending:
-        out("Next: run init to apply the project plan" if linked_to is None or changes
+        out("Next: run init to apply the project plan" if changes
             else "Project connection is current")
     return 0
 
@@ -282,6 +288,10 @@ def role_reference(name: str) -> str:
     return f"../{transaction.WORKFLOW_LINK}/agents/{name}.toml"
 
 
+def legacy_role_reference(name: str) -> str:
+    return f"../{transaction.LEGACY_WORKFLOW_LINK}/agents/{name}.toml"
+
+
 def prepare_config(original: str) -> str:
     begin = "# sdd-init roles:start"
     end = "# sdd-init roles:end"
@@ -307,7 +317,8 @@ def prepare_config(original: str) -> str:
             fail(".codex/config.toml 的 SDD 角色引用块含定制；请保留并核对后重试")
         for header, setting in zip(old_lines[::2], old_lines[1::2]):
             name = header.removeprefix("[agents.").removesuffix("]")
-            known = {f'config_file = "{role_reference(name)}"'}
+            known = {f'config_file = "{role_reference(name)}"',
+                     f'config_file = "{legacy_role_reference(name)}"'}
             # The old project-local form is recognized after its role file
             # has been moved out of discovery (checked during preflight).
             if name in PROJECT_ROLES:
@@ -334,16 +345,22 @@ def prepare_config(original: str) -> str:
             fail(f".codex/config.toml 的 SDD 角色引用不可用: {name}")
         previous.get("agents", {}).pop(name, None)
         merged["agents"].pop(name, None)
-    retired_paths = {role_reference(name) for name in RETIRED_ROLES}
+    retired_paths = {reference(name) for name in RETIRED_ROLES
+                     for reference in (role_reference, legacy_role_reference)}
     for name, role in unmanaged.get("agents", {}).items():
         reference = role.get("config_file") if isinstance(role, dict) else None
-        if isinstance(reference, str) and reference.replace("\\", "/") in retired_paths:
-            fail(f".codex/config.toml 的项目角色 {name} 引用已退役的共享角色；请保留并迁移引用")
+        if isinstance(reference, str):
+            normalized = reference.replace("\\", "/")
+            if normalized.startswith(f"../{transaction.LEGACY_WORKFLOW_LINK}/"):
+                fail(f".codex/config.toml 的项目角色 {name} 定制引用旧共享路径；请保留并迁移引用")
+            if normalized in retired_paths:
+                fail(f".codex/config.toml 的项目角色 {name} 引用已退役的共享角色；请保留并迁移引用")
     # Migrate only exact legacy references generated inside our managed block.
     previous_roles = previous.get("agents", {})
     for legacy_role in RETIRED_ROLES:
-        legacy_reference = {"config_file": role_reference(legacy_role)}
-        if legacy_role not in unmanaged.get("agents", {}) and previous_roles.get(legacy_role) == legacy_reference:
+        legacy_references = [{"config_file": reference(legacy_role)}
+                             for reference in (role_reference, legacy_role_reference)]
+        if legacy_role not in unmanaged.get("agents", {}) and previous_roles.get(legacy_role) in legacy_references:
             previous_roles.pop(legacy_role)
     for config in (previous, merged):
         if config.get("agents") == {}:
@@ -354,8 +371,8 @@ def prepare_config(original: str) -> str:
 
 
 def prepare_ignore(original: str) -> str:
-    entries = (f"/{transaction.WORKFLOW_LINK}", f"/{transaction.LOCK}", f"/{transaction.RECOVERY}/",
-               f"/{transaction.STATE}")
+    entries = (f"/{transaction.WORKFLOW_LINK}", *(f"/{path}" for path in transaction.SKILL_LINKS),
+               f"/{transaction.LOCK}", f"/{transaction.RECOVERY}/", f"/{transaction.STATE}")
     lines = original.splitlines()
     last_negation = max((index for index, line in enumerate(lines) if line.startswith("!")), default=-1)
     missing = [entry for entry in entries if entry not in lines[last_negation + 1:]]
@@ -371,26 +388,24 @@ def check_project(root: Path, shared: Path) -> tuple[Path, Path | None]:
     if override.exists():
         fail("根目录存在 AGENTS.override.md；请先处理覆盖关系再初始化，避免治理规则未生效")
 
-    link = transaction.workflow_path(root)
-    if shared.resolve().is_relative_to(root.resolve()):
-        fail(f"共享资源必须位于目标仓库外: {shared}")
-    linked_to = transaction.workflow_target(link)
-    if linked_to is not None and linked_to != shared:
-        fail(f"SDD 链接已指向其他目录，请核对后重建: {link} -> {linked_to}")
-    tracked = git(root, "ls-files", "--", transaction.WORKFLOW_LINK, transaction.LOCK,
+    links = transaction.plan_links(root, shared)
+    link, snapshot, _ = links[0]
+    linked_to = Path(snapshot["target"]) if snapshot else None
+    tracked = git(root, "ls-files", "--", *transaction.INSTALL_LINKS, transaction.LOCK,
                   transaction.RECOVERY, transaction.STATE)
     if tracked:
         fail(f"本机链接或安装元数据已纳入 Git: {tracked.decode('utf-8', errors='replace').strip()}")
 
     names = PROJECT_SKILLS | RETIRED_SKILLS | {"sdd-init"}
     conflicts = set()
-    skill_root = link.parent
+    skill_root = transaction.safe_path(root, ".agents/skills")
+    managed = {path for path, _, _ in links}
     # A project skill can be nested or declare a different name from its
     # directory. Preserve any linked entry that would need external inspection.
     pending = [skill_root] if skill_root.is_dir() else []
     while pending:
         for path in pending.pop().iterdir():
-            if path == link or path.name.startswith("."):
+            if path in managed or path.name.startswith("."):
                 continue
             if path.parent == skill_root and path.name.casefold() in names:
                 conflicts.add(path)
@@ -459,7 +474,8 @@ def plan_files(root: Path, shared_version: str, fragments: dict[str, str]) -> li
 
 def initialize(root: Path) -> int:
     shared = shared_path()
-    link, linked_to = check_project(root, shared)
+    link, _ = check_project(root, shared)
+    links = transaction.plan_links(root, shared)
     version, shared_version, fragments = shared_bundle(shared)
     files = plan_files(root, shared_version, fragments)
 
@@ -468,13 +484,20 @@ def initialize(root: Path) -> int:
             fail(f"共享版本在预检后变化；请重新检查安装计划: {shared}")
 
     def guard():
-        if check_project(root, shared)[1] != linked_to:
+        check_project(root, shared)
+        if transaction.plan_links(root, shared) != links:
             fail(f"工作流链接在预检后变化: {link}")
         check_bundle()
 
     def verify():
         if check_project(root, shared)[1] != shared or not link.samefile(shared):
             fail(f"工作流链接不可用: {link}")
+        for path, _, target in transaction.plan_links(root, shared):
+            if target is None:
+                if transaction.workflow_target(path) is not None:
+                    fail(f"旧工作流链接尚未迁出: {path}")
+            elif transaction.workflow_target(path) != target or not path.samefile(target):
+                fail(f"工作流入口链接不可用: {path}")
         check_bundle()
         for target, data, _ in files:
             if transaction.content(inside(root, target)) != data:
@@ -485,16 +508,19 @@ def initialize(root: Path) -> int:
             if not reference.samefile(shared / "agents" / f"{name}.toml"):
                 fail(f"角色引用不可达: {name}")
 
-    transaction.apply(root, files, shared=shared if linked_to is None else None, guard=guard, verify=verify)
+    transaction.apply(root, files, links=links, guard=guard, verify=verify)
     for target, data, before in files:
         status = "ADDED" if before is None else "PRESERVED" if data == before else "UPDATED"
         out(f"{status} {target.relative_to(root).as_posix()}")
-    out(f"{'ADDED' if linked_to is None else 'PRESERVED'} {transaction.WORKFLOW_LINK}")
+    for path, before, target in links:
+        if target is not None or before is not None:
+            status = "REMOVED" if target is None else "ADDED" if before is None else "PRESERVED"
+            out(f"{status} {path.relative_to(root).as_posix()}")
     out(f"SDD WORKFLOW {link} -> {shared}")
     out(f"Shared version: sha256:{shared_version}")
     out(f"Project skills: {', '.join(sorted(PROJECT_SKILLS))}")
     out(f"Registered roles: {', '.join(sorted(PROJECT_ROLES))}")
-    out("VERIFIED project link, managed navigation, configuration and local metadata")
+    out("VERIFIED project anchor, six directory skill links, managed navigation, configuration and local metadata")
     return 0
 
 

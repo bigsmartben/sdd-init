@@ -1,17 +1,17 @@
 # 文档校验 CLI
 
-统一入口为项目内 `.agents/skills/sdd-workflow/sdd/scripts/doc_check.py`，Python 3.11+，仅依赖标准库，只读、不访问网络、不更新状态或 Gate。写入者执行机械检查并完成语义核对。
+统一入口为项目内 `.agents/sdd-workflow/sdd/scripts/doc_check.py`，Python 3.11+，仅依赖标准库，只读、不访问网络、不更新状态或 Gate。写入者执行机械检查并完成语义核对。
 
 ## 使用
 
 从项目根目录执行，显式传入本次修改和直接受影响的文件或目录：
 
 ```powershell
-python -B .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root . specs/payment/spec.md docs/blueprint.md
-python -B .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root . --format json docs/test-reports
+python -B .agents/sdd-workflow/sdd/scripts/doc_check.py --root . specs/payment/spec.md docs/blueprint.md
+python -B .agents/sdd-workflow/sdd/scripts/doc_check.py --root . --format json docs/test-reports
 ```
 
-路径相对 `--root` 解析，也可传入根目录内的绝对路径。目录递归选择 `.md`，排除 `.git`、`.build`、`node_modules`、`.venv`、`__pycache__`；文件去重。范围为空、文件不存在、非 Markdown 文件或路径越出根目录均报错。直接检查的文件和目录必须位于根目录内。运行项目已接入的 `.agents/skills/sdd-workflow/sdd/scripts/doc_check.py` 时，允许解析经该共享入口指向同一共享根内的 Markdown。核对托管导航可运行 `python -B .agents/skills/sdd-workflow/sdd/scripts/doc_check.py --root . AGENTS.md`。链接检查只核对存在性及锚点；反向引用按本次变更显式纳入。
+路径相对 `--root` 解析，也可传入根目录内的绝对路径。目录递归选择 `.md`，排除 `.git`、`.build`、`node_modules`、`.venv`、`__pycache__`；文件去重。范围为空、文件不存在、非 Markdown 文件或路径越出根目录均报错。直接检查的文件和目录必须位于根目录内。运行项目已接入的 `.agents/sdd-workflow/sdd/scripts/doc_check.py` 时，允许解析经该共享入口或标准 Skill 目录链接指向同一共享根内的 Markdown。核对托管导航可运行 `python -B .agents/sdd-workflow/sdd/scripts/doc_check.py --root . AGENTS.md`。链接检查只核对存在性及锚点；反向引用按本次变更显式纳入。
 
 文本结果逐项输出 `文件:行号: 级别 规则码: 问题`。JSON 包含 `schema_version`、`scope=mechanical_only`、`files`、`diagnostics`、`errors` 和 `warnings`。行号从 1 开始，文件诊断使用项目相对路径；根目录外的输入显示实际路径。
 

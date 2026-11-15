@@ -1,0 +1,19 @@
+{
+  "local_static": {
+    "requested_model": "gpt-6.1-sol",
+    "requested_reasoning": "high",
+    "reported_start_utc": "2026-11-15T00:22:16Z",
+    "reported_end_utc": "2026-11-15T00:22:40Z",
+    "result": "RW-06.1 存在偏差；prompt.md:3 优先引用 receipt.md:3，允许绕过实际回读。普通工单具备明确命令，行为须单独取证。建议统一实际回读要求。",
+    "limits": "只读静态；未执行入口或写文件；运行时实际型号与 usage 未独立可核验。"
+  },
+  "remote_static": {
+    "requested_model": "gpt-6.1-sol",
+    "requested_reasoning": "high",
+    "result": "RW-06.1 存在偏差，同一共享规则事实。RW-07.1 待验/原因/恢复条件静态具备，但缺远端服务实际响应，证据不足。",
+    "limits": "只读静态；未执行本地入口、远端调用或模拟服务；核对六个相关文件哈希与快照一致；运行时型号和 usage 未独立可核验。",
+    "reported_start_utc": "2026-11-15T00:22:24Z",
+    "reported_end_utc": "2026-11-15T00:22:47Z",
+    "recovery": "提供获授权、可访问的受测服务及调用方式，执行允许的失败场景并保存实际调用、响应、助手输出后按原判据补验。"
+  }
+}

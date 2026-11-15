@@ -14,7 +14,7 @@ uvx --from git+https://github.com/bigsmartben/sdd-init.git sdd-init install
 
 在需要的仓库中打开 Codex，选择 sdd-init（支持该快捷入口的客户端可输入 `/sdd-init`）。CLI／IDE 可输入 `$sdd-init` 或通过 `/skills` 选择，也可明确要求“使用 sdd-init 初始化当前仓库”。未发现新 Skill 时重启 Codex。专项审查可请求“把这份提示词交给 review-prompt，只做审查”，附实际对象和预期依据。角色依赖客户端的用户级发现能力。用户 `config.toml` 由用户维护。[Codex Skill 文档](https://learn.chatgpt.com/docs/build-skills)
 
-初始化在项目内创建 `.agents/skills/sdd-workflow` 目录链接。Windows 使用 junction，其他平台使用目录符号链接。安装器合并 `AGENTS.md` 导航与 `.codex/config.toml` 中的角色引用，并在 `.gitignore` 排除本机链接和安装元数据。托管导航指向[主任务职责](../source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)和[阶段授权与推进](../source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)。角色的项目配置在 Codex 信任该仓库后加载。换机、克隆或新建 worktree 后重新运行 sdd-init 以接上本机共享目录。
+初始化将六个技能分别链接到项目的 `.agents/skills/<技能名>/`，例如 `.agents/skills/sdd-bugfix/SKILL.md`；不复制技能正文。共享包链接位于扫描目录外的 `.agents/sdd-workflow/`，供共享规则、模板和角色引用。Windows 使用 junction，其他平台使用目录符号链接。安装器合并 `AGENTS.md` 导航与 `.codex/config.toml` 中的角色引用，并在 `.gitignore` 排除本机链接和安装元数据。托管导航指向[主任务职责](../source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)和[阶段授权与推进](../source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)。角色的项目配置在 Codex 信任该仓库后加载。换机、克隆或新建 worktree 后重新运行 sdd-init 以接上本机共享目录。
 
 主任务启动技能 Agent，技能 Agent 可调用所需专业角色。项目限制 Codex 委派深度时，这条路径需要允许两级委派。安装器沿用项目已有设置。启动和能力不足时的处理见[技能 Agent 的启动与接续](../source/project/.agents/sdd/references/delegation.md#技能-agent-的启动与接续)。
 
@@ -41,7 +41,7 @@ uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固�
 
 用户角色以已安装清单的路径和哈希判定归属。存在同名自有角色，或受管角色缺失、被修改时，保留现有文件和配置，处理冲突后重试。项目 `init` 只维护项目受管角色。角色目录须支持同文件系统硬链接，安装器用它发布完整文件并在冲突时保护既有目标。
 
-目标项目自行处理遗留文件。清理后，在目标仓库调用一次 `sdd-init` 即可接入共享模式。脚本统一使用 `init`，同步 `AGENTS.md` 和 `.codex/config.toml` 中的 SDD 托管块，保留项目正文、主模型、MCP 和其他配置。安装器报告与当前工作流的同名冲突。项目自有文档及其中的链接由项目维护。
+重新 `init` 会将指向同一共享目录的标准旧 `.agents/skills/sdd-workflow` 链接迁为上述布局，并刷新托管导航、角色引用与忽略项。失败或中断可恢复文件和链接；不递归删除共享内容。同名实体目录、指向其他位置的链接和定制内容保留并报告冲突。其他遗留文件由目标项目自行处理。清理后，在目标仓库调用一次 `sdd-init` 即可接入共享模式。脚本统一使用 `init`，同步 `AGENTS.md` 和 `.codex/config.toml` 中的 SDD 托管块，保留项目正文、主模型、MCP 和其他配置。安装器报告与当前工作流的同名冲突。项目自有文档及其中的链接由项目维护。
 
 共享包更新将原受管 `sdd-spec` 替换为 `sdd-develop`，并移除旧受管技能 `sdd-doc`、`sdd-imp`、`sdd-commit` 和 `sdd-deploy`。已接入项目随后运行一次 `sdd-init` 并重新加载项目。初始化器用[现行五个角色](../source/project/.agents/sdd/references/delegation.md)刷新托管引用和导航，迁出标准旧托管角色 `sdd-delivery`、`sdd-designer`、`sdd-documenter` 和 `sdd-validator`。旧托管引用已定制，或项目自有角色与新版同名时，保留原配置并报告冲突。
 
@@ -55,7 +55,7 @@ uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固�
 
 项目 `init` 在目标根目录的 `.sdd-init.lock` 上获取操作系统文件锁，同项目并发安装直接拒绝。该一字节文件持久保留，不能用文件存在判断进程活跃，也不要在安装期间删除或替换它；进程退出由操作系统释放锁。inspect 不创建锁。锁与恢复记录是本地运行元数据，不应提交到版本库。
 
-写入前的资源冲突只产生锁元数据。安装先持久化 `.sdd-init-recovery/journal.json`，保存受影响文件的原始字节、目标字节、权限、新增目录及新链接的目标。备份字节以 Base64 编码保存。逐文件替换使用同一恢复目录的暂存文件，成功后标记 committed 并清理恢复目录。进程中断后可按恢复记录续接。
+写入前的资源冲突只产生锁元数据。安装先持久化 `.sdd-init-recovery/journal.json`，保存受影响文件的原始字节、目标字节、权限、新增目录及各链接的原始状态、目标和操作进度。备份字节以 Base64 编码保存。逐文件替换使用同一恢复目录的暂存文件，成功后标记 committed 并清理恢复目录。进程中断后可按恢复记录续接。
 
 普通写入失败自动恢复本次文件和链接；异常终止后，重新执行相同 init 命令会先处理恢复记录，再做新安装。恢复期间已恢复的文件可以重复检查；恢复成功只清理本次新建且仍为空的目录。安装及恢复都会比对文件内容，发现外部修改时保留文件并阻止覆盖。
 

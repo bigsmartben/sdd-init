@@ -103,7 +103,7 @@ class PreparationTests(unittest.TestCase):
                 self.assertEqual(set(config["agents"]) - {"max_depth", "max_threads"}, {role})
                 self.assertEqual([p.stem for p in (project / ".codex/agents").glob("*.toml")], [role])
                 self.assertEqual(list((project / ".agents/skills").rglob("SKILL.md")), [])
-                shared = project / ".agents/skills/sdd-workflow/sdd"
+                shared = project / ".agents/sdd-workflow/sdd"
                 self.assertTrue((shared / "references/sdd-repository-governance.md").is_file())
                 self.assertTrue((shared / "references/document-writing.md").is_file())
                 manifest = json.loads((output / "candidate-manifest.json").read_text(encoding="utf-8"))

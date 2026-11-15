@@ -1,0 +1,11 @@
+{
+  "start_utc": "2026-11-15T00:17:11.655646+00:00",
+  "end_utc": "2026-11-15T00:27:56.016303+00:00",
+  "snapshot_window_wall_seconds": 644.360657,
+  "measured_window_excludes": "earlier scope/solution confirmation and initial reads",
+  "human_wait_in_window_seconds": 0,
+  "checked_files": 156,
+  "changed_inputs": [],
+  "tracked_diff": "",
+  "git_status": "?? docs/test-reports/sdd-workflow/2026-11-15-full-review-7aa3759.md\n?? docs/test-reports/sdd-workflow/evidence/2026-11-15-full-review-7aa3759/\n"
+}

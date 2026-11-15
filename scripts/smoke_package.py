@@ -1,10 +1,25 @@
 """Exercise uvx and project initialization using an isolated installation directory."""
 import argparse
 from pathlib import Path
+import stat
 import subprocess
 import sys
 import tempfile
 import tomllib
+
+
+def local_files(root):
+    files, pending = {}, [root]
+    while pending:
+        for path in pending.pop().iterdir():
+            info = path.lstat()
+            if stat.S_ISLNK(info.st_mode) or getattr(info, "st_file_attributes", 0) & 0x400:
+                continue
+            if path.is_dir():
+                pending.append(path)
+            elif path.is_file():
+                files[path.relative_to(root)] = path.read_bytes()
+    return files
 
 
 def main():
@@ -39,18 +54,23 @@ def main():
         project.mkdir()
         initialize = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(project), "init"]
         subprocess.run(initialize, check=True)
-        workflow = project / ".agents/skills/sdd-workflow"
+        workflow = project / ".agents/sdd-workflow"
         self_shared = skills.with_name(f"{skills.name}-sdd-init-shared")
         assert workflow.samefile(self_shared)
-        before = {p.relative_to(project): p.read_bytes() for p in project.rglob("*") if p.is_file()}
+        before = local_files(project)
         subprocess.run(command, check=True)
-        assert before == {p.relative_to(project): p.read_bytes() for p in project.rglob("*") if p.is_file()}
-        assert {p.parent.name for p in (workflow / "skills").glob("*/SKILL.md")} == {
+        assert before == local_files(project)
+        project_skills = project / ".agents/skills"
+        assert {p.name for p in project_skills.iterdir()} == {
             "sdd-develop", "sdd-architecture", "sdd-bugfix", "sdd-test-loop", "sdd-refactor",
             "sdd-deliver",
         }
+        for path in project_skills.iterdir():
+            info = path.lstat()
+            assert stat.S_ISLNK(info.st_mode) or getattr(info, "st_reparse_tag", None) == 0xA0000003
+            assert (path / "SKILL.md").samefile(self_shared / "skills" / path.name / "SKILL.md")
         assert not (workflow / "sdd/assets/prompt_review_template.md").exists()
-        refactor = workflow / "skills/sdd-refactor/SKILL.md"
+        refactor = project_skills / "sdd-refactor/SKILL.md"
         assert "name: sdd-refactor\n" in refactor.read_text(encoding="utf-8")
         guidance = (project / "AGENTS.md").read_text(encoding="utf-8")
         assert f"[sdd-refactor]({refactor.relative_to(project).as_posix()})" in guidance
@@ -64,7 +84,7 @@ def main():
         for name, reference in roles.items():
             assert (config.parent / reference["config_file"]).samefile(self_shared / "agents" / f"{name}.toml")
         subprocess.run(initialize, check=True)
-        assert before == {p.relative_to(project): p.read_bytes() for p in project.rglob("*") if p.is_file()}
+        assert before == local_files(project)
         inspection = subprocess.run([*initialize[:-1], "inspect"], check=True, capture_output=True, text=True, encoding="utf-8")
         assert "Project connection is current" in inspection.stdout
         recovered = subprocess.run([*cli, "recover", *selector], check=True, capture_output=True, text=True, encoding="utf-8")

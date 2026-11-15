@@ -1,0 +1,88 @@
+{
+  "started_utc": "2026-11-15T00:22:01.689756+00:00",
+  "platform": "Linux-6.6.114.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "python": "3.12.3",
+  "files": {
+    ".agents/skills/sdd-workflow-review/SKILL.md": {
+      "sha256": "f3d64daea4350f1783598c08eefbb386a8a9a617b328bfccdf27848e87b749f2",
+      "bytes": 6697
+    },
+    ".agents/skills/sdd-workflow-review/agents/openai.yaml": {
+      "sha256": "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
+      "bytes": 43
+    },
+    ".agents/skills/sdd-workflow-review/assets/review-report-template.md": {
+      "sha256": "3f9f70186391e68cdfd0fc52791cfc3bb3e2c2afe4804b5e0bae57c6f79ab1d3",
+      "bytes": 5808
+    },
+    ".agents/skills/sdd-workflow-review/assets/whitepaper-template.md": {
+      "sha256": "9559baad66736d56312878498ee2b9f2e8f4a0f7d2c5fb99b6865ca79247f6b2",
+      "bytes": 1254
+    },
+    ".agents/skills/sdd-workflow-review/references/evidence-and-cost.md": {
+      "sha256": "a102a84b412ffd139a998e65f15d2cfc7c334f39409ae7508e5d63c440942f2f",
+      "bytes": 3227
+    },
+    ".agents/skills/sdd-workflow-review/references/review-criteria.md": {
+      "sha256": "36deb5a1965974a376161850bcef79b9ed78dd4d0983a2d3d3cf67baac7ac056",
+      "bytes": 15183
+    },
+    "TASK.txt": {
+      "sha256": "64ac36f87ee52fb4521b2ad53d26b316825a02c201a74932daaf19ccd0510e30",
+      "bytes": 415
+    },
+    "artifacts/本地 回执.json": {
+      "sha256": "34baa50a4e30d2256190ba7ce8984845059152a07b1aa27460298b9c49d67329",
+      "bytes": 27
+    },
+    "checks/load_guidance.py": {
+      "sha256": "c2f88b5260f95cfa8d5c127f8043ec62d0ed9138b84573ecdfe958d47a089471",
+      "bytes": 236
+    },
+    "checks/read_receipt.py": {
+      "sha256": "939535b4e047182fc9f3acbb03f0064f27ae9b8b4cedc59082be121654175264",
+      "bytes": 194
+    },
+    "config/service.toml": {
+      "sha256": "634a7586e96c11fefd44a5eb65ca4eb682ad8817baea7fa56893f0817edd3f76",
+      "bytes": 21
+    },
+    "docs/review-criteria.md": {
+      "sha256": "cfa2258bf36e37dae41eecaf26b9c2c69e20846e52626ad8a05a98af4663e246",
+      "bytes": 1059
+    },
+    "docs/sdd-workflow-whitepaper.md": {
+      "sha256": "1bc4dfefc5879bda0468b0089d1d598ae5562be19c81164e334327de024cb808",
+      "bytes": 428
+    },
+    "docs/test-reports/sdd-workflow/README.md": {
+      "sha256": "1e7616fb45c417f047c6d63da1698734811334de4cdc2cb9fb7bc4bbc7d682df",
+      "bytes": 59
+    },
+    "guidance/main.md": {
+      "sha256": "926eec4f95c7692645b2f1f0bff7ec2bef96a69aa365fa63210c508b98e51da6",
+      "bytes": 107
+    },
+    "guidance/prompt.md": {
+      "sha256": "9ec62fa1601d1b821425fdeb7e6ce7662929bf92472aa903d8fd9ccae771ea86",
+      "bytes": 280
+    },
+    "guidance/receipt.md": {
+      "sha256": "7c4940e62e4d2c3648c8c508712252f52d3061635f250c2ca84b750a8f37d399",
+      "bytes": 92
+    },
+    "guidance/remote.md": {
+      "sha256": "5c3625ca845094052f36bea3b436a5d4b6fe9af3d0bbf91379f05c88a176ba66",
+      "bytes": 253
+    },
+    "specs/platform-independent-sdd/spec.md": {
+      "sha256": "292280e5641fa892cbd5b4d1a71130bffd86541e4c83ff36612f54559f71fa44",
+      "bytes": 280
+    }
+  },
+  "missing": [
+    "AGENTS.md",
+    "tests/fixtures/skill-behavior/README.md"
+  ],
+  "version_note": "No .git directory in isolated project; all supplied files snapshotted, tracked/untracked status unavailable."
+}

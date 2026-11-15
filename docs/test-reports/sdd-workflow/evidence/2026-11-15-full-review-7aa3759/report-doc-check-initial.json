@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "scope": "mechanical_only",
+  "files": [
+    "docs/test-reports/sdd-workflow/2026-11-15-full-review-7aa3759.md",
+    "docs/test-reports/sdd-workflow/evidence/2026-11-15-full-review-7aa3759/evidence-applicability.md",
+    "docs/test-reports/sdd-workflow/evidence/2026-11-15-full-review-7aa3759/static-development.md",
+    "docs/test-reports/sdd-workflow/evidence/2026-11-15-full-review-7aa3759/static-main.md",
+    "docs/test-reports/sdd-workflow/evidence/2026-11-15-full-review-7aa3759/static-roles-delivery.md",
+    "docs/test-reports/sdd-workflow/evidence/2026-11-15-full-review-7aa3759/static-validation.md"
+  ],
+  "diagnostics": [],
+  "errors": 0,
+  "warnings": 0
+}

@@ -1,0 +1,5 @@
+fixture-read=ALLOWED
+workspace-write=DENIED
+user-credentials-read=DENIED
+evaluation-read=DENIED
+exit=0

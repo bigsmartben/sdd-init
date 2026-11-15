@@ -89,14 +89,14 @@ class RoleTests(unittest.TestCase):
         config.write_bytes(b'model = "main-model"\n')
         self.assertEqual(self.install().returncode, 0)
         desired = config.read_bytes()
-        customized = desired.replace(b"../.agents/skills/sdd-workflow/", b"../old/")
+        customized = desired.replace(b"../.agents/sdd-workflow/", b"../old/")
         config.write_bytes(customized)
         denied = self.install()
         self.assertNotEqual(denied.returncode, 0)
         self.assertIn("角色引用块含定制", denied.stderr)
         self.assertEqual(config.read_bytes(), customized)
         config.write_bytes(desired.replace(
-            b'config_file = "../.agents/skills/sdd-workflow/agents/sdd-coder.toml"',
+            b'config_file = "../.agents/sdd-workflow/agents/sdd-coder.toml"',
             b'config_file = "agents/sdd-coder.toml"',
         ))
         self.assertEqual(self.install().returncode, 0)

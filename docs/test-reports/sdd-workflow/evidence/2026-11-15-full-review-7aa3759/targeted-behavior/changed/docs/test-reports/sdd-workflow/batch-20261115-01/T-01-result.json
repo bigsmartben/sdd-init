@@ -1,0 +1,20 @@
+{
+  "test_id": "T-01",
+  "started_utc": "2026-11-15T00:22:48.403667+00:00",
+  "ended_utc": "2026-11-15T00:22:48.436331+00:00",
+  "elapsed_seconds": 0.03266244300175458,
+  "argv": [
+    "python",
+    "-B",
+    "-X",
+    "utf8",
+    "checks/read_receipt.py",
+    "artifacts/本地 回执.json"
+  ],
+  "cwd": "/tmp/sdd-targeted-ktq3nvu6/project",
+  "exit_code": 0,
+  "stdout": "verified receipt: LOCAL-17\n",
+  "stderr": "",
+  "pass": true,
+  "environment": "Python subprocess, no model invoked; original project entrypoint and original artifact, no fixture rewrite"
+}

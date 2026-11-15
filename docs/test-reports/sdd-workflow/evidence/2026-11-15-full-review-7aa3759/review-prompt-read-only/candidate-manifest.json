@@ -1,0 +1,10 @@
+{
+  "case": "review_prompt_read_only",
+  "candidate_source": "C:\\Users\\24598\\Documents\\github\\sdd-init\\source\\initializer\\assets\\user-agents\\review-prompt.toml",
+  "files": {},
+  "preparation_only": true,
+  "model_execution": "UNVERIFIED",
+  "profile_files": {
+    ".codex/agents/review-prompt.toml": "8b3e90566f44aec2dad068b67211746b32169a643fd9c30d59f5b80ad614b824"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "start_utc": "2026-11-15T00:22:01.689756+00:00",
+  "end_utc": "2026-11-15T00:24:58.176444+00:00",
+  "timezone": "UTC; Asia/Shanghai=UTC+08:00",
+  "partial_window_seconds": 176.486688,
+  "testcase_seconds": 0.03266244300175458,
+  "review_partial_window_excluding_testcase_seconds": 176.45402555699823,
+  "human_wait_seconds": 0,
+  "full_review_duration": "未测；快照前已有读取，缺完整任务起始时间；本窗口不冒充全程。",
+  "parallel_agent_seconds": "local 24, remote 23; not summed into wall clock",
+  "includes": "Main、两子 Agent 静态、归并及报告写作；无整改复验；最终核验和交付微小尾段未计入窗口"
+}
