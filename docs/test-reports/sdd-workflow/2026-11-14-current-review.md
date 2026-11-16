@@ -44,7 +44,7 @@
 | [sdd-coder](../../../source/project/.codex/agents/sdd-coder.toml) | 03、04、06、07、11 | 原 Task、实际版本、局部证据及待验交回。 | B09、B14、B18、B23、B28。局部实施和多级委派轨迹可复核。 |
 | [sdd-devops](../../../source/project/.codex/agents/sdd-devops.toml) | 04、06、07、11、12 | 按同工单复验实际版本、结果和依赖。 | B10、B32–B33、B39。独立提交、模拟运行及备份取证。 |
 | [sdd-doc-consistency](../../../source/project/.codex/agents/sdd-doc-consistency.toml) | 05、07、10、12 | 按实际只读权限核对冲突、重复和错位引用。 | B03、B11–B12。原生和 WSL 真实角色回执，保护工作区与历史。 |
-| [review-prompt](../../../source/initializer/assets/user-agents/review-prompt.toml) | 04–06、10、12 | 实际装配、授权终点、专项回报及未验证项。 | B05、B34–B36。只读、比较和合成授权修订均上交证据。 |
+| [review-prompt（现行入口）](../../../source/project/.codex/agents/review-prompt.toml) | 04–06、10、12 | 实际装配、授权终点、专项回报及未验证项。 | B05、B34–B36。只读、比较和合成授权修订均上交证据。 |
 | [sdd-workflow-review](../../../.agents/skills/sdd-workflow-review/SKILL.md) | 04、06、08、10–12 | 只显式发起，定义依据、报告、范围和专项分工。 | B05–B06。符合合成执行对照。真实工作流另按实际证据判断。 |
 
 ## 逐 RW 子项覆盖

@@ -86,6 +86,7 @@ class GovernanceTests(unittest.TestCase):
         config = self.root / ".codex/config.toml"
         roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
         expected_models = {
+            "review-prompt": "gpt-6-astra",
             "sdd-architect": "gpt-6-astra",
             "sdd-product-manager": "gpt-6-astra",
             "sdd-coder": "gpt-6.1-sol",
@@ -174,14 +175,15 @@ class GovernanceTests(unittest.TestCase):
         self.assertIn("MY OWN RULES\n", (self.root / "AGENTS.md").read_text(encoding="utf-8"))
         self.run_cmd("init")
         self.assertEqual((self.root / "AGENTS.md").read_text(encoding="utf-8").count("sdd-contract-governance:start"), 1)
-        self.assertTrue((self.root / "AGENTS.md").read_text(encoding="utf-8").startswith("<!-- agent-communication:start -->"))
+        self.assertTrue((self.root / "AGENTS.md").read_text(encoding="utf-8").startswith("MY OWN RULES\n"))
+        self.assertNotIn("<!-- agent-communication:", (self.root / "AGENTS.md").read_text(encoding="utf-8"))
 
     def test_init_writes_persistent_repo_guidance_without_extra_documents(self):
         self.run_cmd("init")
         agents = (self.root / "AGENTS.md").read_text(encoding="utf-8")
         import re
         targets = re.findall(r"\]\(([^)]+)\)", agents)
-        self.assertIn(f"{WORKFLOW}/sdd/references/sdd-repository-governance.md", targets)
+        self.assertIn(f"{WORKFLOW}/sdd/references/sdd-repository-governance.md#职责与交接", targets)
         self.assertIn(f"{WORKFLOW}/sdd/references/delegation.md", targets)
         self.assertIn(".agents/skills/sdd-refactor/SKILL.md", targets)
         for target in targets:

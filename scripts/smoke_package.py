@@ -35,20 +35,18 @@ def main():
         settings.write_bytes(b'model = "user-choice"\r\n')
         agents = config / "agents"
         cli = ["uvx", "--from", args.source, "sdd-init"]
-        selector = ["--skills-dir", str(skills), "--agents-dir", str(agents)]
+        selector = ["--skills-dir", str(skills)]
         inspected = subprocess.run([*cli, "inspect", *selector], check=True, capture_output=True, text=True, encoding="utf-8")
         assert "Status: not installed" in inspected.stdout
-        assert str(agents / "review-prompt.toml") in inspected.stdout
+        assert "User role:" not in inspected.stdout
         assert not skills.exists()
         assert not agents.exists()
         command = [*cli, "install", *selector]
         subprocess.run(command, check=True)
-        role = agents / "review-prompt.toml"
-        role_content = role.read_bytes()
-        assert tomllib.loads(role_content.decode("utf-8"))["name"] == "review-prompt"
+        assert not agents.exists()
         subprocess.run(command, check=True)
         skill = skills / "sdd-init"
-        assert role_content == role.read_bytes() == (skill / "assets/user-agents/review-prompt.toml").read_bytes()
+        assert not (skill / "assets/user-agents/review-prompt.toml").exists()
         assert len(list(skills.rglob("SKILL.md"))) == 1
         project = root / "project"
         project.mkdir()
@@ -79,6 +77,7 @@ def main():
         roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
         assert set(roles) == {
             "sdd-architect", "sdd-coder", "sdd-devops", "sdd-product-manager", "sdd-doc-consistency",
+            "review-prompt",
         }
         assert not (project / ".codex/agents").exists()
         for name, reference in roles.items():

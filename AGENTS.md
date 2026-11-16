@@ -1,14 +1,18 @@
-## 首要沟通原则：对齐意图
-
-必须呈现对用户意图的理解并请求确认，不以推断代替确认。已有确认沿用，新增或变化内容重新对齐。需求与方案分别确认，两者都待定时先确认需求。按讨论内容选择用例图、原型或对照表等视图。
-
 # sdd-init 维护约定
 
 开发工作遵循本文件。`source/` 下的 Skill、角色和治理规则作为源码审阅。先读 [README](README.md) 的仓库定位，再从[项目文档索引](docs/index.md)定位实际路径。已确认需求统一维护为 Spec，按任务契约确定写入范围和完成条件。
 
+## Main 职责与动作
+
+- **Align — 意图对齐**：呈现对用户目标、边界、授权和完成条件的理解并取得必要确认，不以推断替代确认。已有确认持续沿用，仅目标实质变化、约束冲突或缺少必要授权时重新对齐。需求与方案分别确认，两者都待定时先确认需求，按讨论内容选择用例图、原型或对照表等视图。专业执行者的待决事项由 Main 面向用户处理。
+- **Explore & Orchestrate — 探索与调度**：根据目标差距和当前证据选择下一步必要行动；能直接完成就直接完成，按需使用原生工具、Skill 或专业 Agent，不强制完整计划、任务图或多层委派，不重复受托专业过程。
+- **Evaluate — 目标验收**：按用户完成条件与实际证据判断交付；有缺口则在授权内继续，无法有效推进时说明已完成范围、阻塞和恢复条件，不以工具成功或技能结束代替整体完成。
+
+sdd-init Skill 只负责目标项目 sdd-workflow 的环境落地：准备相关资产，并向目标 AGENTS.md 注入 Main 规则与能力入口。Main 规则的唯一注入源为 [Main 指令片段](source/initializer/assets/agents-fragment.md)，详细条款可按需引用；专业执行规则归实际执行者，不因共用文件而成为 Main 的专业职责。本文件是本仓维护指引，不是安装产物，不另设独立沟通块；不加载已安装工作流来维护本仓源码。
+
 ## 维护边界
 
-- 提示词专项工作可委派给 [review-prompt 角色](source/initializer/assets/user-agents/review-prompt.toml)，本仓源码作为受审对象。仅在用户显式请求本仓工作流全面评审时启动 [sdd-workflow-review](.agents/skills/sdd-workflow-review/SKILL.md)。
+- 提示词专项工作可委派给 [review-prompt 角色](source/project/.codex/agents/review-prompt.toml)，本仓源码作为受审对象。仅在用户显式请求本仓工作流全面评审时启动 [sdd-workflow-review](.agents/skills/sdd-workflow-review/SKILL.md)。
 
 - 已确认的具体需求以对应 Spec 文件为唯一正文。[本仓 Spec](specs/platform-independent-sdd/spec.md) 维护 sdd-init 的产品承诺及验收条件。阶段内闭环归各 Skill，本职执行归角色定义，共享契约按[仓库治理](source/project/.agents/sdd/references/sdd-repository-governance.md)定位唯一正文。README 提供定位和导航，Plan／Task 维护同一份执行清单，状态与验证记录引用适用依据。
 - 维护通用流程与资源时，沿用目标项目的已确认决定；业务需求、组件库选型和产品架构由目标项目确定。本仓库自身的维护任务以规则、文档和工具为检查对象。

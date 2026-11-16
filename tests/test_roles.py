@@ -9,6 +9,7 @@ import unittest
 from test_build import WORKFLOW, builder, project_entries, project_files, refresh_manifest
 
 ROLE_MODELS = {
+    "review-prompt": "gpt-6-astra",
     "sdd-architect": "gpt-6-astra",
     "sdd-product-manager": "gpt-6-astra",
     "sdd-coder": "gpt-6.1-sol",
@@ -51,7 +52,11 @@ class RoleTests(unittest.TestCase):
             self.assertTrue(path.samefile(self.skill / "shared/agents" / f"{name}.toml"))
             data = tomllib.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(data["name"], name)
-            self.assertEqual(set(data), {"name", "description", "model", "developer_instructions"})
+            fields = {"name", "description", "model", "developer_instructions"}
+            if name == "review-prompt":
+                fields.add("model_reasoning_effort")
+                self.assertEqual(data["model_reasoning_effort"], "high")
+            self.assertEqual(set(data), fields)
             self.assertEqual(data["model"], ROLE_MODELS[name])
             self.assertTrue(all(isinstance(v, str) and v.strip() for v in data.values()))
         before = self.snapshot()
@@ -141,7 +146,7 @@ class RoleTests(unittest.TestCase):
         config = self.target / ".codex/config.toml"
         local_roles = config.parent / "agents"
         local_roles.mkdir(parents=True)
-        for name in ("sdd-devops", "sdd-architect", "sdd-product-manager", "sdd-doc-consistency"):
+        for name in ("sdd-devops", "sdd-architect", "sdd-product-manager", "sdd-doc-consistency", "review-prompt"):
             with self.subTest(name=name, location="config"):
                 config.write_text(f'[agents.{name}]\nconfig_file = "project-role.toml"\n', encoding="utf-8")
                 before = self.snapshot()
@@ -209,6 +214,19 @@ class RoleTests(unittest.TestCase):
         refresh_manifest(self.skill)
         self.assertNotEqual(self.install().returncode, 0)
         self.assertEqual(project_entries(self.target), [])
+
+    def test_reviewer_model_and_effort_are_validated_before_project_changes(self):
+        entry = self.skill / "shared/agents/review-prompt.toml"
+        original = entry.read_bytes()
+        for data in (original.replace(b'model_reasoning_effort = "high"', b'model_reasoning_effort = "low"'),
+                     original.replace(b'model = "gpt-6-astra"', b'model = "gpt-6.1-sol"')):
+            with self.subTest(data=data):
+                entry.write_bytes(data)
+                refresh_manifest(self.skill)
+                result = self.install()
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("review-prompt", result.stderr)
+                self.assertEqual(project_entries(self.target), [])
 
     def test_consistency_role_requires_default_model_and_inherits_sandbox(self):
         name = "sdd-doc-consistency"

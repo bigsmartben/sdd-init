@@ -33,11 +33,11 @@ approval_mode = "approve"
 
 `role_doc_consistency` 在独立只读会话中验证冲突、冗余、断链及错用历史证据。对照运行前后的文件，核对写入请求是否连同依据与建议交回 Main。
 
-按轨迹核对 Main 为新阶段启动独立技能 Agent，技能 Agent 将复杂实施交给合格角色，并维护同一 Plan、按证据更新原 Issue、沿原 Review 检查项派单和复核。`collaboration_workflow` 核对 Bugfix 修复前后是否使用同一测试 Agent，记录父子调用、Agent 标识、复验版本和实际结果。核对部分阻塞、缺失验证代码、证据补查、增量交接及有效证据复用。只验收、只评估、只审不修和能力受限作为边界例。实际评测结果和候选快照归报告，保留历史事实。
+协作案例按轨迹核对 Main、技能执行者与专业角色的实际调用关系，并核对同一 Plan、原 Issue、原 Review 检查项和证据。新阶段不要求独立技能 Agent。`collaboration_workflow` 核对 Bugfix 修复前后的测试接续；若实际委派了测试 Agent，记录其标识及续派，否则核对同一批次的状态和有效证据。核对部分阻塞、缺失验证代码、证据补查、增量交接及有效证据复用。只验收、只评估、只审不修和能力受限作为边界例。实际评测结果和候选快照归报告，保留历史事实。
 
-核对跨阶段路径时，从实际会话标识和调用目标重建 Main、技能 Agent 与角色的关系。对照 Bugfix 回 Main、Main 把新版本和证据交给原测试 Agent、原测试 Agent 实际复验的先后。检查是否存在同层直传或续派，保留异常调用和未能识别的目标。重复运行使用独立夹具，同一次执行的多处日志只算一个样本。
+核对跨阶段路径时，从实际执行上下文与调用记录重建关系。对照 Bugfix 结果、新版本和证据传入原测试批次及实际复验的先后；原执行者不可接续时核对状态和有效证据交接。检查受托 Agent 是否越过调用者同层直传或续派，保留异常调用和未能识别的目标。重复运行使用独立夹具，同一次执行的多处日志只算一个样本。
 
-对照 `main_direct_config_change` 和 `bug_direct_report`，分别核对 Main 直接完成指定配置改动与启动独立 Bugfix Agent。根据实际任务轨迹及文件差异判定调度和授予的写入范围。
+对照 `main_direct_config_change` 和 `bug_direct_report`，分别核对 Main 直接完成指定配置改动与使用 Bugfix 能力；后者可当前上下文加载，不强制独立 Agent。根据实际轨迹及文件差异判定调度、专业验证和写入范围。
 
 需求交付案例 `develop_delivery` 由评估者按 `evaluation_setup` 在同一会话分轮提供两次真实测试反馈，核对 A 前的权威 Spec 与 B 前的产品文件快照。B 后核对同一 Plan、公开入口逐 AC 验收、定向回归与集成准备条件。`develop_resume` 核对复用两次确认及未完 Plan，`develop_spec_only` 与 `develop_discussion` 核对各自的停止条件。`imp` 继续核对已就绪独立工单的实施交接。
 
@@ -74,7 +74,7 @@ commit 平台场景的 `evidence/*.json` 描述评测所需的仓库／平台状
 
 验证分三类：机械测试验证安装、打包及工具不变量；维护者语义核对检查指令与场景的职责对应；真实模型评测必须保存实际执行轨迹及结果。cases.json 中的 UNVERIFIED 是案例准备时的默认状态。已运行批次按实际轨迹在实施证据中记录通过项、失败和未验证项。机械测试通过不得视为行为评测通过。
 
-原分发技能 `sdd-review-prompt` 的五个 `prompt_review_*` 案例可从 Git 版本 `6af5012` 的同目录 `cases.json` 取回。退款夹具同时供新的用户级角色案例使用。原运行范围见[原实施证据](../../../docs/workflow-evidence.md#2026-11-14-提示词审查与行为验证技能)。
+原分发技能 `sdd-review-prompt` 的五个 `prompt_review_*` 案例可从 Git 版本 `6af5012` 的同目录 `cases.json` 取回。退款夹具供预置项目角色案例使用。原运行范围见[原实施证据](../../../docs/workflow-evidence.md#2026-11-14-提示词审查与行为验证技能)。
 
 远端同步场景使用状态中的 graph 准备对应提交关系；`commit_first_push_stale_main` 保留过期 tracking，只有实际 fetch 才刷新；`commit_remote_diverged_dirty` 准备双方分叉及无关暂存／未暂存修改；`commit_remote_refresh_race` 按查询阶段推进远端 SHA，并模拟非快进拒绝和获取失败；`commit_pinned_release_base` 以维护分支而非 main 作为已确认目标。判定读取了哪些实际引用、两组比较及同步是否在 push 前完成，不以输出了 fetch／pull 字样代替行为证明。
 
@@ -84,9 +84,31 @@ commit 平台场景的 `evidence/*.json` 描述评测所需的仓库／平台状
 
 统计命令：python -B scripts/skill_context_stats.py。输出字符量而非 token；描述已包含在入口字符量中，参考文件按整文件列出，实际读取范围由任务决定。
 
+## Main 目标驱动探索 A～G
+
+对应 Spec FR-031、AC-035～AC-041。`candidate_scope: main` 直接使用 sdd-init 分发的唯一 Main 指令片段作为 AGENTS，Align 已包含其中，不再组合独立沟通片段。保留全部候选 Skills 和专业角色注册；源码布局保留技能相对引用，用现有安装器的目录链接辅助函数将安装约定的共享路径指向同一份隔离规则，不复制第二份正文。候选字节与生成配置进入哈希清单，链接另记目标，夹具不可覆盖入口。只准备快照，不执行安装事务或修改用户级安装，不代表 Harness 已加载 TOML。
+
+| 用例 | 案例 | 观察重点 |
+|---|---|---|
+| A | `main_simple` | 直接回答，零工具／委派／计划，沿用明确确认 |
+| B | `main_specialist` | 单专业能力自主探索和验证，Main 不重复专业过程 |
+| C | `main_explore` | 先取得事实，逐步下钻，遇反证调整，不预建完整路径 |
+| D | `main_dependency` | 新依赖回 Main，增量协调；受控注入须单列合成证据 |
+| E | `main_gap` | 子任务成功不能掩盖整体缺口，只补尚未满足项 |
+| F | `main_goal_change` | 同一会话分轮改变目标，停止旧方向并复用有效结果 |
+| G | `main_blocked` | 完成独立项，明确 Partial／Blocked 与恢复条件，不越权或无效重试 |
+
+```powershell
+python -B tests\prepare_skill_behavior.py --case main_simple --case main_specialist --case main_explore --case main_dependency --case main_gap --case main_goal_change --case main_blocked --output .build\main-orchestration\<新批次>
+```
+
+真实评测在隔离的受支持 Harness 中加载候选入口及角色，只交 TASK 与项目材料，不交 evaluation.json。D、F 按评估者侧 `evaluation_setup` 接续并保存原始轨迹；不把提示词语义核对或准备单测当作行为通过。没有子 Agent 能力时可另验当前上下文 Skill 路径，不能伪造 B 的专业委派或 F 的取消证据。
+
+前后比较固定模型、Harness、工具权限、输入、夹具和反馈时点，分别统计模型调用、工具调用、委派次数、输入／输出／缓存 token、墙钟耗时和逐用例目标完成情况。同一子调用不重复计数，专业调用计入总成本；准备器和单测耗时不计模型执行。无原始遥测则填未测及原因，不用字符量推算 token 或声称优化收益。本轮记录见 [Main 重构验证](../../../docs/test-reports/main-orchestration/2026-11-16.md)。
+
 ## 提示词角色与本仓全面评审
 
-按 [AC-028、AC-034](../../../specs/platform-independent-sdd/spec.md#验收条件)用准备器生成下列案例。角色例仅在工作区外的 `profile/.codex/agents` 放入候选角色。让隔离 Codex 会话使用该临时配置，Main 把 TASK.txt 作为工单实际交给 `review-prompt`，保存委派、回执、前后字节和本地复验记录。退款夹具只支持装配检查，实际退款行为留待有环境时验证。
+按 [AC-028、AC-034](../../../specs/platform-independent-sdd/spec.md#验收条件)用准备器生成下列案例。角色例从项目分发源保留 review-prompt 及适用规则，只在隔离项目的 `.codex/config.toml` 注册该角色，不创建用户级 profile。让隔离 Codex 会话加载项目配置，Main 把 TASK.txt 作为工单实际交给 `review-prompt`，保存委派、回执、前后字节和本地复验记录。退款夹具只支持装配检查，实际退款行为留待有环境时验证。
 
 | 案例 | 验证点 |
 | --- | --- |

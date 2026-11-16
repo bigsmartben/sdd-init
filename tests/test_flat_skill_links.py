@@ -96,7 +96,7 @@ class FlatSkillLinkTests(unittest.TestCase):
         self.assertTrue((self.root / self.tx.WORKFLOW_LINK).samefile(self.shared))
         self.assertFalse(self.tx.linked(self.root / self.tx.LEGACY_WORKFLOW_LINK))
 
-    def legacy(self, *, state=False, retired=False):
+    def legacy(self, *, state=True, retired=False):
         path = self.tx.link_path(self.root, self.tx.LEGACY_WORKFLOW_LINK)
         self.tx.create_workflow_link(path, self.shared)
         agents = "Project-owned introduction\r\n\r\n" + "\r\n\r\n".join(
@@ -201,7 +201,7 @@ tx.publish_workflow_link = stop
         self.init()
         self.assert_layout()
 
-    def test_old_layout_without_state_and_retired_roles_migrates(self):
+    def test_old_layout_with_owned_main_block_and_retired_roles_migrates(self):
         self.legacy(retired=True)
         self.init()
         self.assert_layout()
@@ -239,9 +239,7 @@ tx.publish_workflow_link = stop
 
     def test_old_layout_uses_remembered_hashes_even_without_history(self):
         self.legacy(state=True)
-        history = self.skill / "assets/managed-agents-history.json"
-        history.write_text(json.dumps({filename: {} for filename in self.gov.FRAGMENTS.values()}), encoding="utf-8")
-        self.refresh_manifest()
+        self.assertFalse((self.skill / "assets/managed-agents-history.json").exists())
         self.init()
         self.assert_layout()
 

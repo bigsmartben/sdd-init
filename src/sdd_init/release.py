@@ -16,7 +16,9 @@ MANIFEST = "build-manifest.json"
 USER_LOCK = ".sdd-init-install.lock"
 LOCK_BYTES = b"sdd-init lock v1\n"
 USER_ROLE = "review-prompt"
+# Only used to identify and recover the former standalone user installation.
 USER_ROLE_ASSET = f"assets/user-agents/{USER_ROLE}.toml"
+WORKFLOW_REVIEW_ROLE = f"shared/agents/{USER_ROLE}.toml"
 
 
 def shared_directory(skills_dir: Path) -> Path:
@@ -182,16 +184,18 @@ def verify_distribution(folder: Path) -> dict[str, str]:
     files = verified(folder)
     required = {
         "scripts/project_install.py", "scripts/release.py", "shared/sdd/references/delegation.md",
-        "agents/openai.yaml", "assets/agents-fragment.md", "assets/communication-fragment.md",
-        "assets/managed-agents-history.json", "assets/install.md", USER_ROLE_ASSET,
+        "agents/openai.yaml", "assets/agents-fragment.md",
+        "assets/install.md", WORKFLOW_REVIEW_ROLE,
     }
     for name in sorted(required - files.keys()):
         raise ValueError(f"Incomplete distribution: missing {name}: {folder}")
-    path = folder / USER_ROLE_ASSET
+    if USER_ROLE_ASSET in files:
+        raise ValueError(f"Standalone user role is no longer distributed: {USER_ROLE_ASSET}")
+    path = folder / WORKFLOW_REVIEW_ROLE
     role = tomllib.loads(path.read_text(encoding="utf-8"))
     if role.get("name") != USER_ROLE or not all(
         isinstance(role.get(key), str) and role[key].strip()
         for key in ("description", "developer_instructions")
     ):
-        raise ValueError(f"Invalid distributed user role: {path}")
+        raise ValueError(f"Invalid distributed workflow role: {path}")
     return files
