@@ -6,7 +6,9 @@
 
 sdd-init 面向维护 SDD 工作流的维护者，以及在目标仓库中使用 Agent 的开发者。产品提供可构建、可安装的指令与工具资源，使需求整理、架构设计、实施、验证、部署和交付具有明确的职责与产物归属。
 
-系统由 Python 分发安装工具与 Agent 执行的工作流资源组成。Main 面向用户负责阶段调度与交付。Skill 定义阶段入口和闭环，技能 Agent 承接阶段并调度所需专业角色。目标项目自行决定业务架构、技术选型和实际运行环境。本仓库不承载目标项目业务服务、业务数据库或部署实例。观测样例是可选参考资源，不代表目标项目采用了对应技术栈。协作边界见[仓库治理](../source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)。
+系统由 Python 分发安装工具与 Agent 执行的工作流资源组成。Main 负责意图对齐、目标驱动探索与调度、目标验收。Skill 定义专业流程，可按 Harness 原生机制直接加载或按需委派技能 Agent；专业角色自主完成本职探索、实施与验证。目标项目自行决定业务架构、技术选型和实际运行环境。本仓库不承载目标项目业务服务、业务数据库或部署实例。观测样例是可选参考资源，不代表目标项目采用了对应技术栈。协作边界见[仓库治理](../source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)。
+
+其中，sdd-init Skill 的唯一职责是目标项目 sdd-workflow 的环境落地，包含相关资产的落地准备和目标 AGENTS.md 的注入两项动作。检查、版本核验与恢复服务于落地，不另列职责；接入后的任务调度与业务交付归 Main 和专业执行者。
 
 ## 2. 使用终端与运行条件
 
@@ -16,7 +18,7 @@ sdd-init 面向维护 SDD 工作流的维护者，以及在目标仓库中使用
 | PENV-02 | 用户在终端安装用户级入口 | Python 3.11+；默认远端安装路径另需 uv、Git 与仓库读取权限，详见[安装说明](installation.md) |
 | PENV-03 | 用户在目标仓库通过 Agent 使用 Skill 或委派角色 | 客户端能够发现项目 Skills 与角色；安装脚本需要 Python；Git、部署及验证所需工具按具体任务确定 |
 | PENV-04 | 维护者在 sdd-init 仓库显式发起工作流全面评审 | 从本仓加载维护 Skill，按[开发验证](installation.md#开发验证)准备隔离环境 |
-| PENV-05 | 任意项目通过 Agent 委派提示词审查 | 客户端支持 Codex 用户级自定义角色发现，实跑工具和权限随工单 |
+| PENV-05 | 已接入项目通过 Agent 委派提示词审查 | 客户端加载项目注册的预置自定义角色，实跑工具和权限随工单 |
 
 环境兼容声明采用以下边界（2026-11-04 用户确认）：运行条件为 Python 3.11+，其他工具按具体入口要求；只记录实际验证过的操作系统与客户端版本，验证范围和结果引用对应证据；未验证环境不承诺兼容，不预建完整兼容矩阵。最低运行条件不等于所有满足条件的环境均已通过验证。
 
@@ -52,10 +54,10 @@ flowchart LR
 | ID | 目标与关键体验 | 环境与详细依据 |
 |---|---|---|
 | PUC-01 | 维护一次资源正文，生成可追溯分发包 | PENV-01；Spec FR-002、FR-004、FR-007，AC-002、AC-007 |
-| PUC-02 | 安装或更新用户级入口、共享工作流及通用提示词审查角色 | PENV-02；[安装说明](installation.md#更新与冲突)，Spec AC-002、AC-028 |
-| PUC-03 | 将工作流引入目标仓库，升级时保护项目正文与配置 | PENV-03；[初始化入口](../source/initializer/SKILL.md)，Spec FR-002、FR-027，AC-002、AC-027 |
+| PUC-02 | 安装或更新用户级入口与共享工作流资产（含预置角色） | PENV-02；[安装说明](installation.md#更新与冲突)，Spec AC-002、AC-028 |
+| PUC-03 | 完成目标项目工作流环境落地：准备资产，注入 Main 规则与能力入口，保护项目正文与配置 | PENV-03；[初始化入口](../source/initializer/SKILL.md)，Spec FR-002、FR-027、FR-036，AC-002、AC-027、AC-043 |
 | PUC-04 | 依照用户任务选择需求到实现、架构设计、文档、独立工单实施、缺陷修复、集成测试、架构对齐与重构、部署或交付职责 | PENV-03；Spec FR-001、FR-003、FR-005—FR-012、FR-020—FR-022、FR-026、FR-029、FR-031—FR-032 |
-| PUC-05 | 审查任意项目的运行时提示词，按授权修订与复验 | PENV-05；Spec FR-028、AC-028 |
+| PUC-05 | 在已接入项目审查运行时提示词，按授权修订与复验 | PENV-05；Spec FR-028、AC-028 |
 | PUC-06 | 显式发起本仓工作流全面评审和行为回归 | PENV-04；Spec FR-033、FR-034、AC-034 |
 
 ## 4. 高位验收场景与维度
@@ -95,21 +97,21 @@ flowchart LR
     CLI[sdd-init install] --> UserSkill[用户级 sdd-init]
     Wheel --> CLI
     CLI --> SharedBundle[用户级共享工作流]
-    CLI --> PromptRole[用户级 review-prompt]
     UserSkill --> Govern[govern.py inspect / init / recover]
   end
   subgraph Target[目标仓库]
     Govern --> Local[本地链接和项目配置引用]
+    Govern --> MainRules[AGENTS.md 中的 Main 规则与能力入口]
     Local --> SharedBundle
     Agent[Agent 按任务调用] --> Local
-    Agent --> PromptRole
+    Agent --> MainRules
     Agent --> Artifacts[项目 Spec、Blueprint、Plan、代码与证据]
   end
 ```
 
-构建从维护源码生成入口、共享载荷、通用角色资源与清单。初始化入口位于用户级 Skill 扫描根。用户角色 TOML 位于 Codex 用户角色目录，由客户端发现。项目初始化器将各技能目录分别链接到 `.agents/skills/<技能名>/`，不复制技能正文、不依赖递归发现；共享包锚点链接位于扫描目录外的 `.agents/sdd-workflow/`。标准旧嵌套链接在项目重新接入时迁移。项目配置注册五个相对路径角色引用。项目导航和角色引用可随 Git 共享，本机链接由各工作区建立。详见 Spec FR-027／AC-027、FR-028／AC-028。
+构建从维护源码生成入口、共享载荷与清单。初始化入口位于用户级 Skill 扫描根，六个专业角色（含 review-prompt）统一位于共享资产中。项目初始化器将各技能目录分别链接到 `.agents/skills/<技能名>/`，不复制技能正文、不依赖递归发现；共享包锚点链接位于扫描目录外的 `.agents/sdd-workflow/`。标准旧嵌套链接在项目重新接入时迁移。项目配置注册六个相对路径角色引用，客户端在可信项目中加载，不另装用户级角色。项目导航和角色引用可随 Git 共享，本机链接由各工作区建立。详见 Spec FR-027／AC-027、FR-028／AC-028。
 
-用户级安装采用清单校验，并对 Skill 及用户角色目标分别加锁。Skill 和共享目录在同级事务目录暂存，角色在目标目录内暂存并发布完整文件。两处由同一日志记录实际角色路径、版本和恢复状态。操作入口见[用户级安装恢复](installation.md#用户级安装恢复)。SHA-256 清单用于内容完整性与本地修改检查。
+用户级安装采用清单校验并锁定 Skill 安装目标，Skill 和共享目录在同级事务目录暂存。只有旧用户角色原地迁出或旧事务恢复时，才按原记录锁定角色目录并保留可恢复备份；不创建新的用户级角色。登记路径上的旧 review-prompt 即使已修改也直接迁出，缺失则继续；事务记录原有实际状态，不处理未登记角色，保护事务开始后的外部编辑。操作入口见[用户级安装恢复](installation.md#用户级安装恢复)。SHA-256 清单用于内容完整性与本地修改检查。
 
 ### 项目安装的互斥与恢复边界
 
@@ -137,22 +139,35 @@ flowchart TD
   Installer --> Resources[包内 resources 与 manifest]
   Govern[初始化 govern.py] --> Bundle[共享目录与导航片段]
   User[用户] <-->|目标、授权、决定及交付| Main[主 Agent]
-  Main <-->|阶段工单与回执| SkillAgent[独立技能 Agent]
+  Main <-->|按需委派与接续| SkillAgent[独立技能 Agent]
   SkillAgent <-->|专业工单与回执| Roles[专业角色]
-  Main -->|技能未覆盖且需专业能力| Roles
-  Main --> Local[明确的局部操作]
+  Main <-->|专业目标与证据| Roles
+  Main --> Local[直接回答或工具操作]
+  Main -->|原生加载| Skills
   SkillAgent --> Skills[项目 Skills]
-  SkillAgent --> Shared[共享规则、模板和检查工具]
+  Main --> Shared[Main 详细规则、专业执行规则、模板和工具]
+  SkillAgent --> Shared
   Roles --> Shared
   Roles --> Check[doc_check.py 只读检查]
 ```
 
-阶段上下文由独立技能 Agent 持有，Main 保留阶段间的接续引用。具体职责见[角色定义](../source/project/.codex/agents/)，启动和接续见[执行协作](../source/project/.agents/sdd/references/delegation.md#技能-agent-的启动与接续)。
+专业上下文由实际执行者持有，Main 仅保留目标、当前探索方向、证据引用与剩余缺口；需要恢复时使用原生状态或既有记录。具体职责见[角色定义](../source/project/.codex/agents/)，启动和接续见[执行协作](../source/project/.agents/sdd/references/delegation.md#技能-agent-的启动与接续)。
+
+### Harness 原生能力与适配边界
+
+| 机制 | 本仓落点与复用方式 |
+|---|---|
+| Agent Loop／工具调度 | 由目标 Harness 提供，本仓只分发 Main 指令与契约，不实现循环、搜索引擎或 Align／Explore／Evaluate 三次调用。 |
+| Main 入口与 Skills | sdd-init 注入单个 AGENTS 托管块，承载 Align、探索调度和目标验收；授权与状态、协作、回执分别按引用定位详细正文，不重复展开职责表或另注入沟通块。专业执行规则归实际执行者。标准 `.agents/skills/<name>/SKILL.md` 提供技能发现，按原生触发加载，不以创建子 Agent 为前置。 |
+| 专业 Agent | 当前 Codex 适配使用 `.codex/config.toml` 及 TOML 角色引用。其他 Harness 使用其实际可用接口，不假定可直接识别 Codex 配置。 |
+| 委派与接续 | 优先原生子 Agent 标识、消息及接续机制；接口存在时才使用其参数。无子 Agent 能力可直接加载 Skill，确需独立执行而能力缺失时明确阻塞。 |
+| Plan／任务状态 | 原生能力保留但按需使用。只记录实际依赖、并行协调或长任务恢复所需状态，不预建全图或另建图数据库；专业角色内部 Plan 不上收为 Main 的重复计划。 |
 
 | 组件 | 职责、输入输出与边界 | 实现／契约入口 |
 |---|---|---|
 | 资源构建器 | 读取两组分发源，输出确定性安装树与清单；拒绝已有输出目录，不写用户安装 | [build_release.py](../scripts/build_release.py)、[setup.py](../setup.py) |
-| CLI 与用户级安装器 | 检查并事务发布初始化入口、共享载荷及用户级角色，按恢复记录核对和续接 | [cli.py](../src/sdd_init/cli.py)、[installer.py](../src/sdd_init/installer.py) |
+| CLI 与用户级安装器 | 检查并事务发布初始化入口、共享载荷，按记录恢复并迁出旧受管用户角色 | [cli.py](../src/sdd_init/cli.py)、[installer.py](../src/sdd_init/installer.py) |
+| sdd-init Skill | 完成目标项目环境落地：准备资产，向目标 AGENTS.md 注入 Main 规则与能力入口；检查与恢复是落地手段 | [Skill](../source/initializer/SKILL.md)、[Main 规则注入源](../source/initializer/assets/agents-fragment.md) |
 | 项目初始化器 | 核对分发版本与项目接入计划，管理本机链接、托管引用和项目事务 | [初始化 Skill](../source/initializer/SKILL.md)、[govern.py](../source/initializer/scripts/govern.py)、[project_install.py](../source/initializer/scripts/project_install.py) |
 | 文档写入规则 | 各角色按适用模板原位归并自己产出的已确认内容或实际证据，维护引用并做写后核对 | [各产物的模板与核对要点](../source/project/.agents/sdd/references/document-writing.md#按对象读取与语义核对) |
 | sdd-coder | 交付已就绪且获授权的工单，生成并执行同一 Plan／Task 清单，修改代码并完成局部自验 | [实施交接](../source/project/.agents/sdd/references/delegation.md#实施交接) |
@@ -167,14 +182,14 @@ flowchart TD
 | sdd-architect | 架构风险、方案取舍、顶层设计与架构遵循检查 | [角色](../source/project/.codex/agents/sdd-architect.toml) |
 | sdd-doc-consistency | 只读核对项目权威文档，向任务调用者返回冲突、冗余及引用问题的证据与建议 | [角色](../source/project/.codex/agents/sdd-doc-consistency.toml) |
 | 文档校验器 | 只读检查所选 Markdown 的编码、结构、编号及本地引用，输出诊断与退出码；不判定语义或 Gate | [工具说明](../source/project/.agents/sdd/references/doc-check.md) |
-| review-prompt | 按工单审查运行时指令及候选版本，按授权修订与专项复验 | [用户级通用角色](../source/initializer/assets/user-agents/review-prompt.toml)、Spec FR-028 |
+| review-prompt | 工作流预置专业角色，按工单审查运行时指令及候选版本，按授权修订与专项复验 | [项目预置角色](../source/project/.codex/agents/review-prompt.toml)、Spec FR-028 |
 | sdd-workflow-review | 按绑定的设计与 Skill 判据组织全面评审、隔离回归及获授权后的修复复验，交付批次报告 | [本仓维护 Skill](../.agents/skills/sdd-workflow-review/SKILL.md)、Spec FR-034 |
 
 | 数据／资源 | 权威位置与生命周期 |
 |---|---|
 | 初始化器分发正文 | `source/initializer/`；维护后由构建器复制 |
 | 项目分发正文与共享资源 | `source/project/`，共享资源唯一维护于其 `.agents/sdd/`；根目录已安装副本不是分发编辑入口 |
-| 通用提示词审查角色 | 初始化器的角色资源是唯一源码。用户级安装发布独立 TOML，项目接入不注册该角色 |
+| 提示词审查角色 | `source/project/.codex/agents/review-prompt.toml` 是唯一源码；与其他预置角色统一分发到共享资产，由项目配置注册 |
 | 本仓全面评审技能 | `.agents/skills/sdd-workflow-review/`，从本仓根目录显式加载，位于分发源之外 |
 | 构建树、wheel、构建清单 | 从源生成；清单记录文件哈希；生成物不反向成为源正文 |
 | 用户级安装目录 | 安装器依据 manifest 保护，校验和冲突处理见[安装说明](installation.md#更新与冲突) |
@@ -195,7 +210,7 @@ flowchart TD
 | ID | 约束 | 依据 |
 |---|---|---|
 | ARC-001 | 初始化器源、项目分发源、生成物及历史基线分离；共享资源只维护一份现行源 | [维护边界](../AGENTS.md#维护边界)、[README](../README.md#源码与维护入口) |
-| ARC-002 | 用户级安装更新共享目录及独立用户角色文件。项目初始化通过链接接入，在项目配置中声明项目角色的相对路径引用 | [初始化入口](../source/initializer/SKILL.md)、Spec FR-002、FR-027、FR-028 |
+| ARC-002 | 用户级安装更新共享资产，不另装用户级角色。项目初始化通过链接接入，在项目配置中统一声明六个预置角色的相对路径引用；旧清单登记的用户级 review-prompt 直接迁出，事务可恢复实际原状态 | [初始化入口](../source/initializer/SKILL.md)、Spec FR-002、FR-027、FR-028 |
 | ARC-003 | 详细需求、高位架构、执行清单与验证事实各有唯一正文；引用不形成竞争权威 | Spec FR-001、FR-006、FR-007、FR-009、FR-021 |
 | ARC-004 | 缺陷修复、用户功能集成测试与架构 Review 各自闭环。Bugfix 按原 Issue 取证关单，Review 按原检查项复核整改，实施角色交付改动及局部自验 | Spec FR-008、FR-020、FR-021、FR-029 |
 | ARC-005 | 机械检查只能证明其声明范围内的结构与引用性质，不能代替 Agent 语义判断 | Spec FR-013 |
@@ -213,7 +228,7 @@ flowchart TD
 | 主 Agent 组织和跨阶段接续 | [术语与职责](../source/project/.agents/sdd/references/sdd-repository-governance.md#术语与职责)、[主 Agent 职责](../source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)和[阶段授权与推进](../source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)，需求边界见 Spec FR-031 |
 | 架构蓝图设计与演化 | [sdd-architecture](../source/project/.agents/skills/sdd-architecture/SKILL.md)，形成经确认的设计与验证依据 |
 | 实施与问题闭环 | [sdd-develop](../source/project/.agents/skills/sdd-develop/SKILL.md)、[coder](../source/project/.agents/sdd/references/delegation.md#实施交接)、[bugfix](../source/project/.agents/skills/sdd-bugfix/SKILL.md)、[test](../source/project/.agents/skills/sdd-test-loop/SKILL.md)、[sdd-refactor](../source/project/.agents/skills/sdd-refactor/SKILL.md) 各自定义执行、交接及完成条件，产物归并见[组件职责表](#6-组件协作与数据权威) |
-| 提示词专项审查与复验 | 向 [review-prompt](../source/initializer/assets/user-agents/review-prompt.toml) 提供对象、依据、场景及授权终点 |
+| 提示词专项审查与复验 | 向项目预置 [review-prompt](../source/project/.codex/agents/review-prompt.toml) 提供对象、依据、场景及授权终点 |
 | 本仓工作流全面评审 | 显式调用 [sdd-workflow-review](../.agents/skills/sdd-workflow-review/SKILL.md)，按 Skill 判据汇总各对象和跨阶段证据，设计依据按需只读引用白皮书 |
 | 仓库交付、发布与运维 | [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md) 按请求进入，平台及运行状态以实际回执为准 |
 

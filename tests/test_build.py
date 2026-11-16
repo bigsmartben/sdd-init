@@ -80,13 +80,13 @@ class BuildTests(unittest.TestCase):
         self.assertFalse((output / "assets/spec_template.md").exists())
         self.assertEqual((output / "scripts/release.py").read_bytes(),
                          (ROOT / "src/sdd_init/release.py").read_bytes())
-        path = "assets/user-agents/review-prompt.toml"
+        path = "shared/agents/review-prompt.toml"
         data = (output / path).read_bytes()
-        self.assertEqual(data, (ROOT / "source/initializer" / path).read_bytes())
+        self.assertEqual(data, (project / ".codex/agents/review-prompt.toml").read_bytes())
         self.assertEqual(tomllib.loads(data.decode("utf-8"))["name"], "review-prompt")
         manifest = json.loads((output / "build-manifest.json").read_bytes())
         self.assertEqual(manifest["files"][path], hashlib.sha256(data).hexdigest())
-        self.assertFalse((output / "shared/agents/review-prompt.toml").exists())
+        self.assertFalse((output / "assets/user-agents/review-prompt.toml").exists())
 
     def test_build_is_reproducible_and_does_not_overwrite(self):
         first = builder.build(self.folder / "first")
@@ -110,7 +110,7 @@ class BuildTests(unittest.TestCase):
         rules.write_bytes(b"# Existing project rules\n")
         agents = target / "AGENTS.md"
         project_rules = b"# Existing project guidance\r\n"
-        agents.write_bytes(project_rules + b"\r\n" + legacy_fragment("navigation").replace("\n", "\r\n").encode() + b"\r\n")
+        agents.write_bytes(project_rules)
         config = target / ".codex/config.toml"
         config.parent.mkdir()
         project_config = b'model = "main-model"\r\n[mcp_servers.custom]\r\nurl = "https://example.invalid/mcp"\r\n'
@@ -218,15 +218,12 @@ class BuildTests(unittest.TestCase):
             self.assertEqual((target / WORKFLOW / "sdd/assets/review-matrix_template.md").read_bytes(),
                              (skill / "shared/sdd/assets/review-matrix_template.md").read_bytes())
 
-    def test_communication_install_upgrade_and_repetition(self):
+    def test_main_block_install_preserves_project_content_and_repeats(self):
         skill = builder.build(self.folder / "skill")
-        communication = (skill / "assets/communication-fragment.md").read_text(encoding="utf-8").strip()
         navigation = (skill / "assets/agents-fragment.md").read_text(encoding="utf-8").strip()
-        legacy = legacy_fragment("navigation")
-        legacy_communication = legacy_fragment("communication")
         source = (ROOT / "source/project/.agents/sdd/references/visual-confirmation.md").read_bytes()
         for newline in ("\n", "\r\n"):
-            for kind in ("new", "existing", "legacy", "misplaced", "upgrade"):
+            for kind in ("new", "existing", "positioned"):
                 with self.subTest(newline=repr(newline), kind=kind):
                     target = self.folder / (kind + str(len(newline)))
                     target.mkdir()
@@ -235,9 +232,7 @@ class BuildTests(unittest.TestCase):
                     old = {
                         "new": None,
                         "existing": prefix + suffix,
-                        "legacy": prefix + legacy.replace("\n", newline) + suffix,
-                        "misplaced": prefix + communication.replace("\n", newline) + suffix + newline + navigation.replace("\n", newline),
-                        "upgrade": prefix + legacy_communication.replace("\n", newline) + suffix + newline + legacy.replace("\n", newline),
+                        "positioned": prefix + navigation.replace("\n", newline) + suffix,
                     }[kind]
                     agents = target / "AGENTS.md"
                     if old is not None:
@@ -246,19 +241,16 @@ class BuildTests(unittest.TestCase):
                     result = subprocess.run(command, capture_output=True)
                     self.assertEqual(result.returncode, 0, result.stderr)
                     installed = agents.read_bytes().decode("utf-8")
-                    self.assertTrue(installed.startswith("<!-- agent-communication:start -->"))
-                    self.assertEqual(installed.count("## 首要沟通原则"), 1)
-                    self.assertEqual(installed.count("<!-- agent-communication:start -->"), 1)
+                    self.assertNotIn("<!-- agent-communication:", installed)
+                    self.assertEqual(installed.count("**Align — 意图对齐**"), 1)
                     self.assertEqual(installed.count("<!-- sdd-contract-governance:start -->"), 1)
                     if old is not None:
                         self.assertIn(prefix, installed)
                         self.assertIn(suffix, installed)
                         self.assertLess(installed.index(prefix), installed.index(suffix))
                         nav = navigation.replace("\n", newline)
-                        if kind == "legacy":
-                            self.assertTrue(installed.endswith(prefix + nav + suffix))
-                        elif kind in ("misplaced", "upgrade"):
-                            self.assertTrue(installed.endswith(prefix + suffix + newline + nav))
+                        if kind == "positioned":
+                            self.assertEqual(installed, prefix + nav + suffix)
                         else:
                             self.assertIn(prefix + suffix, installed)
                     self.assertEqual((target / WORKFLOW / "sdd/references/visual-confirmation.md").read_bytes(), source)
@@ -267,7 +259,7 @@ class BuildTests(unittest.TestCase):
                     self.assertEqual(result.returncode, 0, result.stderr)
                     self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
-    def test_confirmation_trigger_new_install_and_previous_version_upgrade(self):
+    def test_main_alignment_and_legacy_communication_rejection(self):
         skill = builder.build(self.folder / "skill")
         target = self.folder / "project"
         target.mkdir()
@@ -279,23 +271,27 @@ class BuildTests(unittest.TestCase):
         agents = target / "AGENTS.md"
         rule = target / WORKFLOW / "sdd/references/visual-confirmation.md"
         source = (ROOT / "source/project/.agents/sdd/references/visual-confirmation.md").read_bytes()
-        current = (skill / "assets/communication-fragment.md").read_text(encoding="utf-8").strip()
-        self.assertTrue(agents.read_text(encoding="utf-8").startswith(current))
+        current = (skill / "assets/agents-fragment.md").read_text(encoding="utf-8").strip()
+        self.assertIn(current, agents.read_text(encoding="utf-8"))
+        self.assertFalse((skill / "assets/communication-fragment.md").exists())
         confirmation_link = f"[意图对齐]({WORKFLOW}/sdd/references/visual-confirmation.md#意图对齐)"
-        self.assertIn("必须呈现对用户意图的理解并请求确认，不以推断代替确认；已有确认沿用，新增或变化内容重新对齐。", current)
+        self.assertIn("**Align — 意图对齐**", current)
+        self.assertIn("已有确认持续沿用，仅目标实质变化、约束冲突或缺少必要授权时重新对齐", current)
         self.assertIn(confirmation_link, current)
         self.assertIn("需求与方案分开讨论、分别确认", rule.read_text(encoding="utf-8"))
         self.assertEqual(rule.read_bytes(), source)
         old = legacy_fragment("communication")
         body = "# 用户正文\r\n保持这些规则。\n"
-        agents.write_bytes((body + agents.read_text(encoding="utf-8").replace(current, old)).encode("utf-8"))
+        agents.write_bytes((body + old + "\n" + current).encode("utf-8"))
+        before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
+        result = run()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("不支持自动迁移", result.stderr.decode("utf-8"))
+        self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
+        self.assertEqual(rule.read_bytes(), source)
+        agents.write_bytes((body + current).encode("utf-8"))
         result = run()
         self.assertEqual(result.returncode, 0, result.stderr)
-        installed = agents.read_bytes().decode("utf-8")
-        self.assertTrue(installed.startswith(current.replace("\n", "\r\n")))
-        self.assertIn(body, installed)
-        self.assertEqual(installed.count(confirmation_link), 1)
-        self.assertEqual(rule.read_bytes(), source)
         before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
         result = run()
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -309,19 +305,37 @@ class BuildTests(unittest.TestCase):
             body = "# 原项目正文\r\n保留。\n尾部"
             original = "\ufeff" + body
             if upgrade:
-                original += "\r\n" + legacy_fragment("navigation").replace("\n", "\r\n")
+                original += "\r\n" + (skill / "assets/agents-fragment.md").read_text(encoding="utf-8").strip().replace("\n", "\r\n")
             agents = target / "AGENTS.md"
             agents.write_bytes(original.encode("utf-8"))
             command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(target), "init"]
             result = subprocess.run(command, capture_output=True)
             self.assertEqual(result.returncode, 0, result.stderr)
             data = agents.read_bytes()
-            self.assertTrue(data.startswith(b"\xef\xbb\xbf<!-- agent-communication:start -->"))
+            self.assertTrue(data.startswith(b"\xef\xbb\xbf" + body.encode("utf-8")))
             self.assertEqual(data.count(b"\xef\xbb\xbf"), 1)
             self.assertIn(body.encode("utf-8"), data)
             result = subprocess.run(command, capture_output=True)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(agents.read_bytes(), data)
+
+    def test_legacy_two_block_state_is_rejected_without_migration(self):
+        skill = builder.build(self.folder / "skill")
+        target = self.folder / "project"
+        target.mkdir()
+        (target / "AGENTS.md").write_bytes(b"# Project-owned guidance\r\n")
+        (target / ".sdd-init-state.json").write_text(json.dumps({
+            "schema_version": 1, "shared_version": "0" * 64,
+            "agents_blocks": {"agent-communication": "0" * 64,
+                              "sdd-contract-governance": "0" * 64},
+        }), encoding="utf-8")
+        before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
+        result = subprocess.run(
+            [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
+             "--root", str(target), "init"], capture_output=True, text=True, encoding="utf-8")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("无效的项目安装元数据", result.stderr)
+        self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
     def test_blocked_payload_parent_fails_before_agents_write(self):
         skill = builder.build(self.folder / "skill")

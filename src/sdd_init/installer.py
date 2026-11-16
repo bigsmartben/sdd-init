@@ -1,4 +1,4 @@
-"""Install the user-level initializer, shared resources, and prompt reviewer."""
+"""Install the initializer and workflow resources; retire owned legacy user roles."""
 from __future__ import annotations
 
 from contextlib import nullcontext
@@ -7,7 +7,6 @@ import os
 from pathlib import Path
 import re
 import shutil
-import tomllib
 
 from .release import (
     MANIFEST, USER_ROLE, USER_ROLE_ASSET, check_files, digest, linked, manifest_data,
@@ -17,11 +16,6 @@ from .release import (
 
 ROLE_LOCK = f".sdd-init-{USER_ROLE}.lock"
 ROLE_RECOVERY_PREFIX = f".sdd-init-{USER_ROLE}-recovery-"
-
-
-def default_agents_directory() -> Path:
-    codex_home = os.environ.get("CODEX_HOME")
-    return (Path(codex_home) if codex_home else Path.home() / ".codex") / "agents"
 
 
 def unlinked_directory(path: Path) -> Path:
@@ -49,6 +43,28 @@ def role_location(agents_dir: Path, target: Path, shared: Path, folder: Path) ->
     return role
 
 
+def legacy_role(target: Path, shared: Path, folder: Path, agents_dir: Path | None = None) -> Path | None:
+    journal = folder / "journal.json"
+    if folder.exists() or linked(folder):
+        if linked(folder) or not folder.is_dir() or linked(journal):
+            raise ValueError(f"Invalid recovery directory or journal: {folder}")
+        try:
+            record = json.loads(journal.read_text(encoding="utf-8")) if journal.is_file() else {}
+        except (OSError, ValueError) as error:
+            raise ValueError(f"Recovery blocked: {error}. Preserve {folder}; review the journal before retrying.") from error
+        owner = record.get("role") if isinstance(record, dict) else None
+    else:
+        owner = manifest_data(target).get("user_role_path") if target.exists() or linked(target) else None
+    if owner is None:
+        return None
+    if not isinstance(owner, str) or not Path(owner).is_absolute() or Path(owner).name != f"{USER_ROLE}.toml":
+        raise ValueError(f"Invalid managed user role path: {owner!r}")
+    role = role_location(Path(owner).parent, target, shared, folder)
+    if agents_dir is not None and role_location(agents_dir, target, shared, folder) != role:
+        raise ValueError(f"Managed user role is {role}; use its original --agents-dir")
+    return role
+
+
 def role_recovery_directory(role: Path, target: Path) -> Path:
     # The same target owns the same marker after restart. Other installations
     # sharing this role directory can see the marker even after a process dies.
@@ -56,19 +72,25 @@ def role_recovery_directory(role: Path, target: Path) -> Path:
     return role.parent / f"{ROLE_RECOVERY_PREFIX}{owner}"
 
 
-def check_role_conflicts(role: Path) -> None:
+def check_pending_role_recovery(role: Path) -> None:
     for folder in sorted(role.parent.glob(f"{ROLE_RECOVERY_PREFIX}*")):
         raise ValueError(f"Pending user role installation: {folder}. "
                          "Run sdd-init recover with the original Skill and role directories.")
-    for path in sorted(role.parent.glob("*.toml")):
-        if path == role or not path.is_file():
-            continue
-        try:
-            other = tomllib.loads(path.read_text(encoding="utf-8"))
-        except ValueError:
-            continue  # An invalid TOML file cannot register a standalone role.
-        if other.get("name") == USER_ROLE:
-            raise ValueError(f"Unmanaged user role {USER_ROLE}; preserve existing file: {path}")
+
+
+def role_snapshot(path: Path) -> str | None:
+    if linked(path):
+        raise ValueError(f"Linked user role is not supported: {path}")
+    if not path.exists():
+        return None
+    if not path.is_file():
+        raise ValueError(f"User role is not a regular file: {path}")
+    return digest(path.read_bytes())
+
+
+def verify_role_snapshot(path: Path, expected: str | None) -> None:
+    if role_snapshot(path) != expected:
+        raise ValueError(f"External change to user role: {path}")
 
 
 def verify_role_manifest(manifest: dict, role: Path | None):
@@ -81,7 +103,8 @@ def verify_role_manifest(manifest: dict, role: Path | None):
         raise ValueError("User role path without managed role in installation manifest")
 
 
-def verified_installation(target: Path, shared: Path, role: Path | None = None) -> dict[str, str] | None:
+def verified_installation(target: Path, shared: Path, role: Path | None = None, *,
+                          verify_managed_role: bool = True) -> dict[str, str] | None:
     for path in (target, shared):
         if linked(path):
             raise ValueError(f"Linked installation path is not supported: {path}")
@@ -91,10 +114,8 @@ def verified_installation(target: Path, shared: Path, role: Path | None = None) 
         verify_role_manifest(manifest_data(target), role)
     elif shared.exists():
         raise ValueError(f"Unexpected shared installation; preserve existing files: {shared}")
-    if files and USER_ROLE_ASSET in files:
+    if verify_managed_role and files and USER_ROLE_ASSET in files:
         verify_part(role, files, "role", role)
-    elif role is not None and (role.exists() or linked(role)):
-        raise ValueError(f"Unmanaged user role; preserve existing file: {role}")
     return files
 
 
@@ -157,13 +178,15 @@ def load(target: Path, folder: Path, role: Path | None = None) -> dict | None:
     record = json.loads(journal.read_text(encoding="utf-8"))
     keys = {"schema_version", "target", "state", "before", "after"}
     schema = record.get("schema_version") if isinstance(record, dict) else None
-    if schema == 2:
+    if schema in (2, 3, 4):
         keys.add("role")
-    if (schema not in (1, 2) or set(record) != keys
+    if schema == 4:
+        keys.add("role_before")
+    if (schema not in (1, 2, 3, 4) or set(record) != keys
             or record.get("target") != str(target)
             or record.get("state") not in {"staging", "prepared", "committed", "rolled-back"}):
         raise ValueError(f"Invalid recovery journal: {journal}")
-    if schema == 2 and (not isinstance(record["role"], str) or role is None or Path(record["role"]) != role):
+    if schema in (2, 3, 4) and (not isinstance(record["role"], str) or role is None or Path(record["role"]) != role):
         raise ValueError(f"Pending installation targets user role {record['role']!r}; "
                          f"recover with its original --agents-dir (requested {role})")
     if record["state"] == "staging" and any(path.name.startswith(("old-", "new-")) for path in folder.iterdir()):
@@ -179,6 +202,11 @@ def load(target: Path, folder: Path, role: Path | None = None) -> dict | None:
             raise ValueError(f"Invalid release data in journal: {journal}")
     if not shared_files(record["after"]) or (schema == 2 and USER_ROLE_ASSET not in record["after"]):
         raise ValueError(f"Incomplete release data in journal: {journal}")
+    if schema in (3, 4) and (not has_part(record["before"], "role") or has_part(record["after"], "role")):
+        raise ValueError(f"Invalid user role retirement in journal: {journal}")
+    if schema == 4 and record["role_before"] is not None and (
+            not isinstance(record["role_before"], str) or not re.fullmatch(r"[0-9a-f]{64}", record["role_before"])):
+        raise ValueError(f"Invalid user role snapshot in journal: {journal}")
     return record
 
 
@@ -225,6 +253,14 @@ def clean_role(folder: Path):
 def role_rollback_paths(role: Path, scratch: Path, before: dict | None, after: dict):
     """Identify the published link to remove and the backup to restore."""
     staged, backup = scratch / "stage", scratch / "old-role"
+    if not has_part(after, "role"):
+        if staged.exists() or linked(staged):
+            raise ValueError(f"Unexpected role staging during retirement: {staged}")
+        verify_part(backup if backup.exists() else role, before, "role", role)
+        if backup.exists() and (role.exists() or linked(role)):
+            if linked(role) or not role.samefile(backup):
+                raise ValueError(f"External change to installation target: {role}")
+        return None, backup if backup.exists() and not role.exists() else None
     verify_part(staged, after, "role", role)
     had_old = has_part(before, "role")
     if linked(role):
@@ -246,6 +282,24 @@ def role_rollback_paths(role: Path, scratch: Path, before: dict | None, after: d
     return staged, backup if had_old else None
 
 
+def retired_role_rollback_path(role: Path, scratch: Path, expected: str | None) -> Path | None:
+    staged, backup = scratch / "stage", scratch / "old-role"
+    if staged.exists() or linked(staged):
+        raise ValueError(f"Unexpected role staging during retirement: {staged}")
+    if backup.exists() or linked(backup):
+        if expected is None:
+            raise ValueError(f"Unexpected user role backup: {backup}")
+        verify_role_snapshot(backup, expected)
+        if role.exists() or linked(role):
+            verify_role_snapshot(role, expected)
+            if not role.samefile(backup):
+                raise ValueError(f"External change to installation target: {role}")
+            return None
+        return backup
+    verify_role_snapshot(role, expected)
+    return None
+
+
 def recover(target: Path, shared: Path, folder: Path, role: Path | None = None) -> bool:
     if not (folder.exists() or linked(folder)):
         return False
@@ -259,8 +313,12 @@ def recover(target: Path, shared: Path, folder: Path, role: Path | None = None) 
         if record is not None and record["state"] != "staging":
             if record["state"] == "prepared":
                 before, after = record["before"], record["after"]
-                remove_role, restore_role = (role_rollback_paths(role, role_folder, before, after)
-                                             if role is not None else (None, None))
+                if record["schema_version"] == 4:
+                    remove_role = None
+                    restore_role = retired_role_rollback_path(role, role_folder, record["role_before"])
+                else:
+                    remove_role, restore_role = (role_rollback_paths(role, role_folder, before, after)
+                                                 if role is not None else (None, None))
                 moves = []
                 for kind, path, scratch, staged in parts(target, shared, folder, None):
                     backup = scratch / f"old-{kind}"
@@ -294,16 +352,34 @@ def recover(target: Path, shared: Path, folder: Path, role: Path | None = None) 
                         raise ValueError(f"External change to installation target: {role}")
                     role.unlink()
                 if restore_role is not None:
-                    verify_part(restore_role, before, "role", role)
+                    if record["schema_version"] == 4:
+                        verify_role_snapshot(restore_role, record["role_before"])
+                    else:
+                        verify_part(restore_role, before, "role", role)
                     os.link(restore_role, role)
-                if verified_installation(target, shared, role) != before:
+                if verified_installation(target, shared, role, verify_managed_role=record["schema_version"] != 4) != before:
                     raise ValueError(f"Unexpected version after recovery: {target}, {shared}")
+                if record["schema_version"] == 4:
+                    verify_role_snapshot(role, record["role_before"])
                 record["state"] = "rolled-back"
                 save(folder, record)
             else:
                 key = "before" if record["state"] == "rolled-back" else "after"
-                if verified_installation(target, shared, role) != record[key]:
+                if verified_installation(target, shared, role, verify_managed_role=record["schema_version"] != 4) != record[key]:
                     raise ValueError(f"External change after {record['state']}: {target}, {shared}")
+                if record["schema_version"] == 4 and record["state"] == "rolled-back":
+                    verify_role_snapshot(role, record["role_before"])
+                if record["schema_version"] in (3, 4) and record["state"] == "committed" and (role.exists() or linked(role)):
+                    raise ValueError(f"External change to retired user role: {role}")
+                if record["schema_version"] in (3, 4) and record["state"] == "committed":
+                    backup = role_folder / "old-role"
+                    if backup.exists() or linked(backup):
+                        if record["schema_version"] == 4:
+                            if record["role_before"] is None:
+                                raise ValueError(f"Unexpected user role backup: {backup}")
+                            verify_role_snapshot(backup, record["role_before"])
+                        else:
+                            verify_part(backup, record["before"], "role", role)
         if role is not None:
             clean_role(role_folder)
         clean(folder)
@@ -319,10 +395,10 @@ def recover_installation(skills_dir: Path, agents_dir: Path | None = None) -> bo
     target, shared, folder = locations(skills_dir)
     if not (folder.exists() or linked(folder)):
         return False
-    role = role_location(agents_dir or default_agents_directory(), target, shared, folder)
+    role = legacy_role(target, shared, folder, agents_dir)
     with user_lock(target.parent):
         # Old journals precede the user role and may have no role directory yet.
-        lock = user_lock(role.parent, name=ROLE_LOCK) if role.parent.is_dir() else nullcontext()
+        lock = user_lock(role.parent, name=ROLE_LOCK) if role is not None and role.parent.is_dir() else nullcontext()
         with lock:
             return recover(target, shared, folder, role)
 
@@ -330,56 +406,61 @@ def recover_installation(skills_dir: Path, agents_dir: Path | None = None) -> bo
 def install(resources: Path, skills_dir: Path, agents_dir: Path | None = None) -> str:
     expected = verify_distribution(resources)
     target, shared, folder = locations(skills_dir)
-    role = role_location(agents_dir or default_agents_directory(), target, shared, folder)
+    role = legacy_role(target, shared, folder, agents_dir)
     target.parent.mkdir(parents=True, exist_ok=True)
-    role.parent.mkdir(parents=True, exist_ok=True)
-    with user_lock(target.parent), user_lock(role.parent, name=ROLE_LOCK):
+    lock = user_lock(role.parent, name=ROLE_LOCK) if role is not None and role.parent.is_dir() else nullcontext()
+    with user_lock(target.parent), lock:
         recover(target, shared, folder, role)
-        check_role_conflicts(role)
-        before = verified_installation(target, shared, role)
+        before = verified_installation(target, shared, role, verify_managed_role=False)
         if before == expected:
             return "Already current"
-        record = {"schema_version": 2, "target": str(target), "role": str(role), "state": "staging",
+        if not has_part(before, "role"):
+            role = None
+        if role is not None:
+            check_pending_role_recovery(role)
+        role_before = role_snapshot(role) if role is not None else None
+        record = {"schema_version": 1 if role is None else 4, "target": str(target), "state": "staging",
                   "before": before, "after": expected}
+        if role is not None:
+            record["role"] = str(role)
+            record["role_before"] = role_before
         folder.mkdir(mode=0o700)
         try:
             save(folder, record)
             staged = folder / "stage"
             shutil.copytree(resources, staged, symlinks=True)
-            if verified(staged) != expected or verified_installation(target, shared, role) != before:
+            if verified(staged) != expected or verified_installation(target, shared, role, verify_managed_role=False) != before:
                 raise ValueError(f"Files changed after preflight: {resources}, {target}, {shared}")
-            manifest = manifest_data(staged)
-            manifest["user_role_path"] = str(role)
-            (staged / MANIFEST).write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-            role_folder = role_recovery_directory(role, target)
-            role_folder.mkdir(mode=0o700)
-            staged_role = role_folder / "stage"
-            shutil.copyfile(staged / USER_ROLE_ASSET, staged_role)
-            verify_part(staged_role, expected, "role", role)
+            if role is not None:
+                verify_role_snapshot(role, role_before)
+            if role is not None and role_before is not None:
+                role_recovery_directory(role, target).mkdir(mode=0o700)
             record["state"] = "prepared"
             save(folder, record)
             installation = list(parts(target, shared, folder, role))
             for kind, path, scratch, _ in installation:
-                had_old = has_part(before, kind)
+                had_old = role_before is not None if kind == "role" else has_part(before, kind)
                 if path.exists() != had_old or linked(path):
                     raise ValueError(f"External change to installation target: {path}")
                 if had_old:
-                    verify_part(path, before, kind, role)
+                    if kind == "role":
+                        verify_role_snapshot(path, role_before)
+                    else:
+                        verify_part(path, before, kind, role)
                     backup = scratch / f"old-{kind}"
                     path.rename(backup)
                     if kind == "role":
-                        verify_part(backup, before, kind, role)
+                        verify_role_snapshot(backup, role_before)
             for kind, destination, _, source in installation:
+                if not has_part(expected, kind):
+                    continue
                 if destination.exists() or linked(destination):
                     raise ValueError(f"External change to installation target: {destination}")
-                if kind == "role":
-                    # Publish a complete file without replacing a name created
-                    # since preflight. Retain the staged inode for recovery.
-                    os.link(source, destination)
-                else:
-                    source.rename(destination)
+                source.rename(destination)
             if verified_installation(target, shared, role) != expected:
                 raise ValueError(f"Unexpected version after installation: {target}, {shared}")
+            if role is not None:
+                verify_role_snapshot(role, None)
             record["state"] = "committed"
             save(folder, record)
         except BaseException:

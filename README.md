@@ -8,7 +8,7 @@ sdd-workflow 的核心目标是让用户前置决定关键结果，Agent 基于�
 
 文档按任务需要产出，实施方案、任务和局部证据使用同一份可执行清单，见[实施交接](source/project/.agents/sdd/references/delegation.md#实施交接)。
 
-由主 Agent（Main）按本轮交付目标选择下表入口。主任务、对话框、Agent、Skill 和角色的区别见[术语与职责](source/project/.agents/sdd/references/sdd-repository-governance.md#术语与职责)。选择工作流和处理组合请求见[职责与交接](source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)和[阶段授权与推进](source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)。
+主 Agent（Main）定位为意图对齐的目标驱动探索与调度 Agent：直接完成能独立处理的任务，按目标差距使用下表能力，以实际证据验收整体交付；不预建完整 Plan／DAG，也不为每个 Skill 强制创建子 Agent。主任务、对话框、Agent、Skill 和角色的区别见[术语与职责](source/project/.agents/sdd/references/sdd-repository-governance.md#术语与职责)。选择工作流和处理组合请求见[职责与交接](source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)和[阶段授权与推进](source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)。
 
 本仓库维护通用流程、资源和安装工具。sdd-init 的产品承诺与验收条件见 [Spec](specs/platform-independent-sdd/spec.md)。实际执行入口见下表。目标项目维护自身的业务需求、架构决定、产品实现及验收证据。
 
@@ -16,16 +16,18 @@ sdd-workflow 的核心目标是让用户前置决定关键结果，Agent 基于�
 
 首次安装、更新命令、环境要求及冲突处理见[安装说明](docs/installation.md)。安装分为两个入口：
 
-1. 安装用户级 `sdd-init` Skill、共享资源和通用 `review-prompt` 角色。
+1. 安装用户级 `sdd-init` Skill 和共享工作流资产（包含预置专业角色）。
 2. 在目标仓库中调用 `sdd-init`，接入用户级共享工作流。
 
 用户级安装负责更新共享资源，项目初始化负责链接和引用。安装和迁移的维护边界见 [AGENTS.md](AGENTS.md)。
+
+作为接入入口，[sdd-init Skill](source/initializer/SKILL.md)只有一个职责：完成目标项目 sdd-workflow 的环境落地，包括相关资产的落地准备，以及目标 AGENTS.md 中 Main 规则与能力入口的注入。检查与恢复是落地手段；Main 的运行规则统一归 Main，专业执行规则归对应执行者，不因文件共用而混合职责。
 
 ## 项目能力入口
 
 | 入口 | 用途 |
 | --- | --- |
-| [sdd-init](source/initializer/SKILL.md) | 初始化或升级项目中的 SDD 资源 |
+| [sdd-init](source/initializer/SKILL.md) | 完成目标项目 sdd-workflow 的环境落地：准备资产，注入 Main 规则与能力入口 |
 | [文档写入规则](source/project/.agents/sdd/references/document-writing.md#按对象读取与语义核对) | 查找各类产物归并使用的模板和核对要点 |
 | [sdd-develop](source/project/.agents/skills/sdd-develop/SKILL.md) | 单个需求的规格、实施及点对点验收 |
 | [sdd-architecture](source/project/.agents/skills/sdd-architecture/SKILL.md) | 仓库级架构蓝图设计与演化 |
@@ -35,7 +37,7 @@ sdd-workflow 的核心目标是让用户前置决定关键结果，Agent 基于�
 | [sdd-refactor](source/project/.agents/skills/sdd-refactor/SKILL.md) | 基于蓝图初始化与维护 Review 矩阵，按确认范围审查、生成重构工单及组织整改复核 |
 | [sdd-deliver](source/project/.agents/skills/sdd-deliver/SKILL.md) | 仓库交付、构建发布、运行排障、流量、备份恢复与退役 |
 
-共享契约见[仓库治理](source/project/.agents/sdd/references/sdd-repository-governance.md)，调度与角色入口见[执行协作](source/project/.agents/sdd/references/delegation.md)，项目文档入口可参考[索引示例](source/project/docs/index.md)。
+Main 规则由[注入片段](source/initializer/assets/agents-fragment.md)承载核心指令，并按需引用[仓库治理](source/project/.agents/sdd/references/sdd-repository-governance.md)与[执行协作](source/project/.agents/sdd/references/delegation.md)中的详细条款；专业执行资料按各自入口读取。项目文档入口可参考[索引示例](source/project/docs/index.md)。
 
 ## 源码与维护入口
 
@@ -46,7 +48,7 @@ sdd-workflow 的核心目标是让用户前置决定关键结果，Agent 基于�
 | [source/initializer/](source/initializer/) | 初始化 Skill、安装脚本、回归测试及专属资源 |
 | [source/project/](source/project/) | 项目工作流 Skill、角色与共享资源源码 |
 | [source/project/.agents/sdd/](source/project/.agents/sdd/) | 共享模板、治理、检查工具及观测参考资源的唯一维护来源 |
-| [review-prompt](source/initializer/assets/user-agents/review-prompt.toml) | 用户级通用角色，审查运行时提示词，按授权修订与复验 |
+| [review-prompt](source/project/.codex/agents/review-prompt.toml) | 工作流预置专业角色，在已接入项目审查运行时提示词，按授权修订与复验 |
 | [sdd-workflow-review](.agents/skills/sdd-workflow-review/SKILL.md) | 用户显式发起后，按设计与判据执行本仓工作流全面评审、隔离回归及获授权后的修复复验 |
 | [scripts/build_release.py](scripts/build_release.py) | 安装资源与哈希清单的构建器 |
 | [tests/](tests/) | 分发内容、构建可重现性及安装保护行为的测试 |

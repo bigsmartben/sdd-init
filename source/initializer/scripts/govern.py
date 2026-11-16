@@ -70,6 +70,7 @@ def git(root: Path, *args: str) -> bytes | None:
 
 PROJECT_SKILLS = set(transaction.PROJECT_SKILLS)
 PROJECT_ROLE_MODELS = {
+    'review-prompt': 'gpt-6-astra',
     'sdd-architect': 'gpt-6-astra',
     'sdd-product-manager': 'gpt-6-astra',
     'sdd-coder': 'gpt-6.1-sol',
@@ -82,7 +83,7 @@ RETIRED_SKILLS = {
     "sdd-doc", "sdd-commit", "sdd-deploy",
 }
 RETIRED_ROLES = {"sdd-delivery", "sdd-designer", "sdd-documenter", "sdd-validator"}
-FRAGMENTS = {"agent-communication": "communication-fragment.md", "sdd-contract-governance": "agents-fragment.md"}
+FRAGMENTS = {"sdd-contract-governance": "agents-fragment.md"}
 
 
 def validate_role(data: bytes, name: str) -> None:
@@ -92,6 +93,8 @@ def validate_role(data: bytes, name: str) -> None:
     except (UnicodeDecodeError, tomllib.TOMLDecodeError) as exc:
         fail(f"角色 {name} 配置无效: {exc}")
     fields = {"name", "description", "developer_instructions", "model"}
+    if name == "review-prompt":
+        fields.add("model_reasoning_effort")
     if set(role) != fields:
         fail(f"角色 {name} 的字段必须为: {', '.join(sorted(fields))}")
     if role["name"] != name:
@@ -100,6 +103,8 @@ def validate_role(data: bytes, name: str) -> None:
         fail(f"角色 {name} 字段必须是非空文本")
     if role["model"] != PROJECT_ROLE_MODELS[name]:
         fail(f"角色 {name} 默认模型必须为 {PROJECT_ROLE_MODELS[name]}")
+    if name == "review-prompt" and role["model_reasoning_effort"] != "high":
+        fail("角色 review-prompt 默认推理强度必须为 high")
 
 
 def skill_name(path: Path) -> str | None:
@@ -227,11 +232,12 @@ def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
 
 
 def prepare_agents(original: str, templates: dict[str, str], remembered: dict[str, str]) -> str:
-    """Prepare both independent managed blocks without changing project-owned bytes."""
+    """Inject the Main block without changing project-owned bytes."""
+    if "<!-- agent-communication:" in original:
+        fail("AGENTS.md 含旧版独立沟通块；不支持自动迁移，请保留并人工处理后重试")
     bom = "\ufeff" if original.startswith("\ufeff") else ""
     original = original[len(bom):]
     spans = {}
-    history = json.loads(read(ASSETS / "managed-agents-history.json"))
     for name in FRAGMENTS:
         opening, closing = f"<!-- {name}:start -->", f"<!-- {name}:end -->"
         starts = list(re.finditer(rf"(?m)^{re.escape(opening)}\r?$", original))
@@ -244,19 +250,16 @@ def prepare_agents(original: str, templates: dict[str, str], remembered: dict[st
             if ends[0].start() <= begin:
                 fail("AGENTS.md 治理片段顺序错误")
             spans[name] = (begin, end)
-    ordered = sorted(spans.values())
-    if len(ordered) == 2 and ordered[0][1] > ordered[1][0]:
-        fail("AGENTS.md 治理片段嵌套或交叉")
     newline = "\r\n" if "\r\n" in original else "\n"
     for name, (begin, end) in spans.items():
         digest = release.digest(original[begin:end].replace("\r\n", "\n").encode())
-        if (digest != remembered.get(name) and digest not in history[FRAGMENTS[name]]
+        if (digest != remembered.get(name)
                 and original[begin:end].replace("\r\n", "\n") != templates[name]):
             fail(f"AGENTS.md 的 {name} 托管块含定制或来源不明；请保留并核对片段后重试")
-    # Replace only owned ranges. Navigation stays where it was; communication moves first.
+    # Replace only the owned range, preserving its position and surrounding bytes.
     body = original
     for name, (begin, end) in sorted(spans.items(), key=lambda item: item[1][0], reverse=True):
-        replacement = "" if name == "agent-communication" else templates[name].replace("\n", newline)
+        replacement = templates[name].replace("\n", newline)
         body = body[:begin] + replacement + body[end:]
     if "sdd-contract-governance" not in spans:
         if not body:
@@ -264,10 +267,7 @@ def prepare_agents(original: str, templates: dict[str, str], remembered: dict[st
         elif not body.endswith(newline + newline):
             body += newline + newline
         body += templates["sdd-contract-governance"].replace("\n", newline) + newline
-    communication = templates["agent-communication"].replace("\n", newline)
-    # Reuse existing separator when already at the front, ensuring byte-stable repeats.
-    separator = "" if spans.get("agent-communication", (-1,))[0] == 0 else newline + newline
-    return bom + communication + separator + body
+    return bom + body
 
 
 def cmd_init(root: Path, _: argparse.Namespace) -> int:

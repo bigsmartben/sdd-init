@@ -5,6 +5,8 @@ These checks do not execute a model or assign behavior-evaluation results.
 import hashlib
 import json
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import tomllib
 import unittest
@@ -114,6 +116,65 @@ class PreparationTests(unittest.TestCase):
         invalid = dict(cases["role_doc_consistency"], files={".agents/skills/extra/SKILL.md": "extra"})
         with self.assertRaisesRegex(ValueError, "override candidate rules"):
             prepare.prepare_case(invalid, self.folder / "contaminated-role-fixture")
+
+    def test_main_cases_keep_distributed_entry_roles_and_evaluation_separate(self):
+        cases = prepare.load_cases()
+        case_ids = ("main_simple", "main_specialist", "main_explore", "main_dependency",
+                    "main_gap", "main_goal_change", "main_blocked")
+        for case_id in case_ids:
+            with self.subTest(case=case_id):
+                output = self.folder / case_id
+                project = prepare.prepare_case(cases[case_id], output)
+                entry = (project / "AGENTS.md").read_bytes()
+                for name in ("agents-fragment.md",):
+                    self.assertIn((prepare.MAIN_ASSETS / name).read_bytes(), entry)
+                shared = project / ".agents/sdd-workflow/sdd/references/delegation.md"
+                self.assertEqual(shared.read_bytes(), (prepare.ROOT / "source/project/.agents/sdd/references/delegation.md").read_bytes())
+                config = tomllib.loads((project / ".codex/config.toml").read_text(encoding="utf-8"))
+                for role, reference in config["agents"].items():
+                    role_path = project / ".codex" / reference["config_file"]
+                    self.assertEqual(tomllib.loads(role_path.read_text(encoding="utf-8"))["name"], role)
+                self.assertTrue((project / ".agents/skills/sdd-bugfix/SKILL.md").is_file())
+                manifest = json.loads((output / "candidate-manifest.json").read_text(encoding="utf-8"))
+                for path, checksum in manifest["files"].items():
+                    self.assertEqual(hashlib.sha256((project / path).read_bytes()).hexdigest(), checksum)
+                self.assertIn("AGENTS.md", manifest["files"])
+                self.assertFalse((project / "evaluation.json").exists())
+                self.assertEqual(manifest["model_execution"], "UNVERIFIED")
+                self.assertEqual((project / "TASK.txt").read_text(encoding="utf-8"), cases[case_id]["input"] + "\n")
+                self.assertTrue((project / ".agents/sdd-workflow/sdd").samefile(project / ".agents/sdd"))
+                self.assertTrue((project / ".agents/sdd-workflow/agents").samefile(project / ".codex/agents"))
+                checked = subprocess.run(
+                    [sys.executable, "-B", str(project / ".agents/sdd/scripts/doc_check.py"),
+                     "--root", str(project), "AGENTS.md", ".agents/skills"],
+                    capture_output=True, text=True, encoding="utf-8")
+                self.assertEqual(checked.returncode, 0, checked.stdout + checked.stderr)
+
+    def test_prompt_review_uses_project_preset_role_without_user_profile(self):
+        cases = prepare.load_cases()
+        for case_id in ("review_prompt_read_only", "review_prompt_compare", "review_prompt_revise"):
+            with self.subTest(case=case_id):
+                output = self.folder / case_id
+                project = prepare.prepare_case(cases[case_id], output)
+                config = tomllib.loads((project / ".codex/config.toml").read_text(encoding="utf-8"))
+                self.assertEqual(config["agents"]["review-prompt"], {"config_file": "agents/review-prompt.toml"})
+                self.assertEqual([p.stem for p in (project / ".codex/agents").glob("*.toml")], ["review-prompt"])
+                role = project / ".codex/agents/review-prompt.toml"
+                self.assertEqual(role.read_bytes(), (prepare.ROOT / "source/project/.codex/agents/review-prompt.toml").read_bytes())
+                self.assertFalse((output / "profile").exists())
+                manifest = json.loads((output / "candidate-manifest.json").read_text(encoding="utf-8"))
+                self.assertEqual(manifest["role"], "review-prompt")
+                self.assertEqual(manifest["model_execution"], "UNVERIFIED")
+
+    def test_main_entry_cannot_be_replaced_by_fixture_or_single_role(self):
+        case = dict(self.case, candidate_scope="main", files={"AGENTS.md": "replacement"})
+        with self.assertRaisesRegex(ValueError, "override candidate rules"):
+            prepare.prepare_case(case, self.folder / "entry-replacement", candidate=self.candidate)
+        self.assertFalse((self.folder / "entry-replacement").exists())
+        case = dict(self.case, candidate_scope="main", role="sdd-coder")
+        with self.assertRaisesRegex(ValueError, "cannot select a single role"):
+            prepare.prepare_case(case, self.folder / "single-role", candidate=self.candidate)
+        self.assertFalse((self.folder / "single-role").exists())
 
 
 if __name__ == "__main__":
