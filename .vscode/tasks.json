@@ -1,0 +1,31 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "运行测试",
+            "type": "shell",
+            "command": "python",
+            "args": ["-B", "-m", "unittest", "discover", "-s", "tests", "-v"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "group": { "kind": "test", "isDefault": true },
+            "problemMatcher": [],
+            "inAgents": true
+        },
+        {
+            "label": "构建安装资源",
+            "type": "shell",
+            "command": "python",
+            "args": ["-B", "scripts${pathSeparator}build_release.py", "--output", "${input:buildOutput}"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "inAgents": true
+        }
+    ],
+    "inputs": [
+        {
+            "id": "buildOutput",
+            "type": "promptString",
+            "description": "输入尚不存在的构建输出目录"
+        }
+    ]
+}
