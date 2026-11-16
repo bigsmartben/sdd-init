@@ -8,7 +8,7 @@ sdd-workflow 的核心目标是让用户前置决定关键结果，Agent 基于�
 
 文档按任务需要产出，实施方案、任务和局部证据使用同一份可执行清单，见[实施交接](source/project/.agents/sdd/references/delegation.md#实施交接)。
 
-由主任务按本轮交付目标选择下表入口。选择工作流和处理组合请求见[职责与交接](source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)和[阶段授权与推进](source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)。
+由主 Agent（Main）按本轮交付目标选择下表入口。主任务、对话框、Agent、Skill 和角色的区别见[术语与职责](source/project/.agents/sdd/references/sdd-repository-governance.md#术语与职责)。选择工作流和处理组合请求见[职责与交接](source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)和[阶段授权与推进](source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)。
 
 本仓库维护通用流程、资源和安装工具。sdd-init 的产品承诺与验收条件见 [Spec](specs/platform-independent-sdd/spec.md)。实际执行入口见下表。目标项目维护自身的业务需求、架构决定、产品实现及验收证据。
 

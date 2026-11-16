@@ -2,10 +2,11 @@
 
 按任务问题进入本项目实际权威章节；尚未建立正文时，使用下列模板。首次建立入口时以实际章节链接替代相应提示。新增或调整产物时查[工程资产边界](../source/project/.agents/sdd/references/sdd-repository-governance.md#工程资产边界)及对应的[文档与产物落点](../source/project/.agents/sdd/references/sdd-repository-governance.md#文档与产物落点)。
 
-- **怎样确定本轮工作和交接边界？** 查[主任务职责](../source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)、[阶段授权与推进](../source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)及[技能 Agent 的启动与接续](../source/project/.agents/sdd/references/delegation.md#技能-agent-的启动与接续)。
+- **主任务、对话框、主 Agent、Skill 和角色分别是什么？** 查共享治理的[术语与职责](../source/project/.agents/sdd/references/sdd-repository-governance.md#术语与职责)，区分工作对象、沟通载体、执行实例与能力定义。
+- **怎样确定本轮工作和交接边界？** 查[主 Agent 职责](../source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)、[阶段授权与推进](../source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)及[技能 Agent 的启动与接续](../source/project/.agents/sdd/references/delegation.md#技能-agent-的启动与接续)。
 - **sdd-init 承诺交付什么，如何验收？** 查[工程协作职责 Spec](../specs/platform-independent-sdd/spec.md)与[产品用例](blueprint.md#3-用户用例)。使用方式按本索引进入对应 Skill、角色或共享规则。
 - **sdd-workflow 的设计目标和 review 依据是什么？** 查[白皮书](sdd-workflow-whitepaper.md)中的已确认设计；执行规则、RW 子项、对象矩阵与设计／Spec 追溯见[审查判据](../.agents/skills/sdd-workflow-review/references/review-criteria.md)，统计方法见[质量成本口径](../.agents/skills/sdd-workflow-review/references/evidence-and-cost.md)。[白皮书模板](../.agents/skills/sdd-workflow-review/assets/whitepaper-template.md)组织设计，[Review 报告模板](../.agents/skills/sdd-workflow-review/assets/review-report-template.md)承载各批次结论、证据与成本；历史记录见[报告目录](test-reports/sdd-workflow/)，本轮分工维护验证见[验证记录](test-reports/sdd-workflow/2026-11-14-artifact-division-validation.md)。
-- **工作流采用怎样的职责组织与依赖约束？** 查[实现策略](sdd-workflow-whitepaper.md#实现策略)，包括三层架构、职责单一、同层禁止依赖、上下位禁止倒置及主任务直接使用下位能力的边界。
+- **工作流采用怎样的职责组织与依赖约束？** 查[实现策略](sdd-workflow-whitepaper.md#实现策略)，包括三层架构、职责单一、同层禁止依赖、上下位禁止倒置及主 Agent 直接使用下位能力的边界。
 
 - **如何接入、升级、重连或恢复 SDD 工作流？** 查[安装指南](installation.md)、[sdd-init](../source/initializer/SKILL.md)及[验证证据](workflow-evidence.md#2026-11-14-初始化升级与恢复)。标准目录链接与旧嵌套布局迁移见[实施与验证记录](plans/flat-skill-links.md)。
 - **谁决定，什么条件下才能报告成功？** 查[产品与架构蓝图](blueprint.md)。架构设计与演化入口为 [sdd-architecture](../source/project/.agents/skills/sdd-architecture/SKILL.md)。公开协作入口见[关键协作索引](blueprint.md#8-关键协作索引与未决边界)；新增独立场景或契约时参考[Scenario Sequence](../source/project/.agents/sdd/assets/sequence_template.md)和[Interface Contract](../source/project/.agents/sdd/assets/contract_template.md)。

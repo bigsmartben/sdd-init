@@ -2,7 +2,8 @@
 
 按任务问题进入本项目实际权威章节；尚未建立正文时，使用下列模板。首次建立入口时以实际章节链接替代相应提示。新增或调整产物时查[工程资产边界](../.agents/sdd/references/sdd-repository-governance.md#工程资产边界)及对应的[文档与产物落点](../.agents/sdd/references/sdd-repository-governance.md#文档与产物落点)。
 
-- **怎样确定本轮工作和交接边界？** 查[主任务职责](../.agents/sdd/references/sdd-repository-governance.md#职责与交接)、[阶段授权与推进](../.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)及[技能 Agent 的启动与接续](../.agents/sdd/references/delegation.md#技能-agent-的启动与接续)。
+- **主任务、对话框、主 Agent、Skill 和角色分别是什么？** 查共享治理的[术语与职责](../.agents/sdd/references/sdd-repository-governance.md#术语与职责)。
+- **怎样确定本轮工作和交接边界？** 查[主 Agent 职责](../.agents/sdd/references/sdd-repository-governance.md#职责与交接)、[阶段授权与推进](../.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)及[技能 Agent 的启动与接续](../.agents/sdd/references/delegation.md#技能-agent-的启动与接续)。
 - **用户要完成什么，界面如何操作？** 查能力需求及其原型。需求到实现的入口为 [sdd-develop](../.agents/skills/sdd-develop/SKILL.md)，点对点验收计划与方案查原需求工单。初次编写规格使用[Spec](../.agents/sdd/assets/spec_template.md)和[Prototype Reference](../.agents/sdd/assets/prototype_reference_template.md)。
 - **谁决定，什么条件下才能报告成功？** 架构设计与演化使用 [sdd-architecture](../.agents/skills/sdd-architecture/SKILL.md)。现有设计查[Blueprint](../.agents/sdd/assets/blueprint_template.md)、[Scenario Sequence](../.agents/sdd/assets/sequence_template.md)、[Interface Contract](../.agents/sdd/assets/contract_template.md)的适用章节；此处链接为模板。
 - **比较了哪些技术，为什么选这一项？** 查 Technical Research and Selection Report；按需使用[Technical Research and Selection Report](../.agents/sdd/assets/research_template.md)。实测结果和复现入口查关联 Test Report，初次记录使用[Test Report](../.agents/sdd/assets/test_report_template.md)。
