@@ -136,7 +136,7 @@ flowchart TD
   CLI[cli.py 命令解析] --> Installer[installer.py 用户级安装]
   Installer --> Resources[包内 resources 与 manifest]
   Govern[初始化 govern.py] --> Bundle[共享目录与导航片段]
-  User[用户] <-->|目标、授权、决定及交付| Main[主任务]
+  User[用户] <-->|目标、授权、决定及交付| Main[主 Agent]
   Main <-->|阶段工单与回执| SkillAgent[独立技能 Agent]
   SkillAgent <-->|专业工单与回执| Roles[专业角色]
   Main -->|技能未覆盖且需专业能力| Roles
@@ -210,7 +210,7 @@ flowchart TD
 |---|---|
 | 构建与用户级安装 | [安装说明](installation.md)定位候选构建、安装预检、暂存发布和恢复入口 |
 | 项目初始化／升级 | [初始化入口](../source/initializer/SKILL.md)定位预检、接入、回执及恢复 |
-| 主任务组织和跨阶段接续 | [主任务职责](../source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)和[阶段授权与推进](../source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)，需求边界见 Spec FR-031 |
+| 主 Agent 组织和跨阶段接续 | [术语与职责](../source/project/.agents/sdd/references/sdd-repository-governance.md#术语与职责)、[主 Agent 职责](../source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)和[阶段授权与推进](../source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)，需求边界见 Spec FR-031 |
 | 架构蓝图设计与演化 | [sdd-architecture](../source/project/.agents/skills/sdd-architecture/SKILL.md)，形成经确认的设计与验证依据 |
 | 实施与问题闭环 | [sdd-develop](../source/project/.agents/skills/sdd-develop/SKILL.md)、[coder](../source/project/.agents/sdd/references/delegation.md#实施交接)、[bugfix](../source/project/.agents/skills/sdd-bugfix/SKILL.md)、[test](../source/project/.agents/skills/sdd-test-loop/SKILL.md)、[sdd-refactor](../source/project/.agents/skills/sdd-refactor/SKILL.md) 各自定义执行、交接及完成条件，产物归并见[组件职责表](#6-组件协作与数据权威) |
 | 提示词专项审查与复验 | 向 [review-prompt](../source/initializer/assets/user-agents/review-prompt.toml) 提供对象、依据、场景及授权终点 |
