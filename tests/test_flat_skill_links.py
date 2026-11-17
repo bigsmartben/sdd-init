@@ -198,6 +198,17 @@ tx.publish_workflow_link = stop
             self.gov.cmd_inspect(self.root, self.args)
         self.assertIn("Project changes on init: .agents/skills/sdd-bugfix", output.getvalue())
         self.assertEqual(self.snapshot(), before)
+
+    def test_inspect_reports_existing_non_link_as_replacement(self):
+        path = self.tx.link_path(self.root, self.tx.WORKFLOW_LINK)
+        path.parent.mkdir(parents=True)
+        path.write_bytes(b"existing entry")
+        before = self.snapshot()
+        with contextlib.redirect_stdout(io.StringIO()) as output:
+            self.gov.cmd_inspect(self.root, self.args)
+        self.assertIn("(existing file or directory)", output.getvalue())
+        self.assertIn(self.tx.WORKFLOW_LINK, output.getvalue())
+        self.assertEqual(self.snapshot(), before)
         self.init()
         self.assert_layout()
 
@@ -226,16 +237,42 @@ tx.publish_workflow_link = stop
         self.assert_layout()
         self.assertEqual([self.tx.link_snapshot(path) for path in existing], before)
 
-    def test_unmanaged_alias_to_old_role_path_blocks_migration(self):
+    def test_unmanaged_alias_to_old_role_path_is_migrated(self):
         self.legacy()
         path = self.root / ".codex/config.toml"
         path.write_bytes(path.read_bytes() + (
             f'\r\n[agents.my_alias]\r\nconfig_file = "{self.gov.legacy_role_reference("sdd-coder")}"\r\n'
         ).encode())
-        before = self.snapshot()
-        with self.assertRaisesRegex(ValueError, "my_alias"):
-            self.init()
-        self.assertEqual(self.snapshot(), before)
+        self.init()
+        self.assertIn(self.gov.role_reference("sdd-coder").encode(), path.read_bytes())
+        self.assertIn(b"[agents.my_alias]", path.read_bytes())
+        self.assert_layout()
+
+    def test_inline_legacy_role_alias_is_migrated_and_retired_alias_removed(self):
+        self.legacy()
+        path = self.root / ".codex/config.toml"
+        path.write_text('[agents]\n'
+                        'my_alias = { config_file = "../.agents/skills/sdd-workflow/agents/sdd-coder.toml" }\n'
+                        'retired = { config_file = "../.agents/skills/sdd-workflow/agents/sdd-designer.toml" }\n'
+                        'other = { config_file = "agents/other.toml" }\n', encoding="utf-8")
+        self.init()
+        import tomllib
+        roles = tomllib.loads(path.read_text(encoding="utf-8"))["agents"]
+        self.assertEqual(roles["my_alias"]["config_file"], self.gov.role_reference("sdd-coder"))
+        self.assertNotIn("retired", roles)
+        self.assertEqual(roles["other"]["config_file"], "agents/other.toml")
+
+    def test_root_inline_legacy_alias_is_migrated(self):
+        self.legacy()
+        path = self.root / ".codex/config.toml"
+        path.write_text('agents = { my_alias = { config_file = '
+                        '"../.agents/skills/sdd-workflow/agents/sdd-coder.toml" } }\n'
+                        'model = "keep"\n', encoding="utf-8")
+        self.init()
+        import tomllib
+        config = tomllib.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(config["model"], "keep")
+        self.assertEqual(config["agents"]["my_alias"]["config_file"], self.gov.role_reference("sdd-coder"))
 
     def test_old_layout_uses_remembered_hashes_even_without_history(self):
         self.legacy(state=True)
@@ -243,53 +280,149 @@ tx.publish_workflow_link = stop
         self.init()
         self.assert_layout()
 
-    def test_custom_navigation_or_role_reference_is_not_migrated(self):
+    def test_custom_navigation_and_managed_role_references_are_replaced(self):
         self.legacy()
         for relative, old, new in (
             ("AGENTS.md", b"## Skill", b"Project customization\r\n## Skill"),
             (".codex/config.toml", self.gov.legacy_role_reference("sdd-coder").encode(), b"custom/coder.toml"),
         ):
-            with self.subTest(path=relative):
-                path = self.root / relative
-                original = path.read_bytes()
-                self.assertIn(old, original)
-                path.write_bytes(original.replace(old, new))
-                before = self.snapshot()
-                with self.assertRaises(ValueError):
-                    self.init()
-                self.assertEqual(self.snapshot(), before)
-                path.write_bytes(original)
+            path = self.root / relative
+            original = path.read_bytes()
+            self.assertIn(old, original)
+            path.write_bytes(original.replace(old, new))
+        self.init()
+        self.assert_layout()
+        self.assertNotIn(b"Project customization", (self.root / "AGENTS.md").read_bytes())
+        self.assertIn(self.gov.role_reference("sdd-coder").encode(),
+                      (self.root / ".codex/config.toml").read_bytes())
 
-    def test_real_directories_and_foreign_links_are_never_overwritten(self):
-        outside = self.home / "foreign"
-        outside.mkdir()
-        (outside / "keep").write_bytes(b"outside")
-        for relative in self.tx.INSTALL_LINKS:
-            for kind in ("directory", "foreign", "dangling"):
+    def test_real_directories_and_files_are_replaced(self):
+        for index, relative in enumerate(self.tx.INSTALL_LINKS):
+            for kind in ("directory", "file"):
                 with self.subTest(path=relative, kind=kind):
-                    path = self.tx.link_path(self.root, relative)
+                    project = self.home / f"force-entry-{index}-{kind}"
+                    project.mkdir()
+                    path = self.tx.link_path(project, relative)
                     path.parent.mkdir(parents=True, exist_ok=True)
                     if kind == "directory":
                         path.mkdir()
                         (path / "keep").write_bytes(b"project")
                     else:
-                        target = outside if kind == "foreign" else self.home / "missing"
-                        # Junction creation requires a present directory on some Windows versions.
-                        target.mkdir(exist_ok=True)
-                        self.tx.create_workflow_link(path, target)
-                        if kind == "dangling":
-                            target.rmdir()
-                    before = self.snapshot()
-                    with self.assertRaises(ValueError):
-                        self.init()
-                    self.assertEqual(self.snapshot(), before)
-                    if kind == "directory":
-                        (path / "keep").unlink()
-                        path.rmdir()
+                        path.write_bytes(b"project")
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        self.gov.cmd_init(project, self.args)
+                    if relative == self.tx.LEGACY_WORKFLOW_LINK:
+                        self.assertFalse(path.exists())
                     else:
-                        self.tx.remove_workflow_link(path)
-        self.assertEqual((outside / "keep").read_bytes(), b"outside")
+                        self.assertTrue(self.tx.linked(path))
         self.assertEqual(self.shared_files(), self.shared_before)
+
+    def test_interrupted_directory_replacement_restores_original(self):
+        path = self.tx.link_path(self.root, ".agents/skills/sdd-develop")
+        path.mkdir(parents=True)
+        (path / "keep.txt").write_bytes(b"project-owned")
+        before = self.tx.link_snapshot(path)
+        self.crash('''
+original = tx.publish_workflow_link
+def stop(source, destination):
+    if destination.name == 'sdd-develop': os._exit(79)
+    return original(source, destination)
+tx.publish_workflow_link = stop
+''')
+        self.recover()
+        self.assertEqual(self.tx.link_snapshot(path), before)
+        self.assertEqual((path / "keep.txt").read_bytes(), b"project-owned")
+
+    def test_replaced_directory_does_not_remove_nested_link_target(self):
+        outside = self.home / "outside-nested"
+        outside.mkdir()
+        (outside / "keep.txt").write_bytes(b"outside")
+        path = self.tx.link_path(self.root, ".agents/skills/sdd-develop")
+        path.mkdir(parents=True)
+        self.tx.create_workflow_link(path / "external", outside)
+        self.init()
+        self.assertEqual((outside / "keep.txt").read_bytes(), b"outside")
+
+    def test_interrupted_backup_cleanup_resumes_and_protects_external_edits(self):
+        path = self.tx.link_path(self.root, ".agents/skills/sdd-develop")
+        path.mkdir(parents=True)
+        (path / "first.txt").write_bytes(b"first")
+        (path / "second.txt").write_bytes(b"second")
+        def interrupt_cleanup(folder):
+            (folder / "first.txt").unlink()
+            raise OSError("interrupted backup cleanup")
+        with patch.object(self.tx.shutil, "rmtree", side_effect=interrupt_cleanup):
+            with self.assertRaisesRegex(OSError, "interrupted backup cleanup"):
+                self.init()
+        backup = next((self.root / self.tx.RECOVERY).glob("old-*"))
+        extra = backup / "external.txt"
+        extra.write_bytes(b"external edit")
+        with self.assertRaisesRegex(ValueError, "External modification"):
+            self.recover()
+        self.assertEqual(extra.read_bytes(), b"external edit")
+        extra.unlink()
+        self.recover()
+        self.assertTrue((path / "SKILL.md").samefile(self.shared / "skills/sdd-develop/SKILL.md"))
+        self.assertFalse((self.root / self.tx.RECOVERY).exists())
+
+    def test_interrupted_nested_alias_removal_restores_original(self):
+        path = self.root / ".agents/skills/custom/nested/SKILL.md"
+        path.parent.mkdir(parents=True)
+        data = b"---\nname: sdd-bugfix\n---\nlocal\n"
+        path.write_bytes(data)
+        self.crash('''
+original = Path.rename
+def stop(path, destination):
+    result = original(path, destination)
+    if path.name == 'SKILL.md' and destination.name.startswith('old-'): os._exit(79)
+    return result
+Path.rename = stop
+''')
+        self.recover()
+        self.assertEqual(path.read_bytes(), data)
+
+    def test_foreign_and_dangling_links_are_replaced_without_touching_targets(self):
+        outside = self.home / "foreign"
+        outside.mkdir()
+        (outside / "keep").write_bytes(b"outside")
+        for index, relative in enumerate(self.tx.INSTALL_LINKS):
+            for kind in ("foreign", "dangling"):
+                with self.subTest(path=relative, kind=kind):
+                    project = self.home / f"force-link-{index}-{kind}"
+                    project.mkdir()
+                    path = self.tx.link_path(project, relative)
+                    target = outside if kind == "foreign" else self.home / f"missing-{index}"
+                    target.mkdir(exist_ok=True)
+                    self.tx.create_workflow_link(path, target)
+                    if kind == "dangling":
+                        target.rmdir()
+                    with contextlib.redirect_stdout(io.StringIO()) as output:
+                        self.gov.cmd_init(project, self.args)
+                    if relative == self.tx.LEGACY_WORKFLOW_LINK:
+                        self.assertFalse(self.tx.linked(path))
+                    else:
+                        self.assertIn(f"UPDATED {relative}", output.getvalue())
+                        self.assertEqual(self.tx.workflow_target(path),
+                                         self.shared if relative == self.tx.WORKFLOW_LINK
+                                         else self.shared / "skills" / path.name)
+        self.assertEqual((outside / "keep").read_bytes(), b"outside")
+
+    def test_interrupted_foreign_link_replacement_recovers_original(self):
+        outside = self.home / "foreign"
+        outside.mkdir()
+        (outside / "keep").write_bytes(b"outside")
+        path = self.tx.link_path(self.root, ".agents/skills/sdd-develop")
+        self.tx.create_workflow_link(path, outside)
+        self.crash('''
+original = tx.publish_workflow_link
+def stop(source, destination):
+    if destination.name == 'sdd-develop': os._exit(79)
+    return original(source, destination)
+tx.publish_workflow_link = stop
+''')
+        self.recover()
+        self.assertEqual(self.tx.workflow_target(path), outside)
+        self.assertEqual((outside / "keep").read_bytes(), b"outside")
 
     def test_linked_parent_cannot_redirect_installation(self):
         outside = self.home / "foreign-parent"
@@ -304,14 +437,14 @@ tx.publish_workflow_link = stop
                 self.assertEqual(list(outside.iterdir()), [])
                 self.tx.remove_workflow_link(path)
 
-    def test_nested_alias_skill_conflict_is_not_hidden_by_flat_links(self):
+    def test_nested_alias_skill_conflict_is_removed(self):
         path = self.root / ".agents/skills/custom/nested/SKILL.md"
         path.parent.mkdir(parents=True)
         path.write_text("---\nname: sdd-bugfix\n---\nlocal\n", encoding="utf-8")
-        before = self.snapshot()
-        with self.assertRaisesRegex(ValueError, "custom/nested/SKILL.md"):
-            self.init()
-        self.assertEqual(self.snapshot(), before)
+        self.init()
+        self.assertFalse(path.exists())
+        self.assertTrue((self.root / ".agents/skills/sdd-bugfix/SKILL.md").samefile(
+            self.shared / "skills/sdd-bugfix/SKILL.md"))
 
     def test_partial_link_creation_failure_rolls_back(self):
         original = self.tx.create_workflow_link
@@ -388,8 +521,8 @@ tx.remove_workflow_link = stop
         self.legacy()
         before = self.snapshot()
         self.crash_after_legacy_deletion()
-        (self.root / "AGENTS.override.md").write_bytes(b"block next plan")
-        with self.assertRaisesRegex(ValueError, "AGENTS.override"):
+        (self.root / "AGENTS.override.md").write_bytes(b"<!-- sdd-contract-governance:start -->\n")
+        with self.assertRaisesRegex(ValueError, "不完整"):
             self.init()
         (self.root / "AGENTS.override.md").unlink()
         self.assertEqual(self.snapshot(), before)

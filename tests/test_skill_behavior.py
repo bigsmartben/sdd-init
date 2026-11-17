@@ -5,6 +5,8 @@ These checks do not execute a model or assign behavior-evaluation results.
 import hashlib
 import json
 from pathlib import Path
+import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -104,6 +106,7 @@ class PreparationTests(unittest.TestCase):
                 self.assertEqual(config["agents"][role], {"config_file": f"agents/{role}.toml"})
                 self.assertEqual(set(config["agents"]) - {"max_depth", "max_threads"}, {role})
                 self.assertEqual([p.stem for p in (project / ".codex/agents").glob("*.toml")], [role])
+                self.assertFalse((project / ".codex/agents/review-prompt").exists())
                 self.assertEqual(list((project / ".agents/skills").rglob("SKILL.md")), [])
                 shared = project / ".agents/sdd-workflow/sdd"
                 self.assertTrue((shared / "references/sdd-repository-governance.md").is_file())
@@ -152,7 +155,8 @@ class PreparationTests(unittest.TestCase):
 
     def test_prompt_review_uses_project_preset_role_without_user_profile(self):
         cases = prepare.load_cases()
-        for case_id in ("review_prompt_read_only", "review_prompt_compare", "review_prompt_revise"):
+        for case_id in ("review_prompt_read_only", "review_prompt_compare", "review_prompt_revise",
+                        "review_prompt_ab_confirmation"):
             with self.subTest(case=case_id):
                 output = self.folder / case_id
                 project = prepare.prepare_case(cases[case_id], output)
@@ -161,8 +165,19 @@ class PreparationTests(unittest.TestCase):
                 self.assertEqual([p.stem for p in (project / ".codex/agents").glob("*.toml")], ["review-prompt"])
                 role = project / ".codex/agents/review-prompt.toml"
                 self.assertEqual(role.read_bytes(), (prepare.ROOT / "source/project/.codex/agents/review-prompt.toml").read_bytes())
+                instructions = tomllib.loads(role.read_text(encoding="utf-8"))["developer_instructions"]
+                reference = re.search(r"\[审查规则与评价\]\(([^)]+)\)", instructions)
+                self.assertIsNotNone(reference)
+                rules_path = (role.parent / reference[1]).relative_to(project).as_posix()
+                rules = (prepare.ROOT / "source/project" / rules_path).read_bytes()
+                self.assertEqual((project / rules_path).read_bytes(), rules)
+                relocated = self.folder / f"{case_id}-relocated"
+                shutil.copytree(role.parent, relocated)
+                self.assertEqual((relocated / reference[1]).read_bytes(), rules)
+                self.assertFalse((relocated / ".agents").exists())
                 self.assertFalse((output / "profile").exists())
                 manifest = json.loads((output / "candidate-manifest.json").read_text(encoding="utf-8"))
+                self.assertEqual(manifest["files"][rules_path], hashlib.sha256(rules).hexdigest())
                 self.assertEqual(manifest["role"], "review-prompt")
                 self.assertEqual(manifest["model_execution"], "UNVERIFIED")
 

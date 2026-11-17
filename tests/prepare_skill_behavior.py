@@ -76,12 +76,14 @@ def prepare_case(case, output, *, candidate=ROOT / "source/project", corpus=CORP
         role_file = f".codex/agents/{relative_path(selected_role)}.toml"
         if role_file not in payload or "/" in selected_role:
             raise ValueError(f"Unknown role: {selected_role}")
+        role_assets_prefix = f".codex/agents/{selected_role}/"
         shared_prefix = ".agents/sdd/"
         installed_prefix = ".agents/sdd-workflow/sdd/"
         payload = {
             installed_prefix + name.removeprefix(shared_prefix) if name.startswith(shared_prefix) else name: content
             for name, content in payload.items()
-            if not name.startswith((".agents/skills/", ".codex/")) or name == role_file
+            if not name.startswith((".agents/skills/", ".codex/"))
+            or name == role_file or name.startswith(role_assets_prefix)
         }
     rules = dict(payload)
     if "fixture" in case:

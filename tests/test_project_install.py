@@ -163,28 +163,27 @@ gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["init"]))
             b"<!-- sdd-contract-governance:end -->", b"Project-owned entry\n<!-- sdd-contract-governance:end -->",
         ))
         before = self.snapshot()
-        for command in ("inspect", "init"):
-            result = self.run_init(command=command)
-            self.assertNotEqual(result.returncode, 0)
-            self.assertIn("sdd-contract-governance", result.stderr)
-            self.assertEqual(self.snapshot(), before)
+        result = self.run_init(command="inspect")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Project changes on init: AGENTS.md", result.stdout)
+        self.assertEqual(self.snapshot(), before)
+        result = self.run_init()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn(b"Project-owned entry", agents.read_bytes())
 
-    def test_role_and_skill_names_cannot_shadow_shared_entries(self):
+    def test_role_and_skill_names_are_replaced_when_they_shadow_shared_entries(self):
         names = {
             ".agents/skills/group/local/SKILL.md": b"---\nname: sdd-develop\ndescription: Custom.\n---\n",
             ".codex/agents/local.toml": b'name = "sdd-architect"\n',
         }
         for relative, data in names.items():
-            with self.subTest(path=relative):
-                path = self.root / relative
-                path.parent.mkdir(parents=True)
-                path.write_bytes(data)
-                before = self.snapshot()
-                result = self.run_init()
-                self.assertNotEqual(result.returncode, 0)
-                self.assertIn(relative, result.stderr)
-                self.assertEqual(self.snapshot(), before)
-                path.unlink()
+            path = self.root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data)
+        result = self.run_init()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for relative in names:
+            self.assertFalse((self.root / relative).exists())
 
     def test_late_edit_to_unwritten_file_does_not_block_rollback(self):
         config = self.root / ".codex/config.toml"
@@ -260,7 +259,7 @@ tx.replace_file = stop
 ''')
         self.assertTrue((self.root / self.tx.RECOVERY / "journal.json").exists())
         # A new preflight blocker proves recovery happens before new planning.
-        (self.root / "AGENTS.override.md").write_bytes(b"unrelated")
+        (self.root / "AGENTS.override.md").write_bytes(b"<!-- sdd-contract-governance:start -->\n")
         result = self.run_init()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("RECOVERED", result.stdout)
@@ -281,7 +280,7 @@ def stop(stage, path):
 tx.publish_workflow_link = stop
 """)
         self.assertTrue((self.root / WORKFLOW / role).samefile(shared))
-        (self.root / "AGENTS.override.md").write_bytes(b"block next install")
+        (self.root / "AGENTS.override.md").write_bytes(b"<!-- sdd-contract-governance:start -->\n")
         result = self.run_init()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("RECOVERED", result.stdout)

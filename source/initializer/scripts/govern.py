@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import importlib.util
 import json
 from pathlib import Path
@@ -107,8 +108,9 @@ def validate_role(data: bytes, name: str) -> None:
         fail("角色 review-prompt 默认推理强度必须为 high")
 
 
-def skill_name(path: Path) -> str | None:
-    frontmatter = re.match(r"\A\ufeff?---\n(.+?)\n---(?:\n|$)", read(path), re.DOTALL)
+def skill_name(path: Path, *, follow_link: bool = False) -> str | None:
+    text = path.read_text(encoding="utf-8") if follow_link else read(path)
+    frontmatter = re.match(r"\A\ufeff?---\n(.+?)\n---(?:\n|$)", text, re.DOTALL)
     if frontmatter:
         name = re.search(r"""(?m)^name:[ \t]*(["']?)([\w-]+)\1[ \t]*(?:#[^\n]*)?$""", frontmatter[1])
         if name:
@@ -206,15 +208,21 @@ def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
     out(f"Shared skill entries: {', '.join(sorted(PROJECT_SKILLS))}")
     out(f"Shared role definitions: {', '.join(sorted(PROJECT_ROLES))}")
     link, linked_to = check_project(root, shared)
-    out(f"Project link: {link} -> {linked_to or '(missing)'}")
-    links = transaction.plan_links(root, shared)
+    existing = transaction.link_snapshot(link)
+    description = linked_to or ("(existing file or directory)" if existing else "(missing)")
+    out(f"Project link: {link} -> {description}")
+    links = plan_project_links(root, shared)
     for path, before, target in links:
         out(f"Project entry: {path.relative_to(root).as_posix()} -> "
-            f"{before['target'] if before else '(missing)'}"
-            + (" (legacy; remove on init)" if target is None and before else ""))
+            f"{(before['target'] or '(existing file or directory)') if before else '(missing)'}"
+            + (" (remove on init)" if target is None and before else ""))
     files = plan_files(root, version, fragments)
-    current = read_state(files[3][2])
-    out(f"Project recorded shared version: {current.get('shared_version', 'none')}")
+    try:
+        current = read_state(files[3][2])
+    except ValueError as error:
+        out(f"Project installation state will be replaced: {error}")
+    else:
+        out(f"Project recorded shared version: {current.get('shared_version', 'none')}")
     doc_index = root / "docs/index.md"
     out(f"Project documentation index: {doc_index}" if doc_index.is_file()
         else "Project documentation index: resolve the project's own entry from its guidance")
@@ -223,7 +231,7 @@ def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
     out(f"Registered roles: {', '.join(roles) or 'none'}")
     changes = [path.relative_to(root).as_posix() for path, data, before in files if data != before]
     changes.extend(path.relative_to(root).as_posix() for path, before, target in links
-                   if (before["target"] if before else None) != (str(target) if target else None))
+                   if not transaction.link_is_current(before, target))
     out(f"Project changes on init: {', '.join(changes) or 'none'}")
     if not pending:
         out("Next: run init to apply the project plan" if changes
@@ -231,37 +239,36 @@ def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
     return 0
 
 
-def prepare_agents(original: str, templates: dict[str, str], remembered: dict[str, str]) -> str:
+def prepare_agents(original: str, templates: dict[str, str]) -> str:
     """Inject the Main block without changing project-owned bytes."""
-    if "<!-- agent-communication:" in original:
-        fail("AGENTS.md 含旧版独立沟通块；不支持自动迁移，请保留并人工处理后重试")
     bom = "\ufeff" if original.startswith("\ufeff") else ""
     original = original[len(bom):]
-    spans = {}
-    for name in FRAGMENTS:
+    spans = []
+    for name in (*FRAGMENTS, "agent-communication"):
         opening, closing = f"<!-- {name}:start -->", f"<!-- {name}:end -->"
         starts = list(re.finditer(rf"(?m)^{re.escape(opening)}\r?$", original))
         ends = list(re.finditer(rf"(?m)^{re.escape(closing)}\r?$", original))
-        if (len(starts) != len(ends) or len(starts) > 1
+        if (len(starts) != len(ends) or original.count(f"<!-- {name}:") != len(starts) + len(ends)
                 or len(starts) != original.count(opening) or len(ends) != original.count(closing)):
             fail("AGENTS.md 治理片段不完整或重复")
-        if starts:
-            begin, end = starts[0].start(), ends[0].start() + len(closing)
-            if ends[0].start() <= begin:
+        for start, end in zip(starts, ends):
+            if end.start() <= start.start():
                 fail("AGENTS.md 治理片段顺序错误")
-            spans[name] = (begin, end)
+            spans.append((start.start(), end.start() + len(closing), name))
+    spans.sort()
+    if any(left[1] > right[0] for left, right in zip(spans, spans[1:])):
+        fail("AGENTS.md 治理片段嵌套或重叠，无法确定覆盖范围")
     newline = "\r\n" if "\r\n" in original else "\n"
-    for name, (begin, end) in spans.items():
-        digest = release.digest(original[begin:end].replace("\r\n", "\n").encode())
-        if (digest != remembered.get(name)
-                and original[begin:end].replace("\r\n", "\n") != templates[name]):
-            fail(f"AGENTS.md 的 {name} 托管块含定制或来源不明；请保留并核对片段后重试")
-    # Replace only the owned range, preserving its position and surrounding bytes.
-    body = original
-    for name, (begin, end) in sorted(spans.items(), key=lambda item: item[1][0], reverse=True):
-        replacement = templates[name].replace("\n", newline)
-        body = body[:begin] + replacement + body[end:]
-    if "sdd-contract-governance" not in spans:
+    parts, previous, installed = [], 0, False
+    for begin, end, name in spans:
+        parts.append(original[previous:begin])
+        if name == "sdd-contract-governance" and not installed:
+            parts.append(templates[name].replace("\n", newline))
+            installed = True
+        previous = end
+    parts.append(original[previous:])
+    body = "".join(parts)
+    if not installed:
         if not body:
             body = "# Project Agent Guidance" + newline + newline
         elif not body.endswith(newline + newline):
@@ -292,6 +299,202 @@ def legacy_role_reference(name: str) -> str:
     return f"../{transaction.LEGACY_WORKFLOW_LINK}/agents/{name}.toml"
 
 
+def assignment_end(lines: list[str], index: int) -> int:
+    line = lines[index]
+    quoted, escaped, offset = None, False, 0
+    for offset, char in enumerate(line):
+        if quoted:
+            if escaped:
+                escaped = False
+            elif char == "\\" and quoted == '"':
+                escaped = True
+            elif char == quoted:
+                quoted = None
+        elif char in ("'", '"'):
+            quoted = char
+        elif char == "=":
+            break
+    else:
+        fail(".codex/config.toml 的角色配置无法安全定位")
+    value = line[offset + 1:]
+    while True:
+        try:
+            tomllib.loads("value = " + value)
+        except tomllib.TOMLDecodeError as error:
+            index += 1
+            if index >= len(lines):
+                raise ValueError(f".codex/config.toml 的角色配置无法安全定位: {error}") from error
+            value += lines[index]
+        else:
+            return index + 1
+
+
+def remove_conflicting_role_sections(original: str, role_names: set[str] | None = None) -> str:
+    """Remove same-name role tables while preserving unrelated TOML text."""
+    role_names = PROJECT_ROLES if role_names is None else role_names
+    if not role_names:
+        return original
+    names = "|".join(re.escape(name) for name in sorted(role_names))
+    target = re.compile(rf"^\s*\[\[?\s*agents\s*\.\s*(?:({names})|\"({names})\"|'({names})')(?=\s*[.\]])")
+    header = re.compile(r"^\s*\[\[?[^\]\r\n]+\]\]?\s*(?:#.*)?$")
+    agents_header = re.compile(r"^\s*\[\s*(?:agents|\"agents\"|'agents')\s*\]\s*(?:#.*)?$")
+    inline = re.compile(rf"^\s*(?:({names})|\"({names})\"|'({names})')\s*(?:\.|=)")
+    dotted = re.compile(rf"^\s*(?:agents|\"agents\"|'agents')\s*\.\s*"
+                        rf"(?:({names})|\"({names})\"|'({names})')\s*(?:\.|=)")
+    in_target = in_agents = False
+    at_root = True
+    result, lines, index = [], original.splitlines(keepends=True), 0
+    while index < len(lines):
+        line = lines[index]
+        if header.match(line.rstrip("\r\n")):
+            in_target = bool(target.match(line))
+            in_agents = bool(agents_header.match(line.rstrip("\r\n")))
+            at_root = False
+        if not in_target and ((in_agents and inline.match(line)) or (at_root and dotted.match(line))):
+            index = assignment_end(lines, index)
+            continue
+        elif not in_target:
+            result.append(line)
+        index += 1
+    return "".join(result)
+
+
+def migrate_legacy_role_references(original: str, config: dict) -> tuple[str, dict]:
+    legacy = f"../{transaction.LEGACY_WORKFLOW_LINK}/"
+    current = f"../{transaction.WORKFLOW_LINK}/"
+    expected = copy.deepcopy(config)
+    replacements, removed = {}, set()
+    for name, role in config.get("agents", {}).items():
+        if name in PROJECT_ROLES:
+            continue
+        reference = role.get("config_file") if isinstance(role, dict) else None
+        if not isinstance(reference, str):
+            continue
+        normalized = reference.replace("\\", "/")
+        prefix = legacy if normalized.startswith(legacy) else current if normalized.startswith(current) else None
+        if prefix is None:
+            continue
+        suffix = normalized[len(prefix):]
+        destination = (shared_path() / suffix).resolve()
+        if not destination.is_relative_to(shared_path().resolve()):
+            fail(f"项目角色 {name} 的旧共享引用越界: {reference}")
+        if not destination.is_file():
+            removed.add(name)
+            expected["agents"].pop(name)
+            continue
+        replacement = current + suffix
+        if reference != replacement:
+            replacements[reference] = replacement
+            expected["agents"][name]["config_file"] = replacement
+    if not replacements and not removed:
+        return original, config
+    original = remove_conflicting_role_sections(original, removed)
+    pattern = re.compile(r'''(?m)^([^\#\r\n]*?\bconfig_file[ \t]*=[ \t]*)(["'])([^"'\r\n]*)(\2)([^\r\n]*)(\r?)$''')
+    def replace(match):
+        value = match[3]
+        return match[1] + match[2] + replacements.get(value, value) + match[4] + match[5] + match[6]
+    migrated = pattern.sub(replace, original)
+    try:
+        actual = tomllib.loads(migrated)
+    except tomllib.TOMLDecodeError as error:
+        fail(f".codex/config.toml 的旧角色引用无法迁移: {error}")
+    if actual != expected:
+        fail(".codex/config.toml 的旧角色引用无法安全定位")
+    return migrated, actual
+
+
+def replace_non_table_agents(original: str, config: dict) -> tuple[str, dict]:
+    if isinstance(config.get("agents", {}), dict):
+        return original, config
+    root, result, lines, index = True, [], original.splitlines(keepends=True), 0
+    assignment = re.compile(r'''^[ \t]*(?:agents|"agents"|'agents')[ \t]*=''')
+    while index < len(lines):
+        line = lines[index]
+        if re.match(r"^[ \t]*\[", line):
+            root = False
+        if root and assignment.match(line):
+            index = assignment_end(lines, index)
+            continue
+        result.append(line)
+        index += 1
+    remaining = "".join(result)
+    expected = copy.deepcopy(config)
+    expected.pop("agents")
+    try:
+        actual = tomllib.loads(remaining)
+    except tomllib.TOMLDecodeError as error:
+        fail(f".codex/config.toml 的 agents 配置无法安全替换: {error}")
+    if actual != expected:
+        fail(".codex/config.toml 的 agents 配置无法安全定位")
+    return remaining, actual
+
+
+def expand_inline_agents(original: str, config: dict) -> tuple[str, dict]:
+    assignment = re.compile(r'''^[ \t]*(?:agents|"agents"|'agents')[ \t]*=[ \t]*\{''')
+    header = re.compile(r"^[ \t]*\[\[?[^\]\r\n]+\]\]?[ \t]*(?:#.*)?$")
+    lines, items, at_root = [], None, True
+    for line in original.splitlines(keepends=True):
+        if header.match(line.rstrip("\r\n")):
+            at_root = False
+        match = assignment.match(line) if at_root else None
+        if not match:
+            lines.append(line)
+            continue
+        start, index, stack, quote, escaped = match.end(), match.end(), ["}"], None, False
+        parts = []
+        while index < len(line):
+            char = line[index]
+            if quote:
+                if escaped:
+                    escaped = False
+                elif char == "\\" and quote[0] == '"':
+                    escaped = True
+                elif line.startswith(quote, index):
+                    index += len(quote) - 1
+                    quote = None
+            elif char in ("'", '"'):
+                quote = char * 3 if line.startswith(char * 3, index) else char
+                index += len(quote) - 1
+            elif char in "{[":
+                stack.append("}" if char == "{" else "]")
+            elif char in "}]":
+                if not stack or stack.pop() != char:
+                    fail(".codex/config.toml 的 agents 内联表无法安全定位")
+                if not stack:
+                    if line[start:index].strip():
+                        parts.append(line[start:index].strip())
+                    suffix = line[index + 1:]
+                    if suffix.strip() and not suffix.lstrip().startswith("#"):
+                        fail(".codex/config.toml 的 agents 内联表尾部无效")
+                    if suffix.lstrip().startswith("#"):
+                        lines.append(suffix.lstrip())
+                    items = parts
+                    break
+            elif char == "," and len(stack) == 1:
+                parts.append(line[start:index].strip())
+                start = index + 1
+            index += 1
+        if items is None:
+            fail(".codex/config.toml 的 agents 内联表不完整")
+    if items is None:
+        return original, config
+    newline = "\r\n" if "\r\n" in original else "\n"
+    remaining = "".join(lines)
+    if items:
+        separator = (newline if remaining.endswith(("\r", "\n")) else newline * 2) if remaining else ""
+        remaining += separator + "[agents]" + newline + newline.join(items) + newline
+    try:
+        actual = tomllib.loads(remaining)
+    except tomllib.TOMLDecodeError as error:
+        fail(f".codex/config.toml 的 agents 内联表无法安全展开: {error}")
+    expected = copy.deepcopy(config)
+    if not items and expected.get("agents") == {}:
+        expected.pop("agents")
+    if actual != expected:
+        fail(".codex/config.toml 的 agents 内联表无法安全展开")
+    return remaining, actual
+
+
 def prepare_config(original: str) -> str:
     begin = "# sdd-init roles:start"
     end = "# sdd-init roles:end"
@@ -310,62 +513,40 @@ def prepare_config(original: str) -> str:
         if len(markers) != 2 or markers[0][0].rstrip("\r") != begin:
             fail(".codex/config.toml 的 SDD 角色引用块不完整、重复或顺序错误")
         first, last = markers[0].start(), markers[1].start() + len(end)
-        old_block = original[first:last]
-        same_block = old_block.replace("\r\n", "\n") == block.replace("\r\n", "\n")
-        old_lines = old_block.splitlines()[1:-1]
-        if not old_lines or len(old_lines) % 2:
-            fail(".codex/config.toml 的 SDD 角色引用块含定制；请保留并核对后重试")
-        for header, setting in zip(old_lines[::2], old_lines[1::2]):
-            name = header.removeprefix("[agents.").removesuffix("]")
-            known = {f'config_file = "{role_reference(name)}"',
-                     f'config_file = "{legacy_role_reference(name)}"'}
-            # The old project-local form is recognized after its role file
-            # has been moved out of discovery (checked during preflight).
-            if name in PROJECT_ROLES:
-                known.add(f'config_file = "agents/{name}.toml"')
-            if name not in PROJECT_ROLES | RETIRED_ROLES or header != f"[agents.{name}]" or setting not in known:
-                fail(f".codex/config.toml 的 SDD 角色引用块含定制 ({header})；请保留并核对后重试")
         remaining = original[:first] + original[last:]
-        candidate = original if same_block else original[:first] + block + original[last:]
+        candidate = original[:first] + block + original[last:]
     else:
         remaining = original
         separator = (newline if original.endswith(("\r", "\n")) else newline * 2) if original else ""
         candidate = original + separator + block + newline
 
     try:
-        previous = tomllib.loads(original)
         unmanaged = tomllib.loads(remaining)
-        merged = tomllib.loads(candidate)
     except tomllib.TOMLDecodeError as error:
         fail(f".codex/config.toml 无法合并 SDD 角色引用: {error}")
+    original_remaining = remaining
+    remaining, unmanaged = expand_inline_agents(remaining, unmanaged)
+    migrated, unmanaged = replace_non_table_agents(remaining, unmanaged)
+    migrated, unmanaged = migrate_legacy_role_references(migrated, unmanaged)
+    has_conflicts = any(name in unmanaged.get("agents", {}) for name in PROJECT_ROLES)
+    if has_conflicts or migrated != original_remaining:
+        remaining = migrated
+        remaining = remove_conflicting_role_sections(remaining)
+        separator = (newline if remaining.endswith(("\r", "\n")) else newline * 2) if remaining else ""
+        candidate = remaining + separator + block + newline
+    try:
+        merged = tomllib.loads(candidate)
+    except tomllib.TOMLDecodeError as error:
+        fail(f".codex/config.toml 无法覆盖同名 SDD 角色引用: {error}")
     for name, reference in references.items():
-        if name in unmanaged.get("agents", {}):
-            fail(f".codex/config.toml 已有同名角色 {name}；请保留并处理冲突后重试")
         if merged.get("agents", {}).get(name) != reference:
             fail(f".codex/config.toml 的 SDD 角色引用不可用: {name}")
-        previous.get("agents", {}).pop(name, None)
+        unmanaged.get("agents", {}).pop(name, None)
         merged["agents"].pop(name, None)
-    retired_paths = {reference(name) for name in RETIRED_ROLES
-                     for reference in (role_reference, legacy_role_reference)}
-    for name, role in unmanaged.get("agents", {}).items():
-        reference = role.get("config_file") if isinstance(role, dict) else None
-        if isinstance(reference, str):
-            normalized = reference.replace("\\", "/")
-            if normalized.startswith(f"../{transaction.LEGACY_WORKFLOW_LINK}/"):
-                fail(f".codex/config.toml 的项目角色 {name} 定制引用旧共享路径；请保留并迁移引用")
-            if normalized in retired_paths:
-                fail(f".codex/config.toml 的项目角色 {name} 引用已退役的共享角色；请保留并迁移引用")
-    # Migrate only exact legacy references generated inside our managed block.
-    previous_roles = previous.get("agents", {})
-    for legacy_role in RETIRED_ROLES:
-        legacy_references = [{"config_file": reference(legacy_role)}
-                             for reference in (role_reference, legacy_role_reference)]
-        if legacy_role not in unmanaged.get("agents", {}) and previous_roles.get(legacy_role) in legacy_references:
-            previous_roles.pop(legacy_role)
-    for config in (previous, merged):
+    for config in (unmanaged, merged):
         if config.get("agents") == {}:
             config.pop("agents")
-    if previous != merged:
+    if unmanaged != merged:
         fail(".codex/config.toml 的角色引用块含其他配置，请保留并处理后重试")
     return candidate
 
@@ -383,25 +564,12 @@ def prepare_ignore(original: str) -> str:
     return original + separator + newline.join(missing) + newline
 
 
-def check_project(root: Path, shared: Path) -> tuple[Path, Path | None]:
-    override = inside(root, root / "AGENTS.override.md")
-    if override.exists():
-        fail("根目录存在 AGENTS.override.md；请先处理覆盖关系再初始化，避免治理规则未生效")
-
+def plan_project_links(root: Path, shared: Path) -> list[tuple[Path, dict | None, Path | None]]:
     links = transaction.plan_links(root, shared)
-    link, snapshot, _ = links[0]
-    linked_to = Path(snapshot["target"]) if snapshot else None
-    tracked = git(root, "ls-files", "--", *transaction.INSTALL_LINKS, transaction.LOCK,
-                  transaction.RECOVERY, transaction.STATE)
-    if tracked:
-        fail(f"本机链接或安装元数据已纳入 Git: {tracked.decode('utf-8', errors='replace').strip()}")
-
     names = PROJECT_SKILLS | RETIRED_SKILLS | {"sdd-init"}
     conflicts = set()
     skill_root = transaction.safe_path(root, ".agents/skills")
     managed = {path for path, _, _ in links}
-    # A project skill can be nested or declare a different name from its
-    # directory. Preserve any linked entry that would need external inspection.
     pending = [skill_root] if skill_root.is_dir() else []
     while pending:
         for path in pending.pop().iterdir():
@@ -410,8 +578,11 @@ def check_project(root: Path, shared: Path) -> tuple[Path, Path | None]:
             if path.parent == skill_root and path.name.casefold() in names:
                 conflicts.add(path)
             elif transaction.linked(path):
-                if path.name.casefold() == "skill.md" or not path.is_file():
-                    conflicts.add(path)
+                entry = path / "SKILL.md" if path.is_dir() else path
+                if entry.name.casefold() == "skill.md" and entry.is_file():
+                    name = skill_name(entry, follow_link=True)
+                    if name and name.casefold() in names:
+                        conflicts.add(path)
             elif path.is_dir():
                 pending.append(path)
             elif path.name.casefold() == "skill.md":
@@ -424,18 +595,23 @@ def check_project(root: Path, shared: Path) -> tuple[Path, Path | None]:
     for path in (agents.iterdir() if agents.is_dir() else ()):
         if path.suffix.casefold() != ".toml":
             continue
-        if path.stem.casefold() in PROJECT_ROLES or transaction.linked(path):
+        if path.stem.casefold() in PROJECT_ROLES:
             conflicts.add(path)
         elif path.is_file():
             try:
-                name = tomllib.loads(read(path)).get("name")
+                name = tomllib.loads(path.read_text(encoding="utf-8")).get("name")
             except ValueError:
                 continue
             if isinstance(name, str) and name.casefold() in PROJECT_ROLES:
                 conflicts.add(path)
-    if conflicts:
-        fail("项目中已有同名、旧入口或无法核对的 Skill／角色，请保留并处理后重新运行 init: "
-             + ", ".join(sorted(path.relative_to(root).as_posix() for path in conflicts)))
+    links.extend((path, transaction.link_snapshot(path), None) for path in sorted(conflicts))
+    return links
+
+
+def check_project(root: Path, shared: Path) -> tuple[Path, Path | None]:
+    links = plan_project_links(root, shared)
+    link, snapshot, _ = links[0]
+    linked_to = Path(snapshot["target"]) if snapshot and snapshot["target"] else None
     return link, linked_to
 
 
@@ -445,7 +621,8 @@ def read_state(data: bytes | None) -> dict:
     try:
         state = json.loads(data)
         if (not isinstance(state, dict) or set(state) != {"schema_version", "shared_version", "agents_blocks"}
-                or state["schema_version"] != 1 or state["agents_blocks"].keys() != FRAGMENTS.keys()
+                or state["schema_version"] != 1
+                or set(state["agents_blocks"]) not in (set(FRAGMENTS), set(FRAGMENTS) | {"agent-communication"})
                 or not all(re.fullmatch(r"[a-f0-9]{64}", value)
                            for value in [state["shared_version"], *state["agents_blocks"].values()])):
             raise ValueError("Invalid project installation state")
@@ -455,9 +632,8 @@ def read_state(data: bytes | None) -> dict:
 
 
 def plan_files(root: Path, shared_version: str, fragments: dict[str, str]) -> list[tuple[Path, bytes, bytes | None]]:
-    paths = [transaction.safe_path(root, name) for name in transaction.FILES]
+    paths = [transaction.safe_path(root, name) for name in transaction.FILES[:4]]
     before = [transaction.content(path) for path in paths]
-    old_state = read_state(before[3])
     texts = []
     for path, data in zip(paths[:3], before[:3]):
         try:
@@ -467,15 +643,24 @@ def plan_files(root: Path, shared_version: str, fragments: dict[str, str]) -> li
     agents, config, ignore = texts
     state = {"schema_version": 1, "shared_version": shared_version,
              "agents_blocks": {name: release.digest(fragment.encode()) for name, fragment in fragments.items()}}
-    proposed = (prepare_agents(agents, fragments, old_state.get("agents_blocks", {})),
+    proposed = (prepare_agents(agents, fragments),
                 prepare_config(config), prepare_ignore(ignore), json.dumps(state, indent=2, sort_keys=True) + "\n")
-    return [(path, data.encode("utf-8"), prior) for path, data, prior in zip(paths, proposed, before)]
+    files = [(path, data.encode("utf-8"), prior) for path, data, prior in zip(paths, proposed, before)]
+    override = transaction.safe_path(root, "AGENTS.override.md")
+    previous = transaction.content(override)
+    if previous is not None:
+        try:
+            data = previous.decode("utf-8")
+        except UnicodeDecodeError as error:
+            raise ValueError(f"文件不是有效 UTF-8: {override}") from error
+        files.append((override, prepare_agents(data, fragments).encode("utf-8"), previous))
+    return files
 
 
 def initialize(root: Path) -> int:
     shared = shared_path()
     link, _ = check_project(root, shared)
-    links = transaction.plan_links(root, shared)
+    links = plan_project_links(root, shared)
     version, shared_version, fragments = shared_bundle(shared)
     files = plan_files(root, shared_version, fragments)
 
@@ -485,14 +670,14 @@ def initialize(root: Path) -> int:
 
     def guard():
         check_project(root, shared)
-        if transaction.plan_links(root, shared) != links:
+        if plan_project_links(root, shared) != links:
             fail(f"工作流链接在预检后变化: {link}")
         check_bundle()
 
     def verify():
         if check_project(root, shared)[1] != shared or not link.samefile(shared):
             fail(f"工作流链接不可用: {link}")
-        for path, _, target in transaction.plan_links(root, shared):
+        for path, _, target in plan_project_links(root, shared):
             if target is None:
                 if transaction.workflow_target(path) is not None:
                     fail(f"旧工作流链接尚未迁出: {path}")
@@ -514,7 +699,8 @@ def initialize(root: Path) -> int:
         out(f"{status} {target.relative_to(root).as_posix()}")
     for path, before, target in links:
         if target is not None or before is not None:
-            status = "REMOVED" if target is None else "ADDED" if before is None else "PRESERVED"
+            status = ("REMOVED" if target is None else "ADDED" if before is None
+                      else "PRESERVED" if transaction.link_is_current(before, target) else "UPDATED")
             out(f"{status} {path.relative_to(root).as_posix()}")
     out(f"SDD WORKFLOW {link} -> {shared}")
     out(f"Shared version: sha256:{shared_version}")
