@@ -167,6 +167,19 @@ class PreparationTests(unittest.TestCase):
                 self.assertTrue(contract.is_file(), contract)
                 self.assertEqual(contract.read_text(encoding="utf-8"), instructions)
                 self.assertEqual((shared / "review-prompt/prompt-review.md").read_bytes(), rules)
+                manifest = json.loads((self.folder / scope / "candidate-manifest.json").read_text(encoding="utf-8"))
+                for path in (contract, shared / "review-prompt/prompt-review.md"):
+                    self.assertEqual(manifest["files"][path.relative_to(project).as_posix()],
+                                     hashlib.sha256(path.read_bytes()).hexdigest())
+
+    def test_full_fixture_cannot_replace_generated_review_contract(self):
+        case = dict(self.case, fixture=prepare.load_cases()["collaboration_blind_workflow"]["fixture"],
+                    files={".agents/sdd-workflow/roles/shared/review-prompt.md": "replacement"})
+        for scope in ("main", "project"):
+            with self.subTest(scope=scope):
+                with self.assertRaisesRegex(ValueError, "override candidate rules"):
+                    prepare.prepare_case(dict(case, candidate_scope=scope), self.folder / scope)
+                self.assertFalse((self.folder / scope).exists())
 
     def test_prompt_review_uses_project_preset_role_without_user_profile(self):
         cases = prepare.load_cases()
