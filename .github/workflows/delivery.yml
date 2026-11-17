@@ -124,6 +124,36 @@ jobs:
       candidate_ref: refs/pull/${{ needs.prepare.outputs.pr }}/merge
       candidate_sha: ${{ needs.prepare.outputs.merge }}
 
+  retry-stale-checks:
+    needs: [prepare, checks]
+    if: always() && needs.prepare.outputs.ready == 'true' && needs.checks.result == 'failure'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Retry only if the candidate changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ needs.prepare.outputs.pr }}
+          BRANCH: ${{ needs.prepare.outputs.branch }}
+          BASE: ${{ needs.prepare.outputs.base }}
+          HEAD_SHA: ${{ needs.prepare.outputs.head }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          details=$(gh api "repos/$GH_REPO/pulls/$PR")
+          current_base=$(gh api "repos/$GH_REPO/git/ref/heads/main" --jq '.object.sha')
+          if [[ $(jq -r '.state' <<< "$details") == open ]] && \
+             { [[ "$current_base" != "$BASE" ]] || [[ $(jq -r '.head.sha' <<< "$details") != "$HEAD_SHA" ]]; }; then
+            gh workflow run delivery.yml --repo "$GH_REPO" --ref "$BRANCH"
+            echo 'Candidate changed during checks; a new delivery run was queued.'
+          else
+            echo 'Checks failed without a candidate change; no retry was queued.'
+          fi
+
   release:
     needs: [prepare, checks]
     if: needs.prepare.outputs.ready == 'true'
