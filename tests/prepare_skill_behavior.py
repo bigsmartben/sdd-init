@@ -9,6 +9,7 @@ import importlib.util
 import json
 from pathlib import Path, PurePosixPath
 import shutil
+import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "tests/fixtures/skill-behavior"
@@ -85,6 +86,12 @@ def prepare_case(case, output, *, candidate=ROOT / "source/project", corpus=CORP
             if not name.startswith((".agents/skills/", ".codex/"))
             or name == role_file or name.startswith(role_assets_prefix)
         }
+        if selected_role == "review-prompt":
+            role = tomllib.loads(payload[role_file].decode("utf-8"))
+            contract = Path(".agents/sdd-workflow/roles/shared/review-prompt.md")
+            companion = ".codex/agents/review-prompt/prompt-review.md"
+            payload[contract.as_posix()] = (role["developer_instructions"].strip() + "\n").encode("utf-8")
+            payload[(contract.parent / "review-prompt/prompt-review.md").as_posix()] = payload[companion]
     rules = dict(payload)
     if "fixture" in case:
         fixture = corpus / str(relative_path(case["fixture"]))

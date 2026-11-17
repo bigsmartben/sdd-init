@@ -90,7 +90,13 @@ class BuildTests(unittest.TestCase):
         self.assertIn(".agents/sdd-workflow/roles/shared/review-prompt.md", role["developer_instructions"])
         contract_text = contract.read_text(encoding="utf-8")
         self.assertIn(".agents/sdd-workflow/roles/shared/review-prompt.md", contract_text)
-        self.assertIn("review-prompt/prompt-review.md", contract_text)
+        reference = re.search(r"\[审查规则与评价\]\(([^)]+)\)", contract_text)
+        self.assertIsNotNone(reference)
+        companion = (contract.parent / reference[1]).resolve()
+        self.assertEqual(
+            companion.read_bytes(),
+            (output / "shared/roles/shared/review-prompt/prompt-review.md").read_bytes(),
+        )
         self.assertNotIn("model:", copilot.read_text(encoding="utf-8"))
         self.assertIn("roles/shared/review-prompt.md", copilot.read_text(encoding="utf-8"))
         manifest = json.loads((output / "build-manifest.json").read_bytes())

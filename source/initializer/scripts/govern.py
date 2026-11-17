@@ -720,14 +720,13 @@ def plan_files(root: Path, shared_version: str, fragments: dict[str, str],
             prior = transaction.content(target)
             owned_digest = copilot_roles.get(name)
             if prior is not None:
-                if owned_digest is not None:
+                if prior == data:
+                    copilot_roles[name] = release.digest(data)
+                elif owned_digest is not None:
                     if release.digest(prior) != owned_digest:
                         raise ValueError(f"Preserve modified Copilot role; ownership check failed: {target}")
-                elif prior != data:
-                    raise ValueError(f"Preserve unmanaged Copilot role collision: {target}")
                 else:
-                    copilot_files.append((target, data, prior))
-                    continue
+                    raise ValueError(f"Preserve unmanaged Copilot role collision: {target}")
             copilot_roles[name] = release.digest(data)
             copilot_files.append((target, data, prior))
     state = {"schema_version": 1, "shared_version": shared_version,

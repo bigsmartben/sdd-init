@@ -1,4 +1,5 @@
 """Role distribution and installer boundaries, using isolated target projects."""
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -139,6 +140,47 @@ class RoleTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("unmanaged Copilot role collision", result.stderr)
         self.assertEqual(self.snapshot(), before)
+
+    def test_identical_copilot_role_records_missing_ownership(self):
+        self.assertEqual(self.install().returncode, 0)
+        role = self.target / ".github/agents/sdd-coder.agent.md"
+        state_path = self.target / ".sdd-init-state.json"
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        state["copilot_roles"].pop("sdd-coder")
+        state_path.write_text(json.dumps(state), encoding="utf-8")
+
+        result = self.install()
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        self.assertEqual(state["copilot_roles"]["sdd-coder"], hashlib.sha256(role.read_bytes()).hexdigest())
+
+    def test_identical_updated_copilot_role_refreshes_stale_ownership(self):
+        self.assertEqual(self.install().returncode, 0)
+        role = self.target / ".github/agents/sdd-coder.agent.md"
+        source = self.skill / "shared/roles/copilot/sdd-coder.agent.md"
+        updated = source.read_bytes() + b"\nupdated adapter\n"
+        source.write_bytes(updated)
+        refresh_manifest(self.skill)
+        role.write_bytes(updated)
+
+        result = self.install()
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        state = json.loads((self.target / ".sdd-init-state.json").read_text(encoding="utf-8"))
+        self.assertEqual(state["copilot_roles"]["sdd-coder"], hashlib.sha256(updated).hexdigest())
+
+    def test_modified_owned_copilot_role_is_preserved(self):
+        self.assertEqual(self.install().returncode, 0)
+        role = self.target / ".github/agents/sdd-coder.agent.md"
+        modified = role.read_bytes() + b"\nlocal customization\n"
+        role.write_bytes(modified)
+
+        result = self.install()
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("ownership check failed", result.stderr)
+        self.assertEqual(role.read_bytes(), modified)
 
     def test_invalid_utf8_state_is_not_decoded_by_inspect_or_init(self):
         state = self.target / ".sdd-init-state.json"

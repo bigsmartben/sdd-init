@@ -166,13 +166,15 @@ class PreparationTests(unittest.TestCase):
                 role = project / ".codex/agents/review-prompt.toml"
                 self.assertEqual(role.read_bytes(), (prepare.ROOT / "source/project/.codex/agents/review-prompt.toml").read_bytes())
                 instructions = tomllib.loads(role.read_text(encoding="utf-8"))["developer_instructions"]
+                contract = project / ".agents/sdd-workflow/roles/shared/review-prompt.md"
+                self.assertEqual(contract.read_text(encoding="utf-8"), instructions.strip() + "\n")
                 reference = re.search(r"\[审查规则与评价\]\(([^)]+)\)", instructions)
                 self.assertIsNotNone(reference)
-                rules_path = (role.parent / reference[1]).relative_to(project).as_posix()
-                rules = (prepare.ROOT / "source/project" / rules_path).read_bytes()
+                rules_path = (contract.parent / reference[1]).relative_to(project).as_posix()
+                rules = (prepare.ROOT / "source/project/.codex/agents/review-prompt/prompt-review.md").read_bytes()
                 self.assertEqual((project / rules_path).read_bytes(), rules)
                 relocated = self.folder / f"{case_id}-relocated"
-                shutil.copytree(role.parent, relocated)
+                shutil.copytree(contract.parent, relocated)
                 self.assertEqual((relocated / reference[1]).read_bytes(), rules)
                 self.assertFalse((relocated / ".agents").exists())
                 self.assertFalse((output / "profile").exists())
