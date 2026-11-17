@@ -87,7 +87,7 @@ python -B source/project/.agents/sdd/scripts/doc_check.py --root . README.md
 
 检查范围与限制见[文档校验 CLI](source/project/.agents/sdd/references/doc-check.md)；Python 包构建与安装冒烟验证见[开发验证](docs/installation.md#开发验证)。旧治理命令的退役决定与当前实现边界见[蓝图](docs/blueprint.md#旧治理命令退役边界)。
 
-本仓的 [GitHub Actions 自动交付](.github/workflows/delivery.yml)及验收条件见 [Spec FR-037／AC-044](specs/platform-independent-sdd/spec.md)。推送非 `main` 分支后自动准备版本和 PR，检查合并候选，通过后合并并创建 GitHub Release；默认递增补丁版本，已指定更高稳定版本时沿用。发布仅限 GitHub，不上传包索引。已合并的远端分支安全删除，本地分支不处理。失败或候选变化时在 Actions 中报告并停止。
+本仓的 [GitHub Actions 自动交付](.github/workflows/delivery.yml)及验收条件见 [Spec FR-037／AC-044](specs/platform-independent-sdd/spec.md)。推送非 `main` 分支后自动准备版本和 PR，检查合并候选，通过后合并并创建 GitHub Release；默认递增补丁版本，已指定更高稳定版本时沿用。发布仅限 GitHub，不上传包索引。已合并的远端分支安全删除，本地分支不处理。候选变化时重新排队检查；冲突或检查失败时在 Actions 中报告并停止。
 
 直接推送 `main` 不经过该交付流程，也不会等待检查通过，而默认安装入口会使用 `main`。自动流程不是 GitHub 分支保护，不能阻止其他方式修改 `main`。
 
