@@ -1,21 +1,63 @@
 name: Distribution checks
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      candidate_ref:
+        type: string
+        required: true
+      candidate_sha:
+        type: string
+        required: true
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.run_id }}
+  cancel-in-progress: true
 jobs:
   distribution:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            python: '3.11'
+          - os: ubuntu-latest
+            python: '3.13'
+          - os: windows-latest
+            python: '3.13'
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.candidate_ref || github.sha }}
+          persist-credentials: false
+      - name: Verify candidate commit
+        if: inputs.candidate_sha != ''
+        shell: bash
+        env:
+          CANDIDATE_SHA: ${{ inputs.candidate_sha }}
+        run: test "$(git rev-parse HEAD)" = "$CANDIDATE_SHA"
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: ${{ matrix.python }}
       - run: python -B -m unittest discover -s tests -v
       - run: python -B scripts/build_release.py
       - run: python -B .build/sdd-init/scripts/test_govern.py
       - uses: astral-sh/setup-uv@v6
       - run: uv build --out-dir .build/dist
-      - run: python -B scripts/smoke_package.py --from .build/dist/sdd_init-0.8.0-py3-none-any.whl
+      - name: Smoke-test built wheel
+        run: >-
+          python -c "from pathlib import Path; import subprocess, sys;
+          wheels = list(Path('.build/dist').glob('*.whl'));
+          len(wheels) == 1 or sys.exit(f'Expected exactly one wheel in .build/dist, found {len(wheels)}: {wheels}');
+          subprocess.run([sys.executable, '-B', 'scripts/smoke_package.py', '--from', str(wheels[0])], check=True)"
+      - name: Preserve tested release packages
+        if: inputs.candidate_sha != '' && matrix.os == 'ubuntu-latest' && matrix.python == '3.13'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-packages
+          path: .build/dist/*
+          if-no-files-found: error
+          retention-days: 1
