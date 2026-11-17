@@ -671,12 +671,17 @@ def read_state(data: bytes | None) -> dict:
         return {}
     try:
         state = json.loads(data)
-        if (not isinstance(state, dict) or set(state) != {"schema_version", "shared_version", "agents_blocks"}
+        required = {"schema_version", "shared_version", "agents_blocks"}
+        if (not isinstance(state, dict) or set(state) not in (required, required | {"copilot_roles"})
                 or state["schema_version"] != 1
                 or set(state["agents_blocks"]) not in (set(FRAGMENTS), set(FRAGMENTS) | {"agent-communication"})
                 or not all(re.fullmatch(r"[a-f0-9]{64}", value)
                            for value in [state["shared_version"], *state["agents_blocks"].values()])):
             raise ValueError("Invalid project installation state")
+        roles = state.get("copilot_roles", {})
+        if (not isinstance(roles, dict) or not set(roles) <= set(PROJECT_ROLES)
+                or not all(re.fullmatch(r"[a-f0-9]{64}", value) for value in roles.values())):
+            raise ValueError("Invalid Copilot role ownership metadata")
     except (ValueError, TypeError, AttributeError) as error:
         raise ValueError(f"无效的项目安装元数据: {transaction.STATE}；请保留文件并核对来源") from error
     return state
@@ -691,7 +696,7 @@ def plan_files(root: Path, shared_version: str, fragments: dict[str, str],
     paths = [transaction.safe_path(root, name) for name in names]
     before = [transaction.content(path) for path in paths]
     texts = []
-    for path, data in zip(paths, before):
+    for path, data in zip(paths[:-1], before[:-1]):
         try:
             texts.append((data or b"").decode("utf-8"))
         except UnicodeDecodeError as error:
@@ -701,19 +706,39 @@ def plan_files(root: Path, shared_version: str, fragments: dict[str, str],
     config = texts[offset] if "codex" in harnesses else None
     offset += "codex" in harnesses
     ignore = texts[offset]
+    try:
+        previous_state = read_state(before[-1])
+    except ValueError:
+        previous_state = {}
+    copilot_roles = dict(previous_state.get("copilot_roles", {}))
+    copilot_files = []
+    if "copilot" in harnesses:
+        for name in sorted(PROJECT_ROLES):
+            source = shared_path() / "roles/copilot" / f"{name}.agent.md"
+            target = transaction.safe_path(root, f".github/agents/{name}.agent.md")
+            data = source.read_bytes()
+            prior = transaction.content(target)
+            owned_digest = copilot_roles.get(name)
+            if prior is not None:
+                if owned_digest is not None:
+                    if release.digest(prior) != owned_digest:
+                        raise ValueError(f"Preserve modified Copilot role; ownership check failed: {target}")
+                elif prior != data:
+                    raise ValueError(f"Preserve unmanaged Copilot role collision: {target}")
+                else:
+                    copilot_files.append((target, data, prior))
+                    continue
+            copilot_roles[name] = release.digest(data)
+            copilot_files.append((target, data, prior))
     state = {"schema_version": 1, "shared_version": shared_version,
-             "agents_blocks": {name: release.digest(fragment.encode()) for name, fragment in fragments.items()}}
+             "agents_blocks": {name: release.digest(fragment.encode()) for name, fragment in fragments.items()},
+             "copilot_roles": copilot_roles}
     proposed = [prepare_agents(agents, fragments)]
     if config is not None:
         proposed.append(prepare_config(config))
     proposed.extend((prepare_ignore(ignore), json.dumps(state, indent=2, sort_keys=True) + "\n"))
     files = [(path, data.encode("utf-8"), prior) for path, data, prior in zip(paths, proposed, before)]
-    if "copilot" in harnesses:
-        shared = shared_path()
-        for name in sorted(PROJECT_ROLES):
-            source = shared / "roles/copilot" / f"{name}.agent.md"
-            target = transaction.safe_path(root, f".github/agents/{name}.agent.md")
-            files.append((target, source.read_bytes(), transaction.content(target)))
+    files.extend(copilot_files)
     override = transaction.safe_path(root, "AGENTS.override.md")
     previous = transaction.content(override)
     if previous is not None:

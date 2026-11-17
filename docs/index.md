@@ -20,7 +20,7 @@
 
 - **怎样审查架构落地或实施技术重构？** 使用 [sdd-refactor](../source/project/.agents/skills/sdd-refactor/SKILL.md)，先定位蓝图并初始化或核对项目规范与独立 [Review 矩阵](../source/project/.agents/sdd/assets/review-matrix_template.md)。按确认范围生成本轮任务；原检查项、重构工单、两类复核及 Review Gate 查 [Architecture Review Record](../source/project/.agents/sdd/assets/review_template.md)，实施方案和局部自验查关联 Plan／Task。本轮维护见[实施清单](plans/refactor-review-matrix.md)。历史证据见[目标规则生成、更新及整改验收](test-reports/code-review-rules/2026-11-05.md)、[Review 检查项闭环复核](test-reports/agent-collaboration/2026-11-05-review-items.md)及[专职 Agent 协作 Review](test-reports/agent-collaboration/2026-11-05-review.md)。
 
-- **怎样专项审查提示词或比较改版后的行为？** 在已接入项目可按需将明确工单交给预置角色 [review-prompt](../source/project/.codex/agents/review-prompt.toml)。目标与验证提取、五类规则、优化策略及同结果下的耗时／token 对照见角色配套的[提示词审查与优化](../source/project/.codex/agents/review-prompt/prompt-review.md)，按角色配置文件的相对路径读取；角色不可用时由合格执行者按同一契约承接，不另装用户级角色或新增 Skill。原地升级见[安装说明](installation.md#更新与冲突)。
+- **怎样专项审查提示词或比较改版后的行为？** 在已接入项目可按需将明确工单交给预置角色 [review-prompt](../source/project/.codex/agents/review-prompt.toml)。目标与验证提取、五类规则、优化策略及同结果下的耗时／token 对照见角色配套的[提示词审查与优化](../source/project/.codex/agents/review-prompt/prompt-review.md)，按共享角色契约所在目录的相对路径读取；角色不可用时由合格执行者按同一契约承接，不另装用户级角色或新增 Skill。原地升级见[安装说明](installation.md#更新与冲突)。
 - **怎样全面审查并回归本仓工作流？** 用户显式调用 [sdd-workflow-review](../.agents/skills/sdd-workflow-review/SKILL.md)，按固定版本的设计与判据，交付版本化覆盖、回归证据、获授权后的修复复验及质量成本报告。
 
 - **本轮改什么、按什么顺序执行？** 查[4+1 角色独立性整改 Plan](plans/role-independence.md)。既有工作见[DevOps 职责与迁移 Plan](plans/devops.md)、[设计变更提醒与任务交接 Plan](plans/workflow-continuation.md)、[专职 Agent 协作 Plan](plans/agent-collaboration.md)和[安装恢复与旧命令退役 Plan](plans/install-recovery.md)。实施任务使用 [Plan 模板](../source/project/.agents/sdd/assets/plan_template.md)。

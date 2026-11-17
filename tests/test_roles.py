@@ -1,4 +1,5 @@
 """Role distribution and installer boundaries, using isolated target projects."""
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -126,6 +127,36 @@ class RoleTests(unittest.TestCase):
         self.assertIn("codex=.codex/config.toml", result.stdout)
         self.assertIn("copilot=.github/copilot-instructions.md", result.stdout)
         self.assertEqual(self.snapshot(), before)
+
+    def test_unmanaged_same_name_copilot_role_is_preserved_before_any_writes(self):
+        role = self.target / ".github/agents/sdd-coder.agent.md"
+        role.parent.mkdir(parents=True)
+        role.write_bytes(b"project-owned instructions\n")
+        before = self.snapshot()
+
+        result = self.install()
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("unmanaged Copilot role collision", result.stderr)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_invalid_utf8_state_is_not_decoded_by_inspect_or_init(self):
+        state = self.target / ".sdd-init-state.json"
+        state.write_bytes(b"\xff")
+        before = self.snapshot()
+
+        inspect = subprocess.run(
+            [sys.executable, "-B", "-X", "utf8", str(self.skill / "scripts/govern.py"),
+             "--root", str(self.target), "inspect"],
+            capture_output=True, text=True, encoding="utf-8")
+
+        self.assertEqual(inspect.returncode, 0, inspect.stderr)
+        self.assertEqual(self.snapshot(), before)
+
+        result = self.install()
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(state.read_bytes())["schema_version"], 1)
 
     def test_missing_or_model_pinned_copilot_adapter_fails_before_changes(self):
         entry = self.skill / "shared/roles/copilot/sdd-coder.agent.md"

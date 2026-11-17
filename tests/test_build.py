@@ -87,6 +87,10 @@ class BuildTests(unittest.TestCase):
         copilot = output / "shared/roles/copilot/review-prompt.agent.md"
         self.assertTrue(contract.is_file())
         self.assertIn("roles/shared/review-prompt.md", role["developer_instructions"])
+        self.assertIn(".agents/sdd-workflow/roles/shared/review-prompt.md", role["developer_instructions"])
+        contract_text = contract.read_text(encoding="utf-8")
+        self.assertIn(".agents/sdd-workflow/roles/shared/review-prompt.md", contract_text)
+        self.assertIn("review-prompt/prompt-review.md", contract_text)
         self.assertNotIn("model:", copilot.read_text(encoding="utf-8"))
         self.assertIn("roles/shared/review-prompt.md", copilot.read_text(encoding="utf-8"))
         manifest = json.loads((output / "build-manifest.json").read_bytes())
