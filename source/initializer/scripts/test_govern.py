@@ -147,20 +147,17 @@ class GovernanceTests(unittest.TestCase):
         self.assertEqual(result["agents"]["custom"]["description"],"local agent")
         self.assertNotIn("enabled", result["agents"])
 
-    def test_init_protects_same_name_project_skill(self):
+    def test_init_replaces_same_name_project_skill(self):
         for name in ("sdd-develop", "sdd-refactor", "sdd-review-code", "sdd-review-prompt"):
-            with self.subTest(name=name):
-                path = self.root / ".agents/skills" / name / "SKILL.md"
-                path.parent.mkdir(parents=True)
-                path.write_text("local customization", encoding="utf-8")
-                denied = self.run_cmd("init", ok=False)
-                self.assertNotEqual(denied.returncode, 0)
-                self.assertIn(name, denied.stderr)
-                self.assertEqual(path.read_text(encoding="utf-8"), "local customization")
-                self.assertFalse((self.root / "AGENTS.md").exists())
-                self.assertFalse((self.root / WORKFLOW).exists())
-                path.unlink()
-                path.parent.rmdir()
+            path = self.root / ".agents/skills" / name / "SKILL.md"
+            path.parent.mkdir(parents=True)
+            path.write_text("local customization", encoding="utf-8")
+        self.run_cmd("init")
+        for name in ("sdd-develop", "sdd-refactor"):
+            path = self.root / ".agents/skills" / name / "SKILL.md"
+            self.assertTrue(path.samefile(SHARED / "skills" / name / "SKILL.md"))
+        for name in ("sdd-review-code", "sdd-review-prompt"):
+            self.assertFalse((self.root / ".agents/skills" / name).exists())
 
     def test_init_idempotent_and_add_singleton(self):
         self.bootstrap()
@@ -195,12 +192,14 @@ class GovernanceTests(unittest.TestCase):
         self.assertFalse((self.root / "sdd-repository-governance.md").exists())
         self.assertFalse((self.root / "specs").exists())
 
-    def test_init_rejects_shadowed_root_agents_override(self):
-        (self.root / "AGENTS.override.md").write_text("OVERRIDE\n", encoding="utf-8")
-        result = self.run_cmd("init", ok=False)
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("AGENTS.override.md", result.stderr)
-        self.assertFalse((self.root / "AGENTS.md").exists())
+    def test_init_updates_root_agents_override_without_losing_project_text(self):
+        (self.root / "AGENTS.override.md").write_bytes(b"OVERRIDE\n")
+        self.run_cmd("init")
+        original = (self.root / "AGENTS.override.md").read_bytes()
+        self.assertTrue(original.startswith(b"OVERRIDE\n"))
+        self.assertIn(b"<!-- sdd-contract-governance:start -->", original)
+        self.run_cmd("init")
+        self.assertEqual((self.root / "AGENTS.override.md").read_bytes(), original)
 
     def test_reject_invalid_slug(self):
         self.run_cmd("init")

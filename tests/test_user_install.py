@@ -308,7 +308,7 @@ class UserInstallTests(unittest.TestCase):
             name.removeprefix("shared/"): digest for name, digest in expected.items() if name.startswith("shared/")
         })
 
-    def test_untracked_files_still_block_upgrade_around_bytecode_caches(self):
+    def test_untracked_files_are_replaced_around_bytecode_caches(self):
         for name in (
             "scripts/__pycache__/notes.txt",
             "scripts/__pycache__/custom.cpython-314.pyc",
@@ -322,12 +322,11 @@ class UserInstallTests(unittest.TestCase):
                 extra = target / name
                 extra.parent.mkdir(parents=True, exist_ok=True)
                 extra.write_bytes(b"user file")
-                before = snapshot(target)
-                with self.assertRaisesRegex(ValueError, "Modified or untracked files"):
-                    install(self.resources, skills, agents_dir)
-                self.assertEqual(snapshot(target), before)
+                self.assertEqual(install(self.resources, skills, agents_dir), "Updated")
+                self.assertFalse(extra.exists())
+                self.assertEqual(install(self.resources, skills, agents_dir), "Already current")
 
-    def test_custom_missing_extra_and_unmanaged_files_block_without_writes(self):
+    def test_custom_missing_extra_and_unmanaged_files_are_replaced(self):
         for kind in ("custom", "missing", "extra", "unmanaged"):
             with self.subTest(kind=kind):
                 skills = self.root / kind
@@ -342,12 +341,104 @@ class UserInstallTests(unittest.TestCase):
                     (target / "notes.txt").write_text("personal")
                 else:
                     (target / "build-manifest.json").unlink()
-                before = snapshot(target)
-                with self.assertRaises(ValueError):
-                    install(self.resources, skills, agents_dir)
-                self.assertEqual(snapshot(target), before)
+                self.assertEqual(install(self.resources, skills, agents_dir), "Updated")
+                self.assertEqual(verified(target, shared=shared_directory(skills)), verified(self.resources))
+                self.assertEqual(install(self.resources, skills, agents_dir), "Already current")
                 self.assertEqual((skills / USER_LOCK).read_bytes(), LOCK_BYTES)
                 self.assertFalse(recovery_directory(skills).exists())
+
+    def test_unmanaged_file_and_shared_directory_are_replaced(self):
+        self.skills.mkdir(parents=True)
+        target = self.skills / "sdd-init"
+        target.write_bytes(b"unmanaged file")
+        shared = shared_directory(self.skills)
+        shared.mkdir()
+        (shared / "old.txt").write_bytes(b"unmanaged shared content")
+        self.assertEqual(install(self.resources, self.skills), "Updated")
+        self.assertEqual(verified(target, shared=shared), verified(self.resources))
+        self.assertFalse((shared / "old.txt").exists())
+
+    def test_unmanaged_installation_link_is_replaced_without_touching_target(self):
+        self.skills.mkdir(parents=True)
+        outside = self.root / "outside-install"
+        outside.mkdir()
+        (outside / "keep.txt").write_bytes(b"outside")
+        spec = importlib.util.spec_from_file_location("force_root_link", self.resources / "scripts/project_install.py")
+        transaction = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(transaction)
+        target = self.skills / "sdd-init"
+        transaction.create_workflow_link(target, outside)
+        self.assertEqual(install(self.resources, self.skills), "Updated")
+        self.assertFalse(transaction.linked(target))
+        self.assertEqual((outside / "keep.txt").read_bytes(), b"outside")
+
+    def test_failed_force_publish_restores_modified_installation(self):
+        install(self.resources, self.skills)
+        target = self.skills / "sdd-init"
+        shared = shared_directory(self.skills)
+        (target / "SKILL.md").write_bytes(b"custom installation")
+        (shared / "extra.txt").write_bytes(b"extra shared content")
+        before_target = snapshot(target)
+        before_shared = snapshot(shared, exclude_manifest=False)
+        rename = Path.rename
+        def fail_stage(path, destination):
+            if path.name == "stage":
+                raise OSError("simulated force publication failure")
+            return rename(path, destination)
+        with patch.object(Path, "rename", fail_stage):
+            with self.assertRaisesRegex(OSError, "simulated force publication failure"):
+                install(self.resources, self.skills)
+        self.assertEqual(snapshot(target), before_target)
+        self.assertEqual(snapshot(shared, exclude_manifest=False), before_shared)
+        self.assertFalse(recovery_directory(self.skills).exists())
+
+    def test_force_inspect_is_read_only_for_modified_installation(self):
+        install(self.resources, self.skills)
+        target = self.skills / "sdd-init"
+        (target / "SKILL.md").write_bytes(b"custom installation")
+        before = snapshot(target)
+        report = io.StringIO()
+        with redirect_stdout(report):
+            inspect(self.skills, self.resources)
+        self.assertIn("Existing installation will be replaced", report.getvalue())
+        self.assertEqual(snapshot(target), before)
+
+    def test_forced_install_does_not_delete_linked_target_contents(self):
+        install(self.resources, self.skills)
+        target = self.skills / "sdd-init"
+        outside = self.root / "outside"
+        outside.mkdir()
+        (outside / "keep.txt").write_bytes(b"outside")
+        spec = importlib.util.spec_from_file_location("force_link_fixture", target / "scripts/project_install.py")
+        transaction = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(transaction)
+        transaction.create_workflow_link(target / "extra-link", outside)
+        self.assertEqual(install(self.resources, self.skills), "Updated")
+        self.assertEqual((outside / "keep.txt").read_bytes(), b"outside")
+
+    def test_interrupted_force_cleanup_resumes_and_preserves_external_edits(self):
+        install(self.resources, self.skills)
+        target = self.skills / "sdd-init"
+        (target / "extra.txt").write_bytes(b"custom content")
+        original = shutil.rmtree
+        def interrupt(path, *args, **kwargs):
+            path = Path(path)
+            if path.name == "old-skill":
+                (path / "extra.txt").unlink()
+                raise OSError("interrupted cleanup")
+            return original(path, *args, **kwargs)
+        with patch.object(installer.shutil, "rmtree", side_effect=interrupt):
+            with self.assertRaisesRegex(ValueError, "interrupted cleanup"):
+                install(self.resources, self.skills)
+        backup = recovery_directory(self.skills) / "old-skill"
+        external = backup / "external.txt"
+        external.write_bytes(b"external edit")
+        with self.assertRaisesRegex(ValueError, "External change"):
+            recover_installation(self.skills)
+        self.assertEqual(external.read_bytes(), b"external edit")
+        external.unlink()
+        self.assertTrue(recover_installation(self.skills))
+        self.assertEqual(install(self.resources, self.skills), "Already current")
 
     def test_corrupt_distribution_does_not_create_destination(self):
         (self.resources / "SKILL.md").write_text("corrupt")
@@ -478,6 +569,46 @@ class UserInstallTests(unittest.TestCase):
         self.assertEqual(len(roles), 6)
         self.assertEqual(roles["review-prompt"]["config_file"], "../.agents/sdd-workflow/agents/review-prompt.toml")
 
+    def test_force_upgrade_user_and_project_conflicts_end_to_end(self):
+        self.install_legacy_role()
+        (self.skills / "sdd-init/SKILL.md").write_bytes(b"custom user installation")
+        project = self.root / "force-project"
+        project.mkdir()
+        agents = project / "AGENTS.md"
+        agents.write_text("# Project text\n" + legacy_fragment("communication") + "\n"
+                          + legacy_fragment("navigation") + "\n# Project ending\n", encoding="utf-8")
+        (project / ".sdd-init-state.json").write_text(json.dumps({
+            "schema_version": 1, "shared_version": "0" * 64,
+            "agents_blocks": {"agent-communication": "0" * 64,
+                              "sdd-contract-governance": "0" * 64},
+        }), encoding="utf-8")
+        skill = project / ".agents/skills/sdd-develop/SKILL.md"
+        skill.parent.mkdir(parents=True)
+        skill.write_bytes(b"custom project skill")
+        role = project / ".codex/agents/sdd-coder.toml"
+        role.parent.mkdir(parents=True)
+        role.write_bytes(b'name = "sdd-coder"\n')
+        config = project / ".codex/config.toml"
+        config.write_bytes(b'model = "keep"\n[agents.sdd-coder]\nconfig_file = "custom.toml"\n')
+        self.assertEqual(install(self.resources, self.skills), "Updated")
+        self.assertFalse(self.role.exists())
+        govern = self.skills / "sdd-init/scripts/govern.py"
+        command = [sys.executable, "-B", "-X", "utf8", str(govern), "--root", str(project)]
+        result = subprocess.run([*command, "init"], capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(skill.samefile(shared_directory(self.skills) / "skills/sdd-develop/SKILL.md"))
+        self.assertFalse(role.exists())
+        self.assertIn("# Project text", agents.read_text(encoding="utf-8"))
+        self.assertIn("# Project ending", agents.read_text(encoding="utf-8"))
+        self.assertNotIn("agent-communication", agents.read_text(encoding="utf-8"))
+        self.assertEqual(tomllib.loads(config.read_text(encoding="utf-8"))["model"], "keep")
+        before = {p.relative_to(project): p.read_bytes() for p in project_files(project)}
+        result = subprocess.run([*command, "inspect"], capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Project changes on init: none", result.stdout)
+        subprocess.run([*command, "init"], check=True, capture_output=True)
+        self.assertEqual(before, {p.relative_to(project): p.read_bytes() for p in project_files(project)})
+
     def test_failed_publish_rolls_back(self):
         install(self.resources, self.skills)
         before = snapshot(self.skills / "sdd-init")
@@ -542,6 +673,30 @@ install(Path(sys.argv[2]), Path(sys.argv[3]))
         self.assertEqual(verified(target, shared=shared), before)
         self.assertEqual(install(self.resources, self.skills), "Updated")
         self.assertEqual(install(self.resources, self.skills), "Already current")
+
+    def test_interrupted_force_upgrade_restores_modified_installation(self):
+        install(self.resources, self.skills)
+        target = self.skills / "sdd-init"
+        shared = shared_directory(self.skills)
+        (target / "SKILL.md").write_bytes(b"custom installation")
+        before_target, before_shared = snapshot(target), snapshot(shared, exclude_manifest=False)
+        self.crash_install("path.name == 'shared' and path.parent.name == 'stage'")
+        self.assertTrue(recover_installation(self.skills))
+        self.assertEqual(snapshot(target), before_target)
+        self.assertEqual(snapshot(shared, exclude_manifest=False), before_shared)
+        self.assertEqual(install(self.resources, self.skills), "Updated")
+
+    def test_interrupted_force_upgrade_restores_modified_legacy_role(self):
+        self.install_legacy_role()
+        target = self.skills / "sdd-init"
+        (target / "SKILL.md").write_bytes(b"custom skill")
+        self.role.write_bytes(b"custom role")
+        self.crash_install("path.name == 'shared' and path.parent.name == 'stage'")
+        self.assertTrue(recover_installation(self.skills))
+        self.assertEqual((target / "SKILL.md").read_bytes(), b"custom skill")
+        self.assertEqual(self.role.read_bytes(), b"custom role")
+        self.assertEqual(install(self.resources, self.skills), "Updated")
+        self.assertFalse(self.role.exists())
 
     def test_interrupted_legacy_role_retirement_rolls_back_and_can_retry(self):
         before = self.install_legacy_role()

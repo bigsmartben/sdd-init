@@ -9,7 +9,8 @@ import re
 import shutil
 
 from .release import (
-    MANIFEST, USER_ROLE, USER_ROLE_ASSET, check_files, digest, linked, manifest_data,
+    MANIFEST, USER_ROLE, USER_ROLE_ASSET, check_files, digest, entry_exists, entry_inventory, entry_snapshot,
+    inventory_digest, linked, manifest_data,
     recovery_directory, shared_directory,
     shared_files, snapshot, user_lock, verified, verify_distribution,
 )
@@ -167,8 +168,8 @@ def load(target: Path, folder: Path, role: Path | None = None) -> dict | None:
         raise ValueError(f"Invalid recovery directory: {folder}")
     names = {"stage", "old-skill", "old-shared", "new-skill", "new-shared", "journal.json", "journal.tmp"}
     for path in folder.iterdir():
-        if (path.name not in names or linked(path)
-                or (path.name.startswith("journal.") and not path.is_file())):
+        if (path.name not in names or (path.name.startswith("journal.")
+                and (linked(path) or not path.is_file()))):
             raise ValueError(f"Unexpected recovery contents: {path}")
     journal = folder / "journal.json"
     if not journal.exists():
@@ -176,6 +177,36 @@ def load(target: Path, folder: Path, role: Path | None = None) -> dict | None:
             raise ValueError(f"Missing recovery journal: {journal}")
         return None
     record = json.loads(journal.read_text(encoding="utf-8"))
+    if isinstance(record, dict) and record.get("schema_version") == 5:
+        keys = {"schema_version", "target", "state", "role", "before_parts", "after_parts",
+                "before_inventories", "after_inventories"}
+        if (set(record) != keys or record["target"] != str(target)
+                or record["state"] not in {"staging", "prepared", "committed", "rolled-back"}
+                or record["role"] != (str(role) if role is not None else None)):
+            raise ValueError(f"Invalid force-install recovery journal: {journal}")
+        names = {"skill", "shared", "role"} if role is not None else {"skill", "shared"}
+        for field in ("before_parts", "after_parts"):
+            values = record[field]
+            if field == "after_parts" and values is None and record["state"] == "staging":
+                continue
+            if (not isinstance(values, dict) or set(values) != names
+                    or not all(value is None or (isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value))
+                               for value in values.values())):
+                raise ValueError(f"Invalid force-install snapshot: {journal}")
+        for prefix in ("before", "after"):
+            inventories = record[f"{prefix}_inventories"]
+            if prefix == "after" and inventories is None and record["state"] == "staging":
+                continue
+            if (not isinstance(inventories, dict) or set(inventories) != names
+                    or any(value is not None and not isinstance(value, dict) for value in inventories.values())
+                    or any(inventory_digest(value) != record[f"{prefix}_parts"][name]
+                           for name, value in inventories.items())):
+                raise ValueError(f"Invalid force-install inventory: {journal}")
+        if record["state"] == "staging" and any(path.name.startswith(("old-", "new-")) for path in folder.iterdir()):
+            raise ValueError(f"Unexpected publication during staging: {folder}")
+        return record
+    if any(linked(path) for path in folder.iterdir()):
+        raise ValueError(f"Unexpected linked recovery contents: {folder}")
     keys = {"schema_version", "target", "state", "before", "after"}
     schema = record.get("schema_version") if isinstance(record, dict) else None
     if schema in (2, 3, 4):
@@ -250,6 +281,92 @@ def clean_role(folder: Path):
         folder.rmdir()
 
 
+def clean_forced_install(folder: Path, record: dict):
+    if linked(folder) or folder.resolve() != folder.parent.resolve() / folder.name:
+        raise ValueError(f"Unsafe recovery directory: {folder}")
+    names = {"stage", "old-skill", "old-shared", "new-skill", "new-shared", "journal.json", "journal.tmp"}
+    for path in folder.iterdir():
+        if path.name not in names:
+            raise ValueError(f"Unexpected recovery contents: {path}")
+    for name in ("stage", "old-skill", "old-shared", "new-skill", "new-shared"):
+        path = folder / name
+        if name != "stage" and entry_exists(path):
+            prefix, kind = name.split("-", 1)
+            inventories = record["before_inventories" if prefix == "old" else "after_inventories"]
+            expected = inventories[kind] if inventories is not None else None
+            actual = entry_inventory(path)
+            if (expected is None or actual is None
+                    or any(expected.get(key) != value for key, value in actual.items())):
+                raise ValueError(f"External change to installation backup: {path}")
+        if linked(path):
+            if path.is_symlink():
+                path.unlink()
+            else:
+                path.rmdir()
+        elif path.is_dir():
+            shutil.rmtree(path)
+        elif path.exists():
+            path.unlink()
+    (folder / "journal.tmp").unlink(missing_ok=True)
+    (folder / "journal.json").unlink(missing_ok=True)
+    folder.rmdir()
+
+
+def recover_forced_install(target: Path, shared: Path, folder: Path, role: Path | None, record: dict):
+    role_folder = role_recovery_directory(role, target) if role is not None else None
+    if role_folder is not None:
+        role_recovery_files(role_folder, staging=record["state"] == "staging")
+    paths = {"skill": (target, folder), "shared": (shared, folder)}
+    if role is not None:
+        paths["role"] = (role, role_folder)
+    before, after = record["before_parts"], record["after_parts"]
+    if record["state"] == "prepared":
+        moves = []
+        for kind, (path, scratch) in paths.items():
+            backup = scratch / f"old-{kind}"
+            holding = scratch / f"new-{kind}"
+            current, saved = entry_snapshot(path), entry_snapshot(backup)
+            held = entry_snapshot(holding)
+            if held is not None and held != after[kind]:
+                raise ValueError(f"External change to recovered installation: {holding}")
+            if saved is not None:
+                if saved != before[kind] or (current is not None and current != after[kind]):
+                    raise ValueError(f"External change to installation target: {path}")
+                if current is not None:
+                    if held is not None:
+                        raise ValueError(f"Unexpected recovery copy: {holding}")
+                    moves.append((path, holding, after[kind]))
+                moves.append((backup, path, before[kind]))
+            elif before[kind] is None:
+                if current is not None:
+                    if current != after[kind] or held is not None:
+                        raise ValueError(f"External change to installation target: {path}")
+                    moves.append((path, holding, after[kind]))
+            elif current != before[kind]:
+                raise ValueError(f"Original installation is missing or changed: {path}")
+        for source, destination, expected in moves:
+            if entry_snapshot(source) != expected or entry_exists(destination):
+                raise ValueError(f"External change during installation recovery: {source}")
+            source.rename(destination)
+        if any(entry_snapshot(path) != before[kind] for kind, (path, _) in paths.items()):
+            raise ValueError("Force-install rollback did not restore the original entries")
+        record["state"] = "rolled-back"
+        save(folder, record)
+    elif record["state"] in {"committed", "rolled-back"}:
+        expected = after if record["state"] == "committed" else before
+        if any(entry_snapshot(path) != expected[kind] for kind, (path, _) in paths.items()):
+            raise ValueError(f"External change after {record['state']}")
+        for kind, (_, scratch) in paths.items():
+            backup = entry_inventory(scratch / f"old-{kind}")
+            expected_backup = record["before_inventories"][kind]
+            if backup is not None and (expected_backup is None
+                    or any(expected_backup.get(key) != value for key, value in backup.items())):
+                raise ValueError(f"External change to installation backup: {scratch / f'old-{kind}'}")
+    if role_folder is not None:
+        clean_role(role_folder)
+    clean_forced_install(folder, record)
+
+
 def role_rollback_paths(role: Path, scratch: Path, before: dict | None, after: dict):
     """Identify the published link to remove and the backup to restore."""
     staged, backup = scratch / "stage", scratch / "old-role"
@@ -305,6 +422,9 @@ def recover(target: Path, shared: Path, folder: Path, role: Path | None = None) 
         return False
     try:
         record = load(target, folder, role)
+        if record is not None and record["schema_version"] == 5:
+            recover_forced_install(target, shared, folder, role, record)
+            return True
         if not record or record["schema_version"] == 1:
             role = None
         if role is not None:
@@ -403,15 +523,82 @@ def recover_installation(skills_dir: Path, agents_dir: Path | None = None) -> bo
             return recover(target, shared, folder, role)
 
 
+def force_install(resources: Path, target: Path, shared: Path, folder: Path,
+                  role: Path | None, expected: dict[str, str]) -> str:
+    paths = {"shared": (shared, folder), "skill": (target, folder)}
+    if role is not None:
+        check_pending_role_recovery(role)
+        role_snapshot(role)
+        paths["role"] = (role, role_recovery_directory(role, target))
+    before_inventories = {name: entry_inventory(path) for name, (path, _) in paths.items()}
+    before = {name: inventory_digest(inventory) for name, inventory in before_inventories.items()}
+    record = {"schema_version": 5, "target": str(target), "state": "staging",
+              "role": str(role) if role is not None else None,
+              "before_parts": before, "after_parts": None,
+              "before_inventories": before_inventories, "after_inventories": None}
+    folder.mkdir(mode=0o700)
+    try:
+        save(folder, record)
+        staged = folder / "stage"
+        shutil.copytree(resources, staged, symlinks=True)
+        if verified(staged) != expected:
+            raise ValueError(f"Distribution changed after preflight: {resources}")
+        if any(entry_snapshot(path) != before[name] for name, (path, _) in paths.items()):
+            raise ValueError("Installation target changed after preflight")
+        after_inventories = {"shared": entry_inventory(staged / "shared"),
+                             "skill": entry_inventory(staged, exclude_shared=True)}
+        if role is not None:
+            after_inventories["role"] = None
+            if before["role"] is not None:
+                paths["role"][1].mkdir(mode=0o700)
+        after = {name: inventory_digest(inventory) for name, inventory in after_inventories.items()}
+        record["after_parts"] = after
+        record["after_inventories"] = after_inventories
+        record["state"] = "prepared"
+        save(folder, record)
+        for name, (path, scratch) in paths.items():
+            if entry_snapshot(path) != before[name]:
+                raise ValueError(f"Installation target changed during publication: {path}")
+            if before[name] is not None:
+                path.rename(scratch / f"old-{name}")
+        for name, source in (("shared", staged / "shared"), ("skill", staged)):
+            destination = paths[name][0]
+            if entry_exists(destination):
+                raise ValueError(f"External change to installation target: {destination}")
+            source.rename(destination)
+        if any(entry_snapshot(path) != after[name] for name, (path, _) in paths.items()):
+            raise ValueError("Unexpected installation after forced publication")
+        record["state"] = "committed"
+        save(folder, record)
+    except BaseException:
+        recover(target, shared, folder, role)
+        raise
+    recover(target, shared, folder, role)
+    return "Updated"
+
+
 def install(resources: Path, skills_dir: Path, agents_dir: Path | None = None) -> str:
     expected = verify_distribution(resources)
     target, shared, folder = locations(skills_dir)
-    role = legacy_role(target, shared, folder, agents_dir)
+    if (entry_exists(target) and not entry_exists(folder)):
+        try:
+            manifest_data(target)
+        except ValueError as error:
+            print(f"Existing installation manifest will be replaced; legacy role path unavailable: {error}")
+            role = None
+        else:
+            role = legacy_role(target, shared, folder, agents_dir)
+    else:
+        role = legacy_role(target, shared, folder, agents_dir)
     target.parent.mkdir(parents=True, exist_ok=True)
     lock = user_lock(role.parent, name=ROLE_LOCK) if role is not None and role.parent.is_dir() else nullcontext()
     with user_lock(target.parent), lock:
         recover(target, shared, folder, role)
-        before = verified_installation(target, shared, role, verify_managed_role=False)
+        try:
+            before = verified_installation(target, shared, role, verify_managed_role=False)
+        except ValueError as error:
+            print(f"Existing installation will be replaced: {error}")
+            return force_install(resources, target, shared, folder, role, expected)
         if before == expected:
             return "Already current"
         if not has_part(before, "role"):

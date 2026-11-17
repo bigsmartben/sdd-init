@@ -3,9 +3,11 @@ from __future__ import annotations
 
 import base64
 from contextlib import contextmanager
+import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import stat
 import subprocess
 
@@ -19,7 +21,7 @@ SKILL_LINKS = tuple(f".agents/skills/{name}" for name in PROJECT_SKILLS)
 INSTALL_LINKS = (WORKFLOW_LINK, *SKILL_LINKS, LEGACY_WORKFLOW_LINK)
 LOCK = ".sdd-init.lock"
 STATE = ".sdd-init-state.json"
-FILES = ("AGENTS.md", ".codex/config.toml", ".gitignore", STATE)
+FILES = ("AGENTS.md", ".codex/config.toml", ".gitignore", STATE, "AGENTS.override.md")
 
 
 def linked(path: Path) -> bool:
@@ -48,7 +50,10 @@ def safe_path(root: Path, relative: str) -> Path:
 
 
 def link_path(root: Path, relative: str) -> Path:
-    if relative not in INSTALL_LINKS:
+    parts = Path(relative).parts
+    is_skill = len(parts) >= 3 and parts[:2] == (".agents", "skills")
+    is_role = len(parts) == 3 and parts[:2] == (".codex", "agents") and Path(parts[2]).suffix == ".toml"
+    if relative not in INSTALL_LINKS and not (is_skill or is_role):
         raise ValueError(f"Invalid installation link: {relative}")
     relative = Path(relative)
     parent = safe_path(root, relative.parent.as_posix())
@@ -101,12 +106,44 @@ def publish_workflow_link(stage: Path, path: Path):
         stage.unlink()
 
 
-def link_snapshot(path: Path) -> dict | None:
-    target = workflow_target(path)
-    if target is None:
+def link_snapshot(path: Path, *, logical_parent: Path | None = None) -> dict | None:
+    try:
+        info = path.lstat()
+    except FileNotFoundError:
         return None
-    info = path.lstat()
+    if not linked(path):
+        inventory = entry_inventory(path)
+        return {"target": None, "device": info.st_dev, "inode": info.st_ino,
+                "content": inventory_digest(inventory), "inventory": inventory}
+    if logical_parent is None:
+        target = workflow_target(path)
+    else:
+        target = (logical_parent / os.readlink(path).removeprefix("\\\\?\\")).resolve()
     return {"target": str(target), "device": info.st_dev, "inode": info.st_ino}
+
+
+def entry_inventory(path: Path) -> dict:
+    entries, pending = {}, [(path, ".")]
+    while pending:
+        current, relative = pending.pop()
+        info = current.lstat()
+        mode = stat.S_IMODE(info.st_mode)
+        if linked(current):
+            entries[relative] = ["link", mode, os.readlink(current)]
+        elif current.is_dir():
+            entries[relative] = ["directory", mode]
+            for child in current.iterdir():
+                name = child.name if relative == "." else f"{relative}/{child.name}"
+                pending.append((child, name))
+        elif current.is_file():
+            entries[relative] = ["file", mode, hashlib.sha256(current.read_bytes()).hexdigest()]
+        else:
+            raise ValueError(f"Unsupported installation entry: {current}")
+    return entries
+
+
+def inventory_digest(entries: dict) -> str:
+    return hashlib.sha256(json.dumps(entries, sort_keys=True, ensure_ascii=True).encode("utf-8")).hexdigest()
 
 
 def remove_workflow_link(path: Path):
@@ -129,11 +166,20 @@ def plan_links(root: Path, shared: Path) -> list[tuple[Path, dict | None, Path |
     for relative, target in targets.items():
         path = link_path(root, relative)
         before = link_snapshot(path)
-        expected = shared if relative == LEGACY_WORKFLOW_LINK else target
-        if before is not None and Path(before["target"]) != expected:
-            raise ValueError(f"SDD link points to another directory; preserve link: {path} -> {before['target']}")
         result.append((path, before, target))
     return result
+
+
+def link_is_current(before: dict | None, target: Path | None) -> bool:
+    if target is None:
+        return before is None
+    return before is not None and before["target"] == str(target.resolve())
+
+
+def should_displace(entry: dict) -> bool:
+    before = entry["before"]
+    return before is not None and (before["target"] is None or entry["target"] is not None
+                                   or entry["path"] != LEGACY_WORKFLOW_LINK)
 
 
 @contextmanager
@@ -202,14 +248,35 @@ def save(folder: Path, journal: dict):
                  json.dumps(journal, ensure_ascii=True).encode("utf-8"), 0o600)
 
 
-def clean(folder: Path):
+def clean(folder: Path, journal: dict | None = None):
     # Delete only our known regular files, never recursively delete this path.
     for name in ("stage", "journal.json"):
         path = folder / name
         if linked(path) or (path.exists() and not path.is_file()):
             raise ValueError(f"Unexpected recovery file: {path}")
-    if any(p.name not in {"stage", "journal.json"} for p in folder.iterdir()):
-        raise ValueError(f"Unexpected recovery contents: {folder}")
+    for path in folder.iterdir():
+        if path.name in {"stage", "journal.json"}:
+            continue
+        if (journal is None or not path.name.startswith("old-") or not path.name[4:].isdigit()
+                or int(path.name[4:]) >= len(journal.get("links", []))):
+            raise ValueError(f"Unexpected recovery contents: {path}")
+        entry = journal["links"][int(path.name[4:])]
+        before = entry["before"]
+        original_parent = (Path(journal["root"]) / entry["path"]).parent
+        actual = link_snapshot(path, logical_parent=original_parent)
+        if before is None or actual is None:
+            raise ValueError(f"External modification; preserve installation backup: {path}")
+        if before["target"] is not None:
+            if actual != before:
+                raise ValueError(f"External modification; preserve installation backup: {path}")
+            remove_workflow_link(path)
+        elif (actual["target"] is not None or any(actual[key] != before[key] for key in ("device", "inode"))
+              or any(before["inventory"].get(name) != value for name, value in actual["inventory"].items())):
+            raise ValueError(f"External modification; preserve installation backup: {path}")
+        elif path.is_dir():
+            shutil.rmtree(path)
+        else:
+            path.unlink()
     (folder / "stage").unlink(missing_ok=True)
     (folder / "journal.json").unlink(missing_ok=True)
     folder.rmdir()
@@ -276,13 +343,26 @@ def validate_external_target(root: Path, raw: str) -> Path:
     return target
 
 
-def validate_snapshot(root: Path, snapshot: dict | None):
+def validate_snapshot(root: Path, snapshot: dict | None, *, allow_project_target: bool = False):
     if snapshot is None:
         return
-    if (not isinstance(snapshot, dict) or set(snapshot) != {"target", "device", "inode"}
+    if (not isinstance(snapshot, dict) or set(snapshot) not in ({"target", "device", "inode"},
+                                                                {"target", "device", "inode", "content", "inventory"})
             or any(type(snapshot[key]) is not int or snapshot[key] < 0 for key in ("device", "inode"))):
         raise ValueError("Invalid recovery link identity")
-    validate_external_target(root, snapshot["target"])
+    if snapshot["target"] is None:
+        if (not allow_project_target or not isinstance(snapshot.get("inventory"), dict)
+                or not isinstance(snapshot.get("content"), str)
+                or snapshot["content"] != inventory_digest(snapshot["inventory"])):
+            raise ValueError("Invalid recovery entry identity")
+        return
+    if "content" in snapshot:
+        raise ValueError("Invalid recovery link identity")
+    if allow_project_target:
+        if not isinstance(snapshot["target"], str) or not Path(snapshot["target"]).is_absolute():
+            raise ValueError("Invalid recovery link target")
+    else:
+        validate_external_target(root, snapshot["target"])
 
 
 def validate_links(root: Path, journal: dict, seen: set):
@@ -295,18 +375,19 @@ def validate_links(root: Path, journal: dict, seen: set):
             raise ValueError(f"Duplicate recovery link: {path}")
         seen.add(path)
         for key in ("before", "after", "restored"):
-            validate_snapshot(root, entry[key])
+            validate_snapshot(root, entry[key], allow_project_target=key != "after")
         target = entry["target"]
         if target is not None:
             validate_external_target(root, target)
-            if entry["before"] is not None or entry["restored"] is not None:
-                raise ValueError("Recovery cannot replace existing links")
             if entry["after"] is not None and entry["after"]["target"] != target:
                 raise ValueError("Invalid staged link target")
-        elif (entry["path"] != LEGACY_WORKFLOW_LINK or entry["before"] is None
+            if entry["restored"] is not None and (entry["before"] is None
+                    or entry["restored"]["target"] != entry["before"]["target"]):
+                raise ValueError("Invalid restored link target")
+        elif (entry["before"] is None
               or entry["after"] is not None or (entry["restored"] is not None
                   and entry["restored"]["target"] != entry["before"]["target"])):
-            raise ValueError("Invalid legacy link removal")
+            raise ValueError("Invalid installation entry removal")
         if index >= started and (entry["after"] is not None or entry["restored"] is not None):
             raise ValueError("Invalid recovery link progress")
         if journal["state"] == "committed" and target is not None and entry["after"] is None:
@@ -318,16 +399,26 @@ def staged_link(root: Path, index: int) -> Path:
     return safe_path(root, RECOVERY) / f"link-{index}"
 
 
+def displaced_entry(root: Path, index: int) -> Path:
+    return safe_path(root, RECOVERY) / f"old-{index}"
+
+
 def check_recovery_link(root: Path, index: int, entry: dict):
     path = link_path(root, entry["path"])
     if link_snapshot(path) not in (entry["before"], entry["after"], entry["restored"]):
         raise ValueError(f"External modification; preserve link: {path}")
     stage = staged_link(root, index)
+    backup = displaced_entry(root, index)
+    saved = link_snapshot(backup, logical_parent=path.parent)
+    if saved is not None and (not should_displace(entry) or saved != entry["before"]):
+        raise ValueError(f"External modification; preserve installation backup: {backup}")
     snapshot = link_snapshot(stage)
     if snapshot is not None:
-        desired = entry["target"] or entry["before"]["target"]
-        recorded = entry["after"] if entry["target"] else entry["restored"]
-        if snapshot["target"] != desired or (recorded is not None and snapshot != recorded):
+        candidates = [(entry["target"], entry["after"])] if entry["target"] else []
+        if entry["before"] is not None and entry["before"]["target"] is not None:
+            candidates.append((entry["before"]["target"], entry["restored"]))
+        if not any(snapshot["target"] == target and (recorded is None or snapshot == recorded)
+                   for target, recorded in candidates):
             raise ValueError(f"External modification; preserve staged link: {stage}")
 
 
@@ -345,7 +436,24 @@ def restore_links(root: Path, folder: Path, journal: dict):
         if entry["before"] is None:
             if current is not None:
                 remove_workflow_link(path)
-        elif current is None:
+        elif should_displace(entry):
+            backup = displaced_entry(root, index)
+            if current != entry["before"]:
+                if link_snapshot(backup, logical_parent=path.parent) != entry["before"]:
+                    raise ValueError(f"Missing or modified installation backup: {backup}")
+                if current is not None:
+                    remove_workflow_link(path)
+                if link_snapshot(path) is not None:
+                    raise ValueError(f"External modification; preserve entry: {path}")
+                backup.rename(path)
+            elif link_snapshot(backup, logical_parent=path.parent) is not None:
+                raise ValueError(f"Unexpected duplicate installation backup: {backup}")
+        elif current != entry["before"]:
+            if current is not None:
+                remove_workflow_link(path)
+            staged = link_snapshot(stage)
+            if staged is not None and staged["target"] != entry["before"]["target"]:
+                remove_workflow_link(stage)
             if link_snapshot(stage) is None:
                 create_workflow_link(stage, Path(entry["before"]["target"]))
             entry["restored"] = link_snapshot(stage)
@@ -366,7 +474,12 @@ def recover(root: Path):
             return False
         journal = load(root, folder)
         if journal is None or journal["state"] == "committed":
-            clean(folder)
+            if journal is not None and journal["version"] == 3:
+                for entry in journal["links"]:
+                    path = link_path(root, entry["path"])
+                    if link_snapshot(path) != entry["after"]:
+                        raise ValueError(f"External modification; preserve link: {path}")
+            clean(folder, journal)
             return True
         entries = journal["files"][:journal.get("started", len(journal["files"]))]
         link_started = journal.get("workflow_target") is not None and journal.get("link_started", True)
@@ -449,7 +562,7 @@ def apply(root: Path, files: list[tuple[Path, bytes, bytes | None]], *,
         if link_snapshot(path) != before:
             raise ValueError(f"Link changed after preflight; preserve link: {path}")
         desired = str(target.resolve()) if target is not None else None
-        if (before["target"] if before else None) == desired:
+        if link_is_current(before, target):
             continue
         link_entries.append({"path": relative, "before": before, "target": desired,
                              "after": None, "restored": None})
@@ -496,11 +609,25 @@ def apply(root: Path, files: list[tuple[Path, bytes, bytes | None]], *,
                 path.parent.mkdir(parents=True, exist_ok=True)
                 if link_snapshot(path) != entry["before"]:
                     raise ValueError(f"Link changed during installation: {path}")
+                if entry["before"] is not None:
+                    if should_displace(entry):
+                        backup = displaced_entry(root, index)
+                        if link_snapshot(backup) is not None:
+                            raise ValueError(f"Unexpected installation backup: {backup}")
+                        path.rename(backup)
+                    else:
+                        remove_workflow_link(path)
                 publish_workflow_link(stage, path)
             else:
                 if link_snapshot(path) != entry["before"]:
                     raise ValueError(f"Link changed during installation: {path}")
-                remove_workflow_link(path)
+                if should_displace(entry):
+                    backup = displaced_entry(root, index)
+                    if link_snapshot(backup) is not None:
+                        raise ValueError(f"Unexpected installation backup: {backup}")
+                    path.rename(backup)
+                else:
+                    remove_workflow_link(path)
         if verify:
             verify()
         # Detect replacement even by a link to the same target, before commit.
@@ -516,4 +643,4 @@ def apply(root: Path, files: list[tuple[Path, bytes, bytes | None]], *,
         # recovery. BaseException also handles an interactive cancellation.
         recover(root)
         raise
-    clean(folder)
+    clean(folder, journal)

@@ -63,7 +63,7 @@ class RoleTests(unittest.TestCase):
         self.assertEqual(self.install().returncode, 0)
         self.assertEqual(before, self.snapshot())
 
-    def test_same_name_role_conflicts_and_unrelated_roles_survive(self):
+    def test_same_name_role_is_replaced_and_unrelated_roles_survive(self):
         role = self.target / ".codex/agents/sdd-coder.toml"
         role.parent.mkdir(parents=True)
         role.write_bytes(b'name = "sdd-coder"\nmodel = "my-role-model"\n')
@@ -72,34 +72,31 @@ class RoleTests(unittest.TestCase):
         config.write_bytes(original)
         custom = role.with_name("user-role.toml")
         custom.write_bytes(b'name = "user-role"\n')
-        before = self.snapshot()
         result = self.install()
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("sdd-coder.toml", result.stderr)
-        self.assertEqual(before, self.snapshot())
-        role.rename(self.folder / "preserved-role.toml")
-        self.assertEqual(self.install().returncode, 0)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(role.exists())
         self.assertTrue(config.read_bytes().startswith(original))
-        self.assertEqual(custom.read_bytes(), before[custom.relative_to(self.target)])
+        self.assertEqual(custom.read_bytes(), b'name = "user-role"\n')
 
-    def test_unmanaged_role_conflicts_and_only_managed_references_can_upgrade(self):
+    def test_same_name_role_configuration_is_overwritten(self):
         config = self.target / ".codex/config.toml"
         config.parent.mkdir()
-        original = b'[agents.sdd-coder]\nconfig_file = "local.toml"\n'
+        original = (b'model = "main-model"\n[agents.other]\nconfig_file = "other.toml"\n'
+                    b'[agents.sdd-coder]\nconfig_file = "local.toml"\n')
         config.write_bytes(original)
-        denied = self.install()
-        self.assertNotEqual(denied.returncode, 0)
-        self.assertEqual(config.read_bytes(), original)
-        self.assertFalse((self.target / WORKFLOW).exists())
-        config.write_bytes(b'model = "main-model"\n')
-        self.assertEqual(self.install().returncode, 0)
+        result = self.install()
+        self.assertEqual(result.returncode, 0, result.stderr)
         desired = config.read_bytes()
+        values = tomllib.loads(desired.decode("utf-8"))
+        self.assertEqual(values["model"], "main-model")
+        self.assertEqual(values["agents"]["other"]["config_file"], "other.toml")
+        self.assertEqual(values["agents"]["sdd-coder"]["config_file"],
+                         "../.agents/sdd-workflow/agents/sdd-coder.toml")
         customized = desired.replace(b"../.agents/sdd-workflow/", b"../old/")
         config.write_bytes(customized)
-        denied = self.install()
-        self.assertNotEqual(denied.returncode, 0)
-        self.assertIn("角色引用块含定制", denied.stderr)
-        self.assertEqual(config.read_bytes(), customized)
+        upgraded = self.install()
+        self.assertEqual(upgraded.returncode, 0, upgraded.stderr)
+        self.assertEqual(config.read_bytes(), desired)
         config.write_bytes(desired.replace(
             b'config_file = "../.agents/sdd-workflow/agents/sdd-coder.toml"',
             b'config_file = "agents/sdd-coder.toml"',
@@ -107,7 +104,85 @@ class RoleTests(unittest.TestCase):
         self.assertEqual(self.install().returncode, 0)
         self.assertEqual(config.read_bytes(), desired)
 
-    def test_customized_legacy_references_in_managed_block_are_not_removed(self):
+    def test_inline_same_name_role_configuration_is_overwritten(self):
+        config = self.target / ".codex/config.toml"
+        config.parent.mkdir()
+        config.write_text('[agents]\nenabled = false\n'
+                          'sdd-coder = { config_file = "project-role.toml" }\n'
+                          'other = { config_file = "other.toml" }\n', encoding="utf-8")
+        result = self.install()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
+        self.assertFalse(roles["enabled"])
+        self.assertEqual(roles["other"]["config_file"], "other.toml")
+        self.assertEqual(roles["sdd-coder"]["config_file"], "../.agents/sdd-workflow/agents/sdd-coder.toml")
+
+    def test_dotted_and_quoted_same_name_role_configuration_is_overwritten(self):
+        config = self.target / ".codex/config.toml"
+        config.parent.mkdir()
+        for original in (
+            'agents."sdd-coder".config_file = "old.toml"\nmodel = "keep"\n',
+            '[agents]\n"sdd-coder".config_file = "old.toml"\nenabled = false\n',
+            '[agents."sdd-coder"]\nconfig_file = "old.toml"\n'
+            '[agents."sdd-coder".settings]\ncustom = true\n',
+        ):
+            with self.subTest(original=original):
+                config.write_text(original, encoding="utf-8")
+                result = self.install()
+                self.assertEqual(result.returncode, 0, result.stderr)
+                roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
+                self.assertEqual(roles["sdd-coder"], {
+                    "config_file": "../.agents/sdd-workflow/agents/sdd-coder.toml"})
+
+    def test_non_table_agents_setting_is_replaced(self):
+        config = self.target / ".codex/config.toml"
+        config.parent.mkdir()
+        for original in ('model = "keep"\nagents = false\n',
+                         'agents = [\n  "old",\n  "another",\n]\nmodel = "keep"\n'):
+            with self.subTest(original=original):
+                config.write_text(original, encoding="utf-8")
+                result = self.install()
+                self.assertEqual(result.returncode, 0, result.stderr)
+                values = tomllib.loads(config.read_text(encoding="utf-8"))
+                self.assertEqual(values["model"], "keep")
+                self.assertEqual(set(values["agents"]), ROLES)
+
+    def test_root_inline_agents_table_is_expanded_and_conflict_overwritten(self):
+        config = self.target / ".codex/config.toml"
+        config.parent.mkdir()
+        original = ('agents = { "sdd-coder" = { config_file = "old.toml" }, '
+                    'other = { description = "keep, {text}", config_file = "other.toml" } } # retain\n'
+                    'model = "keep"\n')
+        config.write_text(original, encoding="utf-8")
+        result = self.install()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        values = tomllib.loads(config.read_text(encoding="utf-8"))
+        self.assertEqual(values["model"], "keep")
+        self.assertEqual(values["agents"]["other"]["description"], "keep, {text}")
+        self.assertEqual(values["agents"]["sdd-coder"]["config_file"],
+                         "../.agents/sdd-workflow/agents/sdd-coder.toml")
+        self.assertIn("# retain", config.read_text(encoding="utf-8"))
+
+    def test_multiline_conflicting_role_value_is_overwritten(self):
+        config = self.target / ".codex/config.toml"
+        config.parent.mkdir()
+        for original in (
+            '[agents]\nsdd-coder = [\n  "old",\n  "other",\n]\nenabled = false\n',
+            'agents.sdd-coder = [\n  "old",\n]\nmodel = "keep"\n',
+        ):
+            with self.subTest(original=original):
+                config.write_text(original, encoding="utf-8")
+                result = self.install()
+                self.assertEqual(result.returncode, 0, result.stderr)
+                values = tomllib.loads(config.read_text(encoding="utf-8"))
+                self.assertEqual(values["agents"]["sdd-coder"]["config_file"],
+                                 "../.agents/sdd-workflow/agents/sdd-coder.toml")
+                if "model" in values:
+                    self.assertEqual(values["model"], "keep")
+                else:
+                    self.assertFalse(values["agents"]["enabled"])
+
+    def test_customized_legacy_references_in_managed_block_are_replaced(self):
         config = self.target / ".codex/config.toml"
         config.parent.mkdir()
         for name in LEGACY_ROLES:
@@ -118,11 +193,10 @@ class RoleTests(unittest.TestCase):
                 with self.subTest(name=name, reference=reference):
                     config.write_text(f"# sdd-init roles:start\n[agents.{name}]\n{reference}# sdd-init roles:end\n",
                                       encoding="utf-8")
-                    before = self.snapshot()
                     outcome = self.install()
-                    self.assertNotEqual(outcome.returncode, 0)
-                    self.assertEqual(self.snapshot(), before)
-                    self.assertFalse((self.target / WORKFLOW).exists())
+                    self.assertEqual(outcome.returncode, 0, outcome.stderr)
+                    result = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
+                    self.assertEqual(set(result), ROLES)
 
     def test_legacy_project_roles_outside_managed_block_survive(self):
         config = self.target / ".codex/config.toml"
@@ -142,30 +216,23 @@ class RoleTests(unittest.TestCase):
             role = config.parent / roles[name]["config_file"]
             self.assertEqual(role.read_bytes(), before[role.relative_to(self.target)])
 
-    def test_project_conflicts_for_replacement_roles_fail_before_changes(self):
-        config = self.target / ".codex/config.toml"
-        local_roles = config.parent / "agents"
-        local_roles.mkdir(parents=True)
+    def test_project_conflicts_for_replacement_roles_are_overwritten(self):
         for name in ("sdd-devops", "sdd-architect", "sdd-product-manager", "sdd-doc-consistency", "review-prompt"):
-            with self.subTest(name=name, location="config"):
+            with self.subTest(name=name):
+                project = self.folder / f"conflict-{name}"
+                local_roles = project / ".codex/agents"
+                local_roles.mkdir(parents=True)
+                config = project / ".codex/config.toml"
                 config.write_text(f'[agents.{name}]\nconfig_file = "project-role.toml"\n', encoding="utf-8")
-                before = self.snapshot()
-                outcome = self.install()
-                self.assertNotEqual(outcome.returncode, 0)
-                self.assertIn(name, outcome.stderr)
-                self.assertEqual(self.snapshot(), before)
-                self.assertFalse((self.target / WORKFLOW).exists())
-                config.unlink()
-            with self.subTest(name=name, location="file"):
                 local = local_roles / f"{name}.toml"
                 local.write_text(f'name = "{name}"\n', encoding="utf-8")
-                before = self.snapshot()
-                outcome = self.install()
-                self.assertNotEqual(outcome.returncode, 0)
-                self.assertIn(f"{name}.toml", outcome.stderr)
-                self.assertEqual(self.snapshot(), before)
-                self.assertFalse((self.target / WORKFLOW).exists())
-                local.unlink()
+                outcome = subprocess.run(
+                    [sys.executable, "-B", "-X", "utf8", str(self.skill / "scripts/govern.py"),
+                     "--root", str(project), "init"], capture_output=True, text=True, encoding="utf-8")
+                self.assertEqual(outcome.returncode, 0, outcome.stderr)
+                self.assertFalse(local.exists())
+                roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
+                self.assertEqual(roles[name]["config_file"], f"../.agents/sdd-workflow/agents/{name}.toml")
 
     def test_invalid_shared_roles_fail_before_any_write(self):
         entry = self.skill / "shared/agents/sdd-product-manager.toml"

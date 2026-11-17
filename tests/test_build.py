@@ -259,7 +259,7 @@ class BuildTests(unittest.TestCase):
                     self.assertEqual(result.returncode, 0, result.stderr)
                     self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
-    def test_main_alignment_and_legacy_communication_rejection(self):
+    def test_main_alignment_and_legacy_communication_upgrade(self):
         skill = builder.build(self.folder / "skill")
         target = self.folder / "project"
         target.mkdir()
@@ -283,15 +283,13 @@ class BuildTests(unittest.TestCase):
         old = legacy_fragment("communication")
         body = "# 用户正文\r\n保持这些规则。\n"
         agents.write_bytes((body + old + "\n" + current).encode("utf-8"))
-        before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
-        result = run()
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("不支持自动迁移", result.stderr.decode("utf-8"))
-        self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
-        self.assertEqual(rule.read_bytes(), source)
-        agents.write_bytes((body + current).encode("utf-8"))
         result = run()
         self.assertEqual(result.returncode, 0, result.stderr)
+        installed = agents.read_text(encoding="utf-8")
+        self.assertIn(body.replace("\r\n", "\n"), installed)
+        self.assertNotIn("<!-- agent-communication:", installed)
+        self.assertIn(current, installed)
+        self.assertEqual(rule.read_bytes(), source)
         before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
         result = run()
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -319,27 +317,34 @@ class BuildTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(agents.read_bytes(), data)
 
-    def test_legacy_two_block_state_is_rejected_without_migration(self):
+    def test_legacy_two_block_state_is_replaced(self):
         skill = builder.build(self.folder / "skill")
         target = self.folder / "project"
         target.mkdir()
-        (target / "AGENTS.md").write_bytes(b"# Project-owned guidance\r\n")
+        old_agents = ("# Project-owned guidance\r\n" + legacy_fragment("communication")
+                      + "\r\n" + legacy_fragment("navigation").replace("\n", "\r\n")
+                      + "\r\n# Project-owned ending\r\n")
+        (target / "AGENTS.md").write_bytes(old_agents.encode("utf-8"))
         (target / ".sdd-init-state.json").write_text(json.dumps({
             "schema_version": 1, "shared_version": "0" * 64,
             "agents_blocks": {"agent-communication": "0" * 64,
                               "sdd-contract-governance": "0" * 64},
         }), encoding="utf-8")
-        before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
         result = subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
              "--root", str(target), "init"], capture_output=True, text=True, encoding="utf-8")
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("无效的项目安装元数据", result.stderr)
-        self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        current = (target / "AGENTS.md").read_bytes()
+        self.assertTrue(current.startswith(b"# Project-owned guidance\r\n"))
+        self.assertTrue(current.endswith(b"# Project-owned ending\r\n"))
+        self.assertNotIn(b"agent-communication", current)
+        self.assertEqual(current.count(b"<!-- sdd-contract-governance:start -->"), 1)
+        state = json.loads((target / ".sdd-init-state.json").read_bytes())
+        self.assertEqual(set(state["agents_blocks"]), {"sdd-contract-governance"})
 
     def test_blocked_payload_parent_fails_before_agents_write(self):
         skill = builder.build(self.folder / "skill")
-        for parent in (".agents", ".agents/skills", WORKFLOW):
+        for parent in (".agents", ".agents/skills"):
             target = self.folder / parent.replace("/", "-")
             blocker = target / parent
             blocker.parent.mkdir(parents=True)
@@ -358,7 +363,7 @@ class BuildTests(unittest.TestCase):
         malformed = [cstart, cend, cend + cstart, cstart + cend + cstart + cend,
                      nstart, nend, nstart + nend + nstart + nend,
                      cstart + nstart + nend + cend, cstart + nstart + cend + nend]
-        for i, content in enumerate(malformed + ["override", "override-with-marker"]):
+        for i, content in enumerate(malformed + ["override-with-marker"]):
             target = self.folder / f"invalid-{i}"
             target.mkdir()
             (target / "AGENTS.md").write_text(content, encoding="utf-8")

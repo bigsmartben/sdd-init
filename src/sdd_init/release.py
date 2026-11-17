@@ -83,6 +83,44 @@ def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def entry_exists(path: Path) -> bool:
+    return path.exists() or linked(path)
+
+
+def entry_inventory(path: Path, *, exclude_shared: bool = False) -> dict | None:
+    """Record an entry without following links or junctions."""
+    if not entry_exists(path):
+        return None
+    entries = {}
+    pending = [(path, ".")]
+    while pending:
+        current, relative = pending.pop()
+        info = current.lstat()
+        mode = stat.S_IMODE(info.st_mode)
+        if linked(current):
+            entries[relative] = ["link", mode, os.readlink(current)]
+        elif current.is_dir():
+            entries[relative] = ["directory", mode]
+            for child in current.iterdir():
+                if exclude_shared and relative == "." and child.name == "shared":
+                    continue
+                name = child.name if relative == "." else f"{relative}/{child.name}"
+                pending.append((child, name))
+        elif current.is_file():
+            entries[relative] = ["file", mode, digest(current.read_bytes())]
+        else:
+            raise ValueError(f"Unsupported installation entry: {current}")
+    return entries
+
+
+def inventory_digest(entries: dict | None) -> str | None:
+    return None if entries is None else digest(json.dumps(entries, sort_keys=True, ensure_ascii=True).encode("utf-8"))
+
+
+def entry_snapshot(path: Path, *, exclude_shared: bool = False) -> str | None:
+    return inventory_digest(entry_inventory(path, exclude_shared=exclude_shared))
+
+
 def content_id(files: dict[str, str]) -> str:
     return digest(json.dumps(files, sort_keys=True, separators=(",", ":")).encode())
 

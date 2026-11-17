@@ -36,21 +36,31 @@ Cover key experiences, success, edge cases, failure, cancellation, and recovery 
 
 Use PACs for product quality dimensions. Refer to Spec ACs for specific conditions, thresholds, timing boundaries, units, statistical definitions, and evidence types. Link available acceptance evidence for the actual integrated version and agreed environment. Follow the [Testing Scope Constraints](../references/sdd-repository-governance.md#testing-scope-constraints).
 
-## 5. Deployment and Runtime Boundaries
+## 5. System Structure and Component Responsibilities
 
-Use a deployment view to describe the project's confirmed deployment units and runtime boundaries. A Mermaid flowchart can depict this view. A Mermaid flowchart is a deployment view expressed outside UML syntax. Identify separate processes only when the confirmed deployment design calls for them. Link existing engineering documentation for source directories and build entry points.
+Follow the containment hierarchy: **System > Subsystem > Component > Module**. A system defines the overall boundary; a subsystem groups related capabilities within it; a component owns a cohesive responsibility within a subsystem; a module is an internal implementation unit of a component. Components are the smallest architectural granularity in the Blueprint. Keep module decomposition and internal implementation details in linked engineering documents, not in Blueprint diagrams or responsibility tables.
 
-Record confirmed design strategies, rationale, costs, and applicable conditions. Link the relevant PUCs and PACs, and refer to the Spec for product quality criteria.
+Use a hierarchical component diagram to show the system boundary, subsystem boundaries, and their components, with responsibilities, I/O, interfaces, allowed and prohibited dependencies, key concepts, and their relationships. Distinguish containment from interaction and dependency relationships. Record who produces and consumes each concept and who owns authoritative data. Define essential terms briefly. Add a separate relationship diagram only if it conveys information absent from the component diagram and overall sequence.
 
-## 6. Components and Responsibilities
-
-Use a component diagram to show responsibilities, I/O, interfaces, allowed and prohibited dependencies, key concepts, and their relationships and boundaries. Record who produces and consumes each concept and who owns authoritative data. Define essential terms briefly. Add a separate relationship diagram only if it conveys information absent from the component diagram and overall sequence.
-
-| Component | Responsibilities, state ownership, and prohibited interactions | Interface Contract |
-|---|---|---|
-| <Confirmed component> | <Requester, decision maker, writer, side-effect executor, authoritative state owner, and evidence of completion> | <Owning Interface Contract section> |
+| System / Subsystem | Component | Responsibilities, state ownership, and prohibited interactions | Interface Contract |
+|---|---|---|---|
+| <Owning system / subsystem> | <Confirmed component> | <Requester, decision maker, writer, side-effect executor, authoritative state owner, and evidence of completion> | <Owning Interface Contract section> |
 
 Add a compact data table when useful to explain sources, authority, permitted reads and writes, and lifecycle. Preserve these distinctions when combining tables. Put detailed payloads, authorization, cancellation, results, and failure semantics in the owning Interface Contract.
+
+## 6. Deployment and Runtime Mapping
+
+Map the logical components defined in section 5 to confirmed deployment units and runtime environments. Use their existing names or identifiers in both views. These are complementary views of the same architecture, not successive levels of the containment hierarchy: a subsystem is not necessarily a service, and a component is not necessarily a process. Multiple components may share a process, and a component may have multiple runtime instances. Do not require a one-to-one mapping.
+
+Use a deployment view to show hosting, instance topology, runtime isolation, and communication across boundaries. A Mermaid flowchart can express this view without UML deployment syntax. Identify separate processes only when the confirmed deployment design calls for them. Link existing engineering documentation for source directories and build entry points.
+
+| Logical component reference | Deployment unit / Runtime location | Instances and isolation | Cross-boundary Interface Contract |
+|---|---|---|---|
+| <Component from section 5, qualified by subsystem> | <Confirmed unit and hosting environment> | <Instance topology and process or other isolation boundary> | <Interface defined in section 5 and its owning contract, or not applicable> |
+
+Account for every in-scope component's runtime placement. Identify external systems and non-runtime assets explicitly rather than forcing them into process deployments; record unresolved placement in section 8. Deployment changes must preserve logical responsibilities and authoritative state ownership. Trace runtime communication to the logical interfaces; sharing a process does not permit bypassing dependency restrictions. Describe how interfaces cross runtime boundaries here, while keeping detailed protocols and failure semantics in the owning Interface Contract.
+
+Record confirmed design strategies, rationale, costs, and applicable conditions. Link the relevant PUCs and PACs, and refer to the Spec for product quality criteria. Use runtime constraints to check whether the logical design is feasible; reconcile conflicts across both views rather than silently changing responsibilities in the deployment view.
 
 ## 7. Architecture Invariants
 
@@ -58,7 +68,7 @@ Add a compact data table when useful to explain sources, authority, permitted re
 |---|---|---|
 | <Stable ARC identifier> | <Rule that holds during normal operation, failure, concurrency, cancellation, and recovery> | <Responsibility or Interface Contract reference> |
 
-Record project invariants the user has confirmed. Preserve stable identifiers, applicability conditions, and the strength of each constraint. Refer to section 6 for existing responsibility lists. List unconfirmed environments, frameworks, and strategies as open questions. Use the confirmed design and this template as the basis. Reading the architecture rules and adding rule mappings are outside this step.
+Record project invariants the user has confirmed. Preserve stable identifiers, applicability conditions, and the strength of each constraint. Refer to section 5 for existing responsibility lists and section 6 for deployment and runtime constraints. List unconfirmed environments, frameworks, and strategies as open questions. Use the confirmed design and this template as the basis. Reading the architecture rules and adding rule mappings are outside this step.
 
 ### Architecture Review Assets
 
@@ -70,7 +80,7 @@ After sdd-refactor initializes the project review assets, keep a fixed link here
 |---|---|
 | <PUC or PAC and interaction goal> | <Links to public interfaces and key interactions> |
 
-Use the index to link responsibilities and detailed flows. Use the [Scenario Sequence template](sequence_template.md) to describe normal ordering, parallelism, races, cancellation, late results, unknown outcomes, and recovery across public interfaces. Keep internal algorithms outside this view. Record interface and failure semantics in the [Interface Contract](contract_template.md). Use activity diagrams for complex branches, joins, or data processing, distinguishing control flow from object flow. Include state or ER diagrams when useful. Internal class diagrams are optional.
+Use the index to link responsibilities and detailed flows. Use the [Scenario Sequence template](sequence_template.md) to describe normal ordering, parallelism, races, cancellation, late results, unknown outcomes, and recovery across public interfaces. Keep internal algorithms outside this view. Record interface and failure semantics in the [Interface Contract](contract_template.md). Use activity diagrams for complex branches, joins, or data processing, distinguishing control flow from object flow. Include state or ER diagrams when useful without decomposing components into internal implementation units. Keep internal class diagrams in linked engineering documents.
 
 | Open question | Source, impact, and decision needed |
 |---|---|
@@ -80,6 +90,6 @@ Collect open questions here and link any authoritative list already maintained i
 
 ## Architecture Modeling and Assessment
 
-Sections 1–4 cover product goals and acceptance dimensions. Section 5 covers runtime boundaries and trade-offs. Sections 6–7 cover concepts, responsibilities, and invariants. Section 8 indexes key interactions and open questions. Combine sections or link existing documents to suit the project. The project confirms module count, architectural planes, directory layout, technical patterns, and deployment. Record missing decisions as open questions.
+Sections 1–4 cover product goals and acceptance dimensions. Section 5 defines the logical system structure, subsystems, and component responsibilities. Section 6 maps those components to deployment and runtime boundaries, with trade-offs. Section 7 records invariants across both views. Section 8 indexes key interactions and open questions. Combine sections or link existing documents to suit the project while preserving the component-level granularity limit and explicit logical-to-runtime mapping. The project confirms subsystem and component boundaries, architectural planes, technical patterns, and deployment. Link engineering documents for module decomposition and directory layout. Record missing decisions as open questions.
 
 Follow the [Repository Governance](../references/sdd-repository-governance.md#authoritative-documents) for document ownership and the [Document Writing Rules](../references/document-writing.md) when consolidating clauses or verifying a migration.

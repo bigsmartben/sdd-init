@@ -8,7 +8,7 @@ from .installer import (
     ROLE_LOCK, check_pending_role_recovery, install, legacy_role, load, locations,
     recover_installation, role_snapshot, verified_installation,
 )
-from .release import LOCK_BYTES, USER_LOCK, content_id, linked, shared_files, verify_distribution
+from .release import LOCK_BYTES, USER_LOCK, content_id, linked, manifest_data, shared_files, verify_distribution
 
 
 def show_versions(label, files):
@@ -19,7 +19,16 @@ def show_versions(label, files):
 
 def inspect(skills_dir: Path, resources: Path, agents_dir: Path | None = None):
     target, shared, folder = locations(skills_dir)
-    role = legacy_role(target, shared, folder, agents_dir)
+    if (target.exists() or linked(target)) and not (folder.exists() or linked(folder)):
+        try:
+            manifest_data(target)
+        except ValueError as error:
+            print(f"Existing manifest will be replaced; legacy role path unavailable: {error}")
+            role = None
+        else:
+            role = legacy_role(target, shared, folder, agents_dir)
+    else:
+        role = legacy_role(target, shared, folder, agents_dir)
     print(f"User skill: {target}")
     print(f"Shared workflow: {shared}")
     if role is not None:
@@ -57,7 +66,12 @@ def inspect(skills_dir: Path, resources: Path, agents_dir: Path | None = None):
     if role is not None:
         check_pending_role_recovery(role)
         role_snapshot(role)
-    files = verified_installation(target, shared, role, verify_managed_role=False)
+    try:
+        files = verified_installation(target, shared, role, verify_managed_role=False)
+    except ValueError as error:
+        print(f"Existing installation will be replaced: {error}")
+        print("Next: run sdd-init install to replace the installation targets")
+        return
     if files is None:
         print("Status: not installed")
         print("Next: run sdd-init install to publish the selected release")
