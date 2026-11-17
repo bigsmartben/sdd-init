@@ -18,10 +18,16 @@ PROJECT_SKILLS = (
     "sdd-architecture", "sdd-bugfix", "sdd-deliver", "sdd-develop", "sdd-refactor", "sdd-test-loop",
 )
 SKILL_LINKS = tuple(f".agents/skills/{name}" for name in PROJECT_SKILLS)
+PROJECT_ROLES = (
+    "review-prompt", "sdd-architect", "sdd-product-manager",
+    "sdd-coder", "sdd-devops", "sdd-doc-consistency",
+)
+COPILOT_ROLE_FILES = tuple(f".github/agents/{name}.agent.md" for name in PROJECT_ROLES)
 INSTALL_LINKS = (WORKFLOW_LINK, *SKILL_LINKS, LEGACY_WORKFLOW_LINK)
 LOCK = ".sdd-init.lock"
 STATE = ".sdd-init-state.json"
-FILES = ("AGENTS.md", ".codex/config.toml", ".gitignore", STATE, "AGENTS.override.md")
+FILES = ("AGENTS.md", ".codex/config.toml", ".gitignore", STATE, "AGENTS.override.md",
+         *COPILOT_ROLE_FILES)
 
 
 def linked(path: Path) -> bool:

@@ -18,7 +18,7 @@ LOCK_BYTES = b"sdd-init lock v1\n"
 USER_ROLE = "review-prompt"
 # Only used to identify and recover the former standalone user installation.
 USER_ROLE_ASSET = f"assets/user-agents/{USER_ROLE}.toml"
-WORKFLOW_REVIEW_ROLE = f"shared/agents/{USER_ROLE}.toml"
+WORKFLOW_REVIEW_ROLE = f"shared/roles/codex/{USER_ROLE}.toml"
 
 
 def shared_directory(skills_dir: Path) -> Path:

@@ -227,7 +227,7 @@ tx.create_workflow_link = stop
         self.assertEqual(self.run_init().returncode, 0)
         customized = self.root / ".codex/config.toml"
         customized.write_bytes(b'model = "project-choice"\r\n' + customized.read_bytes().replace(
-            f'config_file = "../{WORKFLOW}/agents/sdd-coder.toml"'.encode(),
+            f'config_file = "../{WORKFLOW}/roles/codex/sdd-coder.toml"'.encode(),
             b'config_file = "agents/sdd-coder.toml"',
         ))
         history = self.root / "specs/old/status.md"
@@ -269,7 +269,7 @@ tx.replace_file = stop
         self.assertEqual(self.run_init().returncode, 0)
 
     def test_crash_after_link_publication_rolls_back_without_touching_shared_files(self):
-        role = "agents/sdd-architect.toml"
+        role = "roles/codex/sdd-architect.toml"
         shared = self.skill / "shared" / role
         original = shared.read_bytes()
         self.crash("""

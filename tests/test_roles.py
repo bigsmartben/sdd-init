@@ -29,10 +29,10 @@ class RoleTests(unittest.TestCase):
         self.target = self.folder / "project"
         self.target.mkdir()
 
-    def install(self):
+    def install(self, harness="auto"):
         return subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(self.skill / "scripts/govern.py"),
-             "--root", str(self.target), "init"],
+             "--root", str(self.target), "--harness", harness, "init"],
             capture_output=True, text=True, encoding="utf-8")
 
     def snapshot(self):
@@ -49,7 +49,7 @@ class RoleTests(unittest.TestCase):
         for name, reference in roles.items():
             self.assertEqual(set(reference), {"config_file"})
             path = config.parent / reference["config_file"]
-            self.assertTrue(path.samefile(self.skill / "shared/agents" / f"{name}.toml"))
+            self.assertTrue(path.samefile(self.skill / "shared/roles/codex" / f"{name}.toml"))
             data = tomllib.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(data["name"], name)
             fields = {"name", "description", "model", "developer_instructions"}
@@ -59,9 +59,82 @@ class RoleTests(unittest.TestCase):
             self.assertEqual(set(data), fields)
             self.assertEqual(data["model"], ROLE_MODELS[name])
             self.assertTrue(all(isinstance(v, str) and v.strip() for v in data.values()))
+            copilot = self.target / ".github/agents" / f"{name}.agent.md"
+            self.assertTrue(copilot.is_file())
+            self.assertNotIn("model:", copilot.read_text(encoding="utf-8"))
+            self.assertIn(f"roles/shared/{name}.md", copilot.read_text(encoding="utf-8"))
         before = self.snapshot()
         self.assertEqual(self.install().returncode, 0)
         self.assertEqual(before, self.snapshot())
+
+    def test_explicit_harness_selection_installs_only_requested_adapter(self):
+        codex = self.install("codex")
+        self.assertEqual(codex.returncode, 0, codex.stderr)
+        self.assertTrue((self.target / ".codex/config.toml").is_file())
+        self.assertFalse((self.target / ".github/agents").exists())
+
+        other = self.folder / "copilot-only"
+        other.mkdir()
+        self.target = other
+        copilot = self.install("copilot")
+        self.assertEqual(copilot.returncode, 0, copilot.stderr)
+        self.assertFalse((other / ".codex/config.toml").exists())
+        for name in ROLES:
+            path = other / ".github/agents" / f"{name}.agent.md"
+            self.assertTrue(path.is_file())
+            self.assertNotIn("model:", path.read_text(encoding="utf-8"))
+
+    def test_inspect_reports_default_dual_adapter_plan_without_writes(self):
+        result = subprocess.run(
+            [sys.executable, "-B", "-X", "utf8", str(self.skill / "scripts/govern.py"),
+             "--root", str(self.target), "inspect"],
+            capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("codex=none", result.stdout)
+        self.assertIn("copilot=none", result.stdout)
+        self.assertIn("Harness adapters planned: codex, copilot", result.stdout)
+        self.assertEqual(list(self.target.iterdir()), [])
+
+    def test_inspect_reports_codex_and_copilot_project_markers_read_only(self):
+        codex = self.target / ".codex/config.toml"
+        codex.parent.mkdir()
+        codex.write_text('model = "project-choice"\n', encoding="utf-8")
+        instructions = self.target / ".github/copilot-instructions.md"
+        instructions.parent.mkdir()
+        instructions.write_text("# Project instructions\n", encoding="utf-8")
+        before = self.snapshot()
+        result = subprocess.run(
+            [sys.executable, "-B", "-X", "utf8", str(self.skill / "scripts/govern.py"),
+             "--root", str(self.target), "inspect"],
+            capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("codex=.codex/config.toml", result.stdout)
+        self.assertIn("copilot=.github/copilot-instructions.md", result.stdout)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_missing_or_model_pinned_copilot_adapter_fails_before_changes(self):
+        entry = self.skill / "shared/roles/copilot/sdd-coder.agent.md"
+        original = entry.read_bytes()
+        newline = b"\r\n" if b"\r\n" in original else b"\n"
+        cases = (
+            None,
+            original.replace(b'name: "sdd-coder"', b'name: "other-role"'),
+            original.replace(b"---" + newline, b"---" + newline + b"model: gpt-6.1-sol" + newline, 1),
+        )
+        for data in cases:
+            with self.subTest(data=data):
+                if data is None:
+                    entry.unlink()
+                else:
+                    entry.write_bytes(data)
+                refresh_manifest(self.skill)
+                result = self.install()
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(project_entries(self.target), [])
+                if data is None:
+                    entry.write_bytes(original)
+        entry.write_bytes(original)
+        refresh_manifest(self.skill)
 
     def test_same_name_role_is_replaced_and_unrelated_roles_survive(self):
         role = self.target / ".codex/agents/sdd-coder.toml"
@@ -91,14 +164,14 @@ class RoleTests(unittest.TestCase):
         self.assertEqual(values["model"], "main-model")
         self.assertEqual(values["agents"]["other"]["config_file"], "other.toml")
         self.assertEqual(values["agents"]["sdd-coder"]["config_file"],
-                         "../.agents/sdd-workflow/agents/sdd-coder.toml")
+                         "../.agents/sdd-workflow/roles/codex/sdd-coder.toml")
         customized = desired.replace(b"../.agents/sdd-workflow/", b"../old/")
         config.write_bytes(customized)
         upgraded = self.install()
         self.assertEqual(upgraded.returncode, 0, upgraded.stderr)
         self.assertEqual(config.read_bytes(), desired)
         config.write_bytes(desired.replace(
-            b'config_file = "../.agents/sdd-workflow/agents/sdd-coder.toml"',
+            b'config_file = "../.agents/sdd-workflow/roles/codex/sdd-coder.toml"',
             b'config_file = "agents/sdd-coder.toml"',
         ))
         self.assertEqual(self.install().returncode, 0)
@@ -115,7 +188,7 @@ class RoleTests(unittest.TestCase):
         roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
         self.assertFalse(roles["enabled"])
         self.assertEqual(roles["other"]["config_file"], "other.toml")
-        self.assertEqual(roles["sdd-coder"]["config_file"], "../.agents/sdd-workflow/agents/sdd-coder.toml")
+        self.assertEqual(roles["sdd-coder"]["config_file"], "../.agents/sdd-workflow/roles/codex/sdd-coder.toml")
 
     def test_dotted_and_quoted_same_name_role_configuration_is_overwritten(self):
         config = self.target / ".codex/config.toml"
@@ -132,7 +205,7 @@ class RoleTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 0, result.stderr)
                 roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
                 self.assertEqual(roles["sdd-coder"], {
-                    "config_file": "../.agents/sdd-workflow/agents/sdd-coder.toml"})
+                    "config_file": "../.agents/sdd-workflow/roles/codex/sdd-coder.toml"})
 
     def test_non_table_agents_setting_is_replaced(self):
         config = self.target / ".codex/config.toml"
@@ -160,7 +233,7 @@ class RoleTests(unittest.TestCase):
         self.assertEqual(values["model"], "keep")
         self.assertEqual(values["agents"]["other"]["description"], "keep, {text}")
         self.assertEqual(values["agents"]["sdd-coder"]["config_file"],
-                         "../.agents/sdd-workflow/agents/sdd-coder.toml")
+                         "../.agents/sdd-workflow/roles/codex/sdd-coder.toml")
         self.assertIn("# retain", config.read_text(encoding="utf-8"))
 
     def test_multiline_conflicting_role_value_is_overwritten(self):
@@ -176,7 +249,7 @@ class RoleTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 0, result.stderr)
                 values = tomllib.loads(config.read_text(encoding="utf-8"))
                 self.assertEqual(values["agents"]["sdd-coder"]["config_file"],
-                                 "../.agents/sdd-workflow/agents/sdd-coder.toml")
+                                 "../.agents/sdd-workflow/roles/codex/sdd-coder.toml")
                 if "model" in values:
                     self.assertEqual(values["model"], "keep")
                 else:
@@ -232,10 +305,10 @@ class RoleTests(unittest.TestCase):
                 self.assertEqual(outcome.returncode, 0, outcome.stderr)
                 self.assertFalse(local.exists())
                 roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
-                self.assertEqual(roles[name]["config_file"], f"../.agents/sdd-workflow/agents/{name}.toml")
+                self.assertEqual(roles[name]["config_file"], f"../.agents/sdd-workflow/roles/codex/{name}.toml")
 
     def test_invalid_shared_roles_fail_before_any_write(self):
-        entry = self.skill / "shared/agents/sdd-product-manager.toml"
+        entry = self.skill / "shared/roles/codex/sdd-product-manager.toml"
         original = entry.read_bytes().replace(b"\r\n", b"\n")
         cases = {
             "missing": None,
@@ -262,7 +335,7 @@ class RoleTests(unittest.TestCase):
                 self.assertEqual(project_entries(self.target), [])
 
     def test_missing_and_malformed_architect_role_fail_before_changes(self):
-        entry = self.skill / "shared/agents/sdd-architect.toml"
+        entry = self.skill / "shared/roles/codex/sdd-architect.toml"
         entry.unlink()
         refresh_manifest(self.skill)
         self.assertNotEqual(self.install().returncode, 0)
@@ -276,14 +349,14 @@ class RoleTests(unittest.TestCase):
         self.assertEqual(project_entries(self.target), [])
 
     def test_unknown_shared_role_is_rejected(self):
-        path = self.skill / "shared/agents/unlisted.toml"
+        path = self.skill / "shared/roles/codex/unlisted.toml"
         path.write_text('model = "forced"\\n', encoding="utf-8")
         refresh_manifest(self.skill)
         self.assertNotEqual(self.install().returncode, 0)
         self.assertEqual(project_entries(self.target), [])
 
     def test_reviewer_model_and_effort_are_validated_before_project_changes(self):
-        entry = self.skill / "shared/agents/review-prompt.toml"
+        entry = self.skill / "shared/roles/codex/review-prompt.toml"
         original = entry.read_bytes()
         for data in (original.replace(b'model_reasoning_effort = "high"', b'model_reasoning_effort = "low"'),
                      original.replace(b'model = "gpt-6-astra"', b'model = "gpt-6.1-sol"')):
@@ -297,7 +370,7 @@ class RoleTests(unittest.TestCase):
 
     def test_consistency_role_requires_default_model_and_inherits_sandbox(self):
         name = "sdd-doc-consistency"
-        entry = self.skill / "shared/agents" / f"{name}.toml"
+        entry = self.skill / "shared/roles/codex" / f"{name}.toml"
         original = entry.read_bytes().replace(b"\r\n", b"\n")
         cases = {
             "missing_model": original.replace(b'model = "gpt-6.1-terra"\n', b""),

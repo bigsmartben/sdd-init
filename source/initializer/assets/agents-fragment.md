@@ -26,7 +26,7 @@ Main 详细规则按需读[职责与交接](.agents/sdd-workflow/sdd/references/
 
 角色分工、替代及专业执行边界见[执行协作](.agents/sdd-workflow/sdd/references/delegation.md)。sdd-coder 承接就绪工单，按[实施交接](.agents/sdd-workflow/sdd/references/delegation.md#实施交接)执行。
 
-提示词审查、候选对比和授权修订可用 [review-prompt](.agents/sdd-workflow/agents/review-prompt.toml)；不可用时按同一契约选择合格替代。
+提示词审查、候选对比和授权修订可用 `review-prompt` 专业角色；不可用时按同一契约选择合格替代。
 
 ## 文档与证据
 
