@@ -1,0 +1,207 @@
+name: Automated delivery
+
+on:
+  push:
+    branches-ignore: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: automated-delivery
+  queue: max
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      ready: ${{ steps.candidate.outputs.ready }}
+      pr: ${{ steps.candidate.outputs.pr }}
+      branch: ${{ steps.candidate.outputs.branch }}
+      base: ${{ steps.candidate.outputs.base }}
+      head: ${{ steps.candidate.outputs.head }}
+      merge: ${{ steps.candidate.outputs.merge }}
+      version: ${{ steps.candidate.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Prepare version and pull request
+        id: candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+          PUSH_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch_ref="refs/heads/$BRANCH"
+          remote_head=$(git ls-remote --refs origin "$branch_ref" | cut -f1)
+          if [[ "$remote_head" != "$PUSH_SHA" ]]; then
+            echo "Push is superseded or branch was removed; a newer run handles it."
+            echo 'ready=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git fetch origin refs/heads/main:refs/remotes/origin/main
+          base=$(git rev-parse refs/remotes/origin/main)
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git merge --no-edit "$base"
+          git show "$base:pyproject.toml" > "$RUNNER_TEMP/base-pyproject.toml"
+          version=$(python -B scripts/next_release_version.py --base "$RUNNER_TEMP/base-pyproject.toml")
+          if [[ -n "$(git ls-remote --tags --refs origin "refs/tags/v$version")" ]]; then
+            echo "Release tag v$version already exists; refusing to reuse it." >&2
+            exit 1
+          fi
+          if ! git diff --quiet -- pyproject.toml; then
+            git add pyproject.toml
+            git commit -m "chore: prepare release v$version"
+          fi
+          head=$(git rev-parse HEAD)
+          if [[ "$head" != "$PUSH_SHA" ]]; then
+            git push origin "HEAD:$branch_ref"
+          fi
+          prs=$(gh pr list --state open --base main --head "$BRANCH" --limit 2 --json number --jq '.[].number')
+          if [[ -z "$prs" ]]; then
+            gh pr create --base main --head "$BRANCH" --title "Deliver $BRANCH" \
+              --body "Automated delivery for $BRANCH. Release candidate: v$version."
+            prs=$(gh pr list --state open --base main --head "$BRANCH" --limit 2 --json number --jq '.[].number')
+          fi
+          if [[ ! "$prs" =~ ^[0-9]+$ ]]; then
+            echo 'Expected exactly one open pull request for the branch.' >&2
+            exit 1
+          fi
+          pr=$prs
+          for attempt in {1..12}; do
+            details=$(gh api "repos/$GH_REPO/pulls/$pr")
+            mergeable=$(jq -r '.mergeable' <<< "$details")
+            if [[ "$mergeable" != null ]]; then break; fi
+            sleep 5
+          done
+          if [[ "$mergeable" != true ]] || [[ $(jq -r '.draft' <<< "$details") != false ]]; then
+            echo 'Pull request is not mergeable or is a draft.' >&2
+            exit 1
+          fi
+          if [[ $(jq -r '.base.sha' <<< "$details") != "$base" ]] || \
+             [[ $(jq -r '.head.sha' <<< "$details") != "$head" ]]; then
+            echo 'Pull request changed while preparing the candidate.' >&2
+            exit 1
+          fi
+          merge=$(jq -r '.merge_commit_sha' <<< "$details")
+          git fetch origin "refs/pull/$pr/merge"
+          if [[ $(git rev-parse FETCH_HEAD) != "$merge" ]] || \
+             [[ $(git show -s --format=%P "$merge") != "$base $head" ]]; then
+            echo 'Pull request merge candidate does not match its base and head.' >&2
+            exit 1
+          fi
+          {
+            echo 'ready=true'
+            echo "pr=$pr"
+            echo "branch=$BRANCH"
+            echo "base=$base"
+            echo "head=$head"
+            echo "merge=$merge"
+            echo "version=$version"
+          } >> "$GITHUB_OUTPUT"
+
+  checks:
+    needs: prepare
+    if: needs.prepare.outputs.ready == 'true'
+    uses: ./.github/workflows/check.yml
+    permissions:
+      contents: read
+    with:
+      candidate_ref: refs/pull/${{ needs.prepare.outputs.pr }}/merge
+      candidate_sha: ${{ needs.prepare.outputs.merge }}
+
+  release:
+    needs: [prepare, checks]
+    if: needs.prepare.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ needs.prepare.outputs.pr }}/merge
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-packages
+          path: release-packages
+      - name: Merge tested candidate and publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ needs.prepare.outputs.pr }}
+          BRANCH: ${{ needs.prepare.outputs.branch }}
+          BASE: ${{ needs.prepare.outputs.base }}
+          HEAD_SHA: ${{ needs.prepare.outputs.head }}
+          CANDIDATE: ${{ needs.prepare.outputs.merge }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch_ref="refs/heads/$BRANCH"
+          if [[ $(git rev-parse HEAD) != "$CANDIDATE" ]] || \
+             [[ $(git show -s --format=%P HEAD) != "$BASE $HEAD_SHA" ]]; then
+            echo 'Checked-out candidate no longer matches the tested merge.' >&2
+            exit 1
+          fi
+          details=$(gh api "repos/$GH_REPO/pulls/$PR")
+          if [[ $(jq -r '.state' <<< "$details") != open ]] || \
+             [[ $(jq -r '.base.sha' <<< "$details") != "$BASE" ]] || \
+             [[ $(jq -r '.head.sha' <<< "$details") != "$HEAD_SHA" ]] || \
+             [[ $(git ls-remote --refs origin "$branch_ref" | cut -f1) != "$HEAD_SHA" ]] || \
+             [[ $(git ls-remote --refs origin refs/heads/main | cut -f1) != "$BASE" ]]; then
+            echo 'Pull request or branch changed after testing; refusing to merge.' >&2
+            exit 1
+          fi
+          wheel="release-packages/sdd_init-$VERSION-py3-none-any.whl"
+          sdist="release-packages/sdd_init-$VERSION.tar.gz"
+          if [[ ! -f "$wheel" || ! -f "$sdist" ]] || \
+             [[ $(find release-packages -maxdepth 1 -type f | wc -l) -ne 2 ]]; then
+            echo 'Tested packages do not match the candidate version.' >&2
+            exit 1
+          fi
+          if [[ -n "$(git ls-remote --tags --refs origin "refs/tags/v$VERSION")" ]]; then
+            echo "Release tag v$VERSION already exists; refusing to reuse it." >&2
+            exit 1
+          fi
+          git push --force-with-lease="refs/heads/main:$BASE" origin "$CANDIDATE:refs/heads/main"
+          for attempt in {1..12}; do
+            details=$(gh api "repos/$GH_REPO/pulls/$PR")
+            if [[ $(jq -r '.merged' <<< "$details") == true ]]; then break; fi
+            sleep 5
+          done
+          if [[ $(jq -r '.merged' <<< "$details") != true ]] || \
+             [[ $(jq -r '.head.sha' <<< "$details") != "$HEAD_SHA" ]]; then
+            echo 'GitHub did not confirm the tested pull request was merged; release stopped.' >&2
+            exit 1
+          fi
+          (cd release-packages && sha256sum "$(basename "$wheel")" "$(basename "$sdist")" > SHA256SUMS)
+          gh release create "v$VERSION" "$wheel" "$sdist" release-packages/SHA256SUMS \
+            --target "$CANDIDATE" --draft --generate-notes
+          tag_sha=$(git ls-remote --tags --refs origin "refs/tags/v$VERSION" | cut -f1)
+          if [[ "$tag_sha" != "$CANDIDATE" ]]; then
+            echo 'Release tag does not point to the tested candidate; draft retained.' >&2
+            exit 1
+          fi
+          gh release edit "v$VERSION" --draft=false
+          remote_head=$(git ls-remote --refs origin "$branch_ref" | cut -f1)
+          if [[ -n "$remote_head" ]]; then
+            if [[ "$remote_head" != "$HEAD_SHA" ]]; then
+              echo 'Merged branch has new commits; leaving it intact.' >&2
+              exit 1
+            fi
+            git push --force-with-lease="$branch_ref:$HEAD_SHA" origin ":$branch_ref"
+          fi

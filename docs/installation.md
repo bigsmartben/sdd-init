@@ -73,12 +73,17 @@ uv 默认可能复用缓存；`--refresh` 用于重新解析远端。需要固�
 
 ## 开发验证
 
-在本仓库根目录构建并运行回归检查。安装冒烟测试将当前 wheel 安装到临时 Skill 和角色目录，并在独立的临时项目中验证接入。
+在本仓库根目录构建并运行回归检查。每次使用新的输出目录，避免混入旧 wheel。安装冒烟测试将当前 wheel 安装到临时 Skill 和角色目录，并在独立的临时项目中验证接入。
 
 ```powershell
-uv build --out-dir .build/dist
 python -B -m unittest discover -s tests -v
-python -B scripts/smoke_package.py --from .build/dist/sdd_init-0.8.0-py3-none-any.whl
+$dist = ".build\candidate\dist"
+if (Test-Path $dist) { throw "Choose a new output directory: $dist" }
+uv build --out-dir $dist
+if ($LASTEXITCODE -ne 0) { throw "Package build failed" }
+$wheels = @(Get-ChildItem -Path $dist -Filter *.whl -File)
+if ($wheels.Count -ne 1) { throw "Expected exactly one wheel in $dist; found $($wheels.Count)" }
+python -B scripts\smoke_package.py --from $wheels[0].FullName
 ```
 
 `src/sdd_init/cli.py` 定义命令入口，`installer.py` 负责用户级安装。构建器汇集 `source/` 的分发资源，并将 `src/sdd_init/release.py` 投影为初始化器使用的清单校验模块。源码包包含构建所需输入，wheel 可独立安装。客户端发现验证使用隔离的用户配置路径、搜索根和目标项目；旧用户角色迁出测试另使用隔离的历史角色目录。
