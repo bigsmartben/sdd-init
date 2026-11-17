@@ -3,6 +3,7 @@ name: Automated delivery
 on:
   push:
     branches-ignore: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -13,6 +14,7 @@ concurrency:
 
 jobs:
   prepare:
+    if: github.ref_type == 'branch' && github.ref_name != 'main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -127,6 +129,7 @@ jobs:
     if: needs.prepare.outputs.ready == 'true'
     runs-on: ubuntu-latest
     permissions:
+      actions: write
       contents: write
       pull-requests: read
     steps:
@@ -164,6 +167,11 @@ jobs:
              [[ $(git ls-remote --refs origin "$branch_ref" | cut -f1) != "$HEAD_SHA" ]] || \
              [[ $(git ls-remote --refs origin refs/heads/main | cut -f1) != "$BASE" ]]; then
             echo 'Pull request or branch changed after testing; refusing to merge.' >&2
+            if [[ $(jq -r '.state' <<< "$details") == open ]] && \
+               [[ -n $(git ls-remote --refs origin "$branch_ref") ]]; then
+              gh workflow run delivery.yml --repo "$GH_REPO" --ref "$BRANCH"
+              echo 'A new delivery run was queued for the updated candidate.' >&2
+            fi
             exit 1
           fi
           wheel="release-packages/sdd_init-$VERSION-py3-none-any.whl"
@@ -188,9 +196,15 @@ jobs:
             echo 'GitHub did not confirm the tested pull request was merged; release stopped.' >&2
             exit 1
           fi
+          git push --force-with-lease="refs/tags/v$VERSION:" origin "$CANDIDATE:refs/tags/v$VERSION"
+          tag_sha=$(git ls-remote --tags --refs origin "refs/tags/v$VERSION" | cut -f1)
+          if [[ "$tag_sha" != "$CANDIDATE" ]]; then
+            echo 'Release tag does not point to the tested candidate; release stopped.' >&2
+            exit 1
+          fi
           (cd release-packages && sha256sum "$(basename "$wheel")" "$(basename "$sdist")" > SHA256SUMS)
           gh release create "v$VERSION" "$wheel" "$sdist" release-packages/SHA256SUMS \
-            --target "$CANDIDATE" --draft --generate-notes
+            --verify-tag --draft --generate-notes
           tag_sha=$(git ls-remote --tags --refs origin "refs/tags/v$VERSION" | cut -f1)
           if [[ "$tag_sha" != "$CANDIDATE" ]]; then
             echo 'Release tag does not point to the tested candidate; draft retained.' >&2
