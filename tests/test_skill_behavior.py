@@ -153,6 +153,21 @@ class PreparationTests(unittest.TestCase):
                     capture_output=True, text=True, encoding="utf-8")
                 self.assertEqual(checked.returncode, 0, checked.stdout + checked.stderr)
 
+    def test_full_fixtures_include_the_review_prompt_contract_and_companion(self):
+        role_dir = prepare.ROOT / "source/project/.codex/agents"
+        role = tomllib.loads((role_dir / "review-prompt.toml").read_text(encoding="utf-8"))
+        instructions = role["developer_instructions"].strip() + "\n"
+        rules = (role_dir / "review-prompt/prompt-review.md").read_bytes()
+        for scope in ("main", "project"):
+            with self.subTest(scope=scope):
+                case = dict(self.case, candidate_scope=scope)
+                project = prepare.prepare_case(case, self.folder / scope)
+                shared = project / ".agents/sdd-workflow/roles/shared"
+                contract = shared / "review-prompt.md"
+                self.assertTrue(contract.is_file(), contract)
+                self.assertEqual(contract.read_text(encoding="utf-8"), instructions)
+                self.assertEqual((shared / "review-prompt/prompt-review.md").read_bytes(), rules)
+
     def test_prompt_review_uses_project_preset_role_without_user_profile(self):
         cases = prepare.load_cases()
         for case_id in ("review_prompt_read_only", "review_prompt_compare", "review_prompt_revise",
@@ -166,13 +181,15 @@ class PreparationTests(unittest.TestCase):
                 role = project / ".codex/agents/review-prompt.toml"
                 self.assertEqual(role.read_bytes(), (prepare.ROOT / "source/project/.codex/agents/review-prompt.toml").read_bytes())
                 instructions = tomllib.loads(role.read_text(encoding="utf-8"))["developer_instructions"]
+                contract = project / ".agents/sdd-workflow/roles/shared/review-prompt.md"
+                self.assertEqual(contract.read_text(encoding="utf-8"), instructions.strip() + "\n")
                 reference = re.search(r"\[审查规则与评价\]\(([^)]+)\)", instructions)
                 self.assertIsNotNone(reference)
-                rules_path = (role.parent / reference[1]).relative_to(project).as_posix()
-                rules = (prepare.ROOT / "source/project" / rules_path).read_bytes()
+                rules_path = (contract.parent / reference[1]).relative_to(project).as_posix()
+                rules = (prepare.ROOT / "source/project/.codex/agents/review-prompt/prompt-review.md").read_bytes()
                 self.assertEqual((project / rules_path).read_bytes(), rules)
                 relocated = self.folder / f"{case_id}-relocated"
-                shutil.copytree(role.parent, relocated)
+                shutil.copytree(contract.parent, relocated)
                 self.assertEqual((relocated / reference[1]).read_bytes(), rules)
                 self.assertFalse((relocated / ".agents").exists())
                 self.assertFalse((output / "profile").exists())

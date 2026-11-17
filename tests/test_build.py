@@ -70,8 +70,7 @@ class BuildTests(unittest.TestCase):
     def test_payload_and_shared_resources_match_canonical_source(self):
         output = builder.build(self.folder / "skill")
         project = ROOT / "source/project"
-        for source, target in ((".agents/skills", "skills"), (".agents/sdd", "sdd"),
-                               (".codex/agents", "agents")):
+        for source, target in ((".agents/skills", "skills"), (".agents/sdd", "sdd")):
             canonical = project / source
             shared = output / "shared" / target
             expected = {p.relative_to(canonical): p.read_bytes() for p in builder.source_files(canonical)}
@@ -80,10 +79,26 @@ class BuildTests(unittest.TestCase):
         self.assertFalse((output / "assets/spec_template.md").exists())
         self.assertEqual((output / "scripts/release.py").read_bytes(),
                          (ROOT / "src/sdd_init/release.py").read_bytes())
-        path = "shared/agents/review-prompt.toml"
+        path = "shared/roles/codex/review-prompt.toml"
         data = (output / path).read_bytes()
-        self.assertEqual(data, (project / ".codex/agents/review-prompt.toml").read_bytes())
-        self.assertEqual(tomllib.loads(data.decode("utf-8"))["name"], "review-prompt")
+        role = tomllib.loads(data.decode("utf-8"))
+        self.assertEqual(role["name"], "review-prompt")
+        contract = output / "shared/roles/shared/review-prompt.md"
+        copilot = output / "shared/roles/copilot/review-prompt.agent.md"
+        self.assertTrue(contract.is_file())
+        self.assertIn("roles/shared/review-prompt.md", role["developer_instructions"])
+        self.assertIn(".agents/sdd-workflow/roles/shared/review-prompt.md", role["developer_instructions"])
+        contract_text = contract.read_text(encoding="utf-8")
+        self.assertIn(".agents/sdd-workflow/roles/shared/review-prompt.md", contract_text)
+        reference = re.search(r"\[审查规则与评价\]\(([^)]+)\)", contract_text)
+        self.assertIsNotNone(reference)
+        companion = (contract.parent / reference[1]).resolve()
+        self.assertEqual(
+            companion.read_bytes(),
+            (output / "shared/roles/shared/review-prompt/prompt-review.md").read_bytes(),
+        )
+        self.assertNotIn("model:", copilot.read_text(encoding="utf-8"))
+        self.assertIn("roles/shared/review-prompt.md", copilot.read_text(encoding="utf-8"))
         manifest = json.loads((output / "build-manifest.json").read_bytes())
         self.assertEqual(manifest["files"][path], hashlib.sha256(data).hexdigest())
         self.assertFalse((output / "assets/user-agents/review-prompt.toml").exists())
@@ -130,7 +145,7 @@ class BuildTests(unittest.TestCase):
         self.assertIn(WORKFLOW.encode(), agents.read_bytes())
         self.assertNotIn(b"/sdd-commit/SKILL.md", agents.read_bytes())
         self.assertTrue(config.read_bytes().startswith(project_config))
-        self.assertIn(f'config_file = "../{WORKFLOW}/agents/sdd-coder.toml"'.encode(), config.read_bytes())
+        self.assertIn(f'config_file = "../{WORKFLOW}/roles/codex/sdd-coder.toml"'.encode(), config.read_bytes())
         self.assertTrue((target / WORKFLOW).samefile(skill / "shared"))
         self.assertEqual(index.read_bytes(), index_body)
         self.assertEqual(rules.read_bytes(), b"# Existing project rules\n")

@@ -23,10 +23,12 @@
 | 命令 | 行为 |
 | --- | --- |
 | `inspect` | 只读核对版本、链接、配置、入口冲突及待写项 |
-| `init` | 首次接入、升级或重连，必要时先恢复 |
+| `init` | 首次接入、升级或重连，默认准备 Codex 与 Copilot 双端角色适配，必要时先恢复 |
 | `recover` | 恢复未完成的项目操作 |
 
-`init` 将六个技能分别链接到 `.agents/skills/<技能名>/`，例如 `.agents/skills/sdd-bugfix/SKILL.md`，不复制技能正文。共享包链接位于扫描目录外的 `.agents/sdd-workflow/`，角色使用相对路径引用。Windows 使用 junction，其他平台使用目录符号链接。重新 `init` 强制替换同名实体目录、非标准链接、定制托管块及角色引用；旧独立沟通块自动合并为单块，不跟随链接删除其目标。安装元数据记录实际共享版本和托管片段哈希，版本识别以回执中的 SHA-256 为准。重复 `inspect` 可核对剩余写入和版本差异。客户端打开已信任的目标项目后刷新 Skill 与角色配置。
+`init` 可在 `--harness auto|both|codex|copilot` 中显式选适配范围；默认 `auto` 为双端。`inspect` 报告可核验的项目标记，但标记不改变默认值，因为项目文件不能可靠表明同一项目会由哪个客户端使用。Codex 角色在 `.codex/config.toml` 注册，Copilot 角色写入 `.github/agents/*.agent.md`；两者均引用共享正文 `roles/shared/`，Copilot 适配不固定模型。`init` 将六个技能分别链接到 `.agents/skills/<技能名>/`，例如 `.agents/skills/sdd-bugfix/SKILL.md`，不复制技能正文。共享包链接位于扫描目录外的 `.agents/sdd-workflow/`，按 `roles/`、`skills/`、`sdd/` 分类。Windows 使用 junction，其他平台使用目录符号链接。重新 `init` 强制替换同名实体目录、非标准链接、定制托管块及受管角色适配；旧独立沟通块自动合并为单块，不跟随链接删除其目标。安装元数据记录实际共享版本和托管片段哈希，版本识别以回执中的 SHA-256 为准。重复 `inspect` 可核对剩余写入和版本差异。客户端打开已信任的目标项目后刷新 Skill 与角色配置。
+
+例如，只接入 Copilot 时将选项放在子命令前：`python -B <已安装的-sdd-init>/scripts/govern.py --root <目标仓库> --harness copilot init`。
 
 共享更新移除原受管 `sdd-review-prompt` 及其回执模板。已链接项目运行新版 `init` 刷新托管导航。项目自有链接由项目维护。
 

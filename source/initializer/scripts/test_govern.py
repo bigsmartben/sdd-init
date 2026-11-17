@@ -96,7 +96,7 @@ class GovernanceTests(unittest.TestCase):
         self.assertEqual(set(roles), set(expected_models))
         for name, model in expected_models.items():
             role = config.parent / roles[name]["config_file"]
-            self.assertTrue(role.samefile(SHARED / "agents" / f"{name}.toml"))
+            self.assertTrue(role.samefile(SHARED / "roles/codex" / f"{name}.toml"))
             data = tomllib.loads(role.read_text(encoding="utf-8"))
             self.assertEqual(data["model"], model)
             self.assertNotIn("sandbox_mode", data)

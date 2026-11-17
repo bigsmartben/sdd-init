@@ -140,9 +140,14 @@ def shared_bundle(shared: Path) -> tuple[str, str, dict[str, str]]:
         fail(f"安装资源与清单不一致: {error}")
     actual = release.shared_files(files)
     skills = {name for name in actual if name.endswith("/SKILL.md")}
-    roles = {name for name in actual if name.startswith("agents/") and name.endswith(".toml")}
+    roles = {name for name in actual if name.startswith("roles/codex/") and name.endswith(".toml")}
+    copilot_roles = {
+        name for name in actual if name.startswith("roles/copilot/") and name.endswith(".agent.md")
+    }
     required = {
         "sdd/scripts/govern.py", "sdd/scripts/doc_check.py",
+        *(f"roles/shared/{name}.md" for name in PROJECT_ROLES),
+        *(f"roles/copilot/{name}.agent.md" for name in PROJECT_ROLES),
         *(f"sdd/references/{name}.md" for name in (
             "doc-check", "architecture-rules", "visual-confirmation", "document-writing", "delegation", "task-receipt",
             "sdd-repository-governance", "observability-baseline", "scenarios", "prototype", "implementation",
@@ -155,12 +160,21 @@ def shared_bundle(shared: Path) -> tuple[str, str, dict[str, str]]:
         *(f"skills/{name}/agents/openai.yaml" for name in PROJECT_SKILLS),
     }
     if (skills != {f"skills/{name}/SKILL.md" for name in PROJECT_SKILLS}
-            or roles != {f"agents/{name}.toml" for name in PROJECT_ROLES}
+            or roles != {f"roles/codex/{name}.toml" for name in PROJECT_ROLES}
+            or copilot_roles != {f"roles/copilot/{name}.agent.md" for name in PROJECT_ROLES}
             or not required <= actual.keys()):
         fail("共享资源缺少或包含未声明的 Skill、角色、模板或必要引用")
     for name in sorted(PROJECT_ROLES):
-        data = (shared / "agents" / f"{name}.toml").read_bytes()
+        data = (shared / "roles/codex" / f"{name}.toml").read_bytes()
         validate_role(data, name)
+        contract = read(shared / "roles/shared" / f"{name}.md")
+        if not contract.strip():
+            fail(f"共享角色正文为空: {name}")
+        copilot = read(shared / "roles/copilot" / f"{name}.agent.md")
+        if skill_name(shared / "roles/copilot" / f"{name}.agent.md") != name:
+            fail(f"Copilot 角色 name 与分发文件不一致: {name}")
+        if re.search(r"(?m)^model\s*:", copilot):
+            fail(f"Copilot 角色不得固定模型，以继承会话模型: {name}")
     for name in sorted(PROJECT_SKILLS):
         if skill_name(shared / "skills" / name / "SKILL.md") != name:
             fail(f"Skill 入口的 name 与分发目录不一致: {name}")
@@ -181,7 +195,31 @@ def shared_bundle(shared: Path) -> tuple[str, str, dict[str, str]]:
     return release.content_id(files), release.content_id(actual), fragments
 
 
-def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
+def detect_project_harnesses(root: Path) -> dict[str, list[str]]:
+    detected: dict[str, list[str]] = {"codex": [], "copilot": []}
+    codex_config = root / ".codex/config.toml"
+    codex_agents = root / ".codex/agents"
+    if codex_config.exists():
+        detected["codex"].append(".codex/config.toml")
+    if codex_agents.is_dir() and any(codex_agents.glob("*.toml")):
+        detected["codex"].append(".codex/agents/*.toml")
+    copilot_instructions = root / ".github/copilot-instructions.md"
+    copilot_agents = root / ".github/agents"
+    if copilot_instructions.is_file():
+        detected["copilot"].append(".github/copilot-instructions.md")
+    if copilot_agents.is_dir() and any(copilot_agents.glob("*.agent.md")):
+        detected["copilot"].append(".github/agents/*.agent.md")
+    return detected
+
+
+def selected_harnesses(root: Path, requested: str) -> tuple[dict[str, list[str]], set[str]]:
+    detected = detect_project_harnesses(root)
+    if requested in ("auto", "both"):
+        return detected, {"codex", "copilot"}
+    return detected, {requested}
+
+
+def cmd_inspect(root: Path, args: argparse.Namespace) -> int:
     out(f"Repository: {root}")
     for rel in ["AGENTS.md", "docs/index.md", "docs/blueprint.md", "specs"]:
         out(f"{'EXISTS' if (root / rel).exists() else 'MISSING'}  {rel}")
@@ -193,6 +231,10 @@ def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
     for p in candidates[:20]:
         out(f"POSSIBLE_EXISTING_ARCH {p.relative_to(root)} (请人工判断，禁止自动替换)")
     out(f"Git HEAD: {(git(root, 'rev-parse', '--short', 'HEAD') or b'none').decode().strip()}")
+    detected, harnesses = selected_harnesses(root, args.harness)
+    out(f"Detected harness markers: " + "; ".join(
+        f"{name}={', '.join(markers) if markers else 'none'}" for name, markers in detected.items()))
+    out(f"Harness adapters planned: {', '.join(sorted(harnesses))}")
     shared = shared_path()
     out(f"Shared source: {shared}")
     recovery = root / transaction.RECOVERY
@@ -207,18 +249,20 @@ def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
     out(f"Shared version: sha256:{version}")
     out(f"Shared skill entries: {', '.join(sorted(PROJECT_SKILLS))}")
     out(f"Shared role definitions: {', '.join(sorted(PROJECT_ROLES))}")
-    link, linked_to = check_project(root, shared)
+    link, linked_to = check_project(root, shared, harnesses)
     existing = transaction.link_snapshot(link)
     description = linked_to or ("(existing file or directory)" if existing else "(missing)")
     out(f"Project link: {link} -> {description}")
-    links = plan_project_links(root, shared)
+    links = plan_project_links(root, shared, harnesses)
     for path, before, target in links:
         out(f"Project entry: {path.relative_to(root).as_posix()} -> "
             f"{(before['target'] or '(existing file or directory)') if before else '(missing)'}"
             + (" (remove on init)" if target is None and before else ""))
-    files = plan_files(root, version, fragments)
+    files = plan_files(root, version, fragments, harnesses)
+    state_before = next((before for path, _, before in files
+                         if path.relative_to(root).as_posix() == transaction.STATE), None)
     try:
-        current = read_state(files[3][2])
+        current = read_state(state_before)
     except ValueError as error:
         out(f"Project installation state will be replaced: {error}")
     else:
@@ -226,7 +270,8 @@ def cmd_inspect(root: Path, _: argparse.Namespace) -> int:
     doc_index = root / "docs/index.md"
     out(f"Project documentation index: {doc_index}" if doc_index.is_file()
         else "Project documentation index: resolve the project's own entry from its guidance")
-    config = files[1][2]
+    config = next((before for path, _, before in files
+                   if path.relative_to(root).as_posix() == ".codex/config.toml"), None)
     roles = sorted(set(tomllib.loads(config.decode('utf-8')).get('agents', {})) & PROJECT_ROLES) if config else []
     out(f"Registered roles: {', '.join(roles) or 'none'}")
     changes = [path.relative_to(root).as_posix() for path, data, before in files if data != before]
@@ -277,11 +322,12 @@ def prepare_agents(original: str, templates: dict[str, str]) -> str:
     return bom + body
 
 
-def cmd_init(root: Path, _: argparse.Namespace) -> int:
+def cmd_init(root: Path, args: argparse.Namespace) -> int:
     with transaction.project_lock(root):
         transaction.recover(root)
+        _, harnesses = selected_harnesses(root, args.harness)
         with release.user_lock(SKILL.parent, shared_read=True):
-            return initialize(root)
+            return initialize(root, harnesses)
 
 
 def cmd_recover(root: Path, _: argparse.Namespace) -> int:
@@ -292,7 +338,7 @@ def cmd_recover(root: Path, _: argparse.Namespace) -> int:
 
 
 def role_reference(name: str) -> str:
-    return f"../{transaction.WORKFLOW_LINK}/agents/{name}.toml"
+    return f"../{transaction.WORKFLOW_LINK}/roles/codex/{name}.toml"
 
 
 def legacy_role_reference(name: str) -> str:
@@ -375,6 +421,10 @@ def migrate_legacy_role_references(original: str, config: dict) -> tuple[str, di
         if prefix is None:
             continue
         suffix = normalized[len(prefix):]
+        if suffix.startswith("agents/") and suffix.endswith(".toml"):
+            codex_adapter = "roles/codex/" + suffix.removeprefix("agents/")
+            if (shared_path() / codex_adapter).is_file():
+                suffix = codex_adapter
         destination = (shared_path() / suffix).resolve()
         if not destination.is_relative_to(shared_path().resolve()):
             fail(f"项目角色 {name} 的旧共享引用越界: {reference}")
@@ -564,7 +614,7 @@ def prepare_ignore(original: str) -> str:
     return original + separator + newline.join(missing) + newline
 
 
-def plan_project_links(root: Path, shared: Path) -> list[tuple[Path, dict | None, Path | None]]:
+def plan_project_links(root: Path, shared: Path, harnesses: set[str]) -> list[tuple[Path, dict | None, Path | None]]:
     links = transaction.plan_links(root, shared)
     names = PROJECT_SKILLS | RETIRED_SKILLS | {"sdd-init"}
     conflicts = set()
@@ -589,27 +639,28 @@ def plan_project_links(root: Path, shared: Path) -> list[tuple[Path, dict | None
                 name = skill_name(path)
                 if name and name.casefold() in names:
                     conflicts.add(path)
-    agents = transaction.safe_path(root, ".codex/agents")
-    if agents.exists() and not agents.is_dir():
-        fail(f"角色目录被遮蔽: {agents}")
-    for path in (agents.iterdir() if agents.is_dir() else ()):
-        if path.suffix.casefold() != ".toml":
-            continue
-        if path.stem.casefold() in PROJECT_ROLES:
-            conflicts.add(path)
-        elif path.is_file():
-            try:
-                name = tomllib.loads(path.read_text(encoding="utf-8")).get("name")
-            except ValueError:
+    if "codex" in harnesses:
+        agents = transaction.safe_path(root, ".codex/agents")
+        if agents.exists() and not agents.is_dir():
+            fail(f"角色目录被遮蔽: {agents}")
+        for path in (agents.iterdir() if agents.is_dir() else ()):
+            if path.suffix.casefold() != ".toml":
                 continue
-            if isinstance(name, str) and name.casefold() in PROJECT_ROLES:
+            if path.stem.casefold() in PROJECT_ROLES:
                 conflicts.add(path)
+            elif path.is_file():
+                try:
+                    name = tomllib.loads(path.read_text(encoding="utf-8")).get("name")
+                except ValueError:
+                    continue
+                if isinstance(name, str) and name.casefold() in PROJECT_ROLES:
+                    conflicts.add(path)
     links.extend((path, transaction.link_snapshot(path), None) for path in sorted(conflicts))
     return links
 
 
-def check_project(root: Path, shared: Path) -> tuple[Path, Path | None]:
-    links = plan_project_links(root, shared)
+def check_project(root: Path, shared: Path, harnesses: set[str]) -> tuple[Path, Path | None]:
+    links = plan_project_links(root, shared, harnesses)
     link, snapshot, _ = links[0]
     linked_to = Path(snapshot["target"]) if snapshot and snapshot["target"] else None
     return link, linked_to
@@ -620,32 +671,73 @@ def read_state(data: bytes | None) -> dict:
         return {}
     try:
         state = json.loads(data)
-        if (not isinstance(state, dict) or set(state) != {"schema_version", "shared_version", "agents_blocks"}
+        required = {"schema_version", "shared_version", "agents_blocks"}
+        if (not isinstance(state, dict) or set(state) not in (required, required | {"copilot_roles"})
                 or state["schema_version"] != 1
                 or set(state["agents_blocks"]) not in (set(FRAGMENTS), set(FRAGMENTS) | {"agent-communication"})
                 or not all(re.fullmatch(r"[a-f0-9]{64}", value)
                            for value in [state["shared_version"], *state["agents_blocks"].values()])):
             raise ValueError("Invalid project installation state")
+        roles = state.get("copilot_roles", {})
+        if (not isinstance(roles, dict) or not set(roles) <= set(PROJECT_ROLES)
+                or not all(re.fullmatch(r"[a-f0-9]{64}", value) for value in roles.values())):
+            raise ValueError("Invalid Copilot role ownership metadata")
     except (ValueError, TypeError, AttributeError) as error:
         raise ValueError(f"无效的项目安装元数据: {transaction.STATE}；请保留文件并核对来源") from error
     return state
 
 
-def plan_files(root: Path, shared_version: str, fragments: dict[str, str]) -> list[tuple[Path, bytes, bytes | None]]:
-    paths = [transaction.safe_path(root, name) for name in transaction.FILES[:4]]
+def plan_files(root: Path, shared_version: str, fragments: dict[str, str],
+               harnesses: set[str]) -> list[tuple[Path, bytes, bytes | None]]:
+    names = ["AGENTS.md"]
+    if "codex" in harnesses:
+        names.append(".codex/config.toml")
+    names.extend((".gitignore", transaction.STATE))
+    paths = [transaction.safe_path(root, name) for name in names]
     before = [transaction.content(path) for path in paths]
     texts = []
-    for path, data in zip(paths[:3], before[:3]):
+    for path, data in zip(paths[:-1], before[:-1]):
         try:
             texts.append((data or b"").decode("utf-8"))
         except UnicodeDecodeError as error:
             raise ValueError(f"文件不是有效 UTF-8: {path}") from error
-    agents, config, ignore = texts
+    agents = texts[0]
+    offset = 1
+    config = texts[offset] if "codex" in harnesses else None
+    offset += "codex" in harnesses
+    ignore = texts[offset]
+    try:
+        previous_state = read_state(before[-1])
+    except ValueError:
+        previous_state = {}
+    copilot_roles = dict(previous_state.get("copilot_roles", {}))
+    copilot_files = []
+    if "copilot" in harnesses:
+        for name in sorted(PROJECT_ROLES):
+            source = shared_path() / "roles/copilot" / f"{name}.agent.md"
+            target = transaction.safe_path(root, f".github/agents/{name}.agent.md")
+            data = source.read_bytes()
+            prior = transaction.content(target)
+            owned_digest = copilot_roles.get(name)
+            if prior is not None:
+                if prior == data:
+                    copilot_roles[name] = release.digest(data)
+                elif owned_digest is not None:
+                    if release.digest(prior) != owned_digest:
+                        raise ValueError(f"Preserve modified Copilot role; ownership check failed: {target}")
+                else:
+                    raise ValueError(f"Preserve unmanaged Copilot role collision: {target}")
+            copilot_roles[name] = release.digest(data)
+            copilot_files.append((target, data, prior))
     state = {"schema_version": 1, "shared_version": shared_version,
-             "agents_blocks": {name: release.digest(fragment.encode()) for name, fragment in fragments.items()}}
-    proposed = (prepare_agents(agents, fragments),
-                prepare_config(config), prepare_ignore(ignore), json.dumps(state, indent=2, sort_keys=True) + "\n")
+             "agents_blocks": {name: release.digest(fragment.encode()) for name, fragment in fragments.items()},
+             "copilot_roles": copilot_roles}
+    proposed = [prepare_agents(agents, fragments)]
+    if config is not None:
+        proposed.append(prepare_config(config))
+    proposed.extend((prepare_ignore(ignore), json.dumps(state, indent=2, sort_keys=True) + "\n"))
     files = [(path, data.encode("utf-8"), prior) for path, data, prior in zip(paths, proposed, before)]
+    files.extend(copilot_files)
     override = transaction.safe_path(root, "AGENTS.override.md")
     previous = transaction.content(override)
     if previous is not None:
@@ -657,27 +749,27 @@ def plan_files(root: Path, shared_version: str, fragments: dict[str, str]) -> li
     return files
 
 
-def initialize(root: Path) -> int:
+def initialize(root: Path, harnesses: set[str]) -> int:
     shared = shared_path()
-    link, _ = check_project(root, shared)
-    links = plan_project_links(root, shared)
+    link, _ = check_project(root, shared, harnesses)
+    links = plan_project_links(root, shared, harnesses)
     version, shared_version, fragments = shared_bundle(shared)
-    files = plan_files(root, shared_version, fragments)
+    files = plan_files(root, shared_version, fragments, harnesses)
 
     def check_bundle():
         if shared_path() != shared or shared_bundle(shared)[0] != version:
             fail(f"共享版本在预检后变化；请重新检查安装计划: {shared}")
 
     def guard():
-        check_project(root, shared)
-        if plan_project_links(root, shared) != links:
+        check_project(root, shared, harnesses)
+        if plan_project_links(root, shared, harnesses) != links:
             fail(f"工作流链接在预检后变化: {link}")
         check_bundle()
 
     def verify():
-        if check_project(root, shared)[1] != shared or not link.samefile(shared):
+        if check_project(root, shared, harnesses)[1] != shared or not link.samefile(shared):
             fail(f"工作流链接不可用: {link}")
-        for path, _, target in plan_project_links(root, shared):
+        for path, _, target in plan_project_links(root, shared, harnesses):
             if target is None:
                 if transaction.workflow_target(path) is not None:
                     fail(f"旧工作流链接尚未迁出: {path}")
@@ -688,10 +780,16 @@ def initialize(root: Path) -> int:
             if transaction.content(inside(root, target)) != data:
                 fail(f"安装写后核验检测到外部修改: {target}")
         config_dir = root / ".codex"
-        for name in PROJECT_ROLES:
-            reference = config_dir / role_reference(name)
-            if not reference.samefile(shared / "agents" / f"{name}.toml"):
-                fail(f"角色引用不可达: {name}")
+        if "codex" in harnesses:
+            for name in PROJECT_ROLES:
+                reference = config_dir / role_reference(name)
+                if not reference.samefile(shared / "roles/codex" / f"{name}.toml"):
+                    fail(f"Codex 角色引用不可达: {name}")
+        if "copilot" in harnesses:
+            for name in PROJECT_ROLES:
+                target = root / ".github/agents" / f"{name}.agent.md"
+                if target.read_bytes() != (shared / "roles/copilot" / f"{name}.agent.md").read_bytes():
+                    fail(f"Copilot 角色配置不可达: {name}")
 
     transaction.apply(root, files, links=links, guard=guard, verify=verify)
     for target, data, before in files:
@@ -705,14 +803,17 @@ def initialize(root: Path) -> int:
     out(f"SDD WORKFLOW {link} -> {shared}")
     out(f"Shared version: sha256:{shared_version}")
     out(f"Project skills: {', '.join(sorted(PROJECT_SKILLS))}")
-    out(f"Registered roles: {', '.join(sorted(PROJECT_ROLES))}")
-    out("VERIFIED project anchor, six directory skill links, managed navigation, configuration and local metadata")
+    out(f"Configured harnesses: {', '.join(sorted(harnesses))}")
+    out(f"Installed role names: {', '.join(sorted(PROJECT_ROLES))}")
+    out("VERIFIED project anchor, six directory skill links, role adapters, managed navigation and local metadata")
     return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="SDD resource installer")
     p.add_argument("--root", default=".", help="要治理的仓库目录（默认当前目录）")
+    p.add_argument("--harness", choices=("auto", "both", "codex", "copilot"), default="auto",
+                   help="要接入的 Harness；auto 默认准备 Codex 与 Copilot 双端")
     subs = p.add_subparsers(dest="cmd", required=True)
     subs.add_parser("inspect", help="只读盘点，不修改任何文件")
     subs.add_parser("init", help="接入用户级共享资源并同步项目中的 SDD 托管块")

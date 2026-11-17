@@ -81,7 +81,12 @@ def main():
         }
         assert not (project / ".codex/agents").exists()
         for name, reference in roles.items():
-            assert (config.parent / reference["config_file"]).samefile(self_shared / "agents" / f"{name}.toml")
+            assert (config.parent / reference["config_file"]).samefile(
+                self_shared / "roles/codex" / f"{name}.toml")
+            copilot = project / ".github/agents" / f"{name}.agent.md"
+            assert copilot.is_file()
+            assert "model:" not in copilot.read_text(encoding="utf-8")
+            assert f"roles/shared/{name}.md" in copilot.read_text(encoding="utf-8")
         subprocess.run(initialize, check=True)
         assert before == local_files(project)
         inspection = subprocess.run([*initialize[:-1], "inspect"], check=True, capture_output=True, text=True, encoding="utf-8")

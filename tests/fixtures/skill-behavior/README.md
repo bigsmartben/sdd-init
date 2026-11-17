@@ -120,7 +120,7 @@ python -B tests\prepare_skill_behavior.py --case main_simple --case main_special
 | `workflow_review_targeted` | 并行静态审查归并共享偏差，只为本地回读疑点实跑，远端缺证可接续，无比较目标时跳过 A/B |
 | `workflow_review_not_requested` | 普通配置变更只写指定文件，复核轨迹中无评审 Skill 加载或报告写入 |
 
-提示词角色案例同时核对角色配套的[审查规则与评价模型](../../../source/project/.codex/agents/review-prompt/prompt-review.md)：相对实际角色配置文件读取，先提取目标与验证，定位实际基线，区分原版偏差修正和效率优化。单角色准备器仅携带所选角色及其同名配套目录；迁移到不同目录后规则仍可读取。`review_prompt_revise` 核对已有依据和授权足够时直接落地，不重复确认或强制 A/B。`review_prompt_ab_confirmation` 只核对实验前唯一确认节点，当前输入不包含对具体方案的确认，执行止于方案回执。退款后端不可用时，行为等价、执行耗时和 token 优化结论仍待验；准备器与装配成功不证明效率收益。真实 A/B 成本、预算停止与稳定性判据须在用户确认方案且具备受控运行环境及遥测的批次取证。
+提示词角色案例同时核对角色配套的[审查规则与评价模型](../../../source/project/.codex/agents/review-prompt/prompt-review.md)：相对共享角色契约所在目录读取，先提取目标与验证，定位实际基线，区分原版偏差修正和效率优化。单角色准备器仅携带所选角色及其同名配套目录；迁移到不同目录后规则仍可读取。`review_prompt_revise` 核对已有依据和授权足够时直接落地，不重复确认或强制 A/B。`review_prompt_ab_confirmation` 只核对实验前唯一确认节点，当前输入不包含对具体方案的确认，执行止于方案回执。退款后端不可用时，行为等价、执行耗时和 token 优化结论仍待验；准备器与装配成功不证明效率收益。真实 A/B 成本、预算停止与稳定性判据须在用户确认方案且具备受控运行环境及遥测的批次取证。
 
 显式评审例将设计白皮书和 `docs/review-criteria.md` 的执行材料分开，使用候选 Skill 的报告模板及缩小的合成矩阵。整版工作流的结论须绑定其自己的完整矩阵、实际快照和运行证据。
 

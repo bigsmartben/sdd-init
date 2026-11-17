@@ -80,7 +80,7 @@ class UserInstallTests(unittest.TestCase):
         self.change_release()
         self.assertEqual(install(self.resources, self.skills), "Updated")
         self.assertEqual((self.skills / "sdd-init/SKILL.md").read_text(), "new release")
-        self.assertEqual((shared_directory(self.skills) / "agents/review-prompt.toml").read_bytes(), role_revision)
+        self.assertEqual((shared_directory(self.skills) / "roles/codex/review-prompt.toml").read_bytes(), role_revision)
         self.assertFalse(self.role.parent.exists())
         self.assertEqual((project / "custom.txt").read_text(), "keep")
 
@@ -103,7 +103,10 @@ class UserInstallTests(unittest.TestCase):
                                      "status", "--porcelain", "--untracked-files=all"],
                                     check=True, capture_output=True, text=True)
             self.assertEqual(set(result.stdout.splitlines()),
-                             {"?? .codex/config.toml", "?? .gitignore", "?? AGENTS.md"})
+                             {"?? .codex/config.toml", "?? .gitignore", "?? AGENTS.md",
+                              *(f"?? .github/agents/{name}.agent.md" for name in (
+                                  "review-prompt", "sdd-architect", "sdd-product-manager",
+                                  "sdd-coder", "sdd-devops", "sdd-doc-consistency"))})
         worktree = self.root / "worktree"
         for command in (["add", "."], ["-c", "user.name=Test", "-c", "user.email=test@example.invalid",
                                         "commit", "--no-gpg-sign", "-m", "project references"],
@@ -121,7 +124,7 @@ class UserInstallTests(unittest.TestCase):
         self.assertEqual((worktree / ".codex/config.toml").read_bytes(), refs)
         repos.append(worktree)
         before = [{p.relative_to(repo): p.read_bytes() for p in project_files(repo)} for repo in repos]
-        role_path = "agents/sdd-architect.toml"
+        role_path = "roles/codex/sdd-architect.toml"
         role = self.resources / "shared" / role_path
         role.write_text(role.read_text(encoding="utf-8") + "\n# new workflow version\n", encoding="utf-8")
         skill_path = "skills/sdd-bugfix/SKILL.md"
@@ -172,9 +175,9 @@ class UserInstallTests(unittest.TestCase):
         }
         replacements = ("sdd-architect", "sdd-product-manager", "sdd-devops", "sdd-doc-consistency", "review-prompt")
         for name in replacements:
-            (old_release / "shared/agents" / f"{name}.toml").unlink()
+            (old_release / "shared/roles/codex" / f"{name}.toml").unlink()
         for name, model in old_models.items():
-            (old_release / "shared/agents" / f"{name}.toml").write_text(
+            (old_release / "shared/roles/codex" / f"{name}.toml").write_text(
                 f'name = "{name}"\nmodel = "{model}"\ndescription = "Legacy role"\n'
                 'developer_instructions = "Legacy instructions"\n', encoding="utf-8",
             )
@@ -218,7 +221,7 @@ class UserInstallTests(unittest.TestCase):
                           encoding="utf-8")
         old_role_names = sorted(set(old_models) | {"sdd-coder"})
         old_role_block = "# sdd-init roles:start\r\n" + "".join(
-            f'[agents.{name}]\r\nconfig_file = "../{LEGACY_WORKFLOW}/agents/{name}.toml"\r\n'
+            f'[agents.{name}]\r\nconfig_file = "../{LEGACY_WORKFLOW}/roles/codex/{name}.toml"\r\n'
             for name in old_role_names
         ) + "# sdd-init roles:end\r\n"
         config.write_bytes(project_settings + old_role_block.encode("utf-8"))
@@ -231,7 +234,8 @@ class UserInstallTests(unittest.TestCase):
         old_roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
         self.assertEqual(set(old_roles), set(old_models) | {"sdd-coder"})
         for name in old_models:
-            self.assertTrue((config.parent / old_roles[name]["config_file"]).samefile(shared / "agents" / f"{name}.toml"))
+            self.assertTrue((config.parent / old_roles[name]["config_file"]).samefile(
+                shared / "roles/codex" / f"{name}.toml"))
         for name, path in retired.items():
             self.assertTrue((workflow / path).samefile(shared / path))
         self.assertTrue((workflow / prompt_template).is_file())
@@ -242,7 +246,7 @@ class UserInstallTests(unittest.TestCase):
         self.assertFalse(self.role.exists())
         self.assertTrue(workflow.samefile(shared))
         for name in old_models:
-            self.assertFalse((workflow / "agents" / f"{name}.toml").exists())
+            self.assertFalse((workflow / "roles/codex" / f"{name}.toml").exists())
         for path in retired.values():
             self.assertFalse((workflow / path.parent).exists())
         self.assertFalse((workflow / prompt_template).exists())
@@ -280,7 +284,8 @@ class UserInstallTests(unittest.TestCase):
         roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
         self.assertEqual(set(roles), set(replacements) | {"sdd-coder"})
         for name in roles:
-            self.assertTrue((config.parent / roles[name]["config_file"]).samefile(shared / "agents" / f"{name}.toml"))
+            self.assertTrue((config.parent / roles[name]["config_file"]).samefile(
+                shared / "roles/codex" / f"{name}.toml"))
         rules = Path("sdd/references/implementation.md")
         self.assertTrue((workflow / rules).samefile(shared / rules))
         subprocess.run(init, check=True, capture_output=True)
@@ -555,7 +560,7 @@ class UserInstallTests(unittest.TestCase):
         subprocess.run(command, check=True, capture_output=True)
         config = project / ".codex/config.toml"
         current = config.read_text(encoding="utf-8")
-        old = current.replace('[agents.review-prompt]\nconfig_file = "../.agents/sdd-workflow/agents/review-prompt.toml"\n', "")
+        old = current.replace('[agents.review-prompt]\nconfig_file = "../.agents/sdd-workflow/roles/codex/review-prompt.toml"\n', "")
         config.write_text(old, encoding="utf-8")
         subprocess.run(command, check=True, capture_output=True)
         self.assertEqual(config.read_text(encoding="utf-8"), current)
@@ -567,7 +572,7 @@ class UserInstallTests(unittest.TestCase):
         self.assertEqual(install(self.resources, self.skills), "Already current")
         roles = tomllib.loads(current)["agents"]
         self.assertEqual(len(roles), 6)
-        self.assertEqual(roles["review-prompt"]["config_file"], "../.agents/sdd-workflow/agents/review-prompt.toml")
+        self.assertEqual(roles["review-prompt"]["config_file"], "../.agents/sdd-workflow/roles/codex/review-prompt.toml")
 
     def test_force_upgrade_user_and_project_conflicts_end_to_end(self):
         self.install_legacy_role()

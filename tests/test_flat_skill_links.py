@@ -152,7 +152,7 @@ tx.publish_workflow_link = stop
         self.assertFalse((self.root / ".codex/agents").exists())
         for name in self.gov.PROJECT_ROLES:
             reference = self.root / ".codex" / self.gov.role_reference(name)
-            self.assertTrue(reference.samefile(self.shared / "agents" / f"{name}.toml"))
+            self.assertTrue(reference.samefile(self.shared / "roles/codex" / f"{name}.toml"))
 
     def test_shared_updates_are_visible_without_copy_or_relink(self):
         self.init()
