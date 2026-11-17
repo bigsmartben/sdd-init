@@ -249,11 +249,11 @@ def cmd_inspect(root: Path, args: argparse.Namespace) -> int:
     out(f"Shared version: sha256:{version}")
     out(f"Shared skill entries: {', '.join(sorted(PROJECT_SKILLS))}")
     out(f"Shared role definitions: {', '.join(sorted(PROJECT_ROLES))}")
-    link, linked_to = check_project(root, shared)
+    link, linked_to = check_project(root, shared, harnesses)
     existing = transaction.link_snapshot(link)
     description = linked_to or ("(existing file or directory)" if existing else "(missing)")
     out(f"Project link: {link} -> {description}")
-    links = plan_project_links(root, shared)
+    links = plan_project_links(root, shared, harnesses)
     for path, before, target in links:
         out(f"Project entry: {path.relative_to(root).as_posix()} -> "
             f"{(before['target'] or '(existing file or directory)') if before else '(missing)'}"
@@ -614,7 +614,7 @@ def prepare_ignore(original: str) -> str:
     return original + separator + newline.join(missing) + newline
 
 
-def plan_project_links(root: Path, shared: Path) -> list[tuple[Path, dict | None, Path | None]]:
+def plan_project_links(root: Path, shared: Path, harnesses: set[str]) -> list[tuple[Path, dict | None, Path | None]]:
     links = transaction.plan_links(root, shared)
     names = PROJECT_SKILLS | RETIRED_SKILLS | {"sdd-init"}
     conflicts = set()
@@ -639,27 +639,28 @@ def plan_project_links(root: Path, shared: Path) -> list[tuple[Path, dict | None
                 name = skill_name(path)
                 if name and name.casefold() in names:
                     conflicts.add(path)
-    agents = transaction.safe_path(root, ".codex/agents")
-    if agents.exists() and not agents.is_dir():
-        fail(f"角色目录被遮蔽: {agents}")
-    for path in (agents.iterdir() if agents.is_dir() else ()):
-        if path.suffix.casefold() != ".toml":
-            continue
-        if path.stem.casefold() in PROJECT_ROLES:
-            conflicts.add(path)
-        elif path.is_file():
-            try:
-                name = tomllib.loads(path.read_text(encoding="utf-8")).get("name")
-            except ValueError:
+    if "codex" in harnesses:
+        agents = transaction.safe_path(root, ".codex/agents")
+        if agents.exists() and not agents.is_dir():
+            fail(f"角色目录被遮蔽: {agents}")
+        for path in (agents.iterdir() if agents.is_dir() else ()):
+            if path.suffix.casefold() != ".toml":
                 continue
-            if isinstance(name, str) and name.casefold() in PROJECT_ROLES:
+            if path.stem.casefold() in PROJECT_ROLES:
                 conflicts.add(path)
+            elif path.is_file():
+                try:
+                    name = tomllib.loads(path.read_text(encoding="utf-8")).get("name")
+                except ValueError:
+                    continue
+                if isinstance(name, str) and name.casefold() in PROJECT_ROLES:
+                    conflicts.add(path)
     links.extend((path, transaction.link_snapshot(path), None) for path in sorted(conflicts))
     return links
 
 
-def check_project(root: Path, shared: Path) -> tuple[Path, Path | None]:
-    links = plan_project_links(root, shared)
+def check_project(root: Path, shared: Path, harnesses: set[str]) -> tuple[Path, Path | None]:
+    links = plan_project_links(root, shared, harnesses)
     link, snapshot, _ = links[0]
     linked_to = Path(snapshot["target"]) if snapshot and snapshot["target"] else None
     return link, linked_to
@@ -683,25 +684,30 @@ def read_state(data: bytes | None) -> dict:
 
 def plan_files(root: Path, shared_version: str, fragments: dict[str, str],
                harnesses: set[str]) -> list[tuple[Path, bytes, bytes | None]]:
-    paths = [transaction.safe_path(root, name) for name in transaction.FILES[:4]]
+    names = ["AGENTS.md"]
+    if "codex" in harnesses:
+        names.append(".codex/config.toml")
+    names.extend((".gitignore", transaction.STATE))
+    paths = [transaction.safe_path(root, name) for name in names]
     before = [transaction.content(path) for path in paths]
     texts = []
-    for path, data in zip(paths[:3], before[:3]):
+    for path, data in zip(paths, before):
         try:
             texts.append((data or b"").decode("utf-8"))
         except UnicodeDecodeError as error:
             raise ValueError(f"文件不是有效 UTF-8: {path}") from error
-    agents, config, ignore = texts
+    agents = texts[0]
+    offset = 1
+    config = texts[offset] if "codex" in harnesses else None
+    offset += "codex" in harnesses
+    ignore = texts[offset]
     state = {"schema_version": 1, "shared_version": shared_version,
              "agents_blocks": {name: release.digest(fragment.encode()) for name, fragment in fragments.items()}}
-    proposed = (prepare_agents(agents, fragments),
-                prepare_config(config) if "codex" in harnesses else config,
-                prepare_ignore(ignore), json.dumps(state, indent=2, sort_keys=True) + "\n")
-    files = []
-    for path, data, prior in zip(paths, proposed, before):
-        if path.name == "config.toml" and "codex" not in harnesses and prior is None:
-            continue
-        files.append((path, data.encode("utf-8"), prior))
+    proposed = [prepare_agents(agents, fragments)]
+    if config is not None:
+        proposed.append(prepare_config(config))
+    proposed.extend((prepare_ignore(ignore), json.dumps(state, indent=2, sort_keys=True) + "\n"))
+    files = [(path, data.encode("utf-8"), prior) for path, data, prior in zip(paths, proposed, before)]
     if "copilot" in harnesses:
         shared = shared_path()
         for name in sorted(PROJECT_ROLES):
@@ -721,8 +727,8 @@ def plan_files(root: Path, shared_version: str, fragments: dict[str, str],
 
 def initialize(root: Path, harnesses: set[str]) -> int:
     shared = shared_path()
-    link, _ = check_project(root, shared)
-    links = plan_project_links(root, shared)
+    link, _ = check_project(root, shared, harnesses)
+    links = plan_project_links(root, shared, harnesses)
     version, shared_version, fragments = shared_bundle(shared)
     files = plan_files(root, shared_version, fragments, harnesses)
 
@@ -731,15 +737,15 @@ def initialize(root: Path, harnesses: set[str]) -> int:
             fail(f"共享版本在预检后变化；请重新检查安装计划: {shared}")
 
     def guard():
-        check_project(root, shared)
-        if plan_project_links(root, shared) != links:
+        check_project(root, shared, harnesses)
+        if plan_project_links(root, shared, harnesses) != links:
             fail(f"工作流链接在预检后变化: {link}")
         check_bundle()
 
     def verify():
-        if check_project(root, shared)[1] != shared or not link.samefile(shared):
+        if check_project(root, shared, harnesses)[1] != shared or not link.samefile(shared):
             fail(f"工作流链接不可用: {link}")
-        for path, _, target in plan_project_links(root, shared):
+        for path, _, target in plan_project_links(root, shared, harnesses):
             if target is None:
                 if transaction.workflow_target(path) is not None:
                     fail(f"旧工作流链接尚未迁出: {path}")

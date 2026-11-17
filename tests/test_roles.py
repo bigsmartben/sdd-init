@@ -84,6 +84,21 @@ class RoleTests(unittest.TestCase):
             self.assertTrue(path.is_file())
             self.assertNotIn("model:", path.read_text(encoding="utf-8"))
 
+    def test_copilot_only_preserves_codex_configuration_and_local_roles(self):
+        config = self.target / ".codex/config.toml"
+        local_role = self.target / ".codex/agents/sdd-coder.toml"
+        config.parent.mkdir()
+        local_role.parent.mkdir()
+        config.write_bytes(b'model = "project-choice"\n')
+        local_role.write_bytes(b'name = "sdd-coder"\nmodel = "custom-model"\n')
+        before = self.snapshot()
+
+        result = self.install("copilot")
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(config.read_bytes(), before[config.relative_to(self.target)])
+        self.assertEqual(local_role.read_bytes(), before[local_role.relative_to(self.target)])
+
     def test_inspect_reports_default_dual_adapter_plan_without_writes(self):
         result = subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(self.skill / "scripts/govern.py"),
