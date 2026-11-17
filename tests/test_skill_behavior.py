@@ -153,6 +153,21 @@ class PreparationTests(unittest.TestCase):
                     capture_output=True, text=True, encoding="utf-8")
                 self.assertEqual(checked.returncode, 0, checked.stdout + checked.stderr)
 
+    def test_full_fixtures_include_the_review_prompt_contract_and_companion(self):
+        role_dir = prepare.ROOT / "source/project/.codex/agents"
+        role = tomllib.loads((role_dir / "review-prompt.toml").read_text(encoding="utf-8"))
+        instructions = role["developer_instructions"].strip() + "\n"
+        rules = (role_dir / "review-prompt/prompt-review.md").read_bytes()
+        for scope in ("main", "project"):
+            with self.subTest(scope=scope):
+                case = dict(self.case, candidate_scope=scope)
+                project = prepare.prepare_case(case, self.folder / scope)
+                shared = project / ".agents/sdd-workflow/roles/shared"
+                contract = shared / "review-prompt.md"
+                self.assertTrue(contract.is_file(), contract)
+                self.assertEqual(contract.read_text(encoding="utf-8"), instructions)
+                self.assertEqual((shared / "review-prompt/prompt-review.md").read_bytes(), rules)
+
     def test_prompt_review_uses_project_preset_role_without_user_profile(self):
         cases = prepare.load_cases()
         for case_id in ("review_prompt_read_only", "review_prompt_compare", "review_prompt_revise",
