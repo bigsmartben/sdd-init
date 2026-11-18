@@ -123,7 +123,8 @@ class PreparationTests(unittest.TestCase):
     def test_main_cases_keep_distributed_entry_roles_and_evaluation_separate(self):
         cases = prepare.load_cases()
         case_ids = ("main_simple", "main_specialist", "main_explore", "main_dependency",
-                    "main_gap", "main_goal_change", "main_blocked")
+                    "main_gap", "main_goal_change", "main_blocked",
+                    "deliver_solo_workflow_setup", "deliver_team_existing_workflow")
         for case_id in case_ids:
             with self.subTest(case=case_id):
                 output = self.folder / case_id
@@ -210,6 +211,30 @@ class PreparationTests(unittest.TestCase):
                 self.assertEqual(manifest["files"][rules_path], hashlib.sha256(rules).hexdigest())
                 self.assertEqual(manifest["role"], "review-prompt")
                 self.assertEqual(manifest["model_execution"], "UNVERIFIED")
+
+    def test_review_contract_and_companion_are_available_in_every_retaining_scope(self):
+        cases = prepare.load_cases()
+        for scope, case in (("role", cases["review_prompt_read_only"]),
+                            ("main", cases["main_simple"]),
+                            ("project", self.case)):
+            with self.subTest(scope=scope):
+                output = self.folder / f"contract-{scope}"
+                project = prepare.prepare_case(case, output)
+                role = project / ".codex/agents/review-prompt.toml"
+                instructions = tomllib.loads(role.read_text(encoding="utf-8"))["developer_instructions"]
+                contract = project / ".agents/sdd-workflow/roles/shared/review-prompt.md"
+                self.assertEqual(contract.read_text(encoding="utf-8"), instructions.strip() + "\n")
+                reference = re.search(r"\[审查规则与评价\]\(([^)]+)\)", instructions)
+                self.assertIsNotNone(reference)
+                source_rules = (role.parent / reference[1]).read_bytes()
+                self.assertEqual((contract.parent / reference[1]).read_bytes(), source_rules)
+                relocated = self.folder / f"relocated-contract-{scope}"
+                shutil.copytree(contract.parent, relocated)
+                self.assertEqual((relocated / reference[1]).read_bytes(), source_rules)
+                manifest = json.loads((output / "candidate-manifest.json").read_text(encoding="utf-8"))
+                for path in (contract, contract.parent / reference[1]):
+                    self.assertEqual(manifest["files"][path.relative_to(project).as_posix()],
+                                     hashlib.sha256(path.read_bytes()).hexdigest())
 
     def test_main_entry_cannot_be_replaced_by_fixture_or_single_role(self):
         case = dict(self.case, candidate_scope="main", files={"AGENTS.md": "replacement"})

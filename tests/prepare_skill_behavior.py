@@ -86,13 +86,15 @@ def prepare_case(case, output, *, candidate=ROOT / "source/project", corpus=CORP
             if not name.startswith((".agents/skills/", ".codex/"))
             or name == role_file or name.startswith(role_assets_prefix)
         }
-    review_role = ".codex/agents/review-prompt.toml"
-    if review_role in payload:
-        role = tomllib.loads(payload[review_role].decode("utf-8"))
-        contract = Path(".agents/sdd-workflow/roles/shared/review-prompt.md")
-        companion = ".codex/agents/review-prompt/prompt-review.md"
-        payload[contract.as_posix()] = (role["developer_instructions"].strip() + "\n").encode("utf-8")
-        payload[(contract.parent / "review-prompt/prompt-review.md").as_posix()] = payload[companion]
+    review_source = ".codex/agents/review-prompt.toml"
+    if review_source in payload:
+        role = tomllib.loads(payload[review_source].decode("utf-8"))
+        contract_root = ".agents/sdd-workflow/roles/shared/"
+        payload[contract_root + "review-prompt.md"] = (role["developer_instructions"].strip() + "\n").encode("utf-8")
+        companion_prefix = ".codex/agents/review-prompt/"
+        companions = {contract_root + "review-prompt/" + name.removeprefix(companion_prefix): data
+                      for name, data in payload.items() if name.startswith(companion_prefix)}
+        payload.update(companions)
     rules = dict(payload)
     if "fixture" in case:
         fixture = corpus / str(relative_path(case["fixture"]))

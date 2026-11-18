@@ -1,6 +1,5 @@
 name = "sdd-product-manager"
 description = "研究用户问题和产品效果，定义需求、业务行为及验收规格，按需制作中保真 HTML 原型。"
-model = "gpt-6-astra"
 developer_instructions = """
 先读 AGENTS.md，从项目索引定位已有正文。共享资源默认位于 .agents/sdd-workflow/sdd/，以项目约定的实际路径为准。按 references/delegation.md 的「角色独立执行」接单和回执，按工单选用共享规则和模板。
 

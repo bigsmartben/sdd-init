@@ -86,10 +86,10 @@ class BuildTests(unittest.TestCase):
         contract = output / "shared/roles/shared/review-prompt.md"
         copilot = output / "shared/roles/copilot/review-prompt.agent.md"
         self.assertTrue(contract.is_file())
-        self.assertIn("roles/shared/review-prompt.md", role["developer_instructions"])
         self.assertIn(".agents/sdd-workflow/roles/shared/review-prompt.md", role["developer_instructions"])
         contract_text = contract.read_text(encoding="utf-8")
-        self.assertIn(".agents/sdd-workflow/roles/shared/review-prompt.md", contract_text)
+        source_role = tomllib.loads((project / ".codex/agents/review-prompt.toml").read_text(encoding="utf-8"))
+        self.assertEqual(contract_text, source_role["developer_instructions"].strip() + "\n")
         reference = re.search(r"\[审查规则与评价\]\(([^)]+)\)", contract_text)
         self.assertIsNotNone(reference)
         companion = (contract.parent / reference[1]).resolve()
@@ -98,6 +98,7 @@ class BuildTests(unittest.TestCase):
             (output / "shared/roles/shared/review-prompt/prompt-review.md").read_bytes(),
         )
         self.assertNotIn("model:", copilot.read_text(encoding="utf-8"))
+        self.assertIn("\ntarget: vscode\n", copilot.read_text(encoding="utf-8").split("---", 2)[1])
         self.assertIn("roles/shared/review-prompt.md", copilot.read_text(encoding="utf-8"))
         manifest = json.loads((output / "build-manifest.json").read_bytes())
         self.assertEqual(manifest["files"][path], hashlib.sha256(data).hexdigest())

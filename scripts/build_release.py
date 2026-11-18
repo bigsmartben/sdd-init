@@ -60,45 +60,51 @@ def build(output: Path) -> Path:
         relative = path.relative_to(role_source)
         if path.suffix == ".toml":
             role = tomllib.loads(path.read_text(encoding="utf-8"))
-            name, description = role["name"], role["description"]
-            instructions = role["developer_instructions"]
-            if name != path.stem or not all(isinstance(value, str) and value.strip()
-                                           for value in (name, description, instructions, role["model"])):
+            fields = {"name", "description", "developer_instructions"}
+            if (set(role) != fields or role["name"] != path.stem
+                    or not all(isinstance(value, str) and value.strip() for value in role.values())):
                 raise ValueError(f"Invalid role source: {path}")
+            name, description = role["name"], role["description"]
             shared_contract = roles / "shared" / f"{name}.md"
             shared_contract.parent.mkdir(parents=True, exist_ok=True)
-            shared_contract.write_text(instructions.strip() + "\n", encoding="utf-8")
+            shared_contract.write_text(role["developer_instructions"].strip() + "\n", encoding="utf-8")
 
             codex_instructions = (
                 f"Read and follow .agents/sdd-workflow/roles/shared/{name}.md before acting. "
                 "That file is the authoritative role contract."
             )
-            codex = {
-                "name": name,
-                "description": description,
-                "developer_instructions": codex_instructions,
-                "model": role["model"],
-            }
-            if "model_reasoning_effort" in role:
-                codex["model_reasoning_effort"] = role["model_reasoning_effort"]
-            codex_path = roles / "codex" / f"{name}.toml"
-            codex_path.parent.mkdir(parents=True, exist_ok=True)
-            codex_path.write_text(
-                "\n".join(f"{key} = {json.dumps(value, ensure_ascii=False)}"
-                          for key, value in codex.items()) + "\n",
-                encoding="utf-8",
+            # Existing project configs still resolve this path after a user-level upgrade.
+            legacy_instructions = (
+                f"Read and follow .agents/sdd-workflow/roles/shared/{name}.md before acting. "
+                "If that file is absent, read and follow "
+                f".agents/skills/sdd-workflow/roles/shared/{name}.md instead and use "
+                ".agents/skills/sdd-workflow/sdd/ as the shared resource root."
             )
+            for directory, instructions in ((roles / "codex", codex_instructions),
+                                            (output / "shared/agents", legacy_instructions)):
+                directory.mkdir(parents=True, exist_ok=True)
+                codex = {"name": name, "description": description, "developer_instructions": instructions}
+                (directory / f"{name}.toml").write_text(
+                    "\n".join(f"{key} = {json.dumps(value, ensure_ascii=False)}"
+                              for key, value in codex.items()) + "\n",
+                    encoding="utf-8",
+                )
 
             copilot_path = roles / "copilot" / f"{name}.agent.md"
             copilot_path.parent.mkdir(parents=True, exist_ok=True)
-            copilot_path.write_text(
+            copilot = (
                 "---\n"
                 f"name: {json.dumps(name, ensure_ascii=False)}\n"
                 f"description: {json.dumps(description, ensure_ascii=False)}\n"
+                "target: vscode\n"
                 "---\n"
                 f"Read and follow `.agents/sdd-workflow/roles/shared/{name}.md` before acting. "
-                "That file is the authoritative role contract.\n",
-                encoding="utf-8",
+                "That file is the authoritative role contract.\n"
+            )
+            digest = hashlib.sha256(copilot.encode("utf-8")).hexdigest()
+            copilot_path.write_text(
+                f"{copilot}<!-- sdd-init managed role {name} sha256:{digest} -->\n",
+                encoding="utf-8", newline="\n",
             )
         else:
             destination = roles / "shared" / relative

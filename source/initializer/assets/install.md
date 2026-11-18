@@ -26,9 +26,17 @@
 | `init` | 首次接入、升级或重连，默认准备 Codex 与 Copilot 双端角色适配，必要时先恢复 |
 | `recover` | 恢复未完成的项目操作 |
 
-`init` 可在 `--harness auto|both|codex|copilot` 中显式选适配范围；默认 `auto` 为双端。`inspect` 报告可核验的项目标记，但标记不改变默认值，因为项目文件不能可靠表明同一项目会由哪个客户端使用。Codex 角色在 `.codex/config.toml` 注册，Copilot 角色写入 `.github/agents/*.agent.md`；两者均引用共享正文 `roles/shared/`，Copilot 适配不固定模型。`init` 将六个技能分别链接到 `.agents/skills/<技能名>/`，例如 `.agents/skills/sdd-bugfix/SKILL.md`，不复制技能正文。共享包链接位于扫描目录外的 `.agents/sdd-workflow/`，按 `roles/`、`skills/`、`sdd/` 分类。Windows 使用 junction，其他平台使用目录符号链接。重新 `init` 强制替换同名实体目录、非标准链接、定制托管块及受管角色适配；旧独立沟通块自动合并为单块，不跟随链接删除其目标。安装元数据记录实际共享版本和托管片段哈希，版本识别以回执中的 SHA-256 为准。重复 `inspect` 可核对剩余写入和版本差异。客户端打开已信任的目标项目后刷新 Skill 与角色配置。
+`init` 可在 `--harness auto|both|codex|copilot` 中显式选适配范围；默认 `auto` 为双端。`inspect` 报告可核验的项目标记、双端已落盘的 SDD 角色及 Codex 悬空注册，但标记不改变默认值，因为项目文件不能可靠表明同一项目会由哪个客户端使用。Codex 角色在 `.codex/config.toml` 注册，Copilot 角色写入 `.github/agents/*.agent.md`；两者均引用共享正文 `roles/shared/`。Copilot 适配以 `target: vscode` 限定支持的本地 VS Code 会话。两个适配都省略模型与推理强度，由 Main 按工单分配。`init` 将六个技能分别链接到 `.agents/skills/<技能名>/`，例如 `.agents/skills/sdd-bugfix/SKILL.md`，不复制技能正文。共享包链接位于扫描目录外的 `.agents/sdd-workflow/`，按 `roles/`、`skills/`、`sdd/` 分类。Windows 使用 junction，其他平台使用目录符号链接。重新 `init` 强制替换同名实体目录、非标准链接、定制托管块及受管角色适配；旧独立沟通块自动合并为单块，不跟随链接删除其目标。安装元数据记录实际共享版本和托管片段哈希，版本识别以回执中的 SHA-256 为准。重复 `inspect` 可核对剩余写入和版本差异。客户端打开已信任的目标项目后刷新 Skill 与角色配置。
 
 例如，只接入 Copilot 时将选项放在子命令前：`python -B <已安装的-sdd-init>/scripts/govern.py --root <目标仓库> --harness copilot init`。
+
+Copilot 原生适配随文件携带托管角色名和内容 SHA-256，本机元数据记录实际写入的路径和哈希。克隆或状态丢失时，可用当前分发、可校验的托管标记或已知旧版适配的哈希重建归属。校验允许 Git 转换 LF 和 CRLF，无法核验的同名文件在写入前报告冲突。只刷新另一端时保留归属。状态损坏时说明将重建，原始字节保留供事务回滚。
+
+Codex 按角色托管块核验归属；块外同名项目注册和无归属的本地角色文件在写入前拒绝覆盖。已知共享路径的纯引用可迁移，受管本地文件只有不被块外角色共用时才迁出。只选 Copilot 时按配置文件位置解析 Codex 的相对与绝对角色路径。遇到待迁移的旧共享入口或链接更换后会失效的引用，写入前报告并提示 `--harness both`。只选 Codex 时检查未选 Copilot 项目角色中的显式文件链接，遇到会失效的引用时提示迁移项目引用或双端刷新受管适配。
+
+角色配套的相对链接以实际加载职责正文的文件为基准；直接加载源码 TOML 的案例从 TOML 目录读取规则，两个 Harness 适配读取 `roles/shared/` 中的正文后，从正文目录定位配套资源，不从适配配置目录查找。
+
+仅更新共享包时，旧 `agents/<角色>.toml` 引用通过兼容入口读取现行共享正文，支持两个历史项目锚点。项目 `init` 将 Codex 注册迁到 `roles/codex/`。
 
 共享更新移除原受管 `sdd-review-prompt` 及其回执模板。已链接项目运行新版 `init` 刷新托管导航。项目自有链接由项目维护。
 

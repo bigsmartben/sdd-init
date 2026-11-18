@@ -159,7 +159,7 @@ flowchart TD
 |---|---|
 | Agent Loop／工具调度 | 由目标 Harness 提供，本仓只分发 Main 指令与契约，不实现循环、搜索引擎或 Align／Explore／Evaluate 三次调用。 |
 | Main 入口与 Skills | sdd-init 注入单个 AGENTS 托管块，承载 Align、探索调度和目标验收；授权与状态、协作、回执分别按引用定位详细正文，不重复展开职责表或另注入沟通块。专业执行规则归实际执行者。标准 `.agents/skills/<name>/SKILL.md` 提供技能发现，按原生触发加载，不以创建子 Agent 为前置。 |
-| 专业 Agent | 当前 Codex 适配使用 `.codex/config.toml` 及 TOML 角色引用。其他 Harness 使用其实际可用接口，不假定可直接识别 Codex 配置。 |
+| 专业 Agent | Codex 通过 `.codex/config.toml` 引用 TOML 角色，Copilot 使用 `.github/agents/*.agent.md`。两端角色引用同一共享职责正文，模型与推理强度由 Main 按[角色分配规则](../source/project/.agents/sdd/references/delegation.md#角色的模型与推理强度)决定。 |
 | 委派与接续 | 优先原生子 Agent 标识、消息及接续机制；接口存在时才使用其参数。无子 Agent 能力可直接加载 Skill，确需独立执行而能力缺失时明确阻塞。 |
 | Plan／任务状态 | 原生能力保留但按需使用。只记录实际依赖、并行协调或长任务恢复所需状态，不预建全图或另建图数据库；专业角色内部 Plan 不上收为 Main 的重复计划。 |
 
@@ -176,8 +176,8 @@ flowchart TD
 | sdd-bugfix | 恢复指定行为，完成归因、修复、定向复验和原 Issue 关闭 | [Skill](../source/project/.agents/skills/sdd-bugfix/SKILL.md) |
 | sdd-test-loop | 应用户请求开展全功能点集成回归，交付复跑指南、验证证据和 Test Gate | [Skill](../source/project/.agents/skills/sdd-test-loop/SKILL.md) |
 | sdd-refactor | 以已有蓝图为前提维护规范与独立 Review 矩阵，按确认范围初审、生成重构工单并组织技术重构及两类复核 | [Skill](../source/project/.agents/skills/sdd-refactor/SKILL.md)、Spec FR-014、FR-020 |
-| sdd-deliver | Main 用于仓库交付、发布与运维的阶段入口，回收实际结果与证据 | [Skill](../source/project/.agents/skills/sdd-deliver/SKILL.md) |
-| sdd-devops | 仓库、流水线、发布、环境、流量及恢复操作的可选执行者，回读实际版本、运行及恢复状态 | [角色](../source/project/.codex/agents/sdd-devops.toml)、[共享运维规则](../source/project/.agents/sdd/references/delivery.md) |
+| sdd-deliver | 识别个人／团队场景、CI／CD／Ops／DevOps 任务及授权终点，委托完整专业任务并核对结果；不固化平台全流程 | [Skill](../source/project/.agents/skills/sdd-deliver/SKILL.md)、Spec FR-022 |
+| sdd-devops | 按完整交付／运维场景自主制定方案、配置／执行并复验；平台接入落在目标项目，回读实际版本、运行及恢复状态 | [角色](../source/project/.codex/agents/sdd-devops.toml)、[共享运维规则](../source/project/.agents/sdd/references/delivery.md) |
 | sdd-product-manager | 产品调研、需求和验收规格、中保真原型 | [角色](../source/project/.codex/agents/sdd-product-manager.toml) |
 | sdd-architect | 架构风险、方案取舍、顶层设计与架构遵循检查 | [角色](../source/project/.codex/agents/sdd-architect.toml) |
 | sdd-doc-consistency | 只读核对项目权威文档，向任务调用者返回冲突、冗余及引用问题的证据与建议 | [角色](../source/project/.codex/agents/sdd-doc-consistency.toml) |

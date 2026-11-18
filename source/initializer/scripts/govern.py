@@ -6,11 +6,13 @@ import argparse
 import copy
 import importlib.util
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
 import sys
 import tomllib
+from urllib.parse import unquote
 
 SKILL = Path(__file__).resolve().parent.parent
 ASSETS = SKILL / "assets"
@@ -70,52 +72,49 @@ def git(root: Path, *args: str) -> bytes | None:
 
 
 PROJECT_SKILLS = set(transaction.PROJECT_SKILLS)
-PROJECT_ROLE_MODELS = {
-    'review-prompt': 'gpt-6-astra',
-    'sdd-architect': 'gpt-6-astra',
-    'sdd-product-manager': 'gpt-6-astra',
-    'sdd-coder': 'gpt-6.1-sol',
-    'sdd-devops': 'gpt-6.1-terra',
-    'sdd-doc-consistency': 'gpt-6.1-terra',
-}
-PROJECT_ROLES = set(PROJECT_ROLE_MODELS)
+PROJECT_ROLES = set(transaction.PROJECT_ROLES)
 RETIRED_SKILLS = {
     "sdd-spec", "sdd-imp", "sdd-review-code", "sdd-review-loop", "sdd-review-prompt",
     "sdd-doc", "sdd-commit", "sdd-deploy",
 }
 RETIRED_ROLES = {"sdd-delivery", "sdd-designer", "sdd-documenter", "sdd-validator"}
 FRAGMENTS = {"sdd-contract-governance": "agents-fragment.md"}
+# LF-normalized hashes of the unmarked Copilot adapters shipped in v0.8.5.
+LEGACY_COPILOT_DIGESTS = {
+    "review-prompt": "eeb09087ab37b2674898f66364d270803ae99e6b809dc2599c3e03ecba57d838",
+    "sdd-architect": "e29b6aad2e1af3af1539122ed6c821f4edb7f1960f88153d767995541e064b8f",
+    "sdd-coder": "a1a1de56d2024ed5f4e2e2035825284d06f3c76336df4c5c8ef83e752117326d",
+    "sdd-devops": "2fe274a93de5666ebc4a0f3084a9af77e0f12bfb0ed3d7b1451d39b7edd85d97",
+    "sdd-doc-consistency": "5eeb26b09c70b52530a7d5642e1843a96d8948a6edb8ce6d3528323c1ff6c03e",
+    "sdd-product-manager": "7d75f7a8de736cf48662e2959de2e7f51f9bd3597209fc8a4e36ca34b08131f9",
+}
+COPILOT_OWNERSHIP = re.compile(rb"(?m)^<!-- sdd-init managed role ([a-z0-9-]+) sha256:([0-9a-f]{64}) -->\n\Z")
 
 
 def validate_role(data: bytes, name: str) -> None:
-    """Validate the shared role fields and default model before any target write."""
+    """Validate the shared role contract before any target write."""
     try:
         role = tomllib.loads(data.decode("utf-8"))
     except (UnicodeDecodeError, tomllib.TOMLDecodeError) as exc:
         fail(f"角色 {name} 配置无效: {exc}")
-    fields = {"name", "description", "developer_instructions", "model"}
-    if name == "review-prompt":
-        fields.add("model_reasoning_effort")
+    fields = {"name", "description", "developer_instructions"}
     if set(role) != fields:
         fail(f"角色 {name} 的字段必须为: {', '.join(sorted(fields))}")
     if role["name"] != name:
         fail(f"角色文件与 name 不一致: {name}")
     if any(not isinstance(value, str) or not value.strip() for value in role.values()):
         fail(f"角色 {name} 字段必须是非空文本")
-    if role["model"] != PROJECT_ROLE_MODELS[name]:
-        fail(f"角色 {name} 默认模型必须为 {PROJECT_ROLE_MODELS[name]}")
-    if name == "review-prompt" and role["model_reasoning_effort"] != "high":
-        fail("角色 review-prompt 默认推理强度必须为 high")
 
 
 def skill_name(path: Path, *, follow_link: bool = False) -> str | None:
     text = path.read_text(encoding="utf-8") if follow_link else read(path)
-    frontmatter = re.match(r"\A\ufeff?---\n(.+?)\n---(?:\n|$)", text, re.DOTALL)
-    if frontmatter:
-        name = re.search(r"""(?m)^name:[ \t]*(["']?)([\w-]+)\1[ \t]*(?:#[^\n]*)?$""", frontmatter[1])
-        if name:
-            return name[2]
-    return None
+    name = re.search(r"""(?m)^name:[ \t]*(["']?)([\w-]+)\1[ \t]*(?:#[^\n]*)?$""", frontmatter(text))
+    return name[2] if name else None
+
+
+def frontmatter(text: str) -> str:
+    match = re.match(r"\A\ufeff?---\n(.+?)\n---(?:\n|$)", text, re.DOTALL)
+    return match[1] if match else ""
 
 
 def shared_path() -> Path:
@@ -146,6 +145,7 @@ def shared_bundle(shared: Path) -> tuple[str, str, dict[str, str]]:
     }
     required = {
         "sdd/scripts/govern.py", "sdd/scripts/doc_check.py",
+        *(f"agents/{name}.toml" for name in PROJECT_ROLES),
         *(f"roles/shared/{name}.md" for name in PROJECT_ROLES),
         *(f"roles/copilot/{name}.agent.md" for name in PROJECT_ROLES),
         *(f"sdd/references/{name}.md" for name in (
@@ -167,14 +167,17 @@ def shared_bundle(shared: Path) -> tuple[str, str, dict[str, str]]:
     for name in sorted(PROJECT_ROLES):
         data = (shared / "roles/codex" / f"{name}.toml").read_bytes()
         validate_role(data, name)
+        validate_role((shared / "agents" / f"{name}.toml").read_bytes(), name)
         contract = read(shared / "roles/shared" / f"{name}.md")
         if not contract.strip():
             fail(f"共享角色正文为空: {name}")
         copilot = read(shared / "roles/copilot" / f"{name}.agent.md")
         if skill_name(shared / "roles/copilot" / f"{name}.agent.md") != name:
             fail(f"Copilot 角色 name 与分发文件不一致: {name}")
-        if re.search(r"(?m)^model\s*:", copilot):
-            fail(f"Copilot 角色不得固定模型，以继承会话模型: {name}")
+        if re.search(r"(?m)^(model|reasoning-effort)[ \t]*:", copilot):
+            fail(f"Copilot 角色不得预设模型或推理强度: {name}")
+        if re.findall(r"(?m)^target[ \t]*:[ \t]*(.*)$", frontmatter(copilot)) != ["vscode"]:
+            fail(f"Copilot 角色必须限定在本地 VS Code 会话（target: vscode）: {name}")
     for name in sorted(PROJECT_SKILLS):
         if skill_name(shared / "skills" / name / "SKILL.md") != name:
             fail(f"Skill 入口的 name 与分发目录不一致: {name}")
@@ -219,6 +222,45 @@ def selected_harnesses(root: Path, requested: str) -> tuple[dict[str, list[str]]
     return detected, {requested}
 
 
+def role_path(base: Path, reference: str) -> Path:
+    # Keep the project link in the path so preflight can match paths it will replace.
+    reference = reference.replace("\\", "/")
+    if os.name == "nt":
+        if reference[:8].casefold() == "//?/unc/":
+            reference = "//" + reference[8:]
+        elif re.match(r"^//\?/[A-Za-z]:/", reference):
+            reference = reference[4:]
+    return Path(os.path.abspath(base / reference))
+
+
+def codex_config(root: Path) -> tuple[Path, str, dict]:
+    path = transaction.safe_path(root, ".codex/config.toml")
+    original = read(path) if path.exists() else ""
+    try:
+        agents = tomllib.loads(original).get("agents", {})
+    except tomllib.TOMLDecodeError as error:
+        fail(f".codex/config.toml 无法核对角色迁移依赖: {error}")
+    return path, original, agents if isinstance(agents, dict) else {}
+
+
+def codex_references(roles: dict, base: Path) -> dict[str, Path]:
+    return {name: role_path(base, role["config_file"]) for name, role in roles.items()
+            if isinstance(role, dict) and isinstance(role.get("config_file"), str) and role["config_file"]}
+
+
+def inspect_project_roles(root: Path) -> None:
+    config_path, _, roles = codex_config(root)
+    references = codex_references(roles, config_path.parent)
+    codex = {name for name, path in references.items() if name in PROJECT_ROLES and path.is_file()}
+    missing = (PROJECT_ROLES & references.keys()) - codex
+    copilot = {name for name in PROJECT_ROLES
+               if (root / ".github/agents" / f"{name}.agent.md").is_file()}
+    out(f"Installed roles (codex): {', '.join(sorted(codex)) or 'none'}")
+    out(f"Installed roles (copilot): {', '.join(sorted(copilot)) or 'none'}")
+    if missing:
+        out(f"Unresolved role files (codex): {', '.join(sorted(missing))}")
+
+
 def cmd_inspect(root: Path, args: argparse.Namespace) -> int:
     out(f"Repository: {root}")
     for rel in ["AGENTS.md", "docs/index.md", "docs/blueprint.md", "specs"]:
@@ -235,6 +277,7 @@ def cmd_inspect(root: Path, args: argparse.Namespace) -> int:
     out(f"Detected harness markers: " + "; ".join(
         f"{name}={', '.join(markers) if markers else 'none'}" for name, markers in detected.items()))
     out(f"Harness adapters planned: {', '.join(sorted(harnesses))}")
+    inspect_project_roles(root)
     shared = shared_path()
     out(f"Shared source: {shared}")
     recovery = root / transaction.RECOVERY
@@ -249,31 +292,19 @@ def cmd_inspect(root: Path, args: argparse.Namespace) -> int:
     out(f"Shared version: sha256:{version}")
     out(f"Shared skill entries: {', '.join(sorted(PROJECT_SKILLS))}")
     out(f"Shared role definitions: {', '.join(sorted(PROJECT_ROLES))}")
-    link, linked_to = check_project(root, shared, harnesses)
-    existing = transaction.link_snapshot(link)
-    description = linked_to or ("(existing file or directory)" if existing else "(missing)")
-    out(f"Project link: {link} -> {description}")
     links = plan_project_links(root, shared, harnesses)
+    link, existing, _ = links[0]
+    description = (existing["target"] or "(existing file or directory)") if existing else "(missing)"
+    out(f"Project link: {link} -> {description}")
     for path, before, target in links:
         out(f"Project entry: {path.relative_to(root).as_posix()} -> "
             f"{(before['target'] or '(existing file or directory)') if before else '(missing)'}"
             + (" (remove on init)" if target is None and before else ""))
-    files = plan_files(root, version, fragments, harnesses)
-    state_before = next((before for path, _, before in files
-                         if path.relative_to(root).as_posix() == transaction.STATE), None)
-    try:
-        current = read_state(state_before)
-    except ValueError as error:
-        out(f"Project installation state will be replaced: {error}")
-    else:
-        out(f"Project recorded shared version: {current.get('shared_version', 'none')}")
+    files, current = plan_files(root, version, fragments, harnesses)
+    out(f"Project recorded shared version: {current.get('shared_version', 'none')}")
     doc_index = root / "docs/index.md"
     out(f"Project documentation index: {doc_index}" if doc_index.is_file()
         else "Project documentation index: resolve the project's own entry from its guidance")
-    config = next((before for path, _, before in files
-                   if path.relative_to(root).as_posix() == ".codex/config.toml"), None)
-    roles = sorted(set(tomllib.loads(config.decode('utf-8')).get('agents', {})) & PROJECT_ROLES) if config else []
-    out(f"Registered roles: {', '.join(roles) or 'none'}")
     changes = [path.relative_to(root).as_posix() for path, data, before in files if data != before]
     changes.extend(path.relative_to(root).as_posix() for path, before, target in links
                    if not transaction.link_is_current(before, target))
@@ -405,8 +436,8 @@ def remove_conflicting_role_sections(original: str, role_names: set[str] | None 
     return "".join(result)
 
 
-def migrate_legacy_role_references(original: str, config: dict) -> tuple[str, dict]:
-    legacy = f"../{transaction.LEGACY_WORKFLOW_LINK}/"
+def migrate_legacy_role_references(root: Path, original: str, config: dict) -> tuple[str, dict]:
+    anchors = (root / transaction.LEGACY_WORKFLOW_LINK, root / transaction.WORKFLOW_LINK)
     current = f"../{transaction.WORKFLOW_LINK}/"
     expected = copy.deepcopy(config)
     replacements, removed = {}, set()
@@ -416,11 +447,11 @@ def migrate_legacy_role_references(original: str, config: dict) -> tuple[str, di
         reference = role.get("config_file") if isinstance(role, dict) else None
         if not isinstance(reference, str):
             continue
-        normalized = reference.replace("\\", "/")
-        prefix = legacy if normalized.startswith(legacy) else current if normalized.startswith(current) else None
-        if prefix is None:
+        path = role_path(root / ".codex", reference)
+        anchor = next((anchor for anchor in anchors if path.is_relative_to(anchor)), None)
+        if anchor is None:
             continue
-        suffix = normalized[len(prefix):]
+        original_suffix = suffix = path.relative_to(anchor).as_posix()
         if suffix.startswith("agents/") and suffix.endswith(".toml"):
             codex_adapter = "roles/codex/" + suffix.removeprefix("agents/")
             if (shared_path() / codex_adapter).is_file():
@@ -432,6 +463,8 @@ def migrate_legacy_role_references(original: str, config: dict) -> tuple[str, di
             removed.add(name)
             expected["agents"].pop(name)
             continue
+        if anchor == anchors[1] and suffix == original_suffix:
+            continue
         replacement = current + suffix
         if reference != replacement:
             replacements[reference] = replacement
@@ -439,10 +472,16 @@ def migrate_legacy_role_references(original: str, config: dict) -> tuple[str, di
     if not replacements and not removed:
         return original, config
     original = remove_conflicting_role_sections(original, removed)
-    pattern = re.compile(r'''(?m)^([^\#\r\n]*?\bconfig_file[ \t]*=[ \t]*)(["'])([^"'\r\n]*)(\2)([^\r\n]*)(\r?)$''')
+    pattern = re.compile(r'''(?m)^([^#\r\n]*?\bconfig_file[ \t]*=[ \t]*)("(?:[^"\\\r\n]|\\.)*"|'[^'\r\n]*')([^\r\n]*)(\r?)$''')
     def replace(match):
-        value = match[3]
-        return match[1] + match[2] + replacements.get(value, value) + match[4] + match[5] + match[6]
+        value = tomllib.loads("path = " + match[2])["path"]
+        replacement = replacements.get(value)
+        if replacement is None:
+            return match[0]
+        literal = f"'{replacement}'" if match[2].startswith("'") and "'" not in replacement else json.dumps(
+            replacement, ensure_ascii=False,
+        )
+        return match[1] + literal + match[3] + match[4]
     migrated = pattern.sub(replace, original)
     try:
         actual = tomllib.loads(migrated)
@@ -545,7 +584,19 @@ def expand_inline_agents(original: str, config: dict) -> tuple[str, dict]:
     return remaining, actual
 
 
-def prepare_config(original: str) -> str:
+def config_role_block(original: str) -> tuple[str, tuple[int, int] | None]:
+    begin = "# sdd-init roles:start"
+    end = "# sdd-init roles:end"
+    markers = list(re.finditer(rf"(?m)^(?:{begin}|{end})\r?$", original))
+    if not markers:
+        return original, None
+    if len(markers) != 2 or markers[0][0].rstrip("\r") != begin:
+        fail(".codex/config.toml 的 SDD 角色引用块不完整、重复或顺序错误")
+    first, last = markers[0].start(), markers[1].start() + len(end)
+    return original[:first] + original[last:], (first, last)
+
+
+def prepare_config(root: Path, original: str) -> str:
     begin = "# sdd-init roles:start"
     end = "# sdd-init roles:end"
     newline = "\r\n" if "\r\n" in original else "\n"
@@ -558,12 +609,9 @@ def prepare_config(original: str) -> str:
         ))
     lines.append(end)
     block = newline.join(lines)
-    markers = list(re.finditer(rf"(?m)^(?:{begin}|{end})\r?$", original))
-    if markers:
-        if len(markers) != 2 or markers[0][0].rstrip("\r") != begin:
-            fail(".codex/config.toml 的 SDD 角色引用块不完整、重复或顺序错误")
-        first, last = markers[0].start(), markers[1].start() + len(end)
-        remaining = original[:first] + original[last:]
+    remaining, span = config_role_block(original)
+    if span:
+        first, last = span
         candidate = original[:first] + block + original[last:]
     else:
         remaining = original
@@ -577,7 +625,17 @@ def prepare_config(original: str) -> str:
     original_remaining = remaining
     remaining, unmanaged = expand_inline_agents(remaining, unmanaged)
     migrated, unmanaged = replace_non_table_agents(remaining, unmanaged)
-    migrated, unmanaged = migrate_legacy_role_references(migrated, unmanaged)
+    for name in PROJECT_ROLES & unmanaged.get("agents", {}).keys():
+        role = unmanaged["agents"][name]
+        base = root / ".codex"
+        references_to_shared = {role_path(base, reference) for reference in (
+            role_reference(name), legacy_role_reference(name), f"../{transaction.WORKFLOW_LINK}/agents/{name}.toml",
+        )}
+        if (not isinstance(role, dict) or set(role) != {"config_file"}
+                or not isinstance(role["config_file"], str)
+                or role_path(base, role["config_file"]) not in references_to_shared):
+            fail(f"非受管 Codex 角色注册冲突: {name}；保留 .codex/config.toml，未执行覆盖")
+    migrated, unmanaged = migrate_legacy_role_references(root, migrated, unmanaged)
     has_conflicts = any(name in unmanaged.get("agents", {}) for name in PROJECT_ROLES)
     if has_conflicts or migrated != original_remaining:
         remaining = migrated
@@ -614,7 +672,34 @@ def prepare_ignore(original: str) -> str:
     return original + separator + newline.join(missing) + newline
 
 
+def role_reference_will_break(reference: Path, links: list[tuple[Path, dict | None, Path | None]]) -> bool:
+    return any(reference.is_relative_to(path) and (target is None or not (target / reference.relative_to(path)).is_file())
+               for path, _, target in links)
+
+
+def check_copilot_role_references(root: Path, shared: Path, links: list[tuple[Path, dict | None, Path | None]]) -> None:
+    directory = root / ".github/agents"
+    if not directory.is_dir() or transaction.linked(directory) or transaction.linked(directory.parent):
+        return
+    checker = load_tool(shared / "sdd/scripts/doc_check.py")
+    for agent in sorted(directory.glob("*.md")):
+        if not agent.is_file() or transaction.linked(agent):
+            continue
+        for line in agent.read_text(encoding="utf-8", errors="replace").splitlines():
+            references = list(checker.inline_links(line))
+            references.extend(re.findall(r"`([^`]+)`", line))
+            for reference in references:
+                if not reference or "://" in reference:
+                    continue
+                reference = unquote(reference.partition("#")[0])
+                base = root if reference.replace("\\", "/").startswith(".agents/") else agent.parent
+                if role_reference_will_break(role_path(base, reference), links):
+                    fail(f"未选择 Copilot，但角色 {agent.name} 的引用将失效: {reference}；"
+                         "请先迁移该引用，或使用 --harness both 刷新受管适配。未执行写入")
+
+
 def plan_project_links(root: Path, shared: Path, harnesses: set[str]) -> list[tuple[Path, dict | None, Path | None]]:
+    config_path, config_text, registrations = codex_config(root)
     links = transaction.plan_links(root, shared)
     names = PROJECT_SKILLS | RETIRED_SKILLS | {"sdd-init"}
     conflicts = set()
@@ -640,30 +725,46 @@ def plan_project_links(root: Path, shared: Path, harnesses: set[str]) -> list[tu
                 if name and name.casefold() in names:
                     conflicts.add(path)
     if "codex" in harnesses:
+        unmanaged_text, span = config_role_block(config_text)
+        owned_roles = tomllib.loads(config_text[span[0]:span[1]]).get("agents", {}) if span else {}
+        if not isinstance(owned_roles, dict):
+            fail(".codex/config.toml 的托管角色不是配置表，无法核对归属")
+        owned_files = {path for name, path in codex_references(owned_roles, config_path.parent).items()
+                       if name in PROJECT_ROLES}
+        unmanaged_roles = tomllib.loads(unmanaged_text).get("agents", {})
+        unmanaged_files = set(codex_references(unmanaged_roles, config_path.parent).values()) if isinstance(
+            unmanaged_roles, dict,
+        ) else set()
         agents = transaction.safe_path(root, ".codex/agents")
         if agents.exists() and not agents.is_dir():
             fail(f"角色目录被遮蔽: {agents}")
         for path in (agents.iterdir() if agents.is_dir() else ()):
             if path.suffix.casefold() != ".toml":
                 continue
-            if path.stem.casefold() in PROJECT_ROLES:
-                conflicts.add(path)
-            elif path.is_file():
+            collision = path.stem.casefold() in PROJECT_ROLES
+            if not collision and path.is_file() and not transaction.linked(path):
                 try:
                     name = tomllib.loads(path.read_text(encoding="utf-8")).get("name")
                 except ValueError:
                     continue
-                if isinstance(name, str) and name.casefold() in PROJECT_ROLES:
-                    conflicts.add(path)
+                collision = isinstance(name, str) and name.casefold() in PROJECT_ROLES
+            if collision:
+                relative = f"agents/{path.name}"
+                if path not in owned_files or path in unmanaged_files:
+                    fail(f"非受管 Codex 角色文件冲突: .codex/agents/{path.name}；保留原文件，未执行覆盖")
+                conflicts.add(path)
     links.extend((path, transaction.link_snapshot(path), None) for path in sorted(conflicts))
+    if "codex" not in harnesses:
+        legacy = root / transaction.LEGACY_WORKFLOW_LINK
+        old_role_dir = root / transaction.WORKFLOW_LINK / "agents"
+        for name, reference in codex_references(registrations, config_path.parent).items():
+            if (reference.is_relative_to(legacy) or reference.is_relative_to(old_role_dir)
+                    or role_reference_will_break(reference, links)):
+                fail(f"未选择 Codex，但角色 {name} 依赖待迁移的路径: {reference}；"
+                     "请使用 --harness both 完成角色迁移，未执行写入")
+    if "copilot" not in harnesses:
+        check_copilot_role_references(root, shared, links)
     return links
-
-
-def check_project(root: Path, shared: Path, harnesses: set[str]) -> tuple[Path, Path | None]:
-    links = plan_project_links(root, shared, harnesses)
-    link, snapshot, _ = links[0]
-    linked_to = Path(snapshot["target"]) if snapshot and snapshot["target"] else None
-    return link, linked_to
 
 
 def read_state(data: bytes | None) -> dict:
@@ -672,7 +773,8 @@ def read_state(data: bytes | None) -> dict:
     try:
         state = json.loads(data)
         required = {"schema_version", "shared_version", "agents_blocks"}
-        if (not isinstance(state, dict) or set(state) not in (required, required | {"copilot_roles"})
+        if (not isinstance(state, dict) or not required <= state.keys()
+                or set(state) - required - {"copilot_roles", "copilot_adapters"}
                 or state["schema_version"] != 1
                 or set(state["agents_blocks"]) not in (set(FRAGMENTS), set(FRAGMENTS) | {"agent-communication"})
                 or not all(re.fullmatch(r"[a-f0-9]{64}", value)
@@ -682,13 +784,27 @@ def read_state(data: bytes | None) -> dict:
         if (not isinstance(roles, dict) or not set(roles) <= set(PROJECT_ROLES)
                 or not all(re.fullmatch(r"[a-f0-9]{64}", value) for value in roles.values())):
             raise ValueError("Invalid Copilot role ownership metadata")
+        adapters = state.get("copilot_adapters", [])
+        if (not isinstance(adapters, list)
+                or not all(isinstance(path, str) and path in transaction.COPILOT_ROLE_FILES for path in adapters)
+                or len(adapters) != len(set(adapters))):
+            raise ValueError("Invalid Copilot adapter ownership")
     except (ValueError, TypeError, AttributeError) as error:
-        raise ValueError(f"无效的项目安装元数据: {transaction.STATE}；请保留文件并核对来源") from error
+        raise ValueError(f"无效的项目安装元数据: {transaction.STATE}") from error
     return state
 
 
+def is_managed_copilot_adapter(name: str, data: bytes) -> bool:
+    normalized = data.replace(b"\r\n", b"\n")
+    marker = COPILOT_OWNERSHIP.search(normalized)
+    if marker:
+        return (marker[1].decode("ascii") == name
+                and release.digest(normalized[:marker.start()]) == marker[2].decode("ascii"))
+    return release.digest(normalized) == LEGACY_COPILOT_DIGESTS.get(name)
+
+
 def plan_files(root: Path, shared_version: str, fragments: dict[str, str],
-               harnesses: set[str]) -> list[tuple[Path, bytes, bytes | None]]:
+               harnesses: set[str]) -> tuple[list[tuple[Path, bytes, bytes | None]], dict]:
     names = ["AGENTS.md"]
     if "codex" in harnesses:
         names.append(".codex/config.toml")
@@ -701,40 +817,46 @@ def plan_files(root: Path, shared_version: str, fragments: dict[str, str],
             texts.append((data or b"").decode("utf-8"))
         except UnicodeDecodeError as error:
             raise ValueError(f"文件不是有效 UTF-8: {path}") from error
+    try:
+        current = read_state(before[-1])
+    except ValueError as error:
+        out(f"Project installation state will be replaced: {error}")
+        current = {}
+    owned = set(current.get("copilot_adapters", []))
+    copilot_roles = dict(current.get("copilot_roles", {}))
+    copilot_files = []
+    if "copilot" in harnesses:
+        shared = shared_path()
+        for name in sorted(PROJECT_ROLES):
+            source = shared / "roles/copilot" / f"{name}.agent.md"
+            relative = f".github/agents/{name}.agent.md"
+            target = transaction.safe_path(root, relative)
+            desired, prior = source.read_bytes(), transaction.content(target)
+            owned_digest = copilot_roles.get(name)
+            if prior is not None:
+                if prior == desired:
+                    copilot_roles[name] = release.digest(desired)
+                elif owned_digest is not None:
+                    if release.digest(prior) != owned_digest:
+                        fail(f"保留已修改的 Copilot 角色；归属校验失败: {relative}")
+                elif relative not in owned and not is_managed_copilot_adapter(name, prior):
+                    fail(f"非受管 Copilot 角色冲突: {relative}；保留原文件，未执行覆盖")
+            copilot_files.append((target, desired, prior))
+            copilot_roles[name] = release.digest(desired)
+            owned.add(relative)
     agents = texts[0]
     offset = 1
     config = texts[offset] if "codex" in harnesses else None
     offset += "codex" in harnesses
     ignore = texts[offset]
-    try:
-        previous_state = read_state(before[-1])
-    except ValueError:
-        previous_state = {}
-    copilot_roles = dict(previous_state.get("copilot_roles", {}))
-    copilot_files = []
-    if "copilot" in harnesses:
-        for name in sorted(PROJECT_ROLES):
-            source = shared_path() / "roles/copilot" / f"{name}.agent.md"
-            target = transaction.safe_path(root, f".github/agents/{name}.agent.md")
-            data = source.read_bytes()
-            prior = transaction.content(target)
-            owned_digest = copilot_roles.get(name)
-            if prior is not None:
-                if prior == data:
-                    copilot_roles[name] = release.digest(data)
-                elif owned_digest is not None:
-                    if release.digest(prior) != owned_digest:
-                        raise ValueError(f"Preserve modified Copilot role; ownership check failed: {target}")
-                else:
-                    raise ValueError(f"Preserve unmanaged Copilot role collision: {target}")
-            copilot_roles[name] = release.digest(data)
-            copilot_files.append((target, data, prior))
     state = {"schema_version": 1, "shared_version": shared_version,
              "agents_blocks": {name: release.digest(fragment.encode()) for name, fragment in fragments.items()},
              "copilot_roles": copilot_roles}
+    if owned:
+        state["copilot_adapters"] = sorted(owned)
     proposed = [prepare_agents(agents, fragments)]
     if config is not None:
-        proposed.append(prepare_config(config))
+        proposed.append(prepare_config(root, config))
     proposed.extend((prepare_ignore(ignore), json.dumps(state, indent=2, sort_keys=True) + "\n"))
     files = [(path, data.encode("utf-8"), prior) for path, data, prior in zip(paths, proposed, before)]
     files.extend(copilot_files)
@@ -746,29 +868,30 @@ def plan_files(root: Path, shared_version: str, fragments: dict[str, str],
         except UnicodeDecodeError as error:
             raise ValueError(f"文件不是有效 UTF-8: {override}") from error
         files.append((override, prepare_agents(data, fragments).encode("utf-8"), previous))
-    return files
+    return files, current
 
 
 def initialize(root: Path, harnesses: set[str]) -> int:
     shared = shared_path()
-    link, _ = check_project(root, shared, harnesses)
+    config_path = transaction.safe_path(root, ".codex/config.toml")
+    config_before = transaction.content(config_path)
     links = plan_project_links(root, shared, harnesses)
+    link = links[0][0]
     version, shared_version, fragments = shared_bundle(shared)
-    files = plan_files(root, shared_version, fragments, harnesses)
+    files, _ = plan_files(root, shared_version, fragments, harnesses)
 
     def check_bundle():
         if shared_path() != shared or shared_bundle(shared)[0] != version:
             fail(f"共享版本在预检后变化；请重新检查安装计划: {shared}")
 
     def guard():
-        check_project(root, shared, harnesses)
+        if transaction.content(config_path) != config_before:
+            fail(f"File changed after preflight; preserve file: {config_path}")
         if plan_project_links(root, shared, harnesses) != links:
             fail(f"工作流链接在预检后变化: {link}")
         check_bundle()
 
     def verify():
-        if check_project(root, shared, harnesses)[1] != shared or not link.samefile(shared):
-            fail(f"工作流链接不可用: {link}")
         for path, _, target in plan_project_links(root, shared, harnesses):
             if target is None:
                 if transaction.workflow_target(path) is not None:
