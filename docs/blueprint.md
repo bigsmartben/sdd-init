@@ -176,8 +176,8 @@ flowchart TD
 | sdd-bugfix | 恢复指定行为，完成归因、修复、定向复验和原 Issue 关闭 | [Skill](../source/project/.agents/skills/sdd-bugfix/SKILL.md) |
 | sdd-test-loop | 应用户请求开展全功能点集成回归，交付复跑指南、验证证据和 Test Gate | [Skill](../source/project/.agents/skills/sdd-test-loop/SKILL.md) |
 | sdd-refactor | 以已有蓝图为前提维护规范与独立 Review 矩阵，按确认范围初审、生成重构工单并组织技术重构及两类复核 | [Skill](../source/project/.agents/skills/sdd-refactor/SKILL.md)、Spec FR-014、FR-020 |
-| sdd-deliver | Main 用于仓库交付、发布与运维的阶段入口，回收实际结果与证据 | [Skill](../source/project/.agents/skills/sdd-deliver/SKILL.md) |
-| sdd-devops | 仓库、流水线、发布、环境、流量及恢复操作的可选执行者，回读实际版本、运行及恢复状态 | [角色](../source/project/.codex/agents/sdd-devops.toml)、[共享运维规则](../source/project/.agents/sdd/references/delivery.md) |
+| sdd-deliver | 识别个人／团队场景、CI／CD／Ops／DevOps 任务及授权终点，委托完整专业任务并核对结果；不固化平台全流程 | [Skill](../source/project/.agents/skills/sdd-deliver/SKILL.md)、Spec FR-022 |
+| sdd-devops | 按完整交付／运维场景自主制定方案、配置／执行并复验；平台接入落在目标项目，回读实际版本、运行及恢复状态 | [角色](../source/project/.codex/agents/sdd-devops.toml)、[共享运维规则](../source/project/.agents/sdd/references/delivery.md) |
 | sdd-product-manager | 产品调研、需求和验收规格、中保真原型 | [角色](../source/project/.codex/agents/sdd-product-manager.toml) |
 | sdd-architect | 架构风险、方案取舍、顶层设计与架构遵循检查 | [角色](../source/project/.codex/agents/sdd-architect.toml) |
 | sdd-doc-consistency | 只读核对项目权威文档，向任务调用者返回冲突、冗余及引用问题的证据与建议 | [角色](../source/project/.codex/agents/sdd-doc-consistency.toml) |

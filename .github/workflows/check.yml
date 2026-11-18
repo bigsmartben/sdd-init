@@ -2,7 +2,16 @@ name: Distribution checks
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
+    inputs:
+      candidate_ref:
+        description: Optional commit or PR merge ref to test using the main workflow
+        type: string
+      candidate_sha:
+        description: Expected exact candidate SHA (required by delivery)
+        type: string
   workflow_call:
     inputs:
       candidate_ref:
@@ -18,6 +27,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   distribution:
+    name: distribution-${{ matrix.os }}-py${{ matrix.python }}
     strategy:
       matrix:
         include:
@@ -53,6 +63,26 @@ jobs:
           wheels = list(Path('.build/dist').glob('*.whl'));
           len(wheels) == 1 or sys.exit(f'Expected exactly one wheel in .build/dist, found {len(wheels)}: {wheels}');
           subprocess.run([sys.executable, '-B', 'scripts/smoke_package.py', '--from', str(wheels[0])], check=True)"
+      - name: Record tested package provenance
+        if: inputs.candidate_sha != '' && matrix.os == 'ubuntu-latest' && matrix.python == '3.13'
+        env:
+          TESTED_SHA: ${{ inputs.candidate_sha }}
+        shell: bash
+        run: |
+          python -B - <<'PY'
+          import hashlib, json, os, subprocess, tomllib
+          from pathlib import Path
+          sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          if sha != os.environ['TESTED_SHA']:
+              raise SystemExit('Source SHA changed during checks')
+          version = tomllib.loads(Path('pyproject.toml').read_text(encoding='utf-8'))['project']['version']
+          folder = Path('.build/dist')
+          packages = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in folder.iterdir() if p.is_file()}
+          expected = {f'sdd_init-{version}-py3-none-any.whl', f'sdd_init-{version}.tar.gz'}
+          if set(packages) != expected:
+              raise SystemExit('Unexpected release package set')
+          (folder / 'PROVENANCE.json').write_text(json.dumps({'sha': sha, 'version': version, 'files': packages}), encoding='utf-8')
+          PY
       - name: Preserve tested release packages
         if: inputs.candidate_sha != '' && matrix.os == 'ubuntu-latest' && matrix.python == '3.13'
         uses: actions/upload-artifact@v4

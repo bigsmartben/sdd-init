@@ -18,6 +18,8 @@ python -B tests/prepare_skill_behavior.py --case collaboration_workflow --case c
 
 `role_product_manager`、`role_architect`、`role_coder`、`role_devops` 和 `role_doc_consistency` 分别生成仅注册该角色的项目。共享规则按安装路径布置，各工作区排除工作流 Skill 及其余角色。运行时使用隔离的用户配置和工作区，Main 调用已注册角色并传入 TASK.txt，逐例保存子会话的读取、动作、实际文件差异和回执。以候选清单核对使用的源码字节。运维案例先提交夹具基线，再修改 `ops/rollout.txt` 为 `release_label=candidate-b`，同时修改并暂存 `notes.txt`。
 
+`deliver_solo_workflow_setup` 与 `deliver_team_existing_workflow` 使用 Main 入口，分别核对个人 CI 配置和团队既有流程的条件执行。观察交付技能是否按完整场景委托角色、保留实际门禁、避免逐命令派单和平台耦合，并区分配置、本地验证及真实运行。案例不授权访问真实平台或获取凭据；团队案例应回报权限缺口而不重建流程。可用上述准备器逐例生成隔离快照；准备测试通过不代表这些模型行为已实测，未执行时保持 UNVERIFIED。
+
 产品案例使用 [Chromium 检查脚本](run_prototype_check.cjs)。在评测环境准备 Node.js、Playwright 和对应 Chromium，仅在该案例的临时 Codex 配置注册本地工具。用评测者提供的脚本绝对路径和隔离项目绝对路径填写 `args`，用 Playwright 实际搜索目录配置 `NODE_PATH`。角色调用工具后，将返回码、四项断言及 HTML 哈希与最终文件核对。
 
 ```toml
@@ -86,7 +88,7 @@ commit 平台场景的 `evidence/*.json` 描述评测所需的仓库／平台状
 
 ## Main 目标驱动探索 A～G
 
-对应 Spec FR-031、AC-035～AC-041。`candidate_scope: main` 直接使用 sdd-init 分发的唯一 Main 指令片段作为 AGENTS，Align 已包含其中，不再组合独立沟通片段。保留全部候选 Skills 和专业角色注册；源码布局保留技能相对引用，用现有安装器的目录链接辅助函数将安装约定的共享路径指向同一份隔离规则，不复制第二份正文。候选字节与生成配置进入哈希清单，链接另记目标，夹具不可覆盖入口。只准备快照，不执行安装事务或修改用户级安装，不代表 Harness 已加载 TOML。
+对应 Spec FR-031、AC-035～AC-041。`candidate_scope: main` 直接使用 sdd-init 分发的唯一 Main 指令片段作为 AGENTS，Align 已包含其中，不再组合独立沟通片段。保留全部候选 Skills 和专业角色注册；源码布局保留技能相对引用，用现有安装器的目录链接辅助函数将安装约定的共享路径指向同一份隔离规则。只要载荷保留 `review-prompt` 源角色，就在单角色、Main 和默认项目三类快照中生成与正式构建一致的共享契约及配套资源，生成字节同样进入哈希清单；夹具不可覆盖这些候选文件。链接另记目标。只准备快照，不执行安装事务或修改用户级安装，不代表 Harness 已加载 TOML。
 
 | 用例 | 案例 | 观察重点 |
 |---|---|---|
@@ -120,7 +122,7 @@ python -B tests\prepare_skill_behavior.py --case main_simple --case main_special
 | `workflow_review_targeted` | 并行静态审查归并共享偏差，只为本地回读疑点实跑，远端缺证可接续，无比较目标时跳过 A/B |
 | `workflow_review_not_requested` | 普通配置变更只写指定文件，复核轨迹中无评审 Skill 加载或报告写入 |
 
-提示词角色案例同时核对角色配套的[审查规则与评价模型](../../../source/project/.codex/agents/review-prompt/prompt-review.md)：相对共享角色契约所在目录读取，先提取目标与验证，定位实际基线，区分原版偏差修正和效率优化。单角色准备器仅携带所选角色及其同名配套目录；迁移到不同目录后规则仍可读取。`review_prompt_revise` 核对已有依据和授权足够时直接落地，不重复确认或强制 A/B。`review_prompt_ab_confirmation` 只核对实验前唯一确认节点，当前输入不包含对具体方案的确认，执行止于方案回执。退款后端不可用时，行为等价、执行耗时和 token 优化结论仍待验；准备器与装配成功不证明效率收益。真实 A/B 成本、预算停止与稳定性判据须在用户确认方案且具备受控运行环境及遥测的批次取证。
+提示词角色案例同时核对角色配套的[审查规则与评价模型](../../../source/project/.codex/agents/review-prompt/prompt-review.md)：按实际加载方式读取：直接加载源码 TOML 时以 TOML 目录为基准，经适配读取共享契约时以契约目录为基准，而非适配配置目录。先提取目标与验证，定位实际基线，区分原版偏差修正和效率优化。单角色准备器仅携带所选角色及其同名配套目录；迁移到不同目录后规则仍可读取。`review_prompt_revise` 核对已有依据和授权足够时直接落地，不重复确认或强制 A/B。`review_prompt_ab_confirmation` 只核对实验前唯一确认节点，当前输入不包含对具体方案的确认，执行止于方案回执。退款后端不可用时，行为等价、执行耗时和 token 优化结论仍待验；准备器与装配成功不证明效率收益。真实 A/B 成本、预算停止与稳定性判据须在用户确认方案且具备受控运行环境及遥测的批次取证。
 
 显式评审例将设计白皮书和 `docs/review-criteria.md` 的执行材料分开，使用候选 Skill 的报告模板及缩小的合成矩阵。整版工作流的结论须绑定其自己的完整矩阵、实际快照和运行证据。
 

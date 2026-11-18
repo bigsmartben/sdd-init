@@ -35,7 +35,7 @@ sdd-workflow 的核心目标是让用户前置决定关键结果，Agent 基于�
 | [sdd-bugfix](source/project/.agents/skills/sdd-bugfix/SKILL.md) | 按请求恢复指定行为，验证归因、修复并定向复验 |
 | [sdd-test-loop](source/project/.agents/skills/sdd-test-loop/SKILL.md) | 按请求执行全功能点集成回归，交付复跑指南、逐项证据及 Test Gate |
 | [sdd-refactor](source/project/.agents/skills/sdd-refactor/SKILL.md) | 基于蓝图初始化与维护 Review 矩阵，按确认范围审查、生成重构工单及组织整改复核 |
-| [sdd-deliver](source/project/.agents/skills/sdd-deliver/SKILL.md) | 仓库交付、构建发布、运行排障、流量、备份恢复与退役 |
+| [sdd-deliver](source/project/.agents/skills/sdd-deliver/SKILL.md) | 识别个人／团队交付与运维场景，委托角色完成工作流配置或授权操作并核对结果；覆盖 CI/CD、发布、运行及恢复 |
 
 Main 规则由[注入片段](source/initializer/assets/agents-fragment.md)承载核心指令，并按需引用[仓库治理](source/project/.agents/sdd/references/sdd-repository-governance.md)与[执行协作](source/project/.agents/sdd/references/delegation.md)中的详细条款；专业执行资料按各自入口读取。项目文档入口可参考[索引示例](source/project/docs/index.md)。
 
@@ -87,9 +87,13 @@ python -B source/project/.agents/sdd/scripts/doc_check.py --root . README.md
 
 检查范围与限制见[文档校验 CLI](source/project/.agents/sdd/references/doc-check.md)；Python 包构建与安装冒烟验证见[开发验证](docs/installation.md#开发验证)。旧治理命令的退役决定与当前实现边界见[蓝图](docs/blueprint.md#旧治理命令退役边界)。
 
-本仓的 [GitHub Actions 自动交付](.github/workflows/delivery.yml)及验收条件见 [Spec FR-037／AC-044](specs/platform-independent-sdd/spec.md)。推送非 `main` 分支后自动准备版本和 PR，检查合并候选，通过后合并并创建 GitHub Release；默认递增补丁版本，已指定更高稳定版本时沿用。发布仅限 GitHub，不上传包索引。已合并的远端分支安全删除，本地分支不处理。候选变化时重新排队检查；冲突或检查失败时在 Actions 中报告并停止。
+本仓的 [GitHub 交付配置](.github/workflows/delivery.yml)以显式创建或更新 PR 为入口，不再因任意分支推送自动创建 PR，也不允许仅凭 CI 通过或直推 `main` 完成交付。原生审查、云端修复、复审、检查与发布的目标及验收条件见 [Spec FR-037／AC-044](specs/platform-independent-sdd/spec.md)；GitHub 专属实现只归本仓配置，不随通用交付技能分发。
 
-直接推送 `main` 不经过该交付流程，也不会等待检查通过，而默认安装入口会使用 `main`。自动流程不是 GitHub 分支保护，不能阻止其他方式修改 `main`。
+云端接入必须满足实际套餐、凭据、审批和接口条件，缺项时明确阻塞，不把配置落盘、CI 成功或评审评论当作无人值守交付成功。版本、制品与实际合并提交须可追溯，分支清理不能删除新增提交，不操作本地分支；发布仅限 GitHub，不上传包索引。当前实测与未完成项见[实施证据](docs/workflow-evidence.md#2026-11-17-原生-copilot-review-接入实测)。
+
+该集成在版本化配置中默认禁用。启用前须先独立审查并集成可信的流水线代码，再按 [GitHub 接入说明](.github/DELIVERY.md) 配置 `SDD_DELIVERY_TOKEN`、实际支持的 Copilot 能力、分支保护与审批策略，并完成受控验收；不能由该流程自行放行自身的首次安装。
+
+默认安装入口使用 `main`；直接推送可能在检查完成前影响默认分发。工作流不能代替 GitHub 分支保护，也不能阻止其他入口修改 `main`。
 
 ## 进一步阅读
 

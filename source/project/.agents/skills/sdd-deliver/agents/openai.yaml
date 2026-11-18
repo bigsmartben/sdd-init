@@ -1,5 +1,5 @@
 interface:
   display_name: "sdd-deliver"
-  short_description: "完成授权内的仓库交付、构建发布、服务运维、流量治理及备份恢复，核验实际结果"
+  short_description: "识别协作场景与 CI/CD/Ops 任务，委托角色完成工作流配置或授权操作，核验实际结果"
 policy:
   allow_implicit_invocation: true

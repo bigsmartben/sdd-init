@@ -1,5 +1,57 @@
 # 工作流分发实施证据
 
+## 2026-11-17 场景驱动的交付技能与角色交接
+
+依据 [FR-022／AC-022](../specs/platform-independent-sdd/spec.md) 修订[交付技能](../source/project/.agents/skills/sdd-deliver/SKILL.md)、[场景识别与工作流](../source/project/.agents/sdd/references/delivery.md#场景识别与工作流)、[完整场景交接](../source/project/.agents/sdd/references/delegation.md#交付与运维交接)及 [sdd-devops](../source/project/.codex/agents/sdd-devops.toml)。技能识别协作约定、任务类型和授权终点，按完整专业场景派单并验收；角色自主规划、配置／执行和复验，平台实现归目标项目。
+
+| 检查 | 实际覆盖与结果 |
+| --- | --- |
+| 角色与夹具准备 | `test_skill_behavior` 与 `test_roles` 共 29 项通过；覆盖新增个人／团队场景的隔离输入、判据分离，以及双 Harness 角色生成、注册、无关配置保护和重复接入。 |
+| 构建与分发 | `test_build` 共 15 项通过；覆盖构建可重现性、载荷与源码一致、资源引用、新装和受管迁移。不修改用户级安装。 |
+| GitHub 编排回归 | `test_delivery_workflow` 26 项与 `test_next_release_version` 4 项通过。离线覆盖原生 API 编排、有限修复／复审、旧控制器与陈旧证据阻断、门禁路径及重命名保护、合并与制品校验、未确认结果回报，以及真实本地 Git 仓库中的 expected-head lease 清理。没有触发真实云端服务。 |
+| 语义边界 | 对照技能、共享交接、角色、Spec 及导航核对个人／团队不决定审批豁免、类型可组合、单项任务不扩围、优先沿用既有流程和平台实现不进入通用规则。 |
+| 未实测范围 | 新增两个模型案例保持 UNVERIFIED；准备与打包测试不能证明模型实际委派行为。当前 Harness 未暴露该项目角色的原生调用接口，本轮仓库 DevOps 工作由按角色契约接单的合格替代 Agent 承接，不据此声称原生自定义角色发现或调用已验证。 |
+
+本仓 GitHub 实现及启用条件另见[平台接入说明](../.github/DELIVERY.md)，对应 FR-037／AC-044。配置默认禁用，不能把本地编排回归通过等同于云端已生效。只读核验时，私有仓库的分支保护接口返回套餐升级提示，仓库 Secret 名称列表为空；原生任务启动资格不能由可读取任务列表推定。该本地实施阶段的 PR [#9](https://github.com/bigsmartben/sdd-init/pull/9) 保持草稿，尚无提交、推送、远端设置更改、付费 Agent 调用、合并或发布，远端旧工作流未被本地改动替换。后续获授权的远端操作另见[原生 Review 接入实测](#2026-11-17-原生-copilot-review-接入实测)。
+
+## 2026-11-17 原生 Copilot Review 接入实测
+
+用户确认 Copilot 订阅并授权执行配置后，使用已认证的 `bigsmartben` GitHub CLI 操作目标仓库，不读取或复制凭据。实测对象是远端 PR #9 的 `65261c41a98b92c27b008f9f0566b5193c45dde1`，不是尚未提交的本地新编排实现。
+
+| 操作与核验 | 实际结果 |
+| --- | --- |
+| 仓库 Review 配置 | 通过公开 GraphQL `updateRepositoryCopilotCodeReviewSettings` 将强度显式设为 BALANCED；独立回读确认 configured／effective 均为 BALANCED。原有自定义指令、MCP 及严重度过滤设置未更改。 |
+| 单次原生 Review | 官方 REST 请求返回 PENDING；[运行 44025836444](https://github.com/bigsmartben/sdd-init/actions/runs/44025836444) 成功，任务耗时 4 分 2 秒。评审 `5933583520` 的原生身份标识为 true，提交与受审 head 一致，状态为 COMMENTED，留下 3 条待复核建议；不等同于批准合并，也未盲目应用建议。 |
+| 真实接口兼容修复 | 请求返回 `RR_kwDOVfi3Nc7xHZB-`，公开 GraphQL 确认为 ReviewRequest；实际完成评审为另一 PullRequestReview 节点 `PRR_kwDOVfi3Nc8AAAABYatMoA`。修复本地控制器混用两类 ID 导致的超时：保留请求 ID，基于已有记录快照识别唯一新增、已完成的原生评审，并验证实际 head；旧评审不能冒充新结果，多个新结果时明确阻塞。修复前定向用例复现超时，修复后交付编排 28 项与版本 4 项回归通过。 |
+| 旧自动交付退役 | 按已确认的取消旧流程要求停用工作流 `420853123`（Automated delivery），回读为 disabled_manually；独立检查 `404004319`（Distribution checks）仍为 active。停用前没有该旧流程的运行中或排队任务。 |
+| 自动规则与审批阻塞 | 尝试创建仅作用于 main、复审新 push、排除草稿的原生自动 Review 规则，被 GitHub 以套餐门槛拒绝，规则未创建。私有分支保护 REST 仍返回 403。Copilot 订阅不等于仓库所属账户已具备 GitHub Pro 的私有规则能力。自动批准及计入合并要求的设置尚未完成。 |
+| 浏览器与未执行范围 | 集成浏览器未登录；本机浏览器未能验证导航完成，未据此修改页面设置。没有获取密码、验证码或新建 Token。PR 保持 Draft，未提交、推送、启动修复任务、合并或发布；新编排仍默认禁用，完整链路未实跑。 |
+
+## 2026-11-17 PR 9 选定反馈修复
+
+仅处理用户选中的三个会话反馈。修改[项目安装计划](../source/initializer/scripts/govern.py)和[提示词角色权威指令](../source/project/.codex/agents/review-prompt.toml)，不直接编辑构建产物或用户已安装资源。
+
+| 反馈 | 修复与核验 |
+| --- | --- |
+| 非受管 Copilot 角色被覆盖 | 项目状态登记 `copilot_adapters`；未登记且与分发有差异的文件使 inspect／init 在写入前停止。完全一致的文件原样登记，单端刷新保留另一端归属。覆盖冲突保护、受管同步和重复接入；既有 Codex 迁移规则未改。 |
+| 配套规则路径基准错误 | 权威指令及直接引用改为以角色职责正文文件为基准，而不是 Harness 适配配置目录。两个已安装适配均可定位同一共享正文及配套规则；核对其字节与分发一致。此项为装配及指令语义证据，不等同于真实模型导航行为已重跑。 |
+| 非 UTF-8 状态文件阻断安装 | 状态文件不进入项目正文解码，损坏时明确提示重建。只读 inspect 保持原文件，init 可重建元数据，注入提交失败后原始非 UTF-8 字节完整恢复；新字段仍兼容旧状态格式。 |
+
+修复前定向复现覆盖行为与 UnicodeDecodeError。修复后 `test_roles`、`test_project_install`、`test_build` 和 `test_skill_behavior` 共 67 项通过，覆盖完整相关分发、安装、事务恢复及夹具准备回归。相关文档引用检查通过；本轮没有提交、推送或发起新一轮云端评审，远端 PR 版本不能代表这些本地修复。
+
+## 2026-11-17 PR 9 第二批选定反馈修复
+
+本批处理用户选中的六条反馈，归并为以下四个问题，不扩展到云端配置、提交或合并。先复现旧行为，再核验同一份本地候选；受审源码入口为[安装规划](../source/initializer/scripts/govern.py)、[行为夹具准备器](../tests/prepare_skill_behavior.py)、[角色指令](../source/project/.codex/agents/review-prompt.toml)和[随包初始化器回归](../source/initializer/scripts/test_govern.py)。
+
+| 问题 | 修复与证据 |
+| --- | --- |
+| 单端接入破坏未选端的旧引用（两条反馈） | Copilot-only 预检读取 Codex 角色依赖；旧锚点或新载荷缺失的角色路径在任何写入前拒绝，并提示 `--harness both`。隔离用例创建真实可读的旧角色与目录链接，核对 inspect／init 拒绝后原配置、角色字节和链接身份保持，现行兼容配置仍可接入。 |
+| Codex 非受管同名角色丢失 | 提取并复用托管块边界作为归属依据；块外同名本地注册与文件不再因名字被覆盖或删除。已知共享路径的纯引用允许迁移，受管文件被块外角色别名共用时也拒绝删除。更新曾要求删除项目角色的测试；正常受管迁移、重复接入、并发编辑保护和用户级升级仍通过。 |
+| 提示词角色在不同夹具范围内缺配套（两条反馈） | 角色明确按实际加载来源定位规则：直接加载源码 TOML 时以 TOML 目录为基准，经 Harness 适配读取时以共享契约为基准。准备器在 review-prompt 源角色仍留在载荷时统一生成共享契约与配套资源，而非只在单角色分支生成。单角色、Main、默认项目均核对规则可读、搬迁后相对路径及候选哈希；不是模型行为评测通过的声明。 |
+| 随包回归仍断言旧 agents 目录 | 用实际构建包的测试入口复现 FileNotFoundError；将断言迁至 `roles/codex/` 后，实际构建包的完整 22 项回归通过，不仅依赖顶层测试。 |
+
+首轮全量 197 项出现两项失败：新预检改变了外部并发编辑的错误回执，以及一项旧升级夹具仍要求删除非受管角色。补回预检快照比对，并将该升级用例改为先验证非受管冲突原样保留、再验证明确受管迁移。最终 `python -B -m unittest discover -s tests -v` 共 197 项全部通过，实际临时构建后运行 `scripts/test_govern.py` 的 22 项也全部通过。构建及测试仅操作隔离临时目录，不改用户安装；Spec 与安装说明同步当前归属和迁移边界。尚未提交或推送，不能将这些本地证据视为远端 PR 已更新或云端复审已通过。
+
 ## 2026-11-14 提示词审查迁为本仓维护技能
 
 本轮核对 [FR-028／AC-028](../specs/platform-independent-sdd/spec.md) 的分发与迁移部分。候选构建清单 SHA-256 为 `95525106fb215aefcfa60ccbc8453c23866b1587910894447365549ebbf45259`。

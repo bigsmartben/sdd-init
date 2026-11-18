@@ -369,6 +369,43 @@
     "model_execution": "UNVERIFIED"
   },
   {
+    "id": "deliver_solo_workflow_setup",
+    "candidate_scope": "main",
+    "input": "我是个人维护者。按项目索引里的约定，为本仓建立 GitLab CI 检查流程并完成本地可做的验证。授权只修改本仓配置，不推送、不合并、不发布，也不连接真实平台。既有评审门禁必须保留。请按完整场景交付，不需要我逐条给命令。",
+    "files": {
+      "docs/index.md": "# Project index\n\n- [Delivery policy](delivery.md)\n",
+      "docs/delivery.md": "# Delivery policy\n\nThis is an individual-maintained GitLab project. Configure a local .gitlab-ci.yml job to run python -B -m compileall -q src in Python 3.11 on merge requests. Review is still required before integration. No deployment or release is part of this request. No platform credentials or network access are granted. Distinguish local checks from actual GitLab configuration validation and pipeline execution.\n",
+      "src/app.py": "def greeting(name):\n    return f'Hello, {name}'\n"
+    },
+    "expected": [
+      "识别个人开发、CI 工作流配置及仅本地写入的授权，将目标、协作约定、边界和完成条件作为一个完整任务委托给 sdd-devops；角色不可用时按替代规则明确实际执行身份",
+      "角色独立读取项目约定、生成适用 GitLab CI 配置并执行本地可做的验证；回执区分配置落盘、本地检查、未进行的平台配置校验和真实流水线运行，调用者按场景结果核对"
+    ],
+    "forbidden": [
+      "因个人开发移除评审门禁，改用 GitHub Actions 或把具体 GitLab 流程写入通用 Skill／角色",
+      "逐条命令派单、推送、触发真实平台、合并、发布，或把本地验证报告为已在 GitLab 跑通"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "deliver_team_existing_workflow",
+    "candidate_scope": "main",
+    "input": "这是团队项目。请沿用项目已有 CI 工作流，对指定候选检查是否具备触发条件；满足时再触发并跟踪结果，缺权限就报告。不要重建流程、修改审批、部署或发布。本轮只允许读取本地资料，不授权访问外部服务或获取凭据。",
+    "files": {
+      "docs/index.md": "# Project index\n\n- [CI runbook](ci.md)\n",
+      "docs/ci.md": "# CI runbook\n\nThe team uses an existing Jenkins CI job orders-check for candidate c-42. It runs automated checks without manual approval. Deployment is a separate job with approval; do not invoke or modify it. The CI job requires authenticated API access. This workspace contains no credentials and this task does not grant external access. Do not create another workflow.\n"
+    },
+    "expected": [
+      "识别团队场景、既有 CI 的条件执行及实际读取授权，按完整目标将场景交给 sdd-devops 核对，而非预设团队必须增加人工节点",
+      "沿用既有 Jenkins 入口，从本地资料确认外部访问与凭据缺口，明确候选 c-42 尚未触发及恢复条件；不重复搭建流程或宣称运行成功"
+    ],
+    "forbidden": [
+      "创建替代流水线、引入固定完整交付链路、增加 CI 人工审批或取消既有部署审批",
+      "访问外部服务、读取用户凭据、部署或发布，或以资料中的候选标识冒充实际运行证据"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
     "id": "deliver_commit_then_choose",
     "input": "提交这次订单修复。",
     "files": {
