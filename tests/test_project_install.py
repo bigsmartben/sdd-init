@@ -1,5 +1,6 @@
 """Recovery tests use isolated projects, real files and explicit fault injection."""
 import importlib.util
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -128,6 +129,47 @@ gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["init"]))
         self.assertFalse((self.root / self.tx.RECOVERY).exists())
         self.assertEqual(self.run_init().returncode, 0)
 
+    def test_non_utf8_metadata_is_planned_read_only_and_regenerated(self):
+        result = self.run_init()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        state = self.root / self.tx.STATE
+        original = b"\xff\xfeinvalid installation metadata\x80"
+        state.write_bytes(original)
+        before = self.snapshot()
+
+        result = self.run_init(command="inspect")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("will be replaced", result.stdout)
+        self.assertEqual(self.snapshot(), before)
+
+        result = self.run_init()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(set(json.loads(state.read_bytes())["copilot_adapters"]),
+                         set(self.tx.COPILOT_ROLE_FILES))
+        after = self.snapshot()
+        result = self.run_init()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.snapshot(), after)
+
+    def test_non_utf8_metadata_is_restored_byte_for_byte_on_rollback(self):
+        state = self.root / self.tx.STATE
+        original = b"\xff\x80opaque previous metadata\x00"
+        state.write_bytes(original)
+        before = self.snapshot()
+        save = self.tx.save
+
+        def fail_commit(folder, journal):
+            if journal["state"] == "committed":
+                raise OSError("injected metadata commit failure")
+            return save(folder, journal)
+
+        with patch.object(self.tx, "save", side_effect=fail_commit):
+            with self.assertRaisesRegex(OSError, "metadata commit failure"):
+                self.gov.cmd_init(self.root, self.args)
+        self.assertEqual(self.snapshot(), before)
+        self.assertEqual(state.read_bytes(), original)
+        self.assertFalse((self.root / self.tx.RECOVERY).exists())
+
     def test_preflight_snapshot_rejects_late_external_edits(self):
         for relative in ("AGENTS.md", ".codex/config.toml"):
             with self.subTest(path=relative):
@@ -150,7 +192,8 @@ gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["init"]))
         result = self.run_init(command="inspect")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("Shared version: sha256:", result.stdout)
-        self.assertIn("Registered roles: none", result.stdout)
+        self.assertIn("Installed roles (codex): none", result.stdout)
+        self.assertIn("Installed roles (copilot): none", result.stdout)
         self.assertEqual(list(self.root.iterdir()), [])
         self.assertEqual(self.run_init().returncode, 0)
         before = self.snapshot()
@@ -171,7 +214,7 @@ gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["init"]))
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertNotIn(b"Project-owned entry", agents.read_bytes())
 
-    def test_role_and_skill_names_are_replaced_when_they_shadow_shared_entries(self):
+    def test_managed_role_and_skill_names_are_migrated_when_they_shadow_shared_entries(self):
         names = {
             ".agents/skills/group/local/SKILL.md": b"---\nname: sdd-develop\ndescription: Custom.\n---\n",
             ".codex/agents/local.toml": b'name = "sdd-architect"\n',
@@ -180,6 +223,9 @@ gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["init"]))
             path = self.root / relative
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(data)
+        (self.root / ".codex/config.toml").write_text(
+            '# sdd-init roles:start\n[agents.sdd-architect]\n'
+            'config_file = "agents/local.toml"\n# sdd-init roles:end\n', encoding="utf-8")
         result = self.run_init()
         self.assertEqual(result.returncode, 0, result.stderr)
         for relative in names:

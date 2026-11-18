@@ -98,6 +98,7 @@ class BuildTests(unittest.TestCase):
             (output / "shared/roles/shared/review-prompt/prompt-review.md").read_bytes(),
         )
         self.assertNotIn("model:", copilot.read_text(encoding="utf-8"))
+        self.assertIn("\ntarget: vscode\n", copilot.read_text(encoding="utf-8").split("---", 2)[1])
         self.assertIn("roles/shared/review-prompt.md", copilot.read_text(encoding="utf-8"))
         manifest = json.loads((output / "build-manifest.json").read_bytes())
         self.assertEqual(manifest["files"][path], hashlib.sha256(data).hexdigest())

@@ -4,6 +4,7 @@ import importlib.util
 import io
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -89,6 +90,54 @@ class UserInstallTests(unittest.TestCase):
         self.assertEqual(installed_role.read_bytes(), current_role)
         self.assertFalse(self.role.parent.exists())
         self.assertEqual((project / "custom.txt").read_text(), "keep")
+
+    def test_shared_upgrade_preserves_legacy_codex_role_references_without_project_init(self):
+        old_release = self.root / "old-release"
+        shutil.copytree(self.resources, old_release)
+        old_roles = old_release / "shared/agents"
+        old_roles.mkdir(exist_ok=True)
+        for path in (old_release / "shared/roles/codex").glob("*.toml"):
+            (old_roles / path.name).write_text(f'name = "{path.stem}"\ndescription = "Old role"\n'
+                                               'developer_instructions = "Old role instructions"\n', encoding="utf-8")
+        refresh_manifest(old_release)
+        self.assertEqual(install(old_release, self.skills), "Installed")
+        shared = shared_directory(self.skills)
+        target = self.skills / "sdd-init"
+        spec = importlib.util.spec_from_file_location("legacy_codex_tx", target / "scripts/project_install.py")
+        tx = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(tx)
+        expected_roles = set(tx.PROJECT_ROLES)
+        projects = []
+        for index, anchor in enumerate((LEGACY_WORKFLOW, WORKFLOW)):
+            project = self.root / f"legacy-project-{index}"
+            workflow = project / anchor
+            workflow.parent.mkdir(parents=True)
+            tx.create_workflow_link(workflow, shared)
+            config = project / ".codex/config.toml"
+            config.parent.mkdir()
+            config.write_text("\n".join(f'[agents.{name}]\nconfig_file = "../{anchor}/agents/{name}.toml"\n'
+                                        for name in sorted(expected_roles)), encoding="utf-8")
+            for name in expected_roles:
+                self.assertTrue((workflow / f"agents/{name}.toml").is_file())
+            projects.append((project, config, config.read_bytes(), workflow, tx.link_snapshot(workflow)))
+
+        self.assertEqual(install(self.resources, self.skills), "Updated")
+
+        for project, config, original, workflow, link in projects:
+            with self.subTest(anchor=workflow.relative_to(project)):
+                self.assertEqual(config.read_bytes(), original)
+                self.assertEqual(tx.link_snapshot(workflow), link)
+                roles = tomllib.loads(original.decode("utf-8"))["agents"]
+                self.assertEqual(set(roles), expected_roles)
+                for name, registration in roles.items():
+                    role = tomllib.loads((config.parent / registration["config_file"]).read_text(encoding="utf-8"))
+                    self.assertEqual(role["name"], name)
+                    links = re.findall(r"\.agents/[^\s]+/roles/shared/[^\s]+\.md", role["developer_instructions"])
+                    reachable = next((project / path for path in links if (project / path).is_file()), None)
+                    self.assertIsNotNone(reachable)
+                    self.assertTrue(reachable.samefile(shared / "roles/shared" / f"{name}.md"))
+                    if name == "review-prompt":
+                        self.assertTrue((reachable.parent / "review-prompt/prompt-review.md").is_file())
 
     def test_linked_projects_share_updates_and_git_ignores_local_link(self):
         self.assertEqual(install(self.resources, self.skills), "Installed")
@@ -605,6 +654,13 @@ class UserInstallTests(unittest.TestCase):
         self.assertFalse(self.role.exists())
         govern = self.skills / "sdd-init/scripts/govern.py"
         command = [sys.executable, "-B", "-X", "utf8", str(govern), "--root", str(project)]
+        before = {p.relative_to(project): p.read_bytes() for p in project_files(project)}
+        result = subprocess.run([*command, "init"], capture_output=True, text=True, encoding="utf-8")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("非受管 Codex", result.stderr)
+        self.assertEqual(before, {p.relative_to(project): p.read_bytes() for p in project_files(project)})
+        config.write_bytes(b'model = "keep"\n# sdd-init roles:start\n[agents.sdd-coder]\n'
+                           b'config_file = "agents/sdd-coder.toml"\n# sdd-init roles:end\n')
         result = subprocess.run([*command, "init"], capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(skill.samefile(shared_directory(self.skills) / "skills/sdd-develop/SKILL.md"))

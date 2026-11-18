@@ -85,12 +85,16 @@ def main():
                 self_shared / "roles/codex" / f"{name}.toml")
             copilot = project / ".github/agents" / f"{name}.agent.md"
             assert copilot.is_file()
-            assert "model:" not in copilot.read_text(encoding="utf-8")
-            assert f"roles/shared/{name}.md" in copilot.read_text(encoding="utf-8")
+            adapter = copilot.read_text(encoding="utf-8")
+            assert "model:" not in adapter
+            assert "\ntarget: vscode\n" in adapter.split("---", 2)[1]
+            assert f"roles/shared/{name}.md" in adapter
         subprocess.run(initialize, check=True)
         assert before == local_files(project)
         inspection = subprocess.run([*initialize[:-1], "inspect"], check=True, capture_output=True, text=True, encoding="utf-8")
         assert "Project connection is current" in inspection.stdout
+        for harness in ("codex", "copilot"):
+            assert f"Installed roles ({harness}): {', '.join(sorted(roles))}" in inspection.stdout
         recovered = subprocess.run([*cli, "recover", *selector], check=True, capture_output=True, text=True, encoding="utf-8")
         assert "No pending user-level recovery" in recovered.stdout
         assert "Status: current" in recovered.stdout
