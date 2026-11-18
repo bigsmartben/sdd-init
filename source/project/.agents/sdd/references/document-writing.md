@@ -27,7 +27,7 @@
 | Architecture Review Record | [Architecture Review Record](../assets/review_template.md)、原检查项和实际执行证据 | 在原检查项下维护工单与 Task 引用、验收计划与方案及历次结果。分别关联架构复核与业务行为保持验收的判据、整改版本和证据。Review Gate 依据适用架构检查，实施方案与局部自验归原 Task |
 | Review Matrix | [Review Matrix](../assets/review-matrix_template.md)、已确认 Blueprint／契约、项目规则及适用 checklist | 由重构技能维护，按项目层级及协作边界映射规则、方法和判据；首次内容及受影响增删改先展示确认，再归并并维护蓝图链接；保留编号、适用条件及例外。批次任务、结果与证据归专用审查记录 |
 | Delivery Record | 已授权的交付或运维终点、项目运行指南、实测回执及适用证据，首次建档用 [Delivery Record](../assets/delivery_record_template.md) | 核对实际版本、环境、目标对象、步骤回执、运行验证与恢复效果。未完成项保留影响及恢复条件，适用的架构或集成结论引用原证据 |
-| Plan | [Plan](../assets/plan_template.md)、实施执行者的方案、任务与证据 | 保留同一计划及编号，核对上游验收计划与方案的引用、依赖、Task 完成条件、局部证据覆盖与仍待验的判据。Bug Task 引用原 Issue 和归因检查证据，方案、拆分与任务完成判断取自实施执行者 |
+| Plan | [Plan](../assets/plan_template.md)、实施执行者的方案、任务与证据 | 保留同一计划及编号；按单项轻量、多文件／依赖完整、长程恢复点选择分档，核对上游验收计划与方案的引用、依赖、Task 完成条件、局部证据覆盖与仍待验的判据。Bug Task 引用原 Issue 和归因检查证据，方案、拆分与任务完成判断取自实施执行者。 |
 | Quickstart | [测试范围约束](sdd-repository-governance.md#测试范围约束)、[Quickstart](../assets/quickstart_template.md) | 核对验收产品范围内已确认功能点与场景／AC 的覆盖关系，以及版本、环境、入口、数据、步骤、观察点、通过判据和必要复位。实际结果归 Test Report，报告引用本轮指南 |
 | Status / Current Task | Test Report、执行者状态；新建时用[Status](../assets/status_template.md) | 按[运行状态与接续](sdd-repository-governance.md#运行状态与接续)更新进度；版本、覆盖及状态与证据对应，逐项结果、Gate 和人工反馈使用引用 |
 | README / Project Index | 项目权威正文、工程资产规则 | 只定位导航，已有正文不继续指向模板；同步直接受影响入口 |

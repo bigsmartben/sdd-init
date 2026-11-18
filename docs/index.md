@@ -23,7 +23,8 @@
 - **怎样专项审查提示词或比较改版后的行为？** 在已接入项目可按需将明确工单交给预置角色 [review-prompt](../source/project/.codex/agents/review-prompt.toml)。目标与验证提取、五类规则、优化策略及同结果下的耗时／token 对照见角色配套的[提示词审查与优化](../source/project/.codex/agents/review-prompt/prompt-review.md)，相对链接以承载角色职责正文的文件为基准，不以引用它的 Harness 适配配置为基准；角色不可用时由合格执行者按同一契约承接，不另装用户级角色或新增 Skill。原地升级见[安装说明](installation.md#更新与冲突)。
 - **怎样全面审查并回归本仓工作流？** 用户显式调用 [sdd-workflow-review](../.agents/skills/sdd-workflow-review/SKILL.md)，按固定版本的设计与判据，交付版本化覆盖、回归证据、获授权后的修复复验及质量成本报告。
 
-- **本轮改什么、按什么顺序执行？** 查[4+1 角色独立性整改 Plan](plans/role-independence.md)。既有工作见[DevOps 职责与迁移 Plan](plans/devops.md)、[设计变更提醒与任务交接 Plan](plans/workflow-continuation.md)、[专职 Agent 协作 Plan](plans/agent-collaboration.md)和[安装恢复与旧命令退役 Plan](plans/install-recovery.md)。实施任务使用 [Plan 模板](../source/project/.agents/sdd/assets/plan_template.md)。
+- **Coder 工单何时就绪、如何避免调查自动实施？** 查[实施交接](../source/project/.agents/sdd/references/delegation.md#实施交接)的最小工单契约，以及 [Coder 执行模式](../source/project/.agents/sdd/references/implementation.md#执行模式)。Coder 必须在 `investigate`、`prepare`、`implement`、`fix`、`refactor` 中显式执行，调查与准备不会自动升级。
+- **本轮改什么、按什么顺序执行？** 查[4+1 角色独立性整改 Plan](plans/role-independence.md)。既有工作见[DevOps 职责与迁移 Plan](plans/devops.md)、[设计变更提醒与任务交接 Plan](plans/workflow-continuation.md)、[专职 Agent 协作 Plan](plans/agent-collaboration.md)和[安装恢复与旧命令退役 Plan](plans/install-recovery.md)。实施任务按[Plan 模板](../source/project/.agents/sdd/assets/plan_template.md)选择轻量、完整或长程分档，并按[任务回执](../source/project/.agents/sdd/references/task-receipt.md)交付。
 
 - **如何按个人／团队场景配置交付工作流，或处理 CI/CD、发布和运行运维？** 使用 [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md) 识别场景与授权终点，将完整专业任务交给角色自主实施并核对结果；通用边界见[场景识别与工作流](../source/project/.agents/sdd/references/delivery.md#场景识别与工作流)，平台实现归目标项目配置。发布证据查[正式发布依据](../source/project/.agents/sdd/references/sdd-repository-governance.md#正式发布依据)，本仓实际验证查[实施证据](workflow-evidence.md)。
 

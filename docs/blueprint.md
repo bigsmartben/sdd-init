@@ -159,7 +159,7 @@ flowchart TD
 |---|---|
 | Agent Loop／工具调度 | 由目标 Harness 提供，本仓只分发 Main 指令与契约，不实现循环、搜索引擎或 Align／Explore／Evaluate 三次调用。 |
 | Main 入口与 Skills | sdd-init 注入单个 AGENTS 托管块，承载 Align、探索调度和目标验收；授权与状态、协作、回执分别按引用定位详细正文，不重复展开职责表或另注入沟通块。专业执行规则归实际执行者。标准 `.agents/skills/<name>/SKILL.md` 提供技能发现，按原生触发加载，不以创建子 Agent 为前置。 |
-| 专业 Agent | Codex 通过 `.codex/config.toml` 引用 TOML 角色，Copilot 使用 `.github/agents/*.agent.md`。两端角色引用同一共享职责正文，模型与推理强度由 Main 按[角色分配规则](../source/project/.agents/sdd/references/delegation.md#角色的模型与推理强度)决定。 |
+| 专业 Agent | 当前 Codex 适配使用 `.codex/config.toml` 及 TOML 角色引用。其他 Harness 使用其实际可用接口，不假定可直接识别 Codex 配置。 |
 | 委派与接续 | 优先原生子 Agent 标识、消息及接续机制；接口存在时才使用其参数。无子 Agent 能力可直接加载 Skill，确需独立执行而能力缺失时明确阻塞。 |
 | Plan／任务状态 | 原生能力保留但按需使用。只记录实际依赖、并行协调或长任务恢复所需状态，不预建全图或另建图数据库；专业角色内部 Plan 不上收为 Main 的重复计划。 |
 
@@ -170,7 +170,7 @@ flowchart TD
 | sdd-init Skill | 完成目标项目环境落地：准备资产，向目标 AGENTS.md 注入 Main 规则与能力入口；检查与恢复是落地手段 | [Skill](../source/initializer/SKILL.md)、[Main 规则注入源](../source/initializer/assets/agents-fragment.md) |
 | 项目初始化器 | 核对分发版本与项目接入计划，管理本机链接、托管引用和项目事务 | [初始化 Skill](../source/initializer/SKILL.md)、[govern.py](../source/initializer/scripts/govern.py)、[project_install.py](../source/initializer/scripts/project_install.py) |
 | 文档写入规则 | 各角色按适用模板原位归并自己产出的已确认内容或实际证据，维护引用并做写后核对 | [各产物的模板与核对要点](../source/project/.agents/sdd/references/document-writing.md#按对象读取与语义核对) |
-| sdd-coder | 交付已就绪且获授权的工单，生成并执行同一 Plan／Task 清单，修改代码并完成局部自验 | [实施交接](../source/project/.agents/sdd/references/delegation.md#实施交接) |
+| sdd-coder | 唯一实施角色，按明确 `investigate`、`prepare`、`implement`、`fix`、`refactor` 模式交付；工单就绪后选取最小 Plan 分档，修改获授权范围并完成局部自验，不接管阶段 Gate | [角色](../source/project/.codex/agents/sdd-coder.toml)、[实施模式](../source/project/.agents/sdd/references/implementation.md)、[实施交接](../source/project/.agents/sdd/references/delegation.md#实施交接) |
 | sdd-develop | 推进单个需求的规格、实施及点对点验收，交付可集成的实际版本和证据 | [Skill](../source/project/.agents/skills/sdd-develop/SKILL.md) |
 | sdd-architecture | 为仓库级架构建立或演化 Blueprint，回收可行性证据、确认设计并核对归并结果 | [Skill](../source/project/.agents/skills/sdd-architecture/SKILL.md) |
 | sdd-bugfix | 恢复指定行为，完成归因、修复、定向复验和原 Issue 关闭 | [Skill](../source/project/.agents/skills/sdd-bugfix/SKILL.md) |
@@ -218,6 +218,7 @@ flowchart TD
 | ARC-007 | 分发规则及样例不代替目标项目的业务需求、组件库或产品架构决定；历史导入实现不覆盖已确认目标 | [维护边界](../AGENTS.md#维护边界)、Spec FR-012、FR-014 |
 | ARC-008 | 项目安装遵循单项目互斥与失败可恢复边界，恢复保持无关修改，未完成操作先处理，恢复失败时阻止继续覆盖；不承诺跨文件瞬时原子切换 | [项目安装的互斥与恢复边界](#项目安装的互斥与恢复边界)，2026-11-04 用户确认 |
 | ARC-009 | 旧治理命令退役，不保留兼容入口；历史记录保留与命令可执行性分离 | [旧治理命令退役边界](#旧治理命令退役边界)，2026-11-04 用户确认 |
+| ARC-010 | Coder 的调查、准备、实施、修复和重构模式互不自动升级；实施输入、Plan 粒度、回执和证据适用性分别由共享契约统一，局部自验不承担其他阶段 Gate | Spec FR-041／AC-048，[实施与局部自验](../source/project/.agents/sdd/references/implementation.md)、[任务回执](../source/project/.agents/sdd/references/task-receipt.md) |
 
 ## 8. 关键协作索引与未决边界
 
@@ -232,7 +233,7 @@ flowchart TD
 | 本仓工作流全面评审 | 显式调用 [sdd-workflow-review](../.agents/skills/sdd-workflow-review/SKILL.md)，按 Skill 判据汇总各对象和跨阶段证据，设计依据按需只读引用白皮书 |
 | 仓库交付、发布与运维 | [sdd-deliver](../source/project/.agents/skills/sdd-deliver/SKILL.md) 按请求进入，平台及运行状态以实际回执为准 |
 
-`sdd-coder` 的 [Plan 模板](../source/project/.agents/sdd/assets/plan_template.md) 合并了技术实施上下文与可执行 Task 清单，分别对照 Spec Kit 的 [Plan 模板](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/plan-template.md) 和 [Tasks 模板](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/tasks-template.md)。本仓库的 [Quickstart 模板](../source/project/.agents/sdd/assets/quickstart_template.md) 对照上游 [Plan 指令中的 Quickstart 生成规则](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/plan.md#L135)。任务拆分与执行分别对照上游 [Tasks 指令](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/tasks.md) 和 [Implement 指令](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/implement.md)。目标项目运行时按实施交接及适用 Skill 读取分发模板。
+`sdd-coder` 的 [Plan 模板](../source/project/.agents/sdd/assets/plan_template.md) 合并了技术实施上下文与可执行 Task 清单，并按轻量、完整和长程分档，避免简单任务重复完整计划。其参考来源包括 Spec Kit 的 [Plan 模板](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/plan-template.md) 和 [Tasks 模板](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/tasks-template.md)。本仓库的 [Quickstart 模板](../source/project/.agents/sdd/assets/quickstart_template.md) 对照上游 [Plan 指令中的 Quickstart 生成规则](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/plan.md#L135)。任务拆分与执行分别对照上游 [Tasks 指令](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/tasks.md) 和 [Implement 指令](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/templates/commands/implement.md)。目标项目运行时按实施交接及适用 Skill 读取分发模板。
 
 Bug 工作流对照 Spec Kit 的 [Assess](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/extensions/bug/commands/speckit.bug.assess.md)、[Fix](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/extensions/bug/commands/speckit.bug.fix.md) 和 [Test](https://github.com/github/spec-kit/blob/2ee2b1e8005905db05f5717300a469b3068b908f/extensions/bug/commands/speckit.bug.test.md)，作为归因、修复与验证的来源参考。当前工单交付、关单和集成测试的边界见 Spec FR-021 与 FR-026。
 

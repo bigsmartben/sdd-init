@@ -15,7 +15,8 @@
 
 - **怎样审查架构落地或实施技术重构？** 使用 [sdd-refactor](../.agents/skills/sdd-refactor/SKILL.md)，以已有蓝图为前提，核对规范与独立矩阵，再确认本轮 Review Task 的范围和终点。初审、重构工单、架构复核、行为保持验收及 Review Gate 查 [Architecture Review Record](../.agents/sdd/assets/review_template.md)，重构方案与局部自验查关联 Plan／Task。
 
-- **本轮改什么、按什么顺序执行？** 查当前 Plan（Task 清单）；输出结构见 [Plan](../.agents/sdd/assets/plan_template.md)，安排执行见[实施交接](../.agents/sdd/references/delegation.md#实施交接)，制定与执行计划见[实施与局部自验](../.agents/sdd/references/implementation.md)。
+- **Coder 工单何时就绪、允许调查到什么程度？** 查[实施交接](../.agents/sdd/references/delegation.md#实施交接)的最小工单契约，以及 [Coder 执行模式](../.agents/sdd/references/implementation.md#执行模式)。调查与准备必须在明确授权模式内停止，不自动实施。
+- **本轮改什么、按什么顺序执行？** 查当前 Plan（Task 清单）；按 [Plan 模板](../.agents/sdd/assets/plan_template.md)选择轻量、完整或长程分档，安排执行见[实施交接](../.agents/sdd/references/delegation.md#实施交接)，制定与执行计划见[实施与局部自验](../.agents/sdd/references/implementation.md)。回执按[任务回执](../.agents/sdd/references/task-receipt.md)记录产物、版本、检查、覆盖和缺口。
 
 - **如何操作仓库、流水线、发布、环境、流量、备份恢复或退役？** 使用 [sdd-deliver](../.agents/skills/sdd-deliver/SKILL.md)。从项目运行指南与平台配置定位实际入口，正式发布查[适用依据](../.agents/sdd/references/sdd-repository-governance.md#正式发布依据)，首次建运维记录用 [Delivery Record](../.agents/sdd/assets/delivery_record_template.md)。
 

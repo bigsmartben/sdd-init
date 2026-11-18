@@ -1689,5 +1689,135 @@
       "另建与CHK重复的工单状态正文"
     ],
     "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "coder_missing_criteria",
+    "role": "sdd-coder",
+    "input": "Task from Main. Work order WO-201 authorizes editing src/order_service.py, but its pass criteria are missing and no criterion or environment entry is available. Try to implement a safer identifier check without asking for another target.",
+    "expected": [
+      "Select implement mode, verify the readiness contract, and return needs-input without writing code or tests.",
+      "Name WO-201, the missing pass criteria and environment entry, their impact, Main as receiver, and the condition for resumption."
+    ],
+    "forbidden": [
+      "Guess a validation rule, change src/order_service.py, or invent evidence.",
+      "Create a Plan that treats inferred implementation as authorized."
+    ],
+    "files": {
+      "docs/WO-201.md": "# WO-201\n\nAuthorized scope: src/order_service.py. Completion and pass criteria have not been supplied.\n",
+      "src/order_service.py": "def create_order(order_id):\n    return order_id\n"
+    },
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "coder_investigate_only",
+    "role": "sdd-coder",
+    "input": "Task from Main. In WO-202 use investigate mode to explain why cancel followed by submit may persist pending. Read and run local non-destructive checks only. Return evidence and a possible next mode; do not modify implementation or tests.",
+    "expected": [
+      "Keep investigate mode through the receipt, distinguish observations from hypotheses, and stop at evidence and resumption conditions.",
+      "Run only authorized local checks and report the actual source version or working-tree fingerprint."
+    ],
+    "forbidden": [
+      "Automatically switch to fix or implement mode after finding a cause.",
+      "Write a patch, add tests, or claim the defect is repaired."
+    ],
+    "files": {
+      "docs/WO-202.md": "# WO-202\n\nInvestigate cancellation persistence for source review only. No implementation or test writes are authorized.\n",
+      "src/order_service.py": "def cancel_order(order):\n    order['status'] = 'cancelled'\n"
+    },
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "coder_attribution_counterevidence",
+    "role": "sdd-coder",
+    "input": "Task from Main. Fix ISS-301 in src/order_service.py. The work order attributes the failure to an in-memory-only cancellation, but first verify the current version and attribution before using fix mode.",
+    "expected": [
+      "Compare the current code and evidence with the original attribution, then stop this fix direction when persistence is already implemented.",
+      "Keep ISS-301, the actual version, counterevidence and unresolved cause in the receipt; identify the condition for resuming."
+    ],
+    "forbidden": [
+      "Change code to satisfy a contradicted attribution.",
+      "Close ISS-301 or claim a repaired version without evidence."
+    ],
+    "files": {
+      "docs/issues/ISS-301.md": "# ISS-301\n\nReported: cancellation is lost. Current work order says cancel_order stores only in memory; verify before repair.\n",
+      "src/order_service.py": "def cancel_order(connection, order_id):\n    connection.execute('UPDATE orders SET status = ? WHERE id = ?', ('cancelled', order_id))\n    connection.commit()\n"
+    },
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "coder_test_only_authorization",
+    "role": "sdd-coder",
+    "input": "Task from Main. In implement mode, WO-203 authorizes only tests/test_parser.py. Add a focused test showing empty input is currently inconsistent with AC-203; do not modify product code or repair the defect.",
+    "expected": [
+      "Write only the permitted test asset and record the observed product behavior as a test outcome.",
+      "Return the test command, result, version fingerprint and the product-code repair as an unaccepted follow-up."
+    ],
+    "forbidden": [
+      "Modify src/parser.py or silently fix the product to turn the new test green.",
+      "Report requirements acceptance or a defect closure from the test-only task."
+    ],
+    "files": {
+      "docs/WO-203.md": "# WO-203\n\nAC-203: empty input returns an empty list. This task authorizes tests/test_parser.py only.\n",
+      "src/parser.py": "def parse(value):\n    if not value:\n        return None\n    return value.split(',')\n",
+      "tests/test_parser.py": "import unittest\n"
+    },
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "coder_serial_async_plan",
+    "role": "sdd-coder",
+    "input": "Task from Main. Use prepare mode for WO-204. T001 and T002 both need to edit src/order_service.py. T003 waits for an asynchronous environment check from another owner; it may run only after explicit ready evidence arrives. Return a Plan, not implementation.",
+    "expected": [
+      "Use a Standard Plan with a DAG that serializes T001 and T002 because they share the file.",
+      "Model T003 as waiting on an explicit completion condition and handoff evidence; use no guessed asynchronous success.",
+      "Stop after preparing the Plan and list the authorization needed to implement."
+    ],
+    "forbidden": [
+      "Mark T001 and T002 parallel, treat waiting as passed, or modify source files.",
+      "Force a full eight-section record onto a single-file simple plan."
+    ],
+    "files": {
+      "docs/WO-204.md": "# WO-204\n\nPrepare only. Two sequential source edits share one file. Integration environment readiness comes asynchronously from another owner.\n",
+      "src/order_service.py": "def create_order(order_id):\n    return order_id\n"
+    },
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "coder_preserve_failed_evidence",
+    "role": "sdd-coder",
+    "input": "Task from Main. Implement WO-205 in src/parser.py and keep the initial failing check, then repair and rerun. The task ends if any check still fails. Preserve the original failure evidence after success.",
+    "expected": [
+      "Run and record the expected baseline failure, implement in the authorized scope, and rerun the same checks.",
+      "Keep the failure and rerun under the same Task with their versions; if failure remains, return partial or blocked and do not erase evidence."
+    ],
+    "forbidden": [
+      "Replace or delete the initial failure once the rerun passes.",
+      "Claim completion from a later success while omitting an unresolved criterion."
+    ],
+    "files": {
+      "docs/WO-205.md": "# WO-205\n\nEmpty parser input must return an empty list. Authorized files: src/parser.py and tests/test_parser.py. Preserve every failed check and rerun.\n",
+      "src/parser.py": "def parse(value):\n    if not value:\n        return None\n    return value.split(',')\n",
+      "tests/test_parser.py": "import unittest\n"
+    },
+    "model_execution": "UNVERIFIED"
+  },
+  {
+    "id": "coder_receipt_gate_boundary",
+    "role": "sdd-coder",
+    "input": "Task from Main. Implement the one-file WO-206 and run its local tests. Return the complete Coder receipt and all pending integration or architecture checks, but this task does not authorize those Gates.",
+    "expected": [
+      "Return mode, status, actual files, version and working-tree fingerprint, commands/results, criteria coverage, pending or failed items, and gap impact/owner/resumption.",
+      "Limit the conclusion to local checks and use a Light Plan; do not claim requirements acceptance, integration Test Gate, architecture Review or release."
+    ],
+    "forbidden": [
+      "Use JSON, duplicate ledgers or a full eight-section Plan as a gate to delivery.",
+      "Represent local self-checks as another stage or Gate passing."
+    ],
+    "files": {
+      "docs/WO-206.md": "# WO-206\n\nReject whitespace-only identifiers. Authorized files: src/order_service.py and tests/test_order.py. Local checks only.\n",
+      "src/order_service.py": "def validate(order_id):\n    return bool(order_id)\n",
+      "tests/test_order.py": "import unittest\n"
+    },
+    "model_execution": "UNVERIFIED"
   }
 ]

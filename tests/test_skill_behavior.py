@@ -120,6 +120,32 @@ class PreparationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "override candidate rules"):
             prepare.prepare_case(invalid, self.folder / "contaminated-role-fixture")
 
+    def test_coder_boundary_cases_are_registered_and_isolated(self):
+        case_ids = (
+            "coder_missing_criteria",
+            "coder_investigate_only",
+            "coder_attribution_counterevidence",
+            "coder_test_only_authorization",
+            "coder_serial_async_plan",
+            "coder_preserve_failed_evidence",
+            "coder_receipt_gate_boundary",
+        )
+        cases = prepare.load_cases()
+        for case_id in case_ids:
+            with self.subTest(case=case_id):
+                case = cases[case_id]
+                self.assertEqual(case["role"], "sdd-coder")
+                output = self.folder / case_id
+                project = prepare.prepare_case(case, output)
+                config = tomllib.loads((project / ".codex/config.toml").read_text(encoding="utf-8"))
+                self.assertEqual(set(config["agents"]) - {"max_depth", "max_threads"}, {"sdd-coder"})
+                self.assertEqual(len(list((project / ".codex/agents").glob("*.toml"))), 1)
+                self.assertFalse((project / ".agents/skills").exists())
+                evaluation = json.loads((output / "evaluation.json").read_text(encoding="utf-8"))
+                self.assertEqual(evaluation["model_execution"], "UNVERIFIED")
+                self.assertTrue(evaluation["expected"])
+                self.assertTrue(evaluation["forbidden"])
+
     def test_main_cases_keep_distributed_entry_roles_and_evaluation_separate(self):
         cases = prepare.load_cases()
         case_ids = ("main_simple", "main_specialist", "main_explore", "main_dependency",

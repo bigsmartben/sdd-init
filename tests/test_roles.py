@@ -12,13 +12,72 @@ import tempfile
 import tomllib
 import unittest
 
-from test_build import WORKFLOW, builder, project_entries, project_files, refresh_manifest
+from test_build import ROOT, WORKFLOW, builder, project_entries, project_files, refresh_manifest
 
 ROLES = {
     "review-prompt", "sdd-architect", "sdd-product-manager",
     "sdd-coder", "sdd-devops", "sdd-doc-consistency",
 }
 LEGACY_ROLES = ("sdd-delivery", "sdd-designer", "sdd-documenter", "sdd-validator")
+
+
+class CoderContractTests(unittest.TestCase):
+    def setUp(self):
+        self.role = tomllib.loads(
+            (ROOT / "source/project/.codex/agents/sdd-coder.toml").read_text(encoding="utf-8")
+        )["developer_instructions"]
+        references = ROOT / "source/project/.agents/sdd/references"
+        self.implementation = (references / "implementation.md").read_text(encoding="utf-8")
+        self.delegation = (references / "delegation.md").read_text(encoding="utf-8")
+        self.receipt = (references / "task-receipt.md").read_text(encoding="utf-8")
+        self.plan = (ROOT / "source/project/.agents/sdd/assets/plan_template.md").read_text(encoding="utf-8")
+        self.governance = (references / "sdd-repository-governance.md").read_text(encoding="utf-8")
+
+    def test_five_modes_are_explicit_and_cannot_self_upgrade(self):
+        for mode in ("investigate", "prepare", "implement", "fix", "refactor"):
+            self.assertIn(mode, self.role)
+            self.assertIn(f"`{mode}`", self.implementation)
+        self.assertIn("模式不得由调查、准备、失败或新证据自动升级", self.role)
+        self.assertIn("不得用“发现了实现、已有方案、检查失败”自动扩权", self.implementation)
+
+    def test_missing_criteria_returns_without_code_changes(self):
+        for field in ("目标", "范围与排除", "原工单编号", "通过判据",
+                      "授权终点", "写入边界", "完成条件"):
+            self.assertIn(f"| {field} |", self.delegation)
+        self.assertIn("缺项不得靠实施者猜测", self.delegation)
+        self.assertIn("不得开始写产品或测试代码", self.implementation)
+
+    def test_investigation_and_preparation_do_not_implement(self):
+        self.assertIn("修改产品、测试代码或配置", self.implementation)
+        self.assertIn("B 前的准备不得升级为实施", (ROOT /
+                     "source/project/.agents/skills/sdd-develop/SKILL.md").read_text(encoding="utf-8"))
+        self.assertIn("调查不得自动升级为修复", (ROOT /
+                     "source/project/.agents/skills/sdd-bugfix/SKILL.md").read_text(encoding="utf-8"))
+
+    def test_attribution_counterevidence_stops_current_fix_direction(self):
+        self.assertIn("归因反证后继续原方向", self.implementation)
+        self.assertIn("归因反证、不可比较版本或复验失败时", self.implementation)
+        self.assertIn("停止当前修复方向", self.implementation)
+
+    def test_test_only_authorization_preserves_product_code(self):
+        self.assertIn("只获授权修改测试资产时只改测试", self.implementation)
+        self.assertIn("只改测试时明确禁止产品改动", self.delegation)
+
+    def test_plan_tier_serializes_shared_files_and_conditions_async_work(self):
+        self.assertIn("## Light Plan", self.plan)
+        self.assertIn("## Standard Plan", self.plan)
+        self.assertIn("## Long-running Extension", self.plan)
+        self.assertIn("修改同一文件或同一可变共享状态的 Task 必须串行", self.implementation)
+        self.assertIn("异步依赖只有在依赖 Task 的明确完成条件满足并移交实际证据后才解锁",
+                      self.implementation)
+
+    def test_receipt_keeps_failures_and_does_not_claim_other_gates(self):
+        for field in ("执行模式", "状态", "实际产物／改动", "版本与工作树指纹",
+                      "检查命令／结果", "覆盖判据", "待验或失败项", "缺口承接"):
+            self.assertIn(f"**{field}**", self.receipt)
+        self.assertIn("失败状态与原始证据不得在修复后删除", self.implementation)
+        self.assertIn("局部自验不代表需求验收、集成 Test Gate、架构 Review 或发布通过", self.receipt)
+        self.assertIn("版本、环境、工作树", self.governance)
 
 
 class RoleTests(unittest.TestCase):
