@@ -69,18 +69,24 @@ class UserInstallTests(unittest.TestCase):
         project = self.root / "project"
         project.mkdir()
         (project / "custom.txt").write_text("keep")
+        role = self.resources / WORKFLOW_REVIEW_ROLE
+        current_role = role.read_bytes()
+        legacy_role = b'model = "legacy-review-model"\nmodel_reasoning_effort = "high"\n' + current_role
+        role.write_bytes(legacy_role)
+        refresh_manifest(self.resources)
         self.assertEqual(install(self.resources, self.skills), "Installed")
         self.assertFalse(self.role.parent.exists())
         self.assertEqual(install(self.resources, self.skills), "Already current")
         self.assertEqual({p.name for p in self.skills.iterdir()}, {"sdd-init", USER_LOCK})
         self.assertEqual((self.skills / USER_LOCK).read_bytes(), LOCK_BYTES)
         self.assertEqual(len(list(self.skills.rglob("SKILL.md"))), 1)
-        role_revision = (self.resources / WORKFLOW_REVIEW_ROLE).read_bytes() + b"\n# new reviewer\n"
-        (self.resources / WORKFLOW_REVIEW_ROLE).write_bytes(role_revision)
+        installed_role = shared_directory(self.skills) / "roles/codex/review-prompt.toml"
+        self.assertEqual(installed_role.read_bytes(), legacy_role)
+        role.write_bytes(current_role)
         self.change_release()
         self.assertEqual(install(self.resources, self.skills), "Updated")
         self.assertEqual((self.skills / "sdd-init/SKILL.md").read_text(), "new release")
-        self.assertEqual((shared_directory(self.skills) / "roles/codex/review-prompt.toml").read_bytes(), role_revision)
+        self.assertEqual(installed_role.read_bytes(), current_role)
         self.assertFalse(self.role.parent.exists())
         self.assertEqual((project / "custom.txt").read_text(), "keep")
 

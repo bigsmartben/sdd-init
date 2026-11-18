@@ -60,14 +60,14 @@ def build(output: Path) -> Path:
         relative = path.relative_to(role_source)
         if path.suffix == ".toml":
             role = tomllib.loads(path.read_text(encoding="utf-8"))
-            name, description = role["name"], role["description"]
-            instructions = role["developer_instructions"]
-            if name != path.stem or not all(isinstance(value, str) and value.strip()
-                                           for value in (name, description, instructions, role["model"])):
+            fields = {"name", "description", "developer_instructions"}
+            if (set(role) != fields or role["name"] != path.stem
+                    or not all(isinstance(value, str) and value.strip() for value in role.values())):
                 raise ValueError(f"Invalid role source: {path}")
+            name, description = role["name"], role["description"]
             shared_contract = roles / "shared" / f"{name}.md"
             shared_contract.parent.mkdir(parents=True, exist_ok=True)
-            shared_contract.write_text(instructions.strip() + "\n", encoding="utf-8")
+            shared_contract.write_text(role["developer_instructions"].strip() + "\n", encoding="utf-8")
 
             codex_instructions = (
                 f"Read and follow .agents/sdd-workflow/roles/shared/{name}.md before acting. "
@@ -77,10 +77,7 @@ def build(output: Path) -> Path:
                 "name": name,
                 "description": description,
                 "developer_instructions": codex_instructions,
-                "model": role["model"],
             }
-            if "model_reasoning_effort" in role:
-                codex["model_reasoning_effort"] = role["model_reasoning_effort"]
             codex_path = roles / "codex" / f"{name}.toml"
             codex_path.parent.mkdir(parents=True, exist_ok=True)
             codex_path.write_text(

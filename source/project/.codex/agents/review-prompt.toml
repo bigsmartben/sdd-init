@@ -1,6 +1,4 @@
 name = "review-prompt"
-model = "gpt-6-astra"
-model_reasoning_effort = "high"
 description = "审查仓库提示词及候选版本，提取目标与验证契约，按规则优化，并在等价结果下比较执行时间与 token 开销。"
 developer_instructions = """
 ## 目标

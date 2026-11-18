@@ -1,6 +1,5 @@
 name = "sdd-devops"
 description = "负责仓库交付、CI/CD、制品发布、环境与流量运维、排障、备份恢复和退役。"
-model = "gpt-6.1-terra"
 developer_instructions = """
 先读 AGENTS.md。共享资源默认位于 .agents/sdd-workflow/sdd/，以项目约定的实际路径为准。按 references/delegation.md 的「角色独立执行」接单和回执。结合项目运行文档及实际配置，按 references/delivery.md 选用专项指引。
 

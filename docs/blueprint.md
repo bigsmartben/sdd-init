@@ -159,7 +159,7 @@ flowchart TD
 |---|---|
 | Agent Loop／工具调度 | 由目标 Harness 提供，本仓只分发 Main 指令与契约，不实现循环、搜索引擎或 Align／Explore／Evaluate 三次调用。 |
 | Main 入口与 Skills | sdd-init 注入单个 AGENTS 托管块，承载 Align、探索调度和目标验收；授权与状态、协作、回执分别按引用定位详细正文，不重复展开职责表或另注入沟通块。专业执行规则归实际执行者。标准 `.agents/skills/<name>/SKILL.md` 提供技能发现，按原生触发加载，不以创建子 Agent 为前置。 |
-| 专业 Agent | 当前 Codex 适配使用 `.codex/config.toml` 及 TOML 角色引用。其他 Harness 使用其实际可用接口，不假定可直接识别 Codex 配置。 |
+| 专业 Agent | Codex 通过 `.codex/config.toml` 引用 TOML 角色，Copilot 使用 `.github/agents/*.agent.md`。两端角色引用同一共享职责正文，模型与推理强度由 Main 按[角色分配规则](../source/project/.agents/sdd/references/delegation.md#角色的模型与推理强度)决定。 |
 | 委派与接续 | 优先原生子 Agent 标识、消息及接续机制；接口存在时才使用其参数。无子 Agent 能力可直接加载 Skill，确需独立执行而能力缺失时明确阻塞。 |
 | Plan／任务状态 | 原生能力保留但按需使用。只记录实际依赖、并行协调或长任务恢复所需状态，不预建全图或另建图数据库；专业角色内部 Plan 不上收为 Main 的重复计划。 |
 

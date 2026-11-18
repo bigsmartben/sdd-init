@@ -10,15 +10,10 @@ import unittest
 
 from test_build import WORKFLOW, builder, project_entries, project_files, refresh_manifest
 
-ROLE_MODELS = {
-    "review-prompt": "gpt-6-astra",
-    "sdd-architect": "gpt-6-astra",
-    "sdd-product-manager": "gpt-6-astra",
-    "sdd-coder": "gpt-6.1-sol",
-    "sdd-devops": "gpt-6.1-terra",
-    "sdd-doc-consistency": "gpt-6.1-terra",
+ROLES = {
+    "review-prompt", "sdd-architect", "sdd-product-manager",
+    "sdd-coder", "sdd-devops", "sdd-doc-consistency",
 }
-ROLES = set(ROLE_MODELS)
 LEGACY_ROLES = ("sdd-delivery", "sdd-designer", "sdd-documenter", "sdd-validator")
 
 
@@ -41,7 +36,7 @@ class RoleTests(unittest.TestCase):
         return {p.relative_to(self.target): p.read_bytes()
                 for p in project_files(self.target)}
 
-    def test_exact_roles_are_project_scoped_with_default_models(self):
+    def test_exact_roles_are_project_scoped_without_model_presets(self):
         result = self.install()
         self.assertEqual(result.returncode, 0, result.stderr)
         config = self.target / ".codex/config.toml"
@@ -54,17 +49,14 @@ class RoleTests(unittest.TestCase):
             self.assertTrue(path.samefile(self.skill / "shared/roles/codex" / f"{name}.toml"))
             data = tomllib.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(data["name"], name)
-            fields = {"name", "description", "model", "developer_instructions"}
-            if name == "review-prompt":
-                fields.add("model_reasoning_effort")
-                self.assertEqual(data["model_reasoning_effort"], "high")
-            self.assertEqual(set(data), fields)
-            self.assertEqual(data["model"], ROLE_MODELS[name])
+            self.assertEqual(set(data), {"name", "description", "developer_instructions"})
             self.assertTrue(all(isinstance(v, str) and v.strip() for v in data.values()))
             copilot = self.target / ".github/agents" / f"{name}.agent.md"
             self.assertTrue(copilot.is_file())
-            self.assertNotIn("model:", copilot.read_text(encoding="utf-8"))
-            self.assertIn(f"roles/shared/{name}.md", copilot.read_text(encoding="utf-8"))
+            adapter = copilot.read_text(encoding="utf-8")
+            self.assertNotIn("model:", adapter)
+            self.assertNotIn("reasoning-effort:", adapter)
+            self.assertIn(f"roles/shared/{name}.md", adapter)
         before = self.snapshot()
         self.assertEqual(self.install().returncode, 0)
         self.assertEqual(before, self.snapshot())
@@ -200,14 +192,15 @@ class RoleTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(json.loads(state.read_bytes())["schema_version"], 1)
 
-    def test_missing_or_model_pinned_copilot_adapter_fails_before_changes(self):
+    def test_missing_or_pinned_copilot_adapter_fails_before_changes(self):
         entry = self.skill / "shared/roles/copilot/sdd-coder.agent.md"
         original = entry.read_bytes()
         newline = b"\r\n" if b"\r\n" in original else b"\n"
         cases = (
             None,
             original.replace(b'name: "sdd-coder"', b'name: "other-role"'),
-            original.replace(b"---" + newline, b"---" + newline + b"model: gpt-6.1-sol" + newline, 1),
+            original.replace(b"---" + newline, b"---" + newline + b"model: preset" + newline, 1),
+            original.replace(b"---" + newline, b"---" + newline + b"reasoning-effort: high" + newline, 1),
         )
         for data in cases:
             with self.subTest(data=data):
@@ -402,14 +395,10 @@ class RoleTests(unittest.TestCase):
             "missing": None,
             "malformed": b"name = [",
             "wrong_name": original.replace(b'name = "sdd-product-manager"', b'name = "other"'),
-            "missing_model": original.replace(b'model = "gpt-6-astra"\n', b""),
-            "empty_model": original.replace(b'model = "gpt-6-astra"', b'model = ""'),
-            "blank_model": original.replace(b'model = "gpt-6-astra"', b'model = "  "'),
-            "non_text_model": original.replace(b'model = "gpt-6-astra"', b'model = 42'),
-            "wrong_model": original.replace(b'model = "gpt-6-astra"', b'model = "gpt-6.1-sol"'),
-            "fixed_effort": original + b'\nmodel_reasoning_effort = "high"\n',
-            "unexpected_setting": original + b'\nsandbox_mode = "danger-full-access"\n',
-            "empty_description": b'name = "sdd-product-manager"\nmodel = "gpt-6-astra"\n'
+            "fixed_model": b'model = "preset"\n' + original,
+            "fixed_effort": b'model_reasoning_effort = "high"\n' + original,
+            "unexpected_setting": b'sandbox_mode = "danger-full-access"\n' + original,
+            "empty_description": b'name = "sdd-product-manager"\n'
                                  b'description = ""\ndeveloper_instructions = "plan"\n',
         }
         for label, data in cases.items():
@@ -443,26 +432,11 @@ class RoleTests(unittest.TestCase):
         self.assertNotEqual(self.install().returncode, 0)
         self.assertEqual(project_entries(self.target), [])
 
-    def test_reviewer_model_and_effort_are_validated_before_project_changes(self):
-        entry = self.skill / "shared/roles/codex/review-prompt.toml"
-        original = entry.read_bytes()
-        for data in (original.replace(b'model_reasoning_effort = "high"', b'model_reasoning_effort = "low"'),
-                     original.replace(b'model = "gpt-6-astra"', b'model = "gpt-6.1-sol"')):
-            with self.subTest(data=data):
-                entry.write_bytes(data)
-                refresh_manifest(self.skill)
-                result = self.install()
-                self.assertNotEqual(result.returncode, 0)
-                self.assertIn("review-prompt", result.stderr)
-                self.assertEqual(project_entries(self.target), [])
-
-    def test_consistency_role_requires_default_model_and_inherits_sandbox(self):
+    def test_consistency_role_inherits_sandbox(self):
         name = "sdd-doc-consistency"
         entry = self.skill / "shared/roles/codex" / f"{name}.toml"
         original = entry.read_bytes().replace(b"\r\n", b"\n")
         cases = {
-            "missing_model": original.replace(b'model = "gpt-6.1-terra"\n', b""),
-            "wrong_model": original.replace(b'model = "gpt-6.1-terra"', b'model = "gpt-6.1-sol"'),
             "legacy_read_only_override": original + b'\nsandbox_mode = "read-only"\n',
             "workspace_write_override": original + b'\nsandbox_mode = "workspace-write"\n',
             "full_access_override": original + b'\nsandbox_mode = "danger-full-access"\n',

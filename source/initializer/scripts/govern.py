@@ -70,15 +70,7 @@ def git(root: Path, *args: str) -> bytes | None:
 
 
 PROJECT_SKILLS = set(transaction.PROJECT_SKILLS)
-PROJECT_ROLE_MODELS = {
-    'review-prompt': 'gpt-6-astra',
-    'sdd-architect': 'gpt-6-astra',
-    'sdd-product-manager': 'gpt-6-astra',
-    'sdd-coder': 'gpt-6.1-sol',
-    'sdd-devops': 'gpt-6.1-terra',
-    'sdd-doc-consistency': 'gpt-6.1-terra',
-}
-PROJECT_ROLES = set(PROJECT_ROLE_MODELS)
+PROJECT_ROLES = set(transaction.PROJECT_ROLES)
 RETIRED_SKILLS = {
     "sdd-spec", "sdd-imp", "sdd-review-code", "sdd-review-loop", "sdd-review-prompt",
     "sdd-doc", "sdd-commit", "sdd-deploy",
@@ -88,24 +80,18 @@ FRAGMENTS = {"sdd-contract-governance": "agents-fragment.md"}
 
 
 def validate_role(data: bytes, name: str) -> None:
-    """Validate the shared role fields and default model before any target write."""
+    """Validate the shared role contract before any target write."""
     try:
         role = tomllib.loads(data.decode("utf-8"))
     except (UnicodeDecodeError, tomllib.TOMLDecodeError) as exc:
         fail(f"角色 {name} 配置无效: {exc}")
-    fields = {"name", "description", "developer_instructions", "model"}
-    if name == "review-prompt":
-        fields.add("model_reasoning_effort")
+    fields = {"name", "description", "developer_instructions"}
     if set(role) != fields:
         fail(f"角色 {name} 的字段必须为: {', '.join(sorted(fields))}")
     if role["name"] != name:
         fail(f"角色文件与 name 不一致: {name}")
     if any(not isinstance(value, str) or not value.strip() for value in role.values()):
         fail(f"角色 {name} 字段必须是非空文本")
-    if role["model"] != PROJECT_ROLE_MODELS[name]:
-        fail(f"角色 {name} 默认模型必须为 {PROJECT_ROLE_MODELS[name]}")
-    if name == "review-prompt" and role["model_reasoning_effort"] != "high":
-        fail("角色 review-prompt 默认推理强度必须为 high")
 
 
 def skill_name(path: Path, *, follow_link: bool = False) -> str | None:
@@ -173,8 +159,8 @@ def shared_bundle(shared: Path) -> tuple[str, str, dict[str, str]]:
         copilot = read(shared / "roles/copilot" / f"{name}.agent.md")
         if skill_name(shared / "roles/copilot" / f"{name}.agent.md") != name:
             fail(f"Copilot 角色 name 与分发文件不一致: {name}")
-        if re.search(r"(?m)^model\s*:", copilot):
-            fail(f"Copilot 角色不得固定模型，以继承会话模型: {name}")
+        if re.search(r"(?m)^(model|reasoning-effort)[ 	]*:", copilot):
+            fail(f"Copilot 角色不得预设模型或推理强度: {name}")
     for name in sorted(PROJECT_SKILLS):
         if skill_name(shared / "skills" / name / "SKILL.md") != name:
             fail(f"Skill 入口的 name 与分发目录不一致: {name}")

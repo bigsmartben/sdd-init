@@ -80,26 +80,21 @@ class GovernanceTests(unittest.TestCase):
                                  "--root", str(self.root), "inspect"], capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stderr)
 
-    def test_installed_role_references_and_default_models(self):
+    def test_installed_role_references_without_model_presets(self):
         self.run_cmd("init")
         import tomllib
         config = self.root / ".codex/config.toml"
         roles = tomllib.loads(config.read_text(encoding="utf-8"))["agents"]
-        expected_models = {
-            "review-prompt": "gpt-6-astra",
-            "sdd-architect": "gpt-6-astra",
-            "sdd-product-manager": "gpt-6-astra",
-            "sdd-coder": "gpt-6.1-sol",
-            "sdd-devops": "gpt-6.1-terra",
-            "sdd-doc-consistency": "gpt-6.1-terra",
+        expected_roles = {
+            "review-prompt", "sdd-architect", "sdd-product-manager",
+            "sdd-coder", "sdd-devops", "sdd-doc-consistency",
         }
-        self.assertEqual(set(roles), set(expected_models))
-        for name, model in expected_models.items():
+        self.assertEqual(set(roles), expected_roles)
+        for name in expected_roles:
             role = config.parent / roles[name]["config_file"]
             self.assertTrue(role.samefile(SHARED / "roles/codex" / f"{name}.toml"))
             data = tomllib.loads(role.read_text(encoding="utf-8"))
-            self.assertEqual(data["model"], model)
-            self.assertNotIn("sandbox_mode", data)
+            self.assertEqual(set(data), {"name", "description", "developer_instructions"})
         self.assertFalse((self.root / ".codex/agents").exists())
         self.assertFalse((self.root / "architecture").exists())
         self.assertFalse((self.root / "specs").exists())
