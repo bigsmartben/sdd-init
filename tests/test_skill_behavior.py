@@ -148,7 +148,8 @@ class PreparationTests(unittest.TestCase):
 
     def test_main_cases_keep_distributed_entry_roles_and_evaluation_separate(self):
         cases = prepare.load_cases()
-        case_ids = ("main_simple", "main_specialist", "main_explore", "main_dependency",
+        case_ids = ("main_simple", "main_specialist", "main_role_model_per_work_order",
+                    "main_explore", "main_dependency",
                     "main_gap", "main_goal_change", "main_blocked",
                     "deliver_solo_workflow_setup", "deliver_team_existing_workflow")
         for case_id in case_ids:
