@@ -357,7 +357,7 @@ tx.replace_file = stop
         self.assertEqual(self.run_init().returncode, 0)
 
     def test_restore_failure_retains_journal_and_can_resume(self):
-        agents = self.root / "AGENTS.md"
+        agents = self.root.resolve() / "AGENTS.md"
         agents.write_bytes(b"old")
         original = self.tx.replace_file
 
