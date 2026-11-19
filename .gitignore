@@ -8,3 +8,11 @@ dist/
 /.agents/skills/sdd-workflow
 /.sdd-init.lock
 /.sdd-init-recovery/
+/.agents/sdd-workflow
+/.agents/skills/sdd-architecture
+/.agents/skills/sdd-bugfix
+/.agents/skills/sdd-deliver
+/.agents/skills/sdd-develop
+/.agents/skills/sdd-refactor
+/.agents/skills/sdd-test-loop
+/.sdd-init-state.json

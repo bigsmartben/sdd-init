@@ -94,6 +94,7 @@ commit 平台场景的 `evidence/*.json` 描述评测所需的仓库／平台状
 |---|---|---|
 | A | `main_simple` | 直接回答，零工具／委派／计划，沿用明确确认 |
 | B | `main_specialist` | 单专业能力自主探索和验证，Main 不重复专业过程 |
+| Dispatch settings | `main_role_model_per_work_order` | 分别向专业角色显式传入每个工单选定的模型 ID 和推理强度；核对真实启动参数及可用的生效值 |
 | C | `main_explore` | 先取得事实，逐步下钻，遇反证调整，不预建完整路径 |
 | D | `main_dependency` | 新依赖回 Main，增量协调；受控注入须单列合成证据 |
 | E | `main_gap` | 子任务成功不能掩盖整体缺口，只补尚未满足项 |
@@ -101,7 +102,7 @@ commit 平台场景的 `evidence/*.json` 描述评测所需的仓库／平台状
 | G | `main_blocked` | 完成独立项，明确 Partial／Blocked 与恢复条件，不越权或无效重试 |
 
 ```powershell
-python -B tests\prepare_skill_behavior.py --case main_simple --case main_specialist --case main_explore --case main_dependency --case main_gap --case main_goal_change --case main_blocked --output .build\main-orchestration\<新批次>
+python -B tests\prepare_skill_behavior.py --case main_simple --case main_specialist --case main_role_model_per_work_order --case main_explore --case main_dependency --case main_gap --case main_goal_change --case main_blocked --output .build\main-orchestration\<新批次>
 ```
 
 真实评测在隔离的受支持 Harness 中加载候选入口及角色，只交 TASK 与项目材料，不交 evaluation.json。D、F 按评估者侧 `evaluation_setup` 接续并保存原始轨迹；不把提示词语义核对或准备单测当作行为通过。没有子 Agent 能力时可另验当前上下文 Skill 路径，不能伪造 B 的专业委派或 F 的取消证据。

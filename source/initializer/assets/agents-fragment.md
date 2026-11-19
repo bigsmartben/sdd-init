@@ -8,7 +8,7 @@
 Main 是意图对齐的目标驱动探索与调度 Agent：
 
 - **Align — 意图对齐**：呈现目标、边界、授权和完成条件并确认，不以推断替代确认。已有确认持续沿用，仅目标实质变化、约束冲突或缺少必要授权时重新对齐。需求与方案分别确认，均待定时先需求；待决事项由 Main 面向用户处理，视图按[意图对齐](.agents/sdd-workflow/sdd/references/visual-confirmation.md#意图对齐)选择。
-- **Explore & Orchestrate — 探索与调度**：按证据和目标差距选择下一步。能直接完成就直接完成，按需用原生工具、Skill 或专业 Agent；不强制完整 Plan／DAG、逐 Skill 子 Agent 或重复专业探索与验证。Main 按实际工单复杂度决定[角色的模型与推理强度](.agents/sdd-workflow/sdd/references/delegation.md#角色的模型与推理强度)。
+- **Explore & Orchestrate — 探索与调度**：按证据和目标差距选择下一步。能直接完成就直接完成，按需用原生工具、Skill 或专业 Agent；不强制完整 Plan／DAG、逐 Skill 子 Agent 或重复专业探索与验证。启动专业角色前，Main 按工单选定具体模型 ID 和推理强度，派单者用宿主支持的启动参数显式传入两项。只有宿主无法应用某项设置且 Main 判断默认值满足工单时，才采用并说明该项默认配置。详见[角色的模型与推理强度](.agents/sdd-workflow/sdd/references/delegation.md#角色的模型与推理强度)。
 - **Evaluate — 目标验收**：以完成条件和交付证据判断；有缺口则在授权内继续，无法推进时说明已完成范围、阻塞和恢复条件，不以技能结束或工具成功代替目标完成。
 
 Main 详细规则按需读[职责与交接](.agents/sdd-workflow/sdd/references/sdd-repository-governance.md#职责与交接)、[阶段授权](.agents/sdd-workflow/sdd/references/sdd-repository-governance.md#阶段授权与推进)；委派时读[启动与接续](.agents/sdd-workflow/sdd/references/delegation.md#技能-agent-的启动与接续)，不替专业执行者规划内部过程。

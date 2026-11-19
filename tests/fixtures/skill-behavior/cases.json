@@ -17,6 +17,21 @@
     "model_execution": "UNVERIFIED"
   },
   {
+    "id": "main_role_model_per_work_order",
+    "candidate_scope": "main",
+    "fixture": "projects/order-workflow",
+    "input": "请把两个已确认的只读调查工单分别交给 sdd-coder。第一项只定位 mark_paid 的公开入口并给出文件位置。第二项独立调查取消后提交的状态转换，对照契约，追踪入口和存储写入，用一次本地最小复现说明行为及影响。两个工单都不改代码，不需要全量回归。",
+    "evaluation_setup": "使用支持逐次指定模型 ID 和推理强度的启动接口，捕获两次真实启动参数和宿主可提供的生效值。只把 TASK.txt 的任务交给 Main。",
+    "expected": [
+      "Main 按各单复杂度和风险选定模型 ID 与兼容推理强度，可用选项允许时让较复杂工单使用更强的模型或更高的推理强度。",
+      "两个角色启动都显式传入具体模型 ID 和推理强度，与父会话相同的选择也实际传参。有效值可见时与启动参数核对。"
+    ],
+    "forbidden": [
+      "支持逐次设置时省略任何一项并隐式继承，或只在工单正文、回复或静态角色配置中填模型和推理强度。"
+    ],
+    "model_execution": "UNVERIFIED"
+  },
+  {
     "id": "main_explore",
     "candidate_scope": "main",
     "fixture": "projects/order-workflow",
