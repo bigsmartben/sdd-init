@@ -77,6 +77,11 @@ jobs:
               raise SystemExit('Source SHA changed during checks')
           version = tomllib.loads(Path('pyproject.toml').read_text(encoding='utf-8'))['project']['version']
           folder = Path('.build/dist')
+          uv_ignore = folder / '.gitignore'
+          if uv_ignore.exists():
+              if not uv_ignore.is_file() or uv_ignore.read_bytes().strip() != b'*':
+                  raise SystemExit('Unexpected uv output-directory marker')
+              uv_ignore.unlink()
           packages = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in folder.iterdir() if p.is_file()}
           expected = {f'sdd_init-{version}-py3-none-any.whl', f'sdd_init-{version}.tar.gz'}
           if set(packages) != expected:
