@@ -98,9 +98,10 @@ flowchart LR
     Wheel --> CLI
     CLI --> SharedBundle[用户级共享工作流]
     UserSkill --> Govern[govern.py inspect / init / recover]
+    Harness[当前 Codex / Copilot 宿主上下文] --> UserSkill
   end
   subgraph Target[目标仓库]
-    Govern --> Local[本地链接和项目配置引用]
+    Govern --> Local[共享链接和所选 harness 原生适配]
     Govern --> MainRules[AGENTS.md 中的 Main 规则与能力入口]
     Local --> SharedBundle
     Agent[Agent 按任务调用] --> Local
@@ -109,7 +110,7 @@ flowchart LR
   end
 ```
 
-构建从维护源码生成入口、共享载荷与清单。初始化入口位于用户级 Skill 扫描根，六个专业角色（含 review-prompt）统一位于共享资产中。项目初始化器将各技能目录分别链接到 `.agents/skills/<技能名>/`，不复制技能正文、不依赖递归发现；共享包锚点链接位于扫描目录外的 `.agents/sdd-workflow/`。标准旧嵌套链接在项目重新接入时迁移。项目配置注册六个相对路径角色引用，客户端在可信项目中加载，不另装用户级角色。项目导航和角色引用可随 Git 共享，本机链接由各工作区建立。详见 Spec FR-027／AC-027、FR-028／AC-028。
+构建从维护源码生成入口、共享载荷与清单，uv/uvx 分发及用户级 `sdd-init` 入口保持不变。初始化入口位于用户级 Skill 扫描根，六个专业角色（含 review-prompt）统一位于共享资产中。项目初始化器将各技能目录分别链接到 `.agents/skills/<技能名>/`，不复制技能正文、不依赖递归发现；共享包锚点链接位于扫描目录外的 `.agents/sdd-workflow/`。标准旧嵌套链接在项目重新接入时迁移。Copilot 接入额外建立本机 `.github/sdd-workflow/` 同源链接，使普通文件工具可读取角色合同及配套资源，不在仓库复制第二份。所选 harness 通过原生入口注册六个角色、引用同一共享正文，客户端在可信项目中加载，不另装用户级角色。项目导航和角色引用可随 Git 共享，本机链接由各工作区建立。详见 Spec FR-027／AC-027、FR-028／AC-028、FR-039／AC-046。
 
 用户级安装校验新载荷并锁定 Skill 安装目标，Skill 和共享目录在同级事务目录暂存；已安装内容的定制或清单缺失不阻止目标强制替换。只有旧用户角色原地迁出或旧事务恢复时，才按原记录锁定角色目录并保留可恢复备份；不创建新的用户级角色。登记路径上的旧 review-prompt 即使已修改也直接迁出，缺失则继续；事务记录原有实际状态，不处理未登记角色，保护事务开始后的外部编辑。操作入口见[用户级安装恢复](installation.md#用户级安装恢复)。SHA-256 清单用于新载荷完整性校验。
 
@@ -158,8 +159,9 @@ flowchart TD
 | 机制 | 本仓落点与复用方式 |
 |---|---|
 | Agent Loop／工具调度 | 由目标 Harness 提供，本仓只分发 Main 指令与契约，不实现循环、搜索引擎或 Align／Explore／Evaluate 三次调用。 |
+| 接入与识别 | 同一用户级 sdd-init 根据当前宿主上下文自动传递运行时身份，安装器按显式选择、运行时输入、唯一仓库标记的优先级决定适配范围；不能唯一识别则写前停止，不猜测或默认双端。完整契约见[Harness 自动适配](../source/initializer/assets/install.md#harness-自动适配)。 |
 | Main 入口与 Skills | sdd-init 注入单个 AGENTS 托管块，承载 Align、探索调度和目标验收；授权与状态、协作、回执分别按引用定位详细正文，不重复展开职责表或另注入沟通块。专业执行规则归实际执行者。标准 `.agents/skills/<name>/SKILL.md` 提供技能发现，按原生触发加载，不以创建子 Agent 为前置。 |
-| 专业 Agent | 当前 Codex 适配使用 `.codex/config.toml` 及 TOML 角色引用。其他 Harness 使用其实际可用接口，不假定可直接识别 Codex 配置。 |
+| 专业 Agent | Codex 使用 `.codex/config.toml` 及 TOML 角色引用；Copilot CLI／App／VS Code 使用 `.github/agents/*.agent.md`，不限定 `target`。共同正文只在共享载荷中维护；Copilot 通过 `.github/sdd-workflow/` 本机桥接读取合同及配套资源，避免 `.agents` 普通读取权限差异。执行宿主未接入时明确缺项，不以本地链接推定云端可用。只刷新所选端，未选端的配置、归属与共享依赖受保护。 |
 | 委派与接续 | 优先原生子 Agent 标识、消息及接续机制；接口存在时才使用其参数。无子 Agent 能力可直接加载 Skill，确需独立执行而能力缺失时明确阻塞。 |
 | Plan／任务状态 | 原生能力保留但按需使用。只记录实际依赖、并行协调或长任务恢复所需状态，不预建全图或另建图数据库；专业角色内部 Plan 不上收为 Main 的重复计划。 |
 

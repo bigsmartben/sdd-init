@@ -50,7 +50,7 @@ def main():
         assert len(list(skills.rglob("SKILL.md"))) == 1
         project = root / "project"
         project.mkdir()
-        initialize = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(project), "init"]
+        initialize = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(project), "--harness", "both", "init"]
         subprocess.run(initialize, check=True)
         workflow = project / ".agents/sdd-workflow"
         self_shared = skills.with_name(f"{skills.name}-sdd-init-shared")
@@ -87,8 +87,9 @@ def main():
             assert copilot.is_file()
             adapter = copilot.read_text(encoding="utf-8")
             assert "model:" not in adapter
-            assert "\ntarget: vscode\n" in adapter.split("---", 2)[1]
-            assert f"roles/shared/{name}.md" in adapter
+            assert "target:" not in adapter.split("---", 2)[1]
+            assert f".github/sdd-workflow/roles/shared/{name}.md" in adapter
+        assert (project / ".github/sdd-workflow").samefile(self_shared)
         subprocess.run(initialize, check=True)
         assert before == local_files(project)
         inspection = subprocess.run([*initialize[:-1], "inspect"], check=True, capture_output=True, text=True, encoding="utf-8")

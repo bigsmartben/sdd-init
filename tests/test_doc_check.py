@@ -157,7 +157,7 @@ class DocCheckTests(unittest.TestCase):
         project.mkdir()
         initialized = subprocess.run(
             [sys.executable, '-B', '-X', 'utf8', str(build / 'scripts/govern.py'),
-             '--root', str(project), 'init'], capture_output=True)
+             '--root', str(project), '--harness', 'both', 'init'], capture_output=True)
         self.assertEqual(initialized.returncode, 0, initialized.stderr)
         checker = project / '.agents/sdd-workflow/sdd/scripts/doc_check.py'
         command = [sys.executable, '-B', '-X', 'utf8', str(checker), '--root', str(project)]

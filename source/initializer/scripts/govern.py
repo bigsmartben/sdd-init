@@ -176,8 +176,8 @@ def shared_bundle(shared: Path) -> tuple[str, str, dict[str, str]]:
             fail(f"Copilot 角色 name 与分发文件不一致: {name}")
         if re.search(r"(?m)^(model|reasoning-effort)[ \t]*:", copilot):
             fail(f"Copilot 角色不得预设模型或推理强度: {name}")
-        if re.findall(r"(?m)^target[ \t]*:[ \t]*(.*)$", frontmatter(copilot)) != ["vscode"]:
-            fail(f"Copilot 角色必须限定在本地 VS Code 会话（target: vscode）: {name}")
+        if re.search(r"(?m)^target[ \t]*:", frontmatter(copilot)):
+            fail(f"Copilot 角色不得限定 target，须兼容 CLI、App 与 VS Code: {name}")
     for name in sorted(PROJECT_SKILLS):
         if skill_name(shared / "skills" / name / "SKILL.md") != name:
             fail(f"Skill 入口的 name 与分发目录不一致: {name}")
@@ -210,16 +210,45 @@ def detect_project_harnesses(root: Path) -> dict[str, list[str]]:
     copilot_agents = root / ".github/agents"
     if copilot_instructions.is_file():
         detected["copilot"].append(".github/copilot-instructions.md")
-    if copilot_agents.is_dir() and any(copilot_agents.glob("*.agent.md")):
-        detected["copilot"].append(".github/agents/*.agent.md")
+    if copilot_agents.is_dir():
+        profiles = []
+        for path in copilot_agents.glob("*.md"):
+            if not path.is_file() or transaction.linked(path):
+                continue
+            try:
+                text = path.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                continue
+            if re.search(r"(?m)^description[ \t]*:", frontmatter(text)):
+                profiles.append(path)
+        if profiles:
+            detected["copilot"].append(".github/agents/*.md (description frontmatter)")
     return detected
 
 
-def selected_harnesses(root: Path, requested: str) -> tuple[dict[str, list[str]], set[str]]:
+def selected_harnesses(root: Path, requested: str,
+                       runtime: str | None = None) -> tuple[dict[str, list[str]], set[str]]:
     detected = detect_project_harnesses(root)
-    if requested in ("auto", "both"):
-        return detected, {"codex", "copilot"}
-    return detected, {requested}
+    out("Detected harness markers: " + "; ".join(
+        f"{name}={', '.join(markers) if markers else 'none'}" for name, markers in detected.items()))
+    out(f"Runtime harness input: {runtime or 'none'}")
+    if requested != "auto":
+        harnesses = {"codex", "copilot"} if requested == "both" else {requested}
+        basis = f"explicit --harness {requested}"
+    elif runtime is not None:
+        harnesses = {runtime}
+        basis = f"runtime --runtime-harness {runtime}"
+    else:
+        harnesses = {name for name, markers in detected.items() if markers}
+        if len(harnesses) != 1:
+            out("Harness adapters planned: unresolved")
+            fail("无法唯一识别 Harness；请在已明确的宿主中调用 sdd-init，"
+                 "由技能传入 --runtime-harness codex|copilot，"
+                 "或显式指定 --harness codex|copilot|both。未执行写入")
+        basis = "unique project markers (current runtime unknown)"
+    out(f"Harness selection: {basis}")
+    out(f"Harness adapters planned: {', '.join(sorted(harnesses))}")
+    return detected, harnesses
 
 
 def role_path(base: Path, reference: str) -> Path:
@@ -273,11 +302,8 @@ def cmd_inspect(root: Path, args: argparse.Namespace) -> int:
     for p in candidates[:20]:
         out(f"POSSIBLE_EXISTING_ARCH {p.relative_to(root)} (请人工判断，禁止自动替换)")
     out(f"Git HEAD: {(git(root, 'rev-parse', '--short', 'HEAD') or b'none').decode().strip()}")
-    detected, harnesses = selected_harnesses(root, args.harness)
-    out(f"Detected harness markers: " + "; ".join(
-        f"{name}={', '.join(markers) if markers else 'none'}" for name, markers in detected.items()))
-    out(f"Harness adapters planned: {', '.join(sorted(harnesses))}")
     inspect_project_roles(root)
+    _, harnesses = selected_harnesses(root, args.harness, args.runtime_harness)
     shared = shared_path()
     out(f"Shared source: {shared}")
     recovery = root / transaction.RECOVERY
@@ -354,9 +380,11 @@ def prepare_agents(original: str, templates: dict[str, str]) -> str:
 
 
 def cmd_init(root: Path, args: argparse.Namespace) -> int:
+    # Resolve before even creating the lock: ambiguous auto must remain read-only.
+    _, harnesses = selected_harnesses(root, args.harness, args.runtime_harness)
     with transaction.project_lock(root):
-        transaction.recover(root)
-        _, harnesses = selected_harnesses(root, args.harness)
+        if transaction.recover(root):
+            _, harnesses = selected_harnesses(root, args.harness, args.runtime_harness)
         with release.user_lock(SKILL.parent, shared_read=True):
             return initialize(root, harnesses)
 
@@ -659,9 +687,11 @@ def prepare_config(root: Path, original: str) -> str:
     return candidate
 
 
-def prepare_ignore(original: str) -> str:
-    entries = (f"/{transaction.WORKFLOW_LINK}", *(f"/{path}" for path in transaction.SKILL_LINKS),
-               f"/{transaction.LOCK}", f"/{transaction.RECOVERY}/", f"/{transaction.STATE}")
+def prepare_ignore(original: str, harnesses: set[str]) -> str:
+    entries = [f"/{transaction.WORKFLOW_LINK}", *(f"/{path}" for path in transaction.SKILL_LINKS),
+               f"/{transaction.LOCK}", f"/{transaction.RECOVERY}/", f"/{transaction.STATE}"]
+    if "copilot" in harnesses:
+        entries.insert(1, f"/{transaction.COPILOT_WORKFLOW_LINK}")
     lines = original.splitlines()
     last_negation = max((index for index, line in enumerate(lines) if line.startswith("!")), default=-1)
     missing = [entry for entry in entries if entry not in lines[last_negation + 1:]]
@@ -692,7 +722,8 @@ def check_copilot_role_references(root: Path, shared: Path, links: list[tuple[Pa
                 if not reference or "://" in reference:
                     continue
                 reference = unquote(reference.partition("#")[0])
-                base = root if reference.replace("\\", "/").startswith(".agents/") else agent.parent
+                normalized = reference.replace("\\", "/")
+                base = (root if normalized.startswith((".agents/", ".github/")) else agent.parent)
                 if role_reference_will_break(role_path(base, reference), links):
                     fail(f"未选择 Copilot，但角色 {agent.name} 的引用将失效: {reference}；"
                          "请先迁移该引用，或使用 --harness both 刷新受管适配。未执行写入")
@@ -700,7 +731,20 @@ def check_copilot_role_references(root: Path, shared: Path, links: list[tuple[Pa
 
 def plan_project_links(root: Path, shared: Path, harnesses: set[str]) -> list[tuple[Path, dict | None, Path | None]]:
     config_path, config_text, registrations = codex_config(root)
-    links = transaction.plan_links(root, shared)
+    links = transaction.plan_links(root, shared, copilot="copilot" in harnesses)
+    if "copilot" in harnesses:
+        bridge = root / transaction.COPILOT_WORKFLOW_LINK
+        before = next(snapshot for path, snapshot, target in links if path == bridge and target == shared.resolve())
+        if before is not None and before["target"] != str(shared.resolve()):
+            try:
+                state = read_state(transaction.content(transaction.safe_path(root, transaction.STATE)))
+            except ValueError:
+                state = {}
+            owned = state.get("copilot_links", {})
+            recorded = owned.get(transaction.COPILOT_WORKFLOW_LINK)
+            if not isinstance(recorded, str) or recorded != before["target"]:
+                fail(f"非受管 Copilot 共享链接冲突: {transaction.COPILOT_WORKFLOW_LINK}；"
+                     "保留原内容，未执行覆盖")
     names = PROJECT_SKILLS | RETIRED_SKILLS | {"sdd-init"}
     conflicts = set()
     skill_root = transaction.safe_path(root, ".agents/skills")
@@ -774,7 +818,7 @@ def read_state(data: bytes | None) -> dict:
         state = json.loads(data)
         required = {"schema_version", "shared_version", "agents_blocks"}
         if (not isinstance(state, dict) or not required <= state.keys()
-                or set(state) - required - {"copilot_roles", "copilot_adapters"}
+                or set(state) - required - {"copilot_roles", "copilot_adapters", "copilot_links"}
                 or state["schema_version"] != 1
                 or set(state["agents_blocks"]) not in (set(FRAGMENTS), set(FRAGMENTS) | {"agent-communication"})
                 or not all(re.fullmatch(r"[a-f0-9]{64}", value)
@@ -789,6 +833,11 @@ def read_state(data: bytes | None) -> dict:
                 or not all(isinstance(path, str) and path in transaction.COPILOT_ROLE_FILES for path in adapters)
                 or len(adapters) != len(set(adapters))):
             raise ValueError("Invalid Copilot adapter ownership")
+        links = state.get("copilot_links", {})
+        if (not isinstance(links, dict)
+                or set(links) - set(transaction.COPILOT_LINKS)
+                or not all(isinstance(value, str) and value for value in links.values())):
+            raise ValueError("Invalid Copilot link ownership")
     except (ValueError, TypeError, AttributeError) as error:
         raise ValueError(f"无效的项目安装元数据: {transaction.STATE}") from error
     return state
@@ -824,6 +873,7 @@ def plan_files(root: Path, shared_version: str, fragments: dict[str, str],
         current = {}
     owned = set(current.get("copilot_adapters", []))
     copilot_roles = dict(current.get("copilot_roles", {}))
+    copilot_links = dict(current.get("copilot_links", {}))
     copilot_files = []
     if "copilot" in harnesses:
         shared = shared_path()
@@ -844,6 +894,7 @@ def plan_files(root: Path, shared_version: str, fragments: dict[str, str],
             copilot_files.append((target, desired, prior))
             copilot_roles[name] = release.digest(desired)
             owned.add(relative)
+        copilot_links[transaction.COPILOT_WORKFLOW_LINK] = str(shared.resolve())
     agents = texts[0]
     offset = 1
     config = texts[offset] if "codex" in harnesses else None
@@ -852,12 +903,15 @@ def plan_files(root: Path, shared_version: str, fragments: dict[str, str],
     state = {"schema_version": 1, "shared_version": shared_version,
              "agents_blocks": {name: release.digest(fragment.encode()) for name, fragment in fragments.items()},
              "copilot_roles": copilot_roles}
+    if copilot_links:
+        state["copilot_links"] = copilot_links
     if owned:
         state["copilot_adapters"] = sorted(owned)
     proposed = [prepare_agents(agents, fragments)]
     if config is not None:
         proposed.append(prepare_config(root, config))
-    proposed.extend((prepare_ignore(ignore), json.dumps(state, indent=2, sort_keys=True) + "\n"))
+    proposed.extend((prepare_ignore(ignore, harnesses),
+                     json.dumps(state, indent=2, sort_keys=True) + "\n"))
     files = [(path, data.encode("utf-8"), prior) for path, data, prior in zip(paths, proposed, before)]
     files.extend(copilot_files)
     override = transaction.safe_path(root, "AGENTS.override.md")
@@ -936,7 +990,9 @@ def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="SDD resource installer")
     p.add_argument("--root", default=".", help="要治理的仓库目录（默认当前目录）")
     p.add_argument("--harness", choices=("auto", "both", "codex", "copilot"), default="auto",
-                   help="要接入的 Harness；auto 默认准备 Codex 与 Copilot 双端")
+                   help="要接入的 Harness；auto 优先当前运行时，否则要求唯一项目标记")
+    p.add_argument("--runtime-harness", choices=("codex", "copilot"),
+                   help="由 sdd-init 技能按当前宿主自动传入；显式 --harness 优先")
     subs = p.add_subparsers(dest="cmd", required=True)
     subs.add_parser("inspect", help="只读盘点，不修改任何文件")
     subs.add_parser("init", help="接入用户级共享资源并同步项目中的 SDD 托管块")

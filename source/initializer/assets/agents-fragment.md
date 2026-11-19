@@ -3,6 +3,8 @@
 
 本项目使用 SDD 工作流，资料从已有索引定位，通常为 docs/index.md。缺少本地链接时直接运行 sdd-init 接入；明确禁止写入或环境不允许时报告阻塞，不绕过限制。
 
+本文件中的 `.agents/sdd-workflow/` 是共享资源默认锚点。若 Copilot 宿主的普通文件工具无法读取该隐藏目录且项目已接入 `.github/sdd-workflow/`，只将共享锚点替换为 `.github/sdd-workflow/`；`.agents/skills/` 的原生 Skill 入口不改。
+
 Main 是意图对齐的目标驱动探索与调度 Agent：
 
 - **Align — 意图对齐**：呈现目标、边界、授权和完成条件并确认，不以推断替代确认。已有确认持续沿用，仅目标实质变化、约束冲突或缺少必要授权时重新对齐。需求与方案分别确认，均待定时先需求；待决事项由 Main 面向用户处理，视图按[意图对齐](.agents/sdd-workflow/sdd/references/visual-confirmation.md#意图对齐)选择。

@@ -14,11 +14,13 @@ uvx --from git+https://github.com/bigsmartben/sdd-init.git sdd-init install
 
 默认在 `~/.agents/skills/sdd-init/` 安装初始化入口，在相邻的 `~/.agents/skills-sdd-init-shared/` 安装项目工作流资产。`review-prompt` 与其余预置专业角色统一位于共享资产中，由目标项目接入时注册，不再独立安装到用户级角色目录。Windows 的 `~` 为用户主目录。[Codex 自定义角色](https://developers.openai.com/codex/subagents#custom-agents)
 
-在需要的仓库中打开 Codex 或 VS Code Copilot，选择 sdd-init（支持该快捷入口的客户端可输入 `/sdd-init`）。CLI／IDE 可输入 `$sdd-init` 或通过 `/skills` 选择，也可明确要求“使用 sdd-init 初始化当前仓库”。未发现新 Skill 时重启客户端。接入后可请求“把这份提示词交给 review-prompt，只做审查”，附实际对象和预期依据。Codex 与 Copilot 的角色适配分别位于 `.codex/config.toml` 和 `.github/agents/*.agent.md`，共同角色正文位于共享目录 `roles/shared/`。Copilot 适配使用 `target: vscode`，供可读取本机共享资源的 VS Code 会话使用。两个适配都省略模型与推理强度，由 Main 按工单分配。具体规则见[角色的模型与推理强度](../source/project/.agents/sdd/references/delegation.md#角色的模型与推理强度)。用户级客户端配置由用户维护。[Codex Skill 文档](https://learn.chatgpt.com/docs/build-skills) · [Copilot 角色配置](https://docs.github.com/en/copilot/reference/custom-agents-configuration)
+在需要的仓库中打开 Codex、Copilot CLI／桌面 App 或 VS Code Copilot，调用同一个 sdd-init（使用客户端提供的技能选择入口，或明确要求“使用 sdd-init 初始化当前仓库”）。uv/uvx 分发、用户级技能名称和位置不变。未发现新 Skill 时刷新或重启客户端。技能根据宿主明确提供的上下文自动识别 harness，并传递给项目工具，无需用户重复选择。接入后可请求“把这份提示词交给 review-prompt，只做审查”，附实际对象和预期依据。Codex 与 Copilot 的角色适配分别位于 `.codex/config.toml` 和 `.github/agents/*.agent.md`，共同角色正文只维护在共享目录 `roles/shared/`。Copilot 接入建立忽略的 `.github/sdd-workflow/` 本机链接，让普通文件工具访问与 `.agents/sdd-workflow/` 相同的共享正文和配套资源；不复制内容。Copilot 适配省略 `target`，不再限定为 VS Code；要求当前执行宿主已接入共享资源，不承诺仅凭提交这些文件就能在 GitHub 云端使用。两个适配都省略模型与推理强度，由 Main 按工单分配。具体规则见[角色的模型与推理强度](../source/project/.agents/sdd/references/delegation.md#角色的模型与推理强度)。用户级客户端配置由用户维护。[Codex Skill 文档](https://learn.chatgpt.com/docs/build-skills) · [Copilot CLI Skill 路径](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills) · [Copilot 角色配置](https://docs.github.com/en/copilot/reference/custom-agents-configuration)
 
-初始化将六个技能分别链接到项目的 `.agents/skills/<技能名>/`，例如 `.agents/skills/sdd-bugfix/SKILL.md`；不复制技能正文。共享包链接位于扫描目录外的 `.agents/sdd-workflow/`，按 `roles/`、`skills/`、`sdd/` 分类。默认 `init` 的 `--harness auto` 同时配置 Codex 和 Copilot，以支持同一项目由不同 harness 打开；可用 `--harness codex` 或 `--harness copilot` 只配置一端，`--harness both` 明确配置两端。`inspect` 只读报告项目中检测到的 `.codex/config.toml`、`.codex/agents/*.toml`、`.github/copilot-instructions.md` 和 `.github/agents/*.agent.md` 标记，以及默认双端适配计划和两端各自已落盘的 SDD 角色；这些标记用于说明项目现状，不改变 `auto` 的双端默认值。Windows 使用 junction，其他平台使用目录符号链接。安装器合并 `AGENTS.md` 导航、Codex `.codex/config.toml` 角色引用及 Copilot `.github/agents/` 角色适配，并在 `.gitignore` 排除本机链接和安装元数据。托管导航指向[主任务职责](../source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)和[阶段授权与推进](../source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)。换机、克隆或新建 worktree 后重新运行 sdd-init 以接上本机共享目录。
+初始化将六个技能分别链接到项目的 `.agents/skills/<技能名>/`，例如 `.agents/skills/sdd-bugfix/SKILL.md`；不复制技能正文。共享包链接位于扫描目录外的 `.agents/sdd-workflow/`，按 `roles/`、`skills/`、`sdd/` 分类；Copilot 接入再建立指向同一目录的 `.github/sdd-workflow/` 桥接，避免普通工具读取 `.agents/` 的宿主权限差异。默认 `--harness auto` 优先采用技能自动传入的 `--runtime-harness codex|copilot`，只配置当前端；无运行时输入时，仅唯一一端的仓库配置标记可确定接入范围。无标记、仅通用 `AGENTS.md` 或双端标记时停止写入，不再默认配置两端。显式 `--harness codex|copilot|both` 优先；需要双端的脚本须明确 `both`，也可先后在两个 harness 中调用同一技能。识别契约和命令见[Harness 自动适配](../source/initializer/assets/install.md#harness-自动适配)。
 
-Copilot 原生适配随文件携带托管角色名和内容 SHA-256，本机安装元数据记录实际写入的路径和哈希。克隆或换机后，本机记录可以从当前分发、可校验的托管标记或已知旧版适配的哈希恢复。校验允许 Git 转换 LF 和 CRLF。项目自有或内容已修改的适配仍按原归属规则处理，无法确认归属时 `inspect` 和 `init` 会在写入前报告冲突。仅刷新 Codex 时保留 Copilot 归属记录。
+`inspect` 只读报告运行时输入、项目中的 `.codex/config.toml`、`.codex/agents/*.toml`、`.github/copilot-instructions.md` 和 `.github/agents/*.md` 标记、选择依据、计划以及双端各自已落盘的 SDD 角色；项目标记不证明当前运行时，文件落盘也不证明客户端已加载。Windows 使用 junction，其他平台使用目录符号链接。安装器合并 `AGENTS.md` 导航和所选端原生角色适配，并在 `.gitignore` 排除本机链接和安装元数据；未选端配置保留。托管导航指向[主任务职责](../source/project/.agents/sdd/references/sdd-repository-governance.md#职责与交接)和[阶段授权与推进](../source/project/.agents/sdd/references/sdd-repository-governance.md#阶段授权与推进)。换机、克隆或新建 worktree 后，在实际执行宿主重新运行 sdd-init 以接上其共享目录。
+
+Copilot 原生适配随文件携带托管角色名和内容 SHA-256，本机安装元数据记录实际写入的路径、哈希以及 `.github/sdd-workflow/` 原链接目标。克隆或换机后，本机记录可以从当前分发、可校验的托管标记或已知旧版适配的哈希恢复，包括旧 `target: vscode` 受管适配。校验允许 Git 转换 LF 和 CRLF。项目自有或内容已修改的适配仍按原归属规则处理；桥接的普通目录、文件或其他目标链接不得仅凭同名覆盖，须由状态证明，无法确认归属时 `inspect` 和 `init` 会在写入前报告冲突。仅刷新 Codex 时保留 Copilot 归属记录。
 
 Codex 的 `# sdd-init roles:start`／`end` 块标记受管角色注册；块外的同名项目角色注册在写入前报告冲突，不按名字认领。只有恰好指向已知 SDD 共享角色路径且没有额外配置的注册可直接迁移。待迁出的本地角色文件必须由托管块明确引用，且不能被块外角色共用；其他同名或声明同名的本地文件保留并报告冲突，不删除其指令或链接目标。
 
@@ -34,10 +36,10 @@ sdd-init 统一组装和写入单个 Main 托管指令块，源为 [agents-fragm
 
 ```powershell
 uvx --from git+https://github.com/bigsmartben/sdd-init.git sdd-init inspect
-python -B "$env:USERPROFILE/.agents/skills/sdd-init/scripts/govern.py" --root . inspect
+python -B "$env:USERPROFILE\.agents\skills\sdd-init\scripts\govern.py" --root . --runtime-harness copilot inspect
 ```
 
-用户级 CLI 的 `inspect`、`install` 和 `recover` 均接受 `--skills-dir`。隔离验证指定临时目录，自定义安装的后续操作沿用原路径。旧版用户角色的实际路径从原清单或恢复记录读取；`--agents-dir` 仅用于核对该历史路径，不是新装目标。项目检查可通过 `--root` 明确工作区。两个 SHA-256 分别标识分发内容和项目共享内容。项目本机 `.sdd-init-state.json` 记录上次接入时的共享版本、已安装片段哈希及 Copilot 适配托管路径。
+项目检查示例以 Copilot 为当前宿主；技能在 Codex 中自动传 `codex`。普通终端可省略该输入让工具按唯一仓库标记选择，或显式传 `--harness`，不把示例值当作探测结果。用户级 CLI 的 `inspect`、`install` 和 `recover` 均接受 `--skills-dir`。隔离验证指定临时目录，自定义安装的后续操作沿用原路径。旧版用户角色的实际路径从原清单或恢复记录读取；`--agents-dir` 仅用于核对该历史路径，不是新装目标。项目检查可通过 `--root` 明确工作区。两个 SHA-256 分别标识分发内容和项目共享内容。项目本机 `.sdd-init-state.json` 记录上次接入时的共享版本、已安装片段哈希及 Copilot 适配托管路径。
 
 ## 更新与冲突
 
@@ -101,3 +103,5 @@ python -B scripts\smoke_package.py --from $wheels[0].FullName
 `src/sdd_init/cli.py` 定义命令入口，`installer.py` 负责用户级安装。构建器汇集 `source/` 的分发资源，并将 `src/sdd_init/release.py` 投影为初始化器使用的清单校验模块。源码包包含构建所需输入，wheel 可独立安装。客户端发现验证使用隔离的用户配置路径、搜索根和目标项目；旧用户角色迁出测试另使用隔离的历史角色目录。
 
 本仓采用源码维护模式。六份角色定义以 [Codex 角色源码](../source/project/.codex/agents/) 为构建输入，构建器生成共享正文与 Codex／Copilot 适配；项目角色注册与接入在隔离项目验证。独立角色的行为案例及实测边界见[行为夹具](../tests/fixtures/skill-behavior/README.md)。
+
+当前自动适配的隔离回归、分发冒烟及原生客户端未实测边界见[本轮实施证据](workflow-evidence.md#2026-11-19-harness-自动适配)。安装器能正确接收运行时身份不等于已实测技能在每个客户端中的自动识别与加载。

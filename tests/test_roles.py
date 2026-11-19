@@ -89,10 +89,11 @@ class RoleTests(unittest.TestCase):
         self.target = self.folder / "project"
         self.target.mkdir()
 
-    def install(self, harness="auto", command="init"):
+    def install(self, harness="both", command="init", *, runtime=None):
         return subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(self.skill / "scripts/govern.py"),
-             "--root", str(self.target), "--harness", harness, command],
+             "--root", str(self.target), "--harness", harness,
+             *(["--runtime-harness", runtime] if runtime is not None else []), command],
             capture_output=True, text=True, encoding="utf-8")
 
     def snapshot(self):
@@ -121,10 +122,10 @@ class RoleTests(unittest.TestCase):
             copilot = self.target / ".github/agents" / f"{name}.agent.md"
             self.assertTrue(copilot.is_file())
             adapter = copilot.read_text(encoding="utf-8")
-            self.assertIn("\ntarget: vscode\n", adapter.split("---", 2)[1])
+            self.assertNotIn("target:", adapter.split("---", 2)[1])
             self.assertNotIn("model:", adapter)
             self.assertNotIn("reasoning-effort:", adapter)
-            self.assertIn(f"roles/shared/{name}.md", adapter)
+            self.assertIn(f".github/sdd-workflow/roles/shared/{name}.md", adapter)
         before = self.snapshot()
         self.assertEqual(self.install().returncode, 0)
         self.assertEqual(before, self.snapshot())
@@ -134,6 +135,8 @@ class RoleTests(unittest.TestCase):
         self.assertEqual(codex.returncode, 0, codex.stderr)
         self.assertTrue((self.target / ".codex/config.toml").is_file())
         self.assertFalse((self.target / ".github/agents").exists())
+        self.assertFalse((self.target / ".github/sdd-workflow").exists())
+        self.assertNotIn("/.github/sdd-workflow", (self.target / ".gitignore").read_text(encoding="utf-8"))
         inspected = self.install("copilot", "inspect")
         self.assertEqual(inspected.returncode, 0, inspected.stderr)
         self.assertIn(f"Installed roles (codex): {', '.join(sorted(ROLES))}", inspected.stdout)
@@ -145,6 +148,7 @@ class RoleTests(unittest.TestCase):
         copilot = self.install("copilot")
         self.assertEqual(copilot.returncode, 0, copilot.stderr)
         self.assertFalse((other / ".codex/config.toml").exists())
+        self.assertTrue((other / ".github/sdd-workflow").is_dir())
         inspected = self.install("codex", "inspect")
         self.assertEqual(inspected.returncode, 0, inspected.stderr)
         self.assertIn("Installed roles (codex): none", inspected.stdout)
@@ -321,7 +325,8 @@ class RoleTests(unittest.TestCase):
         adapters = original / ".github/agents"
         (adapters / "sdd-devops.agent.md").write_bytes(old_devops.encode("utf-8"))
         old_coder = re.sub(rb'description: [^\n]+', b'description: "Older coder description"',
-                           current_coder.split(b"<!-- sdd-init managed role", 1)[0].replace(b"target: vscode\n", b""))
+                           current_coder.split(b"<!-- sdd-init managed role", 1)[0])
+        old_coder = old_coder.replace(b"---\n", b"---\ntarget: vscode\n", 1)
         digest = hashlib.sha256(old_coder).hexdigest()
         (adapters / "sdd-coder.agent.md").write_bytes(
             old_coder + f"<!-- sdd-init managed role sdd-coder sha256:{digest} -->\n".encode(),
@@ -404,17 +409,119 @@ class RoleTests(unittest.TestCase):
                 self.assertEqual((contract.parent / companion[1]).read_bytes(),
                                  (self.skill / "shared/roles/shared/review-prompt/prompt-review.md").read_bytes())
 
-    def test_inspect_reports_default_dual_adapter_plan_without_writes(self):
+    def test_auto_without_runtime_or_markers_rejects_before_any_write(self):
         result = subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(self.skill / "scripts/govern.py"),
              "--root", str(self.target), "inspect"],
             capture_output=True, text=True, encoding="utf-8")
-        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.returncode, 2, result.stderr)
         self.assertIn("codex=none", result.stdout)
         self.assertIn("copilot=none", result.stdout)
-        self.assertIn("Harness adapters planned: codex, copilot", result.stdout)
+        self.assertIn("Harness adapters planned: unresolved", result.stdout)
+        self.assertIn("--runtime-harness", result.stderr)
         self.assertIn("Installed roles (codex): none", result.stdout)
         self.assertIn("Installed roles (copilot): none", result.stdout)
+        self.assertEqual(list(self.target.iterdir()), [])
+        for guidance in (None, b"# Generic AGENTS guidance\n"):
+            with self.subTest(guidance=guidance):
+                if guidance is not None:
+                    (self.target / "AGENTS.md").write_bytes(guidance)
+                before = self.snapshot()
+                result = self.install("auto")
+                self.assertEqual(result.returncode, 2, result.stderr)
+                self.assertEqual(self.snapshot(), before)
+                self.assertFalse((self.target / ".sdd-init.lock").exists())
+
+    def test_plain_markdown_in_agents_directory_is_not_a_copilot_harness_marker(self):
+        readme = self.target / ".github/agents/README.md"
+        readme.parent.mkdir(parents=True)
+        readme.write_text("# Repository-owned agent notes\n", encoding="utf-8")
+
+        result = self.install("auto")
+
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertIn("无法唯一识别 Harness", result.stderr)
+        self.assertIn("copilot=none", result.stdout)
+        self.assertEqual(readme.read_text(encoding="utf-8"), "# Repository-owned agent notes\n")
+        self.assertFalse((self.target / ".sdd-init.lock").exists())
+
+    def test_auto_uses_runtime_in_empty_projects_and_preserves_the_other_adapter(self):
+        for runtime, other in (("codex", "copilot"), ("copilot", "codex")):
+            with self.subTest(runtime=runtime):
+                self.target = self.folder / f"runtime-{runtime}"
+                self.target.mkdir()
+                result = self.install("auto", "inspect", runtime=runtime)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn(f"Harness selection: runtime --runtime-harness {runtime}", result.stdout)
+                self.assertIn(f"Harness adapters planned: {runtime}", result.stdout.splitlines())
+                self.assertEqual(list(self.target.iterdir()), [])
+                result = self.install("auto", runtime=runtime)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual((self.target / ".codex/config.toml").exists(), runtime == "codex")
+                self.assertEqual((self.target / ".github/agents").exists(), runtime == "copilot")
+                self.assertEqual((self.target / ".github/sdd-workflow").exists(), runtime == "copilot")
+                before = self.snapshot()
+                result = self.install("auto", "inspect", runtime=runtime)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn("Project changes on init: none", result.stdout)
+                self.assertEqual(self.install("auto", runtime=runtime).returncode, 0)
+                self.assertEqual(self.snapshot(), before)
+
+                result = self.install("auto", runtime=other)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn(f"Configured harnesses: {other}", result.stdout.splitlines())
+                for path, data in before.items():
+                    if path.parts[0] in (".codex", ".github"):
+                        self.assertEqual((self.target / path).read_bytes(), data)
+                self.assertTrue((self.target / ".codex/config.toml").exists())
+                self.assertTrue((self.target / ".github/agents").exists())
+                self.assertTrue((self.target / ".github/sdd-workflow").exists())
+                before = self.snapshot()
+                self.assertEqual(self.install("auto", runtime=runtime).returncode, 0)
+                self.assertEqual(self.snapshot(), before)
+
+    def test_auto_falls_back_to_unique_project_markers(self):
+        for marker, runtime in ((".codex/config.toml", "codex"),
+                                (".github/copilot-instructions.md", "copilot"),
+                                (".github/agents/custom.md", "copilot")):
+            with self.subTest(marker=marker):
+                self.target = self.folder / f"marker-{runtime}-{Path(marker).stem}"
+                path = self.target / marker
+                path.parent.mkdir(parents=True)
+                path.write_bytes(
+                    b"---\nname: custom\ndescription: Project-owned agent\n---\n"
+                    if marker.endswith(".md") and "/agents/" in marker
+                    else b"# Project-owned configuration\n"
+                )
+                before = self.snapshot()
+                result = self.install("auto", "inspect")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn("unique project markers (current runtime unknown)", result.stdout)
+                self.assertIn(f"Harness adapters planned: {runtime}", result.stdout.splitlines())
+                self.assertEqual(self.snapshot(), before)
+                result = self.install("auto")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn(f"Configured harnesses: {runtime}", result.stdout.splitlines())
+                self.assertEqual((self.target / ".codex/config.toml").exists(), runtime == "codex")
+                self.assertEqual((self.target / ".github/agents").exists(), runtime == "copilot")
+                self.assertEqual((self.target / ".github/sdd-workflow").exists(), runtime == "copilot")
+
+    def test_explicit_selection_overrides_runtime(self):
+        for harness in ("codex", "copilot", "both"):
+            with self.subTest(harness=harness):
+                self.target = self.folder / f"explicit-{harness}"
+                self.target.mkdir()
+                result = self.install(harness, runtime="copilot" if harness == "codex" else "codex")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn(f"Harness selection: explicit --harness {harness}", result.stdout)
+                self.assertEqual((self.target / ".codex/config.toml").exists(), harness != "copilot")
+                self.assertEqual((self.target / ".github/agents").exists(), harness != "codex")
+                self.assertEqual((self.target / ".github/sdd-workflow").exists(), harness != "codex")
+
+    def test_unknown_runtime_is_rejected_without_writes(self):
+        result = self.install("auto", runtime="unknown")
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("invalid choice", result.stderr)
         self.assertEqual(list(self.target.iterdir()), [])
 
     def test_inspect_reports_landed_roles_independent_of_metadata_or_selection(self):
@@ -423,11 +530,11 @@ class RoleTests(unittest.TestCase):
         config = self.target / ".codex/config.toml"
         config.write_bytes(config.read_bytes().replace(b"roles/codex/sdd-coder.toml", b"roles/codex/absent.toml"))
         before = self.snapshot()
-        for harness in ("auto", "codex", "copilot"):
+        for harness in ("auto", "both", "codex", "copilot"):
             with self.subTest(harness=harness):
                 result = self.install(harness, "inspect")
                 # Copilot-only cannot preserve the missing Codex reference, but still reports the disk state.
-                self.assertEqual(result.returncode, 2 if harness == "copilot" else 0, result.stderr)
+                self.assertEqual(result.returncode, 2 if harness in ("auto", "copilot") else 0, result.stderr)
                 codex = ", ".join(sorted(ROLES - {"sdd-coder"}))
                 copilot = ", ".join(sorted(ROLES - {"sdd-devops"}))
                 self.assertIn(f"Installed roles (codex): {codex}", result.stdout.splitlines())
@@ -447,10 +554,14 @@ class RoleTests(unittest.TestCase):
             [sys.executable, "-B", "-X", "utf8", str(self.skill / "scripts/govern.py"),
              "--root", str(self.target), "inspect"],
             capture_output=True, text=True, encoding="utf-8")
-        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.returncode, 2, result.stderr)
         self.assertIn("codex=.codex/config.toml", result.stdout)
         self.assertIn("copilot=.github/copilot-instructions.md", result.stdout)
         self.assertEqual(self.snapshot(), before)
+        result = self.install("auto")
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertEqual(self.snapshot(), before)
+        self.assertFalse((self.target / ".sdd-init.lock").exists())
 
     def test_unmanaged_same_name_copilot_role_is_preserved_before_any_writes(self):
         role = self.target / ".github/agents/sdd-coder.agent.md"
@@ -463,6 +574,43 @@ class RoleTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("非受管 Copilot 角色冲突", result.stderr)
         self.assertEqual(self.snapshot(), before)
+
+    def test_unmanaged_copilot_bridge_is_preserved_before_any_writes(self):
+        bridge = self.target / ".github/sdd-workflow"
+        bridge.mkdir(parents=True)
+        evidence = bridge / "project-owned.md"
+        evidence.write_bytes(b"project-owned shared resources\n")
+        before = self.snapshot()
+
+        result = self.install("copilot")
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("非受管 Copilot 共享链接冲突", result.stderr)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_managed_copilot_bridge_can_move_to_new_shared_target(self):
+        self.assertEqual(self.install("copilot").returncode, 0)
+        bridge = self.target / ".github/sdd-workflow"
+        old = self.folder / "old-shared"
+        old.mkdir()
+        loader = importlib.util.spec_from_file_location(
+            "copilot_bridge_tx", self.skill / "scripts/project_install.py")
+        tx = importlib.util.module_from_spec(loader)
+        loader.loader.exec_module(tx)
+        tx.remove_workflow_link(bridge)
+        tx.create_workflow_link(bridge, old)
+        state_path = self.target / ".sdd-init-state.json"
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        state["copilot_links"] = {tx.COPILOT_WORKFLOW_LINK: str(old.resolve())}
+        state_path.write_text(json.dumps(state), encoding="utf-8")
+
+        result = self.install("copilot")
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(bridge.samefile(self.skill / "shared"))
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        self.assertEqual(state["copilot_links"][tx.COPILOT_WORKFLOW_LINK],
+                         str((self.skill / "shared").resolve()))
 
     def test_identical_copilot_role_records_missing_ownership(self):
         self.assertEqual(self.install().returncode, 0)
@@ -510,10 +658,7 @@ class RoleTests(unittest.TestCase):
         state.write_bytes(b"\xff")
         before = self.snapshot()
 
-        inspect = subprocess.run(
-            [sys.executable, "-B", "-X", "utf8", str(self.skill / "scripts/govern.py"),
-             "--root", str(self.target), "inspect"],
-            capture_output=True, text=True, encoding="utf-8")
+        inspect = self.install(command="inspect")
 
         self.assertEqual(inspect.returncode, 0, inspect.stderr)
         self.assertEqual(self.snapshot(), before)
@@ -532,9 +677,8 @@ class RoleTests(unittest.TestCase):
             original.replace(b'name: "sdd-coder"', b'name: "other-role"'),
             original.replace(b"---" + newline, b"---" + newline + b"model: preset" + newline, 1),
             original.replace(b"---" + newline, b"---" + newline + b"reasoning-effort: high" + newline, 1),
-            original.replace(b"target: vscode" + newline, b""),
-            original.replace(b"target: vscode", b"target: github-copilot"),
-            original.replace(b"target: vscode", b"target: vscode" + newline + b"target: github-copilot"),
+            original.replace(b"---" + newline, b"---" + newline + b"target: vscode" + newline, 1),
+            original.replace(b"---" + newline, b"---" + newline + b"target: github-copilot" + newline, 1),
         )
         for data in cases:
             with self.subTest(data=data):

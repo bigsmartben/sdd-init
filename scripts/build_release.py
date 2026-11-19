@@ -21,6 +21,26 @@ def source_files(folder: Path) -> list[Path]:
     return files
 
 
+def copilot_adapter(name: str, description: str) -> str:
+    prompt = (
+        "---\n"
+        f"name: {json.dumps(name, ensure_ascii=False)}\n"
+        f"description: {json.dumps(description, ensure_ascii=False)}\n"
+        "---\n"
+        f"Read and follow `.github/sdd-workflow/roles/shared/{name}.md` before acting. "
+        "That file is the authoritative role contract. "
+        "In this Copilot adapter, use `.github/sdd-workflow/` as the actual shared-resource "
+        "root named by the contract and task, so this harness can access the shared files. "
+        "If it is unavailable on this execution host, report the missing sdd-init connection "
+        "and stop; do not substitute a different role contract.\n"
+    )
+    digest = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
+    adapter = f"{prompt}<!-- sdd-init managed role {name} sha256:{digest} -->\n"
+    if len(adapter) > 30_000:
+        raise ValueError(f"Copilot role exceeds the 30,000-character prompt limit: {name}")
+    return adapter
+
+
 def build(output: Path) -> Path:
     output = output.resolve()
     # Keep generated artifacts out of both canonical sources and provenance.
@@ -92,20 +112,8 @@ def build(output: Path) -> Path:
 
             copilot_path = roles / "copilot" / f"{name}.agent.md"
             copilot_path.parent.mkdir(parents=True, exist_ok=True)
-            copilot = (
-                "---\n"
-                f"name: {json.dumps(name, ensure_ascii=False)}\n"
-                f"description: {json.dumps(description, ensure_ascii=False)}\n"
-                "target: vscode\n"
-                "---\n"
-                f"Read and follow `.agents/sdd-workflow/roles/shared/{name}.md` before acting. "
-                "That file is the authoritative role contract.\n"
-            )
-            digest = hashlib.sha256(copilot.encode("utf-8")).hexdigest()
-            copilot_path.write_text(
-                f"{copilot}<!-- sdd-init managed role {name} sha256:{digest} -->\n",
-                encoding="utf-8", newline="\n",
-            )
+            adapter = copilot_adapter(name, description)
+            copilot_path.write_text(adapter, encoding="utf-8", newline="\n")
         else:
             destination = roles / "shared" / relative
             destination.parent.mkdir(parents=True, exist_ok=True)

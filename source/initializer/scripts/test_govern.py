@@ -25,7 +25,7 @@ class GovernanceTests(unittest.TestCase):
         self.root.mkdir()
 
     def run_cmd(self, *args, ok=True):
-        result = subprocess.run([sys.executable, str(GOV), "--root", str(self.root), *args],
+        result = subprocess.run([sys.executable, str(GOV), "--root", str(self.root), "--harness", "both", *args],
                                 text=True, capture_output=True, encoding="utf-8")
         if ok and result.returncode != 0:
             self.fail(f"return={result.returncode}\nstdout={result.stdout}\nstderr={result.stderr}")

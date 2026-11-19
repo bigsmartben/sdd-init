@@ -40,7 +40,7 @@ class ProjectInstallTests(unittest.TestCase):
         self.root.mkdir()
         self.gov = module(self.skill / "scripts/govern.py", "candidate_init")
         self.tx = self.gov.transaction
-        self.args = self.gov.build_parser().parse_args(["init"])
+        self.args = self.gov.build_parser().parse_args(["--harness", "both", "init"])
 
     def snapshot(self):
         return {p.relative_to(self.root).as_posix(): p.read_bytes()
@@ -49,7 +49,7 @@ class ProjectInstallTests(unittest.TestCase):
     def run_init(self, *, env=None, command="init"):
         return subprocess.run([sys.executable, "-B", "-X", "utf8",
                                str(self.skill / "scripts/govern.py"),
-                               "--root", str(self.root), command],
+                               "--root", str(self.root), "--harness", "both", command],
                               capture_output=True, text=True, encoding="utf-8", timeout=30, env=env)
 
     def crash(self, hook):
@@ -62,7 +62,7 @@ gov = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(gov)
 tx = gov.transaction
 ''' + hook + '''
-gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["init"]))
+gov.cmd_init(Path(sys.argv[2]), gov.build_parser().parse_args(["--harness", "both", "init"]))
 '''
         result = subprocess.run([sys.executable, "-B", "-X", "utf8", "-c", program,
                                  str(self.skill / "scripts/govern.py"), str(self.root)],

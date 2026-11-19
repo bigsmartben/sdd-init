@@ -1,5 +1,20 @@
 # 工作流分发实施证据
 
+## 2026-11-19 Harness 自动适配
+
+依据 [FR-039／AC-046](../specs/platform-independent-sdd/spec.md) 调整[初始化技能](../source/initializer/SKILL.md)、[接入契约](../source/initializer/assets/install.md#harness-自动适配)、项目安装器与角色构建器。验证对象为 `c25637ebc601826aa4b73c8af951a6cad740c519` 基础上的本轮未提交源码；不是已发布版本或用户已安装资源。uv/uvx 分发和用户级技能入口保持不变，当前宿主身份由技能自动交接，`auto` 不再等于双端安装。
+
+| 检查 | 实际覆盖与结果 |
+| --- | --- |
+| 项目与用户级安装 | 在 Windows、Python 3.13 下，最终 `python -B -m unittest discover -s tests -v` 共 224 项通过。覆盖空项目的两端运行时输入、唯一仓库标记回退、无身份／双端标记写前拒绝、普通 Markdown 不作为角色标记、显式选择优先、换端接入、另一端配置保护、Copilot 桥接归属与冲突、幂等和事务恢复；实际构建载荷的 22 项便携回归也通过。 |
+| Copilot 适配升级 | 构建及项目文件省略 `target`，仍使用共享正文；隔离 Git 克隆覆盖原 `target: vscode` 托管标记、CRLF、状态缺失与重连，同名非受管文件及已修改受管文件不被覆盖。 |
+| Copilot App 原生验证 | 在本地 `hanxue-live` 当前 `main`、基线 `c29a4bc` 的隔离候选接入中，当前宿主被识别为 `copilot`，Codex 配置哈希不变且重复接入无待写项。首轮六个项目 Skill 均被原生发现并加载，但角色 wrapper 的 `.agents/sdd-workflow/...` 权威合同在普通文件工具中不可读。修订为 Copilot 读取 `.github/sdd-workflow/` 同源本机桥接后，六个 wrapper、合同及 `review-prompt` 配套规则均可由普通 `view` 读取，六个 custom-agent 类型均可发现并启动，最窄握手返回各自合同已加载，不再返回缺连接。最终探针又加载 `sdd-architecture`，按 managed AGENTS 将 Skill 内共享引用映射到 `.github/sdd-workflow/sdd/references/sdd-repository-governance.md` 并成功读取；原生 Skill 入口仍为 `.agents/skills/`。均未执行业务工单、联网或写入。 |
+| sdd-init 自动入口 | 另建独立 Copilot App 会话，原生加载临时项目 Skill `sdd-init-harness-probe`，返回 Base directory 为 `hanxue-live/.agents/skills/sdd-init-candidate`，证明候选 Skill 正文而非旧用户级 Skill 生效。会话按 Skill 自行识别当前 Copilot App，自动组装 `--runtime-harness copilot inspect`；仓库虽同时有 Codex/Copilot 标记，回执仍唯一计划 `copilot` 并退出 0。对 1,716 个 Git 可见文件的 SHA-256 前后快照完全一致，未执行 init/recover、联网或修改用户级安装。探针 Skill、清单别名和目标链接随后清理。 |
+| 分发入口 | `uv build` 生成唯一 wheel 与 sdist，`scripts/smoke_package.py --from <本轮 wheel>` 通过；安装、重装、显式双端接入、只读检查和恢复均使用临时用户级与项目目录。构建器同时硬校验 Copilot 完整角色文件不超过 30,000 字符。 |
+| CodeQL | 最终本地 Python `python-security-and-quality` 查询完成，扫描 128 个 Python 文件；33 项发现均未落在本轮修改行，未据此声称全仓无问题，也未扩围修复。Windows 缺少 `py` launcher，使用官方 `CODEQL_EXTRACTOR_PYTHON_OPTION_PYTHON_EXECUTABLE_NAME=python` 指定已有解释器完成提取。 |
+| 目标仓库迁移边界 | `hanxue-live` 原先提交了 92 个 `.agents/sdd-workflow/` 实体文件，而本轮设计改为受忽略的本机链接；因此候选验证在 Git 中表现为共享实体迁移，并非应直接提交的复制品。本轮验证完成后已移除候选链接和本机状态、从原 `HEAD` 恢复验证范围文件，目标仓库工作树重新干净；未处理其一次性迁移提交或清理跟踪索引。 |
+| 未实测范围 | 已实测 Copilot App 的当前宿主识别、Skill 与 Custom Agent 发现／合同装载；未实跑各角色的真实业务工单，也未覆盖 Codex CLI、Copilot CLI 独立命令或 VS Code 的完整原生交互。当前环境未找到独立 Codex CLI，Copilot 命令为报告 CLI 未安装的启动垫片。没有部署云端 Agent、更新用户安装或执行远端交付。 |
+
 ## 2026-11-17 场景驱动的交付技能与角色交接
 
 依据 [FR-022／AC-022](../specs/platform-independent-sdd/spec.md) 修订[交付技能](../source/project/.agents/skills/sdd-deliver/SKILL.md)、[场景识别与工作流](../source/project/.agents/sdd/references/delivery.md#场景识别与工作流)、[完整场景交接](../source/project/.agents/sdd/references/delegation.md#交付与运维交接)及 [sdd-devops](../source/project/.codex/agents/sdd-devops.toml)。技能识别协作约定、任务类型和授权终点，按完整专业场景派单并验收；角色自主规划、配置／执行和复验，平台实现归目标项目。

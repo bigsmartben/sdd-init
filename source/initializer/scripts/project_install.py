@@ -13,6 +13,7 @@ import subprocess
 
 RECOVERY = ".sdd-init-recovery"
 WORKFLOW_LINK = ".agents/sdd-workflow"
+COPILOT_WORKFLOW_LINK = ".github/sdd-workflow"
 LEGACY_WORKFLOW_LINK = ".agents/skills/sdd-workflow"
 PROJECT_SKILLS = (
     "sdd-architecture", "sdd-bugfix", "sdd-deliver", "sdd-develop", "sdd-refactor", "sdd-test-loop",
@@ -23,7 +24,8 @@ PROJECT_ROLES = (
     "sdd-coder", "sdd-devops", "sdd-doc-consistency",
 )
 COPILOT_ROLE_FILES = tuple(f".github/agents/{name}.agent.md" for name in PROJECT_ROLES)
-INSTALL_LINKS = (WORKFLOW_LINK, *SKILL_LINKS, LEGACY_WORKFLOW_LINK)
+COPILOT_LINKS = (COPILOT_WORKFLOW_LINK,)
+INSTALL_LINKS = (WORKFLOW_LINK, COPILOT_WORKFLOW_LINK, *SKILL_LINKS, LEGACY_WORKFLOW_LINK)
 LOCK = ".sdd-init.lock"
 STATE = ".sdd-init-state.json"
 FILES = ("AGENTS.md", ".codex/config.toml", ".gitignore", STATE, "AGENTS.override.md",
@@ -161,13 +163,15 @@ def remove_workflow_link(path: Path):
         path.rmdir()
 
 
-def plan_links(root: Path, shared: Path) -> list[tuple[Path, dict | None, Path | None]]:
+def plan_links(root: Path, shared: Path, *, copilot: bool = False) -> list[tuple[Path, dict | None, Path | None]]:
     shared = shared.resolve()
     if shared.is_relative_to(root.resolve()):
         raise ValueError(f"Shared resources must be outside the project: {shared}")
     targets = {WORKFLOW_LINK: shared,
                **{relative: shared / "skills" / Path(relative).name for relative in SKILL_LINKS},
                LEGACY_WORKFLOW_LINK: None}
+    if copilot:
+        targets[COPILOT_WORKFLOW_LINK] = shared
     result = []
     for relative, target in targets.items():
         path = link_path(root, relative)

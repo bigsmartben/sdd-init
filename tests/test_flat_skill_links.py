@@ -35,7 +35,7 @@ class FlatSkillLinkTests(unittest.TestCase):
         self.gov = module(self.skill / "scripts/govern.py", "flat_link_govern")
         self.tx = self.gov.transaction
         self.shared = self.skill / "shared"
-        self.args = self.gov.build_parser().parse_args(["init"])
+        self.args = self.gov.build_parser().parse_args(["--harness", "both", "init"])
         self.legacy_fragments = {}
         assets = self.skill / "assets"
         for name, filename in self.gov.FRAGMENTS.items():
@@ -94,6 +94,7 @@ class FlatSkillLinkTests(unittest.TestCase):
             else:
                 self.assertTrue(path.is_symlink())
         self.assertTrue((self.root / self.tx.WORKFLOW_LINK).samefile(self.shared))
+        self.assertTrue((self.root / self.tx.COPILOT_WORKFLOW_LINK).samefile(self.shared))
         self.assertFalse(self.tx.linked(self.root / self.tx.LEGACY_WORKFLOW_LINK))
 
     def legacy(self, *, state=True, retired=False):
@@ -126,7 +127,7 @@ spec.loader.exec_module(gov)
 tx = gov.transaction
 root = Path(sys.argv[2])
 ''' + hook + f'''
-gov.cmd_{command}(root, gov.build_parser().parse_args(["{command}"]))
+gov.cmd_{command}(root, gov.build_parser().parse_args(["--harness", "both", "{command}"]))
 '''
         result = subprocess.run([sys.executable, "-B", "-X", "utf8", "-c", program,
                                  str(self.skill / "scripts/govern.py"), str(self.root)],
@@ -170,10 +171,10 @@ tx.publish_workflow_link = stop
     def test_repeat_keeps_bytes_and_link_identities(self):
         self.init()
         before = self.snapshot()
-        links = self.tx.plan_links(self.root, self.shared)
+        links = self.tx.plan_links(self.root, self.shared, copilot=True)
         self.init()
         self.assertEqual(self.snapshot(), before)
-        self.assertEqual(self.tx.plan_links(self.root, self.shared), links)
+        self.assertEqual(self.tx.plan_links(self.root, self.shared, copilot=True), links)
         self.assertFalse((self.root / self.tx.RECOVERY).exists())
 
     def test_ignore_covers_each_link_after_negations(self):
@@ -182,7 +183,7 @@ tx.publish_workflow_link = stop
         self.init()
         result = (self.root / ".gitignore").read_text(encoding="utf-8")
         self.assertTrue(result.startswith(original))
-        for relative in (self.tx.WORKFLOW_LINK, *self.tx.SKILL_LINKS):
+        for relative in (self.tx.WORKFLOW_LINK, self.tx.COPILOT_WORKFLOW_LINK, *self.tx.SKILL_LINKS):
             self.assertIn(f"/{relative}", result.split("!.agents/**\n", 1)[1].splitlines())
 
     def test_inspect_reports_missing_flat_link_without_writes(self):
@@ -309,6 +310,12 @@ tx.publish_workflow_link = stop
                         (path / "keep").write_bytes(b"project")
                     else:
                         path.write_bytes(b"project")
+                    if relative == self.tx.COPILOT_WORKFLOW_LINK:
+                        before = self.tx.link_snapshot(path)
+                        with self.assertRaisesRegex(ValueError, "非受管 Copilot 共享链接冲突"):
+                            self.gov.cmd_init(project, self.args)
+                        self.assertEqual(self.tx.link_snapshot(path), before)
+                        continue
                     with contextlib.redirect_stdout(io.StringIO()):
                         self.gov.cmd_init(project, self.args)
                     if relative == self.tx.LEGACY_WORKFLOW_LINK:
@@ -396,6 +403,13 @@ Path.rename = stop
                     self.tx.create_workflow_link(path, target)
                     if kind == "dangling":
                         target.rmdir()
+                    if relative == self.tx.COPILOT_WORKFLOW_LINK:
+                        before = self.tx.link_snapshot(path)
+                        with self.assertRaisesRegex(ValueError, "非受管 Copilot 共享链接冲突"):
+                            self.gov.cmd_init(project, self.args)
+                        self.assertEqual(self.tx.link_snapshot(path), before)
+                        self.assertEqual(self.tx.workflow_target(path), target.resolve())
+                        continue
                     with contextlib.redirect_stdout(io.StringIO()) as output:
                         self.gov.cmd_init(project, self.args)
                     if relative == self.tx.LEGACY_WORKFLOW_LINK:

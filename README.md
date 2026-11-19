@@ -17,9 +17,9 @@ sdd-workflow 的核心目标是让用户前置决定关键结果，Agent 基于�
 首次安装、更新命令、环境要求及冲突处理见[安装说明](docs/installation.md)。安装分为两个入口：
 
 1. 安装用户级 `sdd-init` Skill 和共享工作流资产（包含预置专业角色）。
-2. 在目标仓库中调用 `sdd-init`，接入用户级共享工作流。
+2. 在目标仓库的 Codex 或 Copilot 会话中调用同一个 `sdd-init`，自动识别当前 harness 并接入用户级共享工作流。
 
-用户级安装负责更新共享资源，项目初始化负责链接和引用。安装和迁移的维护边界见 [AGENTS.md](AGENTS.md)。
+uv/uvx 分发和用户级技能入口不变。用户级安装负责更新共享资源，项目初始化负责 harness 识别、原生适配、链接和引用，不实现或替代宿主的 Agent Loop。默认只接入已识别的当前端，支持本地 Codex、Copilot CLI／桌面 App，并保留 VS Code Copilot 兼容；无法唯一识别时停止写入，不默认安装双端。识别依据与显式双端接入见[Harness 自动适配](source/initializer/assets/install.md#harness-自动适配)。安装和迁移的维护边界见 [AGENTS.md](AGENTS.md)。
 
 作为接入入口，[sdd-init Skill](source/initializer/SKILL.md)只有一个职责：完成目标项目 sdd-workflow 的环境落地，包括相关资产的落地准备，以及目标 AGENTS.md 中 Main 规则与能力入口的注入。检查与恢复是落地手段；Main 的运行规则统一归 Main，专业执行规则归对应执行者，不因文件共用而混合职责。
 

@@ -148,7 +148,7 @@ class UserInstallTests(unittest.TestCase):
             repo.mkdir()
             subprocess.run(["git", "init", "-q", "--template=", str(repo)], check=True, capture_output=True)
             subprocess.run([sys.executable, "-B", "-X", "utf8", str(target / "scripts/govern.py"),
-                            "--root", str(repo), "init"], check=True, capture_output=True)
+                            "--root", str(repo), "--harness", "both", "init"], check=True, capture_output=True)
             self.assertTrue((repo / WORKFLOW).samefile(shared))
             self.assertEqual({p.name for p in (repo / ".agents/skills").iterdir()}, set(PROJECT_SKILLS))
             for name in PROJECT_SKILLS:
@@ -172,7 +172,7 @@ class UserInstallTests(unittest.TestCase):
             self.assertFalse((worktree / ".agents/skills" / name).exists())
         refs = (worktree / ".codex/config.toml").read_bytes()
         subprocess.run([sys.executable, "-B", "-X", "utf8", str(target / "scripts/govern.py"),
-                        "--root", str(worktree), "init"], check=True, capture_output=True)
+                        "--root", str(worktree), "--harness", "both", "init"], check=True, capture_output=True)
         self.assertTrue((worktree / WORKFLOW).samefile(shared))
         for name in PROJECT_SKILLS:
             self.assertTrue((worktree / ".agents/skills" / name).samefile(shared / "skills" / name))
@@ -198,7 +198,7 @@ class UserInstallTests(unittest.TestCase):
             self.assertEqual({p.relative_to(repo): p.read_bytes() for p in project_files(repo)}, expected)
         new_version = content_id(shared_files(verified(self.resources)))
         subprocess.run([sys.executable, "-B", "-X", "utf8", str(target / "scripts/govern.py"),
-                        "--root", str(repos[0]), "init"], check=True, capture_output=True)
+                        "--root", str(repos[0]), "--harness", "both", "init"], check=True, capture_output=True)
         self.assertEqual(json.loads((repos[0] / ".sdd-init-state.json").read_bytes())["shared_version"], new_version)
         for repo in repos[1:]:
             self.assertNotEqual(json.loads((repo / ".sdd-init-state.json").read_bytes())["shared_version"], new_version)
@@ -254,7 +254,7 @@ class UserInstallTests(unittest.TestCase):
         project.mkdir()
         shared = shared_directory(self.skills)
         govern = self.skills / "sdd-init/scripts/govern.py"
-        init = [sys.executable, "-B", "-X", "utf8", str(govern), "--root", str(project), "init"]
+        init = [sys.executable, "-B", "-X", "utf8", str(govern), "--root", str(project), "--harness", "both", "init"]
         local_text = "# Project guidance\n"
         agents = project / "AGENTS.md"
         agents.write_text(local_text, encoding="utf-8")
@@ -610,7 +610,7 @@ class UserInstallTests(unittest.TestCase):
         project = self.root / "connected-project"
         project.mkdir()
         command = [sys.executable, "-B", "-X", "utf8", str(self.skills / "sdd-init/scripts/govern.py"),
-                   "--root", str(project), "init"]
+                   "--root", str(project), "--harness", "both", "init"]
         self.assertEqual(install(self.resources, self.skills), "Updated")
         subprocess.run(command, check=True, capture_output=True)
         config = project / ".codex/config.toml"
@@ -653,7 +653,7 @@ class UserInstallTests(unittest.TestCase):
         self.assertEqual(install(self.resources, self.skills), "Updated")
         self.assertFalse(self.role.exists())
         govern = self.skills / "sdd-init/scripts/govern.py"
-        command = [sys.executable, "-B", "-X", "utf8", str(govern), "--root", str(project)]
+        command = [sys.executable, "-B", "-X", "utf8", str(govern), "--root", str(project), "--harness", "both"]
         before = {p.relative_to(project): p.read_bytes() for p in project_files(project)}
         result = subprocess.run([*command, "init"], capture_output=True, text=True, encoding="utf-8")
         self.assertNotEqual(result.returncode, 0)

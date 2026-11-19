@@ -98,8 +98,10 @@ class BuildTests(unittest.TestCase):
             (output / "shared/roles/shared/review-prompt/prompt-review.md").read_bytes(),
         )
         self.assertNotIn("model:", copilot.read_text(encoding="utf-8"))
-        self.assertIn("\ntarget: vscode\n", copilot.read_text(encoding="utf-8").split("---", 2)[1])
-        self.assertIn("roles/shared/review-prompt.md", copilot.read_text(encoding="utf-8"))
+        self.assertNotIn("target:", copilot.read_text(encoding="utf-8").split("---", 2)[1])
+        copilot_text = copilot.read_text(encoding="utf-8")
+        self.assertIn(".github/sdd-workflow/roles/shared/review-prompt.md", copilot_text)
+        self.assertIn("use `.github/sdd-workflow/` as the actual shared-resource", copilot_text)
         manifest = json.loads((output / "build-manifest.json").read_bytes())
         self.assertEqual(manifest["files"][path], hashlib.sha256(data).hexdigest())
         self.assertFalse((output / "assets/user-agents/review-prompt.toml").exists())
@@ -113,6 +115,12 @@ class BuildTests(unittest.TestCase):
             builder.build(first)
         with self.assertRaises(ValueError):
             builder.build(ROOT / "source/not-an-output")
+
+    def test_copilot_adapter_enforces_prompt_character_limit(self):
+        adapter = builder.copilot_adapter("sdd-coder", "short")
+        self.assertLessEqual(len(adapter), 30_000)
+        with self.assertRaisesRegex(ValueError, "30,000-character"):
+            builder.copilot_adapter("sdd-coder", "x" * 30_000)
 
     def test_init_connects_cleaned_project_and_preserves_project_configuration(self):
         skill = builder.build(self.folder / "skill")
@@ -138,7 +146,7 @@ class BuildTests(unittest.TestCase):
         (target / "architecture").mkdir()
         contract = target / "architecture/blueprint.md"
         contract.write_bytes(b"# Existing architecture\n")
-        command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(target), "init"]
+        command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(target), "--harness", "both", "init"]
         result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(contract.read_bytes(), b"# Existing architecture\n")
@@ -148,6 +156,7 @@ class BuildTests(unittest.TestCase):
         self.assertTrue(config.read_bytes().startswith(project_config))
         self.assertIn(f'config_file = "../{WORKFLOW}/roles/codex/sdd-coder.toml"'.encode(), config.read_bytes())
         self.assertTrue((target / WORKFLOW).samefile(skill / "shared"))
+        self.assertTrue((target / ".github/sdd-workflow").samefile(skill / "shared"))
         self.assertEqual(index.read_bytes(), index_body)
         self.assertEqual(rules.read_bytes(), b"# Existing project rules\n")
         before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
@@ -161,10 +170,11 @@ class BuildTests(unittest.TestCase):
         target.mkdir()
         result = subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-             "--root", str(target), "init"], capture_output=True, text=True, encoding="utf-8")
+             "--root", str(target), "--harness", "both", "init"], capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual({p.name for p in (target / ".agents/skills").iterdir()}, set(PROJECT_SKILLS))
         links = {WORKFLOW: skill / "shared",
+                 ".github/sdd-workflow": skill / "shared",
                  **{f".agents/skills/{name}": skill / "shared/skills" / name for name in PROJECT_SKILLS}}
         for relative, shared in links.items():
             path = target / relative
@@ -219,7 +229,7 @@ class BuildTests(unittest.TestCase):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(content)
         command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-                   "--root", str(target), "init"]
+                   "--root", str(target), "--harness", "both", "init"]
         for version in range(3):
             if version == 2:
                 # Upgrade shared knowledge while preserving the project's normative assets.
@@ -253,7 +263,7 @@ class BuildTests(unittest.TestCase):
                     agents = target / "AGENTS.md"
                     if old is not None:
                         agents.write_bytes(old.encode("utf-8"))
-                    command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(target), "init"]
+                    command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(target), "--harness", "both", "init"]
                     result = subprocess.run(command, capture_output=True)
                     self.assertEqual(result.returncode, 0, result.stderr)
                     installed = agents.read_bytes().decode("utf-8")
@@ -279,7 +289,7 @@ class BuildTests(unittest.TestCase):
         skill = builder.build(self.folder / "skill")
         target = self.folder / "project"
         target.mkdir()
-        command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(target), "init"]
+        command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(target), "--harness", "both", "init"]
         def run():
             return subprocess.run(command, capture_output=True)
         result = run()
@@ -322,7 +332,7 @@ class BuildTests(unittest.TestCase):
                 original += "\r\n" + (skill / "assets/agents-fragment.md").read_text(encoding="utf-8").strip().replace("\n", "\r\n")
             agents = target / "AGENTS.md"
             agents.write_bytes(original.encode("utf-8"))
-            command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(target), "init"]
+            command = [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"), "--root", str(target), "--harness", "both", "init"]
             result = subprocess.run(command, capture_output=True)
             self.assertEqual(result.returncode, 0, result.stderr)
             data = agents.read_bytes()
@@ -348,7 +358,7 @@ class BuildTests(unittest.TestCase):
         }), encoding="utf-8")
         result = subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-             "--root", str(target), "init"], capture_output=True, text=True, encoding="utf-8")
+             "--root", str(target), "--harness", "both", "init"], capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stderr)
         current = (target / "AGENTS.md").read_bytes()
         self.assertTrue(current.startswith(b"# Project-owned guidance\r\n"))
@@ -368,7 +378,7 @@ class BuildTests(unittest.TestCase):
             (target / "AGENTS.md").write_bytes(b"existing body\r\n")
             before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
             result = subprocess.run([sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-                                     "--root", str(target), "init"], capture_output=True)
+                                     "--root", str(target), "--harness", "both", "init"], capture_output=True)
             self.assertNotEqual(result.returncode, 0)
             self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
@@ -387,7 +397,7 @@ class BuildTests(unittest.TestCase):
                 (target / "AGENTS.override.md").write_text(nstart if content.endswith("marker") else "custom", encoding="utf-8")
             before = {p.relative_to(target): p.read_bytes() for p in project_files(target)}
             result = subprocess.run([sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-                                     "--root", str(target), "init"], capture_output=True)
+                                     "--root", str(target), "--harness", "both", "init"], capture_output=True)
             self.assertNotEqual(result.returncode, 0, content)
             self.assertEqual(before, {p.relative_to(target): p.read_bytes() for p in project_files(target)})
 
@@ -405,7 +415,7 @@ class BuildTests(unittest.TestCase):
             entry.write_bytes(content)
         result = subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-             "--root", str(target), "init"], capture_output=True, text=True, encoding="utf-8")
+             "--root", str(target), "--harness", "both", "init"], capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stderr)
         for relative, content in files.items():
             self.assertEqual((target / relative).read_bytes(), content)
@@ -416,7 +426,7 @@ class BuildTests(unittest.TestCase):
         target.mkdir()
         result = subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-             "--root", str(target), "init"], capture_output=True, text=True, encoding="utf-8")
+             "--root", str(target), "--harness", "both", "init"], capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stderr)
         for base in (skill, target):
             for path in base.rglob("*.md"):
@@ -439,7 +449,7 @@ class BuildTests(unittest.TestCase):
         agents.write_bytes(b"existing rules")
         result = subprocess.run(
             [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-             "--root", str(target), "init"], capture_output=True, text=True, encoding="utf-8")
+             "--root", str(target), "--harness", "both", "init"], capture_output=True, text=True, encoding="utf-8")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("清单不一致", result.stderr)
         self.assertEqual(project_entries(target), [agents])
@@ -475,7 +485,7 @@ class BuildTests(unittest.TestCase):
                 target.mkdir()
                 result = subprocess.run(
                     [sys.executable, "-B", "-X", "utf8", str(skill / "scripts/govern.py"),
-                     "--root", str(target), "init"], capture_output=True)
+                     "--root", str(target), "--harness", "both", "init"], capture_output=True)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertEqual(project_entries(target), [])
                 path.write_bytes(original)
