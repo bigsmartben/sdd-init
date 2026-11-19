@@ -34,8 +34,22 @@ transaction = load_tool(Path(__file__).with_name("project_install.py"))
 release = load_tool(Path(__file__).with_name("release.py"))
 
 
+def emit(stream, message: str) -> None:
+    line = message + "\n"
+    try:
+        stream.write(line)
+        stream.flush()
+        return
+    except UnicodeEncodeError:
+        buffer = getattr(stream, "buffer", None)
+        if buffer is None:
+            raise
+    buffer.write(line.encode("utf-8"))
+    buffer.flush()
+
+
 def out(message: str) -> None:
-    print(message)
+    emit(sys.stdout, message)
 
 
 def fail(message: str) -> None:
@@ -259,7 +273,16 @@ def role_path(base: Path, reference: str) -> Path:
             reference = "//" + reference[8:]
         elif re.match(r"^//\?/[A-Za-z]:/", reference):
             reference = reference[4:]
-    return Path(os.path.abspath(base / reference))
+    path = Path(os.path.abspath(base / reference))
+    if os.name == "nt":
+        project = base.resolve().parent
+        for ancestor in (path, *path.parents):
+            try:
+                if ancestor.samefile(project):
+                    return project / path.relative_to(ancestor)
+            except OSError:
+                continue
+    return path
 
 
 def codex_config(root: Path) -> tuple[Path, str, dict]:
@@ -291,6 +314,7 @@ def inspect_project_roles(root: Path) -> None:
 
 
 def cmd_inspect(root: Path, args: argparse.Namespace) -> int:
+    root = root.resolve()
     out(f"Repository: {root}")
     for rel in ["AGENTS.md", "docs/index.md", "docs/blueprint.md", "specs"]:
         out(f"{'EXISTS' if (root / rel).exists() else 'MISSING'}  {rel}")
@@ -380,6 +404,7 @@ def prepare_agents(original: str, templates: dict[str, str]) -> str:
 
 
 def cmd_init(root: Path, args: argparse.Namespace) -> int:
+    root = root.resolve()
     # Resolve before even creating the lock: ambiguous auto must remain read-only.
     _, harnesses = selected_harnesses(root, args.harness, args.runtime_harness)
     with transaction.project_lock(root):
@@ -1006,7 +1031,7 @@ def main(argv: list[str] | None = None) -> int:
         root = require_root(args.root)
         return {"inspect": cmd_inspect, "init": cmd_init, "recover": cmd_recover}[args.cmd](root, args)
     except (ValueError, OSError) as e:
-        print(f"ERROR {e}", file=sys.stderr)
+        emit(sys.stderr, f"ERROR {e}")
         return 2
 
 

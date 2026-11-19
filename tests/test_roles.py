@@ -1,5 +1,6 @@
 """Role distribution and installer boundaries, using isolated target projects."""
 import hashlib
+import io
 import json
 from pathlib import Path
 import importlib.util
@@ -100,6 +101,17 @@ class RoleTests(unittest.TestCase):
         return {p.relative_to(self.target): p.read_bytes()
                 for p in project_files(self.target)}
 
+    def test_console_emit_falls_back_to_utf8_for_non_utf8_streams(self):
+        spec = importlib.util.spec_from_file_location("console_govern", self.skill / "scripts/govern.py")
+        govern = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(govern)
+        raw = io.BytesIO()
+        stream = io.TextIOWrapper(raw, encoding="cp1252")
+
+        govern.emit(stream, "无效的项目安装元数据")
+
+        self.assertEqual(raw.getvalue().decode("utf-8"), "无效的项目安装元数据\n")
+
     def test_exact_roles_are_project_scoped_without_model_presets(self):
         result = self.install()
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -189,7 +201,7 @@ class RoleTests(unittest.TestCase):
             link = self.target / anchor
             if anchor != ".agents/skills/sdd-workflow":
                 tx.create_workflow_link(link, old_shared)
-            absolute = str(link / "agents/sdd-coder.toml")
+            absolute = str(self.target.resolve() / anchor / "agents/sdd-coder.toml")
             references = [f"../{anchor}/agents/sdd-coder.toml", absolute]
             if os.name == "nt":
                 references.append("\\\\?\\" + absolute)
@@ -257,7 +269,7 @@ class RoleTests(unittest.TestCase):
     def test_unmanaged_shared_pure_reference_can_be_migrated_without_losing_settings(self):
         config = self.target / ".codex/config.toml"
         config.parent.mkdir()
-        alias = self.target / ".agents/skills/sdd-workflow/agents/sdd-coder.toml"
+        alias = self.target.resolve() / ".agents/skills/sdd-workflow/agents/sdd-coder.toml"
         config.write_text('model = "project-choice"\n[agents.sdd-coder]\n'
                           'config_file = "../.agents/skills/sdd-workflow/agents/sdd-coder.toml"\n'
                           f'[agents.project_alias]\nconfig_file = {json.dumps(str(alias), ensure_ascii=False)}\n',
