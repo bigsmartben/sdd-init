@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sdd-init"
-version = "0.8.9"
+version = "0.8.10"
 description = "Bootstrap the sdd-init skill for Codex and GitHub Copilot repositories"
 requires-python = ">=3.11"
 readme = "README.md"

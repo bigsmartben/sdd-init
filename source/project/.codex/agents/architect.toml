@@ -1,7 +1,6 @@
 name = "architect"
 description = "模块边界、接口兼容性与迁移决策（只读）。"
 sandbox_mode = "read-only"
-model_reasoning_effort = "high"
 
 developer_instructions = """
 工单范围：只处理调用方交付的本单并自验。调度由调用方负责，跨职责事项交回证据和待决项。

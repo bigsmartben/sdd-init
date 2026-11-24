@@ -22,6 +22,26 @@ spec.loader.exec_module(builder)
 
 
 class DistributionTests(unittest.TestCase):
+    def test_codex_dispatch_defaults_in_published_bundle(self):
+        expected = {
+            "architect": ("gpt-6.2-astra", "medium"),
+            "analyst": ("gpt-6.2-sol", "high"),
+            "implementer": ("gpt-6.2-sol", "medium"),
+            "tester": ("gpt-6.2-sol", "high"),
+            "devops": ("gpt-6.2-sol", "medium"),
+            "uat-observer": ("gpt-6.2-sol", "medium"),
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            assets = builder.build(Path(directory) / "bundle") / "assets"
+            main = (assets / repository.MAIN_RULES).read_text("utf-8")
+            for role, (model, effort) in expected.items():
+                with self.subTest(role=role):
+                    self.assertIn(f"| `{role}` | `{model}` | `{effort}` |", main)
+                    path = assets / repository.profile_path("codex", role)
+                    profile = tomllib.loads(path.read_text("utf-8"))
+                    self.assertNotIn("model", profile)
+                    self.assertNotIn("model_reasoning_effort", profile)
+
     def test_legacy_task_label_resolves_to_shipped_role(self):
         with tempfile.TemporaryDirectory() as directory:
             bundle = builder.build(Path(directory) / "bundle")
