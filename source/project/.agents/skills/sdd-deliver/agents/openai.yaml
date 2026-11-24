@@ -1,5 +1,0 @@
-interface:
-  display_name: "sdd-deliver"
-  short_description: "识别协作场景与 CI/CD/Ops 任务，委托角色完成工作流配置或授权操作，核验实际结果"
-policy:
-  allow_implicit_invocation: true

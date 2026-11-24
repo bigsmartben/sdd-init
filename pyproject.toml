@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "sdd-init"
 version = "0.8.7"
-description = "Install the user-level SDD initializer skill"
+description = "Install Codex Main Agent instructions, and six vertical agents"
 requires-python = ">=3.11"
 readme = "README.md"
 

@@ -1,5 +1,7 @@
 # sdd-workflow 白皮书
 
+> 历史资料，记录旧版 SDD 工作流。当前产品范围见[项目文档索引](index.md)。
+
 本文按[白皮书结构模板](../.agents/skills/sdd-workflow-review/assets/whitepaper-template.md)组织已确认设计。S1～S8、I1～I3 是可独立引用的设计条款；修改这些决定须有相应确认。
 
 ## 设计目标

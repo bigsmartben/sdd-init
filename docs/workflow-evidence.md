@@ -1,5 +1,7 @@
 # 工作流分发实施证据
 
+> 历史资料，记录旧版 SDD 工作流。当前产品范围见[项目文档索引](index.md)。
+
 ## 2026-11-19 Harness 自动适配
 
 依据 [FR-039／AC-046](../specs/platform-independent-sdd/spec.md) 调整[初始化技能](../source/initializer/SKILL.md)、[接入契约](../source/initializer/assets/install.md#harness-自动适配)、项目安装器与角色构建器。验证对象为 `c25637ebc601826aa4b73c8af951a6cad740c519` 基础上的本轮未提交源码；不是已发布版本或用户已安装资源。uv/uvx 分发和用户级技能入口保持不变，当前宿主身份由技能自动交接，`auto` 不再等于双端安装。

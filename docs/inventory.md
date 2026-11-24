@@ -1,5 +1,7 @@
 # 2026-11-02 维护来源盘点
 
+> 历史资料，记录旧版 SDD 工作流。当前产品范围见[项目文档索引](index.md)。
+
 导入依据是当前聊天的只读盘点，以及用户创建私有 sdd-init 维护项目的请求。已确认目标及待决方案维护在 [Issue #1](https://github.com/bigsmartben/sdd-init/issues/1)。
 
 ## 来源和分发

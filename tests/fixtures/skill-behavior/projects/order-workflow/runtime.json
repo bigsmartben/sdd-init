@@ -1,7 +1,0 @@
-{
-  "environment": "isolated-local-fixture",
-  "database": "per-scenario temporary SQLite file",
-  "external_endpoint": null,
-  "external_call_authorized": false,
-  "network_access_in_this_run": false
-}

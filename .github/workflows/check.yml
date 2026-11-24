@@ -54,7 +54,6 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: python -B -m unittest discover -s tests -v
       - run: python -B scripts/build_release.py
-      - run: python -B .build/sdd-init/scripts/test_govern.py
       - uses: astral-sh/setup-uv@v6
       - run: uv build --out-dir .build/dist
       - name: Smoke-test built wheel

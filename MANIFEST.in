@@ -1,6 +1,3 @@
-recursive-include scripts *.py
-include docs/installation.md
-recursive-include tests/fixtures/install *.md
-graft source/initializer
+include scripts/build_release.py
 graft source/project
 global-exclude __pycache__ *.py[cod]

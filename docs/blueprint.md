@@ -1,5 +1,7 @@
 # sdd-init 产品与架构蓝图
 
+> 历史资料，记录旧版 SDD 工作流。当前产品范围见[项目文档索引](index.md)。
+
 本蓝图描述 sdd-init 的产品用例和架构。产品承诺及 FR／AC 见[工程协作职责 Spec](../specs/platform-independent-sdd/spec.md)，执行入口见[关键协作索引](#8-关键协作索引与未决边界)，执行证据见[实施记录](workflow-evidence.md)与[安装证据](bootstrap-evidence.md)。
 
 ## 1. 产品目标与范围
