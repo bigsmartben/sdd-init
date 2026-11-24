@@ -20,7 +20,11 @@ uvx --from . sdd-init install
 | Codex Desktop | 根目录 `AGENTS.md` | `.codex/agents/<角色>.toml`，按 `name` 发现 |
 | GitHub Copilot App | 根目录 `AGENTS.md` | `.github/agents/<角色>.agent.md`，使用 YAML 前置属性与 Markdown 正文 |
 
-六个逻辑角色共用同一份职责源码。构建器从 TOML 生成 Copilot 配置。Codex 子 Agent 继承父会话的实际权限。Copilot 的 architect 和 analyst 配置读取与搜索工具。实际可调用能力由对应宿主、会话权限和组织配置决定。[Codex 子 Agent](https://developers.openai.com/codex/subagents) · [Copilot App 自定义](https://docs.github.com/en/copilot/how-tos/github-copilot-app/customize-github-copilot-app) · [Copilot 角色格式](https://docs.github.com/en/copilot/reference/custom-agents-configuration) · [Copilot 项目角色路径](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/invoke-custom-agents)
+根目录 `AGENTS.md` 指示主会话读取 `.agents/sdd-init/main.md`。完整热词和路由放在该文件。两个宿主共用这份规则和六个角色的职责源码。
+
+Copilot 角色配置关闭子角色自动继承仓库指令、设置 `user-invocable: false` 并列出本职工具。所有角色可读取和搜索，陪测观测另可执行，实施、测试和工程角色另可编辑及执行。复用定制配置前，检查这些开关和工具清单。Codex 子角色沿用父会话权限。Main 派发时关闭父会话历史继承。Codex V1 可用 `[agents]` 的 `max_depth = 1` 保留主会话派发并限制嵌套派发，有效值需要在会话中验证。V2 不使用这一深度设置。[Codex 子 Agent](https://developers.openai.com/codex/subagents) · [Codex 配置定义](https://github.com/openai/codex/blob/main/codex-rs/core/config.schema.json) · [Copilot 子角色上下文](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference#repository-custom-instructions-for-subagents) · [Copilot 角色工具](https://docs.github.com/en/copilot/reference/custom-agents-configuration#tools)
+
+角色配置与 Main 规则保存在共享仓库，具备相应文件权限的角色可直接读取。Copilot CLI 1.0.114 的顶层 `--agent` 可显式选择角色。需要隔离共享文件、继承工具或独立进程启动时，由宿主或执行环境提供相应权限边界。[角色隔离证据](workflow-evidence.md#2026-11-24-角色隔离)
 
 同一仓库补接另一端时，使用同一根规则和该端原生角色目录。首次创建使用 Main 模板。使用当前标记的 Main 管理块按预览原地更新，块外项目内容原样保留。未标记的已有规则需要更新时，先审阅差异，再选择合并或整文件替换。管理块格式异常或与项目条款存在冲突时，可提供包含当前管理块的完整合并候选供用户审阅。
 
@@ -50,4 +54,4 @@ $wheelCandidate = Get-ChildItem -LiteralPath $distCandidate -Filter '*.whl' | Se
 python -B scripts/smoke_package.py --from $wheelCandidate.FullName
 ```
 
-冒烟检查在临时用户目录与临时 Git 仓库验证 UVX 初始化、Skill 内置命令、两端配置及重复接入。两端桌面验收按工单的[宿主验收](../source/initializer/references/repository-onboarding.md#宿主验收)执行。在受控用户环境中记录实际客户端版本、根规则加载、六个角色发现与具名调用证据。配置校验和原生调用分别记录。[本轮验证证据](workflow-evidence.md#2026-11-24-仓库接入)
+冒烟检查在临时用户目录与临时 Git 仓库验证 UVX 初始化、Skill 内置命令、两端配置及重复接入。两端桌面验收按工单在受控会话中执行，分别记录分发配置、角色实际上下文、原生调用和共享文件可见性。[宿主验收步骤](../source/initializer/references/repository-onboarding.md#宿主验收) · [仓库接入证据](workflow-evidence.md#2026-11-24-仓库接入) · [角色隔离证据](workflow-evidence.md#2026-11-24-角色隔离)

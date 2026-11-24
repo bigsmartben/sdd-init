@@ -24,6 +24,8 @@ ROLES = ("architect", "analyst", "implementer", "tester", "devops", "uat-observe
 PROFILES = {"codex": (".codex/agents", ".toml"), "copilot": (".github/agents", ".agent.md")}
 BEGIN = b"<!-- sdd-init:main:start -->"
 END = b"<!-- sdd-init:main:end -->"
+MAIN_RULES = ".agents/sdd-init/main.md"
+MAIN_RULES_MARKER = b"<!-- sdd-init:main-rules -->\n"
 CI_SOURCE = re.compile(
     r"git\+https://[A-Za-z0-9._/-]+@[0-9a-fA-F]{40}|https://[A-Za-z0-9._/-]+\.whl"
 )
@@ -136,6 +138,18 @@ def profile_name(harness: str, path: str, content: bytes) -> str:
         name = Path(path).name.removesuffix(".md").removesuffix(".agent")
         if "name" in profile and profile["name"] != name:
             raise ValueError(f"{path}: display name must match role {name!r}")
+        if name in ROLES:
+            tools = profile.get("tools")
+            allowed = {"read", "search"}
+            if name not in {"architect", "analyst"}:
+                allowed.add("execute")
+                if name != "uat-observer":
+                    allowed.add("edit")
+            if (not isinstance(tools, list) or not tools
+                    or any(not isinstance(tool, str) or tool not in allowed for tool in tools)):
+                raise ValueError(f"{path}: expected an explicit role tool allowlist from {', '.join(sorted(allowed))}")
+            if profile.get("include-custom-instructions") is not False or profile.get("user-invocable") is not False:
+                raise ValueError(f"{path}: set include-custom-instructions and user-invocable to false")
         return name
     return profile["name"]
 
@@ -296,9 +310,12 @@ def handle_profiles(plan: Plan, assets: Path, reuse: list[str], check: bool) -> 
 
 def make_plan(root: Path, assets: Path, args) -> Plan:
     template = normalized((assets / "AGENTS.md").read_bytes()).rstrip(b"\n") + b"\n"
-    plan = Plan(root, args.harness, content_digest(template))
+    main_rules = normalized((assets / MAIN_RULES).read_bytes())
+    if not main_rules.startswith(MAIN_RULES_MARKER) or MAIN_RULES.encode() not in template:
+        raise ValueError("Bundled Main rules or entry is invalid")
+    plan = Plan(root, args.harness, content_digest(main_rules))
     for name in ROLES:
-        if not re.search(rb"(?m)^- \*\*" + name.encode() + rb"\*\*", template):
+        if not re.search(rb"(?m)^- \*\*" + name.encode() + rb"\*\*", main_rules):
             raise ValueError(f"Main route is missing role: {name}")
     checking = args.action == "check"
     if checking:
@@ -308,6 +325,17 @@ def make_plan(root: Path, assets: Path, args) -> Plan:
             plan.status["AGENTS.md"] = "current"
     else:
         plan_rules(plan, template, args)
+    current_rules = plan.read(MAIN_RULES)
+    if current_rules is not None and normalized(current_rules) == main_rules:
+        plan.status[MAIN_RULES] = "current"
+    elif checking:
+        plan.blockers.append(f"Missing or mismatched Main rules: {MAIN_RULES}")
+    elif current_rules is None or normalized(current_rules).startswith(MAIN_RULES_MARKER):
+        plan.status[MAIN_RULES] = "create" if current_rules is None else "update"
+        plan.write(MAIN_RULES, main_rules)
+    else:
+        plan.blockers.append(f"Existing file conflicts with bundled Main rules: {MAIN_RULES}")
+        plan.alternatives[MAIN_RULES] = main_rules
     other = "copilot" if args.harness == "codex" else "codex"
     other_folder = PROFILES[other][0]
     other_path = target_path(root, other_folder)

@@ -16,10 +16,15 @@ def copilot_profile(source: Path) -> str:
         "---",
         f'name: {json.dumps(role["name"])}',
         f'description: {json.dumps(role["description"], ensure_ascii=False)}',
-        "include-custom-instructions: true",
+        "include-custom-instructions: false",
+        "user-invocable: false",
     ]
-    if role.get("sandbox_mode") == "read-only":
-        frontmatter.append('tools: ["read", "search"]')
+    tools = ["read", "search"]
+    if role.get("sandbox_mode") != "read-only":
+        if role["name"] != "uat-observer":
+            tools.append("edit")
+        tools.append("execute")
+    frontmatter.append(f"tools: {json.dumps(tools)}")
     frontmatter.extend(("---", "", role["developer_instructions"].strip(), ""))
     return "\n".join(frontmatter)
 
@@ -36,7 +41,7 @@ def build(output: Path) -> Path:
         "SKILL.md": initializer / "SKILL.md",
         "references/repository-onboarding.md": initializer / "references/repository-onboarding.md",
         "scripts/repository.py": ROOT / "src/sdd_init/repository.py",
-        "assets/AGENTS.md": source / "agentsmd_template.md",
+        "assets/AGENTS.md": source / "agentsmd_entry.md",
         **{f"assets/.codex/agents/{name}.toml": role for name, role in roles.items()},
     }
     for path in inputs.values():
@@ -47,6 +52,10 @@ def build(output: Path) -> Path:
         target = output / name
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(path, target)
+    main = output / "assets/.agents/sdd-init/main.md"
+    main.parent.mkdir(parents=True)
+    template = (source / "agentsmd_template.md").read_text("utf-8")
+    main.write_text("<!-- sdd-init:main-rules -->\n\n" + template, encoding="utf-8", newline="\n")
     copilot = output / "assets/.github/agents"
     copilot.mkdir(parents=True)
     for name, role in roles.items():

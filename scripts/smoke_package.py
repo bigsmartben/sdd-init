@@ -1,5 +1,6 @@
 """Verify a packaged skill and both project adapters in temporary Git repositories."""
 import argparse
+import json
 import os
 import re
 from pathlib import Path
@@ -48,8 +49,9 @@ def main():
         assert not (home / ".codex").exists()
 
         skill = home / ".agents/skills/sdd-init"
+        main_rules = ".agents/sdd-init/main.md"
         expected = {"SKILL.md", "references/repository-onboarding.md", "scripts/repository.py",
-                    "assets/AGENTS.md"}
+                    "assets/AGENTS.md", f"assets/{main_rules}"}
         expected.update(f"assets/.codex/agents/{role}.toml" for role in ROLES)
         expected.update(f"assets/.github/agents/{role}.agent.md" for role in ROLES)
         assert {p.relative_to(skill).as_posix() for p in skill.rglob("*") if p.is_file()} == expected
@@ -67,7 +69,8 @@ def main():
         assert "Written: AGENTS.md" not in connect([*cli, "project"], repo, "copilot")
         assert "Written:" not in connect([*cli, "project"], repo, "copilot")
         assert (repo / "AGENTS.md").read_text("utf-8") == (skill / "assets/AGENTS.md").read_text("utf-8")
-        assert re.search(r"^# Main Agent$", (repo / "AGENTS.md").read_text("utf-8"), re.MULTILINE)
+        assert (repo / main_rules).read_bytes() == (skill / "assets" / main_rules).read_bytes()
+        assert f"]({main_rules})" in (repo / "AGENTS.md").read_text("utf-8")
         assert not (repo / ".github/workflows").exists()
 
         for name in sorted(ROLES):
@@ -81,12 +84,20 @@ def main():
             for section in ("工具参考（可选）", "正向交付", "逆向定位与验证", "交回条件"):
                 assert re.search(rf"^{section}：\S.+$", body, re.MULTILINE), (name, section)
             assert "调用方" in body, name
-            for other in (ROLES - {name}) | {"Main"}:
-                assert not re.search(rf"\b{re.escape(other)}\b", body, re.IGNORECASE), (name, other)
             assert (role.get("sandbox_mode") == "read-only") == (name in {"architect", "analyst"})
             profile = (repo / copilot).read_text("utf-8")
             assert body.strip() in profile
-            assert ('tools: ["read", "search"]' in profile) == (name in {"architect", "analyst"})
+            for other in (ROLES - {name}) | {"Main"}:
+                for rendered in ((repo / codex).read_text("utf-8"), profile):
+                    assert not re.search(rf"\b{re.escape(other)}\b", rendered, re.IGNORECASE), (name, other)
+            assert "include-custom-instructions: false" in profile
+            assert "user-invocable: false" in profile
+            tools = ["read", "search"]
+            if name not in {"architect", "analyst"}:
+                if name != "uat-observer":
+                    tools.append("edit")
+                tools.append("execute")
+            assert f"tools: {json.dumps(tools)}" in profile
             print(f"Verified packaged and installed profiles: {name}")
 
         print("UVX bootstrap, installed Skill CLI, both repository adapters and repeat checks passed.")
