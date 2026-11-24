@@ -1,21 +1,27 @@
-"""Install or inspect Main and its six vertical agents."""
+"""Initialize the user-level sdd-init skill and configure a target repository."""
 import argparse
 import os
 from pathlib import Path
 import sys
 import tempfile
 
+from . import repository
+
 
 def apply(resources: Path, home: Path, install: bool) -> int:
-    if not resources.is_dir():
+    home = home.absolute()
+    if not (resources / "SKILL.md").is_file():
         raise ValueError("Package resources missing. Install from a built distribution.")
     pending = []
     conflicts = []
+    if home.is_symlink() or home.resolve() != home:
+        raise ValueError(f"Linked skill directory: {home}")
     for source in sorted(resources.rglob("*")):
         if not source.is_file():
             continue
         target = home / source.relative_to(resources)
-        if target.is_symlink() or not target.resolve().is_relative_to(home.resolve()):
+        if (target.resolve() != target or target.is_symlink()
+                or any(parent.exists() and not parent.is_dir() for parent in target.parents)):
             conflicts.append(target)
         elif target.is_file() and target.read_bytes() == source.read_bytes():
             continue
@@ -49,12 +55,23 @@ def apply(resources: Path, home: Path, install: bool) -> int:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("install", "inspect"))
-    parser.add_argument("--home", type=Path, default=Path.home(),
-                        help="Parent of .codex (defaults to your home directory)")
+    commands = parser.add_subparsers(dest="command", required=True)
+    for name in ("install", "inspect"):
+        command = commands.add_parser(name)
+        location = command.add_mutually_exclusive_group()
+        location.add_argument("--home", type=Path, default=Path.home(),
+                              help="Parent of .agents (defaults to your home directory)")
+        location.add_argument("--skills-dir", type=Path, help="Explicit parent directory for sdd-init")
+    repository.add_arguments(commands.add_parser("project"))
     args = parser.parse_args()
     try:
-        return apply(Path(__file__).with_name("resources"), args.home.resolve(), args.command == "install")
+        resources = Path(__file__).with_name("resources")
+        if args.command == "project":
+            return repository.run(resources / "assets", args)
+        directory = args.skills_dir if args.skills_dir is not None else args.home / ".agents/skills"
+        target = (directory / "sdd-init").absolute()
+        print(f"User skill: {target}")
+        return apply(resources, target, args.command == "install")
     except (OSError, ValueError) as error:
         print(f"sdd-init: {error}", file=sys.stderr)
         return 1

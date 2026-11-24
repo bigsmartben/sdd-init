@@ -1,3 +1,4 @@
 include scripts/build_release.py
 graft source/project
+graft source/initializer
 global-exclude __pycache__ *.py[cod]

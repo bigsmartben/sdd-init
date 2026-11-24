@@ -1,6 +1,19 @@
 # 工作流分发实施证据
 
-> 历史资料，记录旧版 SDD 工作流。当前产品范围见[项目文档索引](index.md)。
+当前产品范围见[项目文档索引](index.md)。2026-11-19 及之前记录用于追溯旧版 SDD 工作流。
+
+## 2026-11-24 仓库接入
+
+验证对象为基于 `830fa18` 的未提交工作区候选。Windows 上使用 Python 3.13 和 uv 0.13.9，安装与宿主探针使用临时用户目录和临时 Git 仓库。
+
+| 验证 | 命令与结果 |
+| --- | --- |
+| 仓库回归 | `uv run --no-project --with "PyYAML>=6.0.2,<7" python -B -m unittest discover -s tests` 退出 0，43 项通过。覆盖首次接入、两端先后补接、幂等、等待选择保全、合并、替换、过期预览、定制角色、无效和重复配置、CI 选定与失败检查。 |
+| Skill 与分发 | `python -B scripts/build_release.py --output <临时 Skill 路径>` 和 Skill Creator 的 `python -X utf8 -B quick_validate.py <临时 Skill 路径>` 均退出 0。 `uv build --out-dir <临时制品目录>` 生成 wheel 和 sdist。 `python -B scripts/smoke_package.py --from <本轮 wheel>` 退出 0，运行 UVX 初始化、重装、Skill 内置命令及两端配置检查。 |
+| Codex 原生读取 | 本机安装 Codex Desktop 26.1111.2228.0。其附带的 Codex CLI 0.169.0-alpha.11.1 在临时受信仓库运行 `codex debug prompt-input` 退出 0。返回中包含根 `AGENTS.md` 全文和六个角色的配置描述。该探针未确认临时用户级 Skill 的原生发现。桌面会话中的具名角色调用待验证。 |
+| GitHub Copilot App | 本机安装 1.4.3。六个 `.agent.md` 配置已在 wheel 冒烟中解析和核对。临时用户环境未完成已登录会话中的 Skill 发现、仓库规则加载与原生角色调用，均待验证。 |
+
+在受控桌面会话中按[工单宿主验收步骤](../source/initializer/references/repository-onboarding.md#宿主验收)补验两端的 Skill 与仓库规则来源、角色发现和具名调用。目标仓库的 CI 运行需在用户选择接入后验证，本轮覆盖生成配置及相同检查命令的本地运行。
 
 ## 2026-11-19 Harness 自动适配
 

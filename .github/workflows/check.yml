@@ -52,9 +52,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
-      - run: python -B -m unittest discover -s tests -v
-      - run: python -B scripts/build_release.py
       - uses: astral-sh/setup-uv@v6
+      - run: uv run --no-project --with "PyYAML>=6.0.2,<7" python -B -m unittest discover -s tests -v
+      - run: python -B scripts/build_release.py
       - run: uv build --out-dir .build/dist
       - name: Smoke-test built wheel
         run: >-
