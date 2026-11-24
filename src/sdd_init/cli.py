@@ -18,10 +18,10 @@ def apply(resources: Path, home: Path, install: bool) -> int:
     for path in (home, *home.parents):
         try:
             metadata = path.lstat()
-        except FileNotFoundError:
+        except (FileNotFoundError, NotADirectoryError):
             continue
-        if (stat.S_ISLNK(metadata.st_mode)
-                or getattr(metadata, "st_reparse_tag", 0) == stat.IO_REPARSE_TAG_MOUNT_POINT):
+        junction = os.name == "nt" and metadata.st_reparse_tag == stat.IO_REPARSE_TAG_MOUNT_POINT
+        if stat.S_ISLNK(metadata.st_mode) or junction:
             raise ValueError(f"Linked skill directory: {path}")
     home = home.resolve()
     for source in sorted(resources.rglob("*")):
