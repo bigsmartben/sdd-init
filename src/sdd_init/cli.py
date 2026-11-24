@@ -2,6 +2,7 @@
 import argparse
 import os
 from pathlib import Path
+import stat
 import sys
 import tempfile
 
@@ -14,8 +15,15 @@ def apply(resources: Path, home: Path, install: bool) -> int:
         raise ValueError("Package resources missing. Install from a built distribution.")
     pending = []
     conflicts = []
-    if home.is_symlink() or home.resolve() != home:
-        raise ValueError(f"Linked skill directory: {home}")
+    for path in (home, *home.parents):
+        try:
+            metadata = path.lstat()
+        except FileNotFoundError:
+            continue
+        if (stat.S_ISLNK(metadata.st_mode)
+                or getattr(metadata, "st_reparse_tag", 0) == stat.IO_REPARSE_TAG_MOUNT_POINT):
+            raise ValueError(f"Linked skill directory: {path}")
+    home = home.resolve()
     for source in sorted(resources.rglob("*")):
         if not source.is_file():
             continue
