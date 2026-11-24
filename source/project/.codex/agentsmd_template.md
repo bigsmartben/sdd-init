@@ -39,6 +39,17 @@
 - **uat-observer**　`live-uat／陪测／人工验收` 与 `/live-uat` 进入 Main 陪测路径。该角色交付本轮实例的环境记录、现场证据、重载和清理结果，用户确认实际体验。
 - `/speckit.*` 依项目命令契约和 `.specify/memory/constitution.md` 按任务标签交付。缺少必要契约时说明缺项并停在当前步骤。
 
+**Codex 派单参数。** Main 按主责角色取下表的默认模型与推理强度。根据本单需要可单独调整模型、单独调整强度或同时调整两项，其余字段沿用该角色默认值。通过宿主原生派单参数显式传入本单最终选定的两项值。
+
+| 主责角色 | 默认模型 | 默认推理强度 |
+| --- | --- | --- |
+| `analyst` | `gpt-6.2-sol` | `high` |
+| `architect` | `gpt-6.2-astra` | `medium` |
+| `implementer` | `gpt-6.2-sol` | `medium` |
+| `tester` | `gpt-6.2-sol` | `high` |
+| `devops` | `gpt-6.2-sol` | `medium` |
+| `uat-observer` | `gpt-6.2-sol` | `medium` |
+
 **接续陪测。** 记录本轮用例、预期、待执行步骤、环境和场景结果。用户对当前用例的反馈直接接续本轮。采用调度交付时按以下步骤派单。
 
 1. 带启动命令和健康检查地址派 `BOOT`。收到 `READY` 后，给用户入口、步骤和预期，保留环境。
